@@ -1,7 +1,9 @@
 <template>
-  <!-- :locale="getAntdLocale" -->
-  <!-- :locale="enUS.locale" -->
-  <ConfigProvider :locale="localeValue == 'en' ? en : zh">
+  <ConfigProvider :locale="localeValue == 'en' ? en : zh" :theme="{
+    token: {
+      colorPrimary: store.state.globalConfiguration.colorPrimary,
+    },
+  }">
     <router-view #="{ Component }">
       <component :is="Component" />
     </router-view>
@@ -10,29 +12,24 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect, watch, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { watch, ref } from 'vue';
 import { ConfigProvider } from 'ant-design-vue';
 import en from 'ant-design-vue/es/locale/en_US';
 import zh from 'ant-design-vue/es/locale/zh_CN';
 import 'dayjs/locale/zh-cn';
 import { useI18n } from 'vue-i18n'
 import dayjs from 'dayjs';
+import { useStore } from 'vuex'
 const { locale } = useI18n()
-const route = useRoute();
 let localeValue = ref<string>(locale.value)
+const store = useStore()
 dayjs.locale(locale.value);
 watch(locale, (val: string) => {
   localeValue.value = val
+  console.log(1312)
   dayjs.locale(val);
 });
 
-watchEffect(() => {
-  if (route.meta?.title) {
-    // 翻译网页标题
-    document.title = '管理系统';
-  }
-});
 </script>
 
 <style lang="less">

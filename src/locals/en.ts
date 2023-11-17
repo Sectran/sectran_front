@@ -2,9 +2,11 @@
 export default {
     login: {
         login: 'login',
-        userName: 'userName',
+        account: 'account',
         password: 'password',
-        record:'Remember me'
+        record:'Remember me',
+        accountMessage: 'Please input your account!',
+        passwordMessage: 'Please input your password!',
     },
     user:{
         userName:'userName',

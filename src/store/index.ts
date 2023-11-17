@@ -1,8 +1,10 @@
 import { createStore } from 'vuex'
-import TabsStore from "./TabsStore/index"
+import tabsStore from "./tabsStore/index"
+import globalConfiguration from "./globalConfiguration/index"
 
 export default createStore({
     modules: {
-        TabsStore
+        tabsStore,
+        globalConfiguration
     }
 })

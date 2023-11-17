@@ -1,12 +1,12 @@
 <template>
     <div class="tablePage-style">
         <div class="table-nav">
-            <a-form layout="inline" :model="SearchFrom">
-                <a-form-item :label="t('user.userName')" name="fieldA">
-                    <a-input v-model:value="SearchFrom.user" placeholder="请输入用户名" />
+            <a-form layout="inline" :model="searchFrom">
+                <a-form-item :label="t('user.userName')" name="user">
+                    <a-input v-model:value="searchFrom.user" placeholder="请输入用户名" />
                 </a-form-item>
                 <a-form-item :label="t('user.userName')" name="fieldA">
-                    <a-date-picker v-model:value="SearchFrom.value1" />
+                    <a-date-picker v-model:value="searchFrom.value" />
                 </a-form-item>
 
                 <a-form-item>
@@ -78,29 +78,33 @@ import { useI18n } from 'vue-i18n'
 import type { Dayjs } from 'dayjs';
 import type { FormInstance } from 'ant-design-vue';
 const { t } = useI18n()
-import { adduser, listUser, deleteUser ,edituser} from "@/api/admin"
+import { adduser, listUser, deleteUser, edituser } from "@/api/admin"
 const formRef = ref<FormInstance>();
-let { tabHeight, SearchFrom, on_search, handleDelete, paginationOpt, tableData ,   Fun_requestList} = useTableHooks<SearchType>({
+let searchFrom = reactive({
     user: "",
-}, listUser, deleteUser);
+    value: ""
+});
+
+let { tabHeight, on_search, paginationOpt, tableData, requestList, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listUser, deleteApi: deleteUser });
 const addOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({
     userName: '',
     password: '',
 });
 const columns = [{
-    title: '用户名',
+    title: 'user.userName',
     dataIndex: 'userName',
 },
-{
-    title: '修改时间',
-    dataIndex: 'revampTime',
-},
+    // {
+    //     title: '修改时间',
+    //     dataIndex: 'revampTime',
+    // },
 
-{
-    title: 'public.operation',
-    dataIndex: 'operation',
-},]
+    {
+        title: 'public.operation',
+        dataIndex: 'operation',
+    }
+]
 
 const on_redact = (data: listItemType) => {
     console.log(data.userName)
@@ -113,14 +117,14 @@ const on_redact = (data: listItemType) => {
 
 const onFinish = () => {
     let api
-    if(formState.id){
+    if (formState.id) {
         api = edituser
-    }else {
+    } else {
         api = adduser
     }
     api(formState).then(() => {
         addOpen.value = false
-        Fun_requestList()
+        requestList()
     })
 };
 

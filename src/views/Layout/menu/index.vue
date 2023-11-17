@@ -32,12 +32,12 @@ let tabs = {
   name: route.name,
   title: route.meta.title
 }
-store.commit('TabsStore/addtabsArr', tabs)
+store.commit('tabsStore/addtabsArr', tabs)
 const menuState = reactive<{ openKeys: string[], selectedKeys: string[] }>({
   openKeys: ['admin'],
   selectedKeys: [route.name],
 })
-watch(() => store.state.TabsStore.pitchTabs, (oldValue: string) => {
+watch(() => store.state.tabsStore.pitchTabs, (oldValue: string) => {
   menuState.selectedKeys = [oldValue]
 })
 const onPath = (el: routerType) => {
@@ -45,7 +45,7 @@ const onPath = (el: routerType) => {
     name: el.name,
     title: el.meta.title
   }
-  store.commit('TabsStore/addtabsArr', data)
+  store.commit('tabsStore/addtabsArr', data)
   router.push(data.name)
 }
 </script>

@@ -2,7 +2,7 @@
 let Layout = [
     {
         path: '/admin',
-        component: import('views/Layout/index.vue'),
+        component: () => import('views/layout/index.vue'),
         name:'admin',
         meta: {
             // title: '配置管理',
@@ -12,18 +12,16 @@ let Layout = [
             {
                 path: 'user',
                 name: 'user',
-                component: () => import('views/Table/user.vue'),
+                component: () => import('views/table/user.vue'),
                 meta: {
-                    // title: '人员管理',
                     title: 'userAdmin',
                 },
             },
             {
                 path: 'department',
                 name: 'department',
-                component: () => import('views/Table/department.vue'),
+                component: () => import('views/table/department.vue'),
                 meta: {
-                    // title: '部门管理',
                     title: 'departmentAdmin',
                 },
             },
@@ -31,9 +29,8 @@ let Layout = [
             {
                 path: 'role',
                 name: 'role',
-                component: () => import('views/Table/role.vue'),
+                component: () => import('views/table/role.vue'),
                 meta: {
-                    // title: '部门管理',
                     title: 'roleAdmin',
                 },
             },

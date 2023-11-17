@@ -1,8 +1,8 @@
 <template>
     <div class="Tabs-style">
-        <a-tabs v-model:activeKey="store.state.TabsStore.pitchTabs" hide-add type="editable-card" @tabClick="on_tabs"
+        <a-tabs v-model:activeKey="store.state.tabsStore.pitchTabs" hide-add type="editable-card" @tabClick="on_tabs"
             @edit="on_edit">
-            <a-tab-pane v-for="pane in store.state.TabsStore.tabsArr" :key="pane.name" :tab="t(`menu.${pane.title}`)"></a-tab-pane>
+            <a-tab-pane v-for="pane in store.state.tabsStore.tabsArr" :key="pane.name" :tab="t(`menu.${pane.title}`)"></a-tab-pane>
         </a-tabs>
     </div>
 </template>
@@ -22,7 +22,7 @@ const router = useRouter();
 const on_tabs = (key: string) => {
     if (route.name === key) return
     router.push(key)
-    store.commit('TabsStore/pitchTabsChange', key)
+    store.commit('tabsStore/pitchTabsChange', key)
 }
 /**
  * 删除tabs页
@@ -30,7 +30,7 @@ const on_tabs = (key: string) => {
  */
 const on_edit = (key: string) => {
     console.log(route.name)
-    store.commit('TabsStore/deleteTabsArr', { name: key, routeName: route.name })
+    store.commit('tabsStore/deleteTabsArr', { name: key, routeName: route.name })
 }
 </script>
 

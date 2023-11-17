@@ -10,7 +10,7 @@
         <router-view v-slot="{ Component }">
           <template v-if="Component">
             <transition :name="Object.is(route.meta?.transitionName, false) ? '' : 'fade-transform'" mode="out-in" appear>
-              <keep-alive :include="[store.state.TabsStore.tabsArr.map((item: any) => item.name)]">
+              <keep-alive :include="[store.state.tabsStore.tabsArr.map((item: any) => item.name)]">
                 <component :is="Component" :key="route.fullPath" />
               </keep-alive>
             </transition>
@@ -23,8 +23,8 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import AsideMenu from './menu/index.vue';
-import Headers from './Header/index.vue';
-import Tabs from './Tabs/index.vue';
+import Headers from './header/index.vue';
+import Tabs from './tabs/index.vue';
 const collapsed = ref<boolean>(false);
 import { useRoute } from 'vue-router';
 const route = useRoute();
@@ -42,7 +42,6 @@ onMounted(() => {
   width: 100vw;
   height: 100vh;
 }
-
 
 .Content-style {
   height: calc(100vh - 64px - 50px);

@@ -9,26 +9,46 @@
         </div>
         <div class="nav-right">
             <a-dropdown>
-                <a class="ant-dropdown-link" @click.prevent>
+                <a class="nav-right-space" @click.prevent>
                     <TranslationOutlined class="nav-icon" />
                 </a>
                 <template #overlay>
                     <a-menu>
-                        <a-menu-item :class="{ optCalss: langSrt === item.lang }" v-for="item in menuItem" :key="item.lang"
-                            @click='on_language(item.lang)'>{{
-                                item.name }}</a-menu-item>
+                        <a-menu-item :class="{ optCalss: langSrt === item.lang }" v-for="item in languageArr"
+                            :key="item.lang" @click='on_language(item.lang)'>
+                            {{ item.name }}
+                        </a-menu-item>
                     </a-menu>
                 </template>
             </a-dropdown>
-            <!-- 
-            <a-avatar shape="square">
+
+
+            <a-dropdown>
+                <a class="nav-right-space" @click.prevent>
+                    <div>颜色</div>
+                </a>
+                <template #overlay>
+                    <a-menu>
+                        <!-- :class="{ optCalss: langSrt === item.lang }"  -->
+                        <!--  -->
+                        <a-menu-item v-for="item in themeColors" :key="item.color">
+                            <div class="theme-color" @click='on_color(item)'>
+                                <div :style="{'background-color': item.color}"></div>
+                                {{ item.name }}
+                            </div>
+                        </a-menu-item>
+                    </a-menu>
+                </template>
+            </a-dropdown>
+
+            <!-- <a-avatar shape="square" class="nav-right-space">
                 <template #icon>
                     <UserOutlined class="nav-icon" />
                 </template>
             </a-avatar> -->
         </div>
     </a-layout-header>
-</template>
+</template> 
 
 <script setup lang="ts">
 import {
@@ -39,14 +59,22 @@ import {
 } from "@ant-design/icons-vue";
 // Breadcrumb
 import { useI18n } from 'vue-i18n'
-const { locale } = useI18n()
+import { useStore } from 'vuex'
+
 import { ref, onMounted } from 'vue';
+const { locale } = useI18n()
+const store = useStore()
 let langSrt = ref(localStorage.getItem('lang') || 'zh')
-type menuItemType = {
+type languageType = {
     name: string,
     lang: string
 }
-let menuItem: menuItemType[] = [
+
+type themeColorsType = {
+    color: string,
+    name: string,
+}
+let languageArr: languageType[] = [
     {
         name: '中文',
         lang: 'zh'
@@ -54,7 +82,39 @@ let menuItem: menuItemType[] = [
     {
         name: 'English',
         lang: 'en'
-    }]
+    }
+]
+
+let themeColors: themeColorsType[] = [
+    {
+        name: "拂晓蓝",
+        color: "rgb(22, 119, 255)"
+    }, {
+        name: "薄暮",
+        color: "rgb(245, 34, 45)"
+    }, {
+        name: "火山",
+        color: "rgb(250, 84, 28)"
+    }, {
+        name: "日暮",
+        color: "rgb(250, 173, 20)"
+    }, {
+        name: "明青",
+        color: "rgb(19, 194, 194)"
+    }, {
+        name: "极光绿",
+        color: "rgb(82, 196, 26)"
+    }, {
+        name: "极客蓝",
+        color: "rgb(47, 84, 235)"
+    },
+    {
+        name: "酱紫",
+        color: "rgb(114, 46, 209)"
+    }
+]
+
+
 onMounted(() => {
     console.log('3.-组件挂载到页面之后执行-------onMounted,Header')
 })
@@ -71,6 +131,9 @@ const { collapsed } = defineProps(['collapsed'])
 const emit = defineEmits(['update:collapsed'])
 const on_icon = (type: boolean) => {
     emit("update:collapsed", type)
+}
+const on_color = (item:themeColorsType) =>{
+    store.commit('globalConfiguration/alterColorPrimary', item.color)
 }
 </script>
 
@@ -89,10 +152,29 @@ const on_icon = (type: boolean) => {
     display: flex;
     align-items: center;
 
-    span {
-        margin-left: 20px;
+    a {
+        display: flex;
+    }
+
+    .nav-right-space {
+        margin-left: 30px;
+    }
+
+
+}
+
+.theme-color {
+    display: flex;
+    align-items: center;
+
+    div {
+        width: 20px;
+        height: 20px;
+        background: red;
+        margin-right: 5px;
     }
 }
+
 
 ::v-deep(.optCalss) {
     color: #2D93FC !important;
