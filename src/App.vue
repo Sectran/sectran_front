@@ -26,13 +26,15 @@ const store = useStore()
 dayjs.locale(locale.value);
 watch(locale, (val: string) => {
   localeValue.value = val
-  console.log(1312)
   dayjs.locale(val);
 });
 
 </script>
 
 <style lang="less">
+
+
+// @primary-color: #f99; // 自定义的主题颜色
 * {
   padding: 0;
   margin: 0;
