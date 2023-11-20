@@ -4,7 +4,7 @@
  */
 export const LoginRoute = {
   path: '/',
-  name: 'Login',
+  name: 'login',
   component: () => import(/* webpackChunkName: "login" */ 'views/Login/index.vue'),
   meta: {
     title: '登录',
@@ -16,7 +16,7 @@ export const LoginRoute = {
  */
 export const LinkConfiguration = {
   path: '/linkConfiguration',
-  name: 'LinkConfiguration',
+  name: 'linkConfiguration',
   component: () => import(/* webpackChunkName: "login" */ 'views/linkConfiguration/index.vue'),
   meta: {
     title: '连接配置',

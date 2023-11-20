@@ -19,7 +19,7 @@ export default {
         description: '部门描述',
         add_user: '添加人'
     },
-    AsideMenu: {
+    asideMenu: {
         userinfo: '用户信息'
     },
     public: {

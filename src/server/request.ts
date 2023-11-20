@@ -58,7 +58,7 @@ const requests: Function = (url: string, param: AxiosRequestConfig<string>, fect
                         let { data } = response;
                         message.success(data.msg);
                         resolve(data);
-                    } else { Landing(response?.data); }
+                    } else { landing(response?.data); }
                 }).catch((error: any) => {
                     msag(error)
                     reject(error);
@@ -73,7 +73,7 @@ const requests: Function = (url: string, param: AxiosRequestConfig<string>, fect
                             message.success(data.msg);
                             resolve(data);
                         } else {
-                            Landing(response.data);
+                            landing(response.data);
                         }
                     },
                     (error: any) => {
@@ -141,7 +141,7 @@ function msag(err: { response: { status: number; data: { error: { details: strin
  * 查看返回的数据
  * @param data
  */
-function Landing(data: { code: number, status: number | string; msg: string }) {
+function landing(data: { code: number, status: number | string; msg: string }) {
     console.log(data)
     let { code, msg } = data
     message.error(msg);

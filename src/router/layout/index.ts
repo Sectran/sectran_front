@@ -1,5 +1,5 @@
 //配置管理
-let Layout = [
+let layoutRouter = [
     {
         path: '/admin',
         component: () => import('views/layout/index.vue'),
@@ -42,5 +42,5 @@ let Layout = [
         ]
     }]
 
-export default Layout;
+export default layoutRouter;
 

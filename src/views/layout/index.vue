@@ -1,12 +1,12 @@
 <template>
-  <a-layout class="layout-style" style="background: #fff">
-    <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible style="background: #fff">
+  <a-layout class="layout-style">
+    <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible class="a-sider">
       <AsideMenu></AsideMenu>
     </a-layout-sider>
     <a-layout>
       <Headers v-model:collapsed="collapsed"></Headers>
       <Tabs></Tabs>
-      <a-layout-content class="Content-style">
+      <a-layout-content class="content-style ">
         <router-view v-slot="{ Component }">
           <template v-if="Component">
             <transition :name="Object.is(route.meta?.transitionName, false) ? '' : 'fade-transform'" mode="out-in" appear>
@@ -43,9 +43,9 @@ onMounted(() => {
   height: 100vh;
 }
 
-.Content-style {
+.content-style  {
   height: calc(100vh - 64px - 50px);
   padding: 20px;
-  background: #F1F3F4;
+  background: var(--theme-content-bg);
 }
 </style>

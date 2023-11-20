@@ -1,5 +1,5 @@
 <template>
-    <div class="Tabs-style">
+    <div class="tabs-style">
         <a-tabs v-model:activeKey="store.state.tabsStore.pitchTabs" hide-add type="editable-card" @tabClick="on_tabs"
             @edit="on_edit">
             <a-tab-pane v-for="pane in store.state.tabsStore.tabsArr" :key="pane.name" :tab="t(`menu.${pane.title}`)"></a-tab-pane>
@@ -35,9 +35,8 @@ const on_edit = (key: string) => {
 </script>
 
 <style lang="less" scoped>
-.Tabs-style {
-   
-    background: #ffffff;
+.tabs-style {
+    background: var(--theme-bg);
     padding: 10px 10px 0 10px;
 
     ::v-deep(.ant-tabs-nav) {
