@@ -28,8 +28,9 @@ export default {
         delete:'delete',
         add:'add',
         redact:'redact',
-        operation:'operation'
-
+        operation:'operation',
+        reset:"redact",
+        search:"search"
         
     },
     menu:{

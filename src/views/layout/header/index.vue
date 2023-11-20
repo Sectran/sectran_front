@@ -8,9 +8,14 @@
             </Breadcrumb> -->
         </div>
         <div class="nav-right">
+
+            <BulbOutlined @click="on_theme" :style="{ color: store.state.globalConfiguration.colorPrimary }"
+                class="nav-icon" />
             <a-dropdown>
+
                 <a class="nav-right-space" @click.prevent>
-                    <TranslationOutlined :style="{color:store.state.globalConfiguration.colorPrimary }" class="nav-icon" />
+                    <TranslationOutlined :style="{ color: store.state.globalConfiguration.colorPrimary }"
+                        class="nav-icon" />
                 </a>
                 <template #overlay>
                     <a-menu>
@@ -19,18 +24,19 @@
                             {{ item.name }}
                         </a-menu-item>
                     </a-menu>
-                </template>     
+                </template>
             </a-dropdown>
-            <a-dropdown>  
+            <a-dropdown>
                 <a class="nav-right-space" @click.prevent>
-                    <div class="theme-color-div" :style="{ 'background-color': store.state.globalConfiguration.colorPrimary }"></div>
+                    <div class="theme-color-div"
+                        :style="{ 'background-color': store.state.globalConfiguration.colorPrimary }"></div>
                 </a>
                 <template #overlay>
                     <a-menu>
                         <!-- :class="{ optCalss: langSrt === item.lang }"  -->
                         <!--  -->
                         <a-menu-item v-for="item in themeColors" :key="item.color" @click='on_color(item)'>
-                            <div class="theme-color" >
+                            <div class="theme-color">
                                 <div class="theme-color-div" :style="{ 'background-color': item.color }"></div>
                                 {{ item.name }}
                             </div>
@@ -53,6 +59,7 @@ import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
     TranslationOutlined,
+    BulbOutlined
     // UserOutlined
 } from "@ant-design/icons-vue";
 // Breadcrumb
@@ -133,6 +140,10 @@ const on_icon = (type: boolean) => {
 const on_color = (item: themeColorsType) => {
     store.commit('globalConfiguration/alterColorPrimary', item.color)
 }
+
+const on_theme = () => {
+    store.commit('globalConfiguration/alterTheme')
+}
 </script>
 
 <style scoped lang="less">
@@ -171,5 +182,4 @@ const on_color = (item: themeColorsType) => {
     height: 20px;
     margin-right: 5px;
 }
-
 </style>

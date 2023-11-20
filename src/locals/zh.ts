@@ -27,7 +27,9 @@ export default {
         delete: '删 除',
         add: '新 增',
         redact: '编 辑',
-        operation: '操 作'
+        operation: '操 作',
+        reset:"重 置",
+        search:"搜 索"
     },
     menu: {
         configuration: '配置',

@@ -3,8 +3,8 @@ import type { Ref } from "vue"
 
 
 type requestApi = {
-    listApi:Function,
-    deleteApi:Function
+    listApi: Function,
+    deleteApi: Function
 }
 
 type pageData = {
@@ -28,7 +28,6 @@ type pageData = {
 export const useTableHooks = <K extends object>(searchFrom: K, requestApi: requestApi) => {
     //表格头部颜色
     const headerStyle = { background: '#F8F8F9' }
-
     const fromSearchRef: Ref = ref<any>()
     //表格高度
     let tabHeight = ref<number>(100)
@@ -39,7 +38,7 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
     })
     //表格是否正在加载
     const tableLoading = ref(false)
-
+    const searchFormRef = ref<any>();
 
     //当前表格数据
     const tableData = ref([]);
@@ -70,13 +69,11 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
         requestList()
     }
 
-    //表单重置
-    const fromreset = (fromRef: any) => {
-        if (fromRef) {
-            fromRef.resetFields()
-        }
+    //搜索表单重置
+    const fromreset = () => {
+        searchFormRef.value.resetFields()
     }
-    
+
     onMounted(() => {
         let tableDom = document.querySelector('.table-style')
         if (tableDom) {
@@ -89,7 +86,8 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
 
     //请求接口
     const requestList = () => {
-        console.log({...pageData,...searchFrom})
+        console.log({ ...pageData, ...searchFrom })
+
         return
         // requestApi.listApi(fromData).then((res: { data: resTable }) => {
         //     let { list, PageInfo } = res.data
@@ -98,8 +96,9 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
         // })
     }
     //删除接口
-    const handleDelete = (params:number) =>{
+    const handleDelete = (params: number) => {
         requestApi.deleteApi(params)
+
     }
 
 
@@ -110,6 +109,7 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
         tableLoading,
         tabHeight,
         paginationOpt,
+        searchFormRef,
         fromreset,
         on_search,
         requestList,

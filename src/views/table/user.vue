@@ -1,23 +1,27 @@
 <template>
     <div class="tablePage-style">
         <div class="table-nav">
-            <a-form layout="inline" :model="searchFrom">
+            <a-form layout="inline" :model="searchFrom" ref="searchFormRef">
                 <a-form-item :label="t('user.userName')" name="user">
                     <a-input v-model:value="searchFrom.user" placeholder="请输入用户名" />
                 </a-form-item>
-                <a-form-item :label="t('user.userName')" name="fieldA">
+                <a-form-item :label="t('user.userName')" name="value">
                     <a-date-picker v-model:value="searchFrom.value" />
                 </a-form-item>
 
                 <a-form-item>
-                    <a-button type="primary" @click="on_search()">{{ t('public.Submit') }}</a-button>
+                    <a-space>
+                        <a-button type="primary" @click="on_search()">{{ t('public.search') }}</a-button>
+                        <a-button @click="fromreset()">{{ t('public.reset') }}</a-button></a-space>
                 </a-form-item>
             </a-form>
 
-            <a-space wrap>
-                <a-button @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
-            </a-space>
+ 
         </div>
+        <a-space wrap>
+                <a-button @click="addOpen = true" type="primary">{{ t('public.search') }}</a-button>
+
+            </a-space>
         <a-table class="table-style" :columns="columns" :data-source="tableData" :scroll="{ y: tabHeight }"
             :pagination="paginationOpt">
             <template #headerCell="{ column }">
@@ -57,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { useTableHooks } from "@/Hooks/useTableHooks"
+import { useTableHooks } from "@/hooks/useTableHooks"
 import { ref, reactive } from 'vue';
 import { useI18n } from 'vue-i18n'
 import type { Dayjs } from 'dayjs';
@@ -65,6 +69,7 @@ import type { FormInstance } from 'ant-design-vue';
 import { adduser, listUser, deleteUser, edituser } from "@/api/admin"
 const { t } = useI18n()
 const formRef = ref<FormInstance>();
+
 let searchFrom = reactive({
     user: "",
     value: ""
@@ -85,7 +90,7 @@ type listItemType = {
     password: string
 }
 
-let { tabHeight, on_search, paginationOpt, tableData, requestList, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listUser, deleteApi: deleteUser });
+let { tabHeight, paginationOpt, tableData, searchFormRef, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listUser, deleteApi: deleteUser });
 const addOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({
     userName: '',
