@@ -94,11 +94,11 @@ import type { FormInstance } from 'ant-design-vue';
 const { t } = useI18n()
 import { listRole ,addRole,editRole,deleteRole} from "@/api/admin"
 const formRef = ref<FormInstance>();
-let { tabHeight, SearchFrom, on_search, paginationOpt, tableData, Fun_requestList } = useTableHooks<SearchType>({
+let { tabHeight, on_search, paginationOpt, tableData, Fun_requestList } = useTableHooks<SearchType>({
     name: "",
     role_id: 0,
     createTime: ""
-}, { listApi: listRole, paramFormat: paramFormat });
+}, { listApi: listRole, requestApi: paramFormat });
 // deleteUser
 const addOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({

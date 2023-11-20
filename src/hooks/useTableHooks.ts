@@ -29,18 +29,16 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
     //表格头部颜色
     const headerStyle = { background: '#F8F8F9' }
 
-    const FromSearchRef: Ref = ref<any>()
+    const fromSearchRef: Ref = ref<any>()
     //表格高度
     let tabHeight = ref<number>(100)
-    //总条数
-    let pageTotal = ref(200)
     //分页
     let pageData = reactive<pageData>({
         pageNum: 1,
         pageSize: 10
     })
     //表格是否正在加载
-    const Table_loading = ref(false)
+    const tableLoading = ref(false)
 
 
     //当前表格数据
@@ -73,13 +71,12 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
     }
 
     //表单重置
-    const Fromreset = (FromRef: any) => {
-        if (FromRef) {
-            FromRef.resetFields()
+    const fromreset = (fromRef: any) => {
+        if (fromRef) {
+            fromRef.resetFields()
         }
     }
-
-
+    
     onMounted(() => {
         let tableDom = document.querySelector('.table-style')
         if (tableDom) {
@@ -109,11 +106,11 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
     return {
         headerStyle,
         tableData,
-        FromSearchRef,
-        Table_loading,
+        fromSearchRef,
+        tableLoading,
         tabHeight,
         paginationOpt,
-        Fromreset,
+        fromreset,
         on_search,
         requestList,
         handleDelete

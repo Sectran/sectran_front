@@ -41,10 +41,10 @@ export default {
          * @param name 当前删除的name
          * @param routeName 当前路由的name
          */
-        deleteTabsArr(state: tabsArrType, NameObj: { name: string, routeName: string }) {
-            state.tabsArr.splice(state.tabsArr.findIndex(item => item.name === NameObj.name), 1)
+        deleteTabsArr(state: tabsArrType, nameObj: { name: string, routeName: string }) {
+            state.tabsArr.splice(state.tabsArr.findIndex(item => item.name === nameObj.name), 1)
             //如果删除的是当前页面，就要把路由跳转到tab的最后一页
-            if (NameObj.name === NameObj.routeName) {
+            if (nameObj.name === nameObj.routeName) {
                 let routerPushName = state.tabsArr[state.tabsArr.length - 1].name
                 router.push(routerPushName)
                 state.pitchTabs = routerPushName

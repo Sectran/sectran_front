@@ -1,6 +1,6 @@
 <template>
-    <a-layout-header class="flex-space-between-center Header-style">
-        <div class="Header-letf">
+    <a-layout-header class="flex-space-between-center header-style">
+        <div class="header-letf">
             <menu-unfold-outlined v-if="collapsed" class="nav-icon" @click="on_icon(false)" />
             <menu-fold-outlined v-else class="nav-icon" @click="on_icon(true)" />
             <!-- <Breadcrumb>
@@ -114,7 +114,7 @@ let themeColors: themeColorsType[] = [
 
 
 onMounted(() => {
-    console.log('3.-组件挂载到页面之后执行-------onMounted,Header')
+    console.log('3.-组件挂载到页面之后执行-------onMounted,header')
 })
 /**
  * 点击切换全局化语言
@@ -136,12 +136,12 @@ const on_color = (item: themeColorsType) => {
 </script>
 
 <style scoped lang="less">
-.Header-style {
-    background: #ffffff;
+.header-style {
+    background: var(--theme-bg);
     padding: 0 20px;
-    border-bottom: 2px solid #F1F3F4;
+    border-bottom: 2px solid var(--theme-border-color);
 
-    .Header-letf {
+    .header-letf {
         display: flex;
     }
 }

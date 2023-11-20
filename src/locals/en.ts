@@ -20,7 +20,7 @@ export default {
         add_user:'add_user'
     },
 
-    AsideMenu:{
+    asideMenu:{
         userinfo:'userinfo'
     },
     public:{

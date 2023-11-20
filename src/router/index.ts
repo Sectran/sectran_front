@@ -1,8 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import outsideLayout from './outsideLayout';
-import layout from "./layout/index"
+import layoutRouter from "./layout/index"
 const routes = [
-  ...layout,
+  ...layoutRouter,
   ...outsideLayout
 ];
 
