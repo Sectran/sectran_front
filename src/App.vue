@@ -3,6 +3,7 @@
     token: {
       colorPrimary: store.state.globalConfiguration.colorPrimary,
     },
+    
   }">
     <router-view #="{ Component }">
       <component :is="Component" />

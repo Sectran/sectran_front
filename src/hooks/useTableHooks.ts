@@ -12,12 +12,12 @@ type pageData = {
     pageSize: number
 }
 
-type resTable = {
-    list: any
-    PageInfo: {
-        total:number
-    }
-}
+// type resTable = {
+//     list: any
+//     PageInfo: {
+//         total:number
+//     }
+// }
 
 /**
  * 
@@ -28,12 +28,9 @@ type resTable = {
 export const useTableHooks = <K extends object>(searchFrom: K, requestApi: requestApi) => {
     //表格头部颜色
     const headerStyle = { background: '#F8F8F9' }
-
     const FromSearchRef: Ref = ref<any>()
     //表格高度
     let tabHeight = ref<number>(100)
-    //总条数
-    let pageTotal = ref(200)
     //分页
     let pageData = reactive<pageData>({
         pageNum: 1,

@@ -1,23 +1,23 @@
 <template>
     <div class="tablePage-style">
         <div class="table-nav">
-            <a-form layout="inline" :model="SearchFrom">
+            <a-form layout="inline" :model="searchFrom">
 
                 <a-form-item label="部门ID">
-                    <a-input v-model:value="SearchFrom.dept_id" placeholder="请输入部门ID" />
+                    <a-input v-model:value="searchFrom.dept_id" placeholder="请输入部门ID" />
                 </a-form-item>
                 <a-form-item :label="t('department.name')">
-                    <a-input v-model:value="SearchFrom.name" placeholder="请输入部门名称" />
+                    <a-input v-model:value="searchFrom.name" placeholder="请输入部门名称" />
                 </a-form-item>
 
                 <a-form-item label="部门位置">
-                    <a-input v-model:value="SearchFrom.region" placeholder="请输入部门位置" />
+                    <a-input v-model:value="searchFrom.region" placeholder="请输入部门位置" />
                 </a-form-item>
 
 
 
                 <a-form-item label="上级部门">
-                    <a-input v-model:value="SearchFrom.parentId" placeholder="请输入上级部门" />
+                    <a-input v-model:value="searchFrom.parentId" placeholder="请输入上级部门" />
                 </a-form-item>
 
 
@@ -62,7 +62,7 @@
                     :rules="[{ required: true, message: 'Please input your password!' }]">
                     <a-input v-model:value="formState.description" />
                 </a-form-item>
-
+  
                 <a-form-item label="部门位置" name="region"
                     :rules="[{ required: true, message: 'Please input your password!' }]">
                     <a-input v-model:value="formState.region" />
@@ -85,9 +85,18 @@
 </template>
 
 <script setup lang="ts">
+
+import { useTableHooks } from "@/Hooks/useTableHooks"
+import { onMounted, ref, reactive } from 'vue';
+import { addDepartment, editDepartment, listDepartment, deleteDepartment } from "@/api/admin"
+import { useI18n } from 'vue-i18n'
+
+
 type SearchType = {
-    user: string;
-    value1?: Dayjs
+    dept_id: number;
+    name: string,
+    region: string,
+    parentId: number
 };
 
 interface FormState {
@@ -100,30 +109,23 @@ interface FormState {
     createByUid: number
 }
 
-type listItemType = {
-    id: string
-    name: string
-    describe: string
-}
-const paramFormat = (data: any) => {
-    return { ...data, dept_id: Number(data.dept_id) || 0, parentId: Number(data.parentId) || 0 }
-}
-
-import { useTableHooks } from "@/Hooks/useTableHooks"
-import { onMounted, ref, reactive } from 'vue';
-import { addDepartment, editDepartment, listDepartment, deleteDepartment } from "@/api/admin"
-import { useI18n } from 'vue-i18n'
-import type { Dayjs } from 'dayjs';
+// type listItemType = {
+//     id: string
+//     name: string
+//     describe: string
+// }
 const { t } = useI18n()
 const addOpen = ref<boolean>(false);
 // let listItem = reactive<listItemType>()
-
-let { tabHeight, SearchFrom, on_search, paginationOpt, tableData, Fun_requestList } = useTableHooks<SearchType>({
+let searchFrom = reactive({
     dept_id: 0,
     name: "",
-    parentId: 0,
-    region: ""
-}, { listApi: listDepartment, paramFormat: paramFormat });
+    region: "",
+    parentId: 0
+
+});
+// requestList,
+let { tabHeight, on_search, paginationOpt, tableData, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listDepartment, deleteApi: deleteDepartment });
 
 
 const formState = reactive<FormState>({
@@ -207,7 +209,7 @@ const onFinish = () => {
     formState.parentId = formState.parentId ? Number(formState.parentId) : 0
     api(formState).then(() => {
         addOpen.value = false
-        Fun_requestList()
+        // Fun_requestList()
     })
 };
 
