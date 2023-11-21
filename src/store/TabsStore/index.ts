@@ -17,11 +17,11 @@ export default {
     },
     mutations: {
         /**
-         * 添加tabs
+         * 修改url
          * @param state 数据源
          * @param data 添加的tabs信息
          */
-        addtabsArr(state: tabsArrType, data: tabsType) {
+        urlAlter(state: tabsArrType, data: tabsType) {
             if (!state.tabsArr.some(item => item.name === data.name)) {
                 state.tabsArr.push(data)
             }

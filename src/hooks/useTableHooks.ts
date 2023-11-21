@@ -30,7 +30,7 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
     const headerStyle = { background: '#F8F8F9' }
     const fromSearchRef: Ref = ref<any>()
     //表格高度
-    let tabHeight = ref<number>(100)
+    let tabHeight = ref<number>(520)
     //分页
     let pageData = reactive<pageData>({
         pageNum: 1,
@@ -80,6 +80,7 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
             let Height = tableDom.getBoundingClientRect().height
             tabHeight.value = Height - 120
         }
+        console.log(tabHeight.value)
         requestList()
 
     })
@@ -100,7 +101,6 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
         requestApi.deleteApi(params)
 
     }
-
 
     return {
         headerStyle,

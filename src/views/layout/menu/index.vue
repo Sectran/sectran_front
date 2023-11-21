@@ -32,7 +32,7 @@ let tabs = {
   name: route.name,
   title: route.meta.title
 }
-store.commit('tabsStore/addtabsArr', tabs)
+store.commit('tabsStore/urlAlter', tabs)
 const menuState = reactive<{ openKeys: string[], selectedKeys: string[] }>({
   openKeys: ['admin'],
   selectedKeys: [route.name],
@@ -45,9 +45,20 @@ const onPath = (el: routerType) => {
     name: el.name,
     title: el.meta.title
   }
-  store.commit('tabsStore/addtabsArr', data)
+  console.log(data)
+  store.commit('tabsStore/urlAlter', data)
   router.push(data.name)
 }
+
+watch(
+  () => router.currentRoute.value,
+  (newValue: any) => {
+    let { name, meta: { title } } = newValue
+    store.commit('tabsStore/urlAlter', { name, title })
+    console.log('newValue', newValue)
+  },
+  { immediate: true }
+)
 </script>
 
 <style lang="less" scoped>

@@ -15,14 +15,12 @@
                         <a-button @click="fromreset()">{{ t('public.reset') }}</a-button></a-space>
                 </a-form-item>
             </a-form>
-
- 
         </div>
-        <a-space wrap>
-                <a-button @click="addOpen = true" type="primary">{{ t('public.search') }}</a-button>
-
-            </a-space>
-        <a-table class="table-style" :columns="columns" :data-source="tableData" :scroll="{ y: tabHeight }"
+        <a-space class="mb8">
+            <a-button @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
+        </a-space>
+        <!-- :scroll="{ y: tabHeight }" -->
+        <a-table class="table-style" :columns="columns" :data-source="tableData" 
             :pagination="paginationOpt">
             <template #headerCell="{ column }">
                 <span>{{ t(column.title) }}</span>
@@ -90,7 +88,7 @@ type listItemType = {
     password: string
 }
 
-let { tabHeight, paginationOpt, tableData, searchFormRef, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listUser, deleteApi: deleteUser });
+let {  paginationOpt, tableData, searchFormRef, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listUser, deleteApi: deleteUser });
 const addOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({
     userName: '',
