@@ -35,6 +35,7 @@ export default {
         configuration: '配置',
         userAdmin: '人员管理',
         departmentAdmin: '部门管理',
-        roleAdmin: "角色管理"
+        roleAdmin: "角色管理",
+        uploadingAdmin:"连接管理"
     }
 }

@@ -3,7 +3,7 @@ let layoutRouter = [
     {
         path: '/admin',
         component: () => import('views/layout/index.vue'),
-        name:'admin',
+        name: 'admin',
         meta: {
             // title: '配置管理',
             title: 'configuration',
@@ -34,10 +34,17 @@ let layoutRouter = [
                     title: 'roleAdmin',
                 },
             },
+            {
+                path: 'uploading',
+                name: 'uploading',
+                component: () => import('views/table/uploading.vue'),
+                meta: {
+                    title: 'uploadingAdmin',
+                },
+            },
 
 
 
-            
 
         ]
     }]

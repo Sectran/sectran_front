@@ -10,3 +10,7 @@ declare module 'vue-router';
 declare module 'Vue';
 declare module 'xterm';
 declare module 'xterm-addon-fit';
+
+interface Window {
+    showDirectoryPicker:any
+}

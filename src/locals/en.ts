@@ -37,7 +37,8 @@ export default {
         configuration:'configuration',
         userAdmin:'user admin',
         departmentAdmin:'department admin',
-        roleAdmin:"role admin"
+        roleAdmin:"role admin",
+        uploadingAdmin:"uploading admin"
     }
 
 

@@ -31,6 +31,7 @@ watch(locale, (val: string) => {
   localeValue.value = val
   dayjs.locale(val);
 });
+
 window.document.documentElement.setAttribute('data-theme', store.state.globalConfiguration.theme)
 const Fun_shiyan = () => {
   switch (store.state.globalConfiguration.theme) {
