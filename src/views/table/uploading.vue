@@ -7,9 +7,9 @@
                     <div>{{ }}</div>
                     <div v-for="(item, index) in fileArray" :key="index" @click="on_file(item)">
                         <FileOutlined :style="{ color: store.state.globalConfiguration.colorPrimary }"
-                            v-if="item.kind === 'directory'" />
+                            v-if="item.kind === 'file'" />
                         <FolderOpenOutlined :style="{ color: store.state.globalConfiguration.colorPrimary }"
-                            v-else-if="item.kind === 'file'" />
+                            v-else-if="item.kind === 'directory'" />
                         {{ item.name }}
                     </div>
                 </a-col>

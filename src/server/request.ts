@@ -142,7 +142,6 @@ function msag(err: { response: { status: number; data: { error: { details: strin
  * @param data
  */
 function landing(data: { code: number, status: number | string; msg: string }) {
-    console.log(data)
     let { code, msg } = data
     message.error(msg);
     if (code === 401) {

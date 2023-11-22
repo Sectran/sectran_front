@@ -45,7 +45,6 @@ const onPath = (el: routerType) => {
     name: el.name,
     title: el.meta.title
   }
-  console.log(data)
   store.commit('tabsStore/urlAlter', data)
   router.push(data.name)
 }
