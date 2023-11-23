@@ -44,7 +44,7 @@
             <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
         </a-space>
 
-        <a-table class="table-style" :scroll="{ y: 300 }" :columns="columns" :data-source="data" />
+        <a-table class="table-style" :scroll="{ y: tabHeight }" :columns="columns" :data-source="data" />
         <a-modal v-model:open="addOpen" title="添加部门" :footer=null>
             <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off"
                 @finish="onFinish">
@@ -78,19 +78,31 @@
     </div>
 </template>
 
+
 <script setup lang="ts">
 
+import { useTableHooks } from "@/hooks/useTableHooks"
 import { onMounted, ref, reactive, h } from 'vue';
 import { addDepartment, editDepartment } from "@/api/admin"
 import { useI18n } from 'vue-i18n'
 import { SearchOutlined, SyncOutlined, PlusOutlined } from '@ant-design/icons-vue';
+import {  listUser, deleteUser } from "@/api/admin"
+type SearchType = {
+    dept_id: number;
+    name: string,
+    region: string,
+    parentId: number
+};
+let searchFrom = reactive({
+    dept_id: 0,
+    name: "",
+    region: "",
+    parentId: 0
 
-// type SearchType = {
-//     dept_id: number;
-//     name: string,
-//     region: string,
-//     parentId: number
-// };
+});
+// paginationOpt, tableData, searchFormRef, requestList, on_search, fromreset, handleDelete,
+let { tabHeight } = useTableHooks<SearchType>(searchFrom, { listApi: listUser, deleteApi: deleteUser });
+
 
 interface FormState {
     dept_id?: number
@@ -110,13 +122,7 @@ interface FormState {
 const { t } = useI18n()
 const addOpen = ref<boolean>(false);
 // let listItem = reactive<listItemType>()
-let searchFrom = reactive({
-    dept_id: 0,
-    name: "",
-    region: "",
-    parentId: 0
 
-});
 
 
 

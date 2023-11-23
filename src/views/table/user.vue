@@ -2,19 +2,26 @@
     <div class="tablePage-style">
         <div class="table-nav">
 
-            <a-form layout="inline" :model="searchFrom" ref="searchFormRef">
-                <a-row :gutter="[20, 16]">
-                    <a-col :xl="6" :md="8" :xs="12">
+            <a-form :model="searchFrom" ref="searchFormRef">
+                <a-row :gutter="[20, 0]">
+                    <a-col :lg="8" :md="12" :sm="24">
                         <a-form-item :label="t('user.userName')" name="user">
-                            <a-input v-model:value="searchFrom.user" placeholder="请输入用户名" />
+                            <a-input v-model:value="searchFrom.user" :placeholder="t('user.usernamePlaceholder')" />
                         </a-form-item>
                     </a-col>
-                    <a-col :xl="6" :md="8" :xs="12">
-                        <a-form-item :label="t('user.userName')" name="value">
-                            <a-date-picker v-model:value="searchFrom.value" />
+                    <a-col :lg="8" :md="12" :sm="24">
+                        <a-form-item :label="t('user.userId')" name="value">
+                            <a-input v-model:value="searchFrom.value" :placeholder="t('user.userIdPlaceholder')" />
                         </a-form-item>
                     </a-col>
-                    <a-col :xl="6" :md="8" :xs="12">
+                    <a-col :lg="8" :md="12" :sm="24">
+                        <a-form-item :label="t('user.usereEmail')" name="value">
+                            <a-input v-model:value="searchFrom.value" :placeholder="t('user.userEmailPlaceholder')" />
+                        </a-form-item>
+                    </a-col>
+
+
+                    <a-col :lg="8" :md="12" :sm="24">
                         <a-form-item>
                             <a-space>
                                 <a-button :icon="h(SearchOutlined)" type="primary" @click="on_search()">{{
