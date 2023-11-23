@@ -1,27 +1,37 @@
 <template>
     <div class="tablePage-style">
         <div class="table-nav">
-            <a-form layout="inline" :model="searchFrom" ref="searchFormRef">
-                <a-form-item :label="t('user.userName')" name="user">
-                    <a-input v-model:value="searchFrom.user" placeholder="请输入用户名" />
-                </a-form-item>
-                <a-form-item :label="t('user.userName')" name="value">
-                    <a-date-picker v-model:value="searchFrom.value" />
-                </a-form-item>
 
-                <a-form-item>
-                    <a-space>
-                        <a-button type="primary" @click="on_search()">{{ t('public.search') }}</a-button>
-                        <a-button @click="fromreset()">{{ t('public.reset') }}</a-button></a-space>
-                </a-form-item>
+            <a-form layout="inline" :model="searchFrom" ref="searchFormRef">
+                <a-row :gutter="[20, 16]">
+                    <a-col :xl="6" :md="8" :xs="12">
+                        <a-form-item :label="t('user.userName')" name="user">
+                            <a-input v-model:value="searchFrom.user" placeholder="请输入用户名" />
+                        </a-form-item>
+                    </a-col>
+                    <a-col :xl="6" :md="8" :xs="12">
+                        <a-form-item :label="t('user.userName')" name="value">
+                            <a-date-picker v-model:value="searchFrom.value" />
+                        </a-form-item>
+                    </a-col>
+                    <a-col :xl="6" :md="8" :xs="12">
+                        <a-form-item>
+                            <a-space>
+                                <a-button :icon="h(SearchOutlined)" type="primary" @click="on_search()">{{
+                                    t('public.search') }}</a-button>
+                                <a-button :icon="h(SyncOutlined)" @click="fromreset()">{{ t('public.reset')
+                                }}</a-button>
+                            </a-space>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
             </a-form>
+
         </div>
-        <a-space class="mb8">
-            <a-button @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
+        <a-space class="mb8 justify-end">
+            <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
         </a-space>
-        <!-- :scroll="{ y: tabHeight }" -->
-        <a-table class="table-style" :columns="columns" :data-source="tableData" 
-            :pagination="paginationOpt">
+        <a-table class="table-style" :columns="columns" :data-source="tableData" :pagination="paginationOpt">
             <template #headerCell="{ column }">
                 <span>{{ t(column.title) }}</span>
             </template>
@@ -60,11 +70,13 @@
 
 <script setup lang="ts">
 import { useTableHooks } from "@/hooks/useTableHooks"
-import { ref, reactive } from 'vue';
+import { ref, reactive, h } from 'vue';
 import { useI18n } from 'vue-i18n'
 import type { Dayjs } from 'dayjs';
 import type { FormInstance } from 'ant-design-vue';
 import { adduser, listUser, deleteUser, edituser } from "@/api/admin"
+import { SearchOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons-vue';
+
 const { t } = useI18n()
 const formRef = ref<FormInstance>();
 
@@ -88,7 +100,7 @@ type listItemType = {
     password: string
 }
 
-let {  paginationOpt, tableData, searchFormRef, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listUser, deleteApi: deleteUser });
+let { paginationOpt, tableData, searchFormRef, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listUser, deleteApi: deleteUser });
 const addOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({
     userName: '',

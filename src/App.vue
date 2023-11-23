@@ -2,8 +2,10 @@
   <ConfigProvider :locale="localeValue == 'en' ? en : zh" :theme="{
     token: {
       colorPrimary: store.state.globalConfiguration.colorPrimary,
+      colorLink: store.state.globalConfiguration.colorPrimary,
     },
-    algorithm: Fun_shiyan(),
+   
+    algorithm: Fun_shiyan()
   }">
     <router-view #="{ Component }">
       <component :is="Component" />

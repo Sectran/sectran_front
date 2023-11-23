@@ -2,54 +2,49 @@
     <div class="tablePage-style">
         <div class="table-nav">
             <a-form layout="inline" :model="searchFrom">
+                <a-row :gutter="[20, 16]">
+                    <a-col :xl="6" :md="8" :xs="12">
+                        <a-form-item label="部门ID">
+                            <a-input v-model:value="searchFrom.dept_id" placeholder="请输入部门ID" />
+                        </a-form-item>
+                    </a-col>
+                    <a-col :xl="6" :md="8" :xs="12">
+                        <a-form-item :label="t('department.name')">
+                            <a-input v-model:value="searchFrom.name" placeholder="请输入部门名称" />
+                        </a-form-item>
+                    </a-col>
+                    <a-col :xl="6" :md="8" :xs="12">
+                        <a-form-item label="部门位置">
+                            <a-input v-model:value="searchFrom.region" placeholder="请输入部门位置" />
+                        </a-form-item>
+                    </a-col>
+                    <a-col :xl="6" :md="8" :xs="12">
+                        <a-form-item label="上级部门">
+                            <a-input v-model:value="searchFrom.parentId" placeholder="请输入上级部门" />
+                        </a-form-item>
+                    </a-col>
+                    <a-col :xl="6" :md="8" :xs="12">
+                        <a-form-item>
+                            <a-space wrap>
+                                <a-button :icon="h(SearchOutlined)" type="primary">
+                                    {{ t('public.search') }}
+                                </a-button>
+                                <a-button :icon="h(SyncOutlined)">
+                                    {{ t('public.reset') }}
+                                </a-button>
+                            </a-space>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
 
-                <a-form-item label="部门ID">
-                    <a-input v-model:value="searchFrom.dept_id" placeholder="请输入部门ID" />
-                </a-form-item>
-                <a-form-item :label="t('department.name')">
-                    <a-input v-model:value="searchFrom.name" placeholder="请输入部门名称" />
-                </a-form-item>
-
-                <a-form-item label="部门位置">
-                    <a-input v-model:value="searchFrom.region" placeholder="请输入部门位置" />
-                </a-form-item>
-
-
-
-                <a-form-item label="上级部门">
-                    <a-input v-model:value="searchFrom.parentId" placeholder="请输入上级部门" />
-                </a-form-item>
-
-
-                <a-form-item>
-                    <a-button type="primary" @click="on_search()">{{ t('public.Submit') }}</a-button>
-                </a-form-item>
             </a-form>
-
-            <a-space wrap>
-                <a-button @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
-            </a-space>
         </div>
 
-        <a-table class="table-style" :columns="columns" :data-source="tableData" :scroll="{ y: tabHeight }"
-            :pagination="paginationOpt">
-            <template #headerCell="{ column }">
-                <span>{{ column.title }}</span>
-            </template>
-            <template #Description="{ text }">
-                <span>{{ text.String }}</span>
-            </template>
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.dataIndex === 'operation'">
-                    <a-space :size="8">
-                        <a-button type="link" @click="on_redact(record)">{{ t('public.redact') }}</a-button>
-                        <a-button type="link" danger @click="handleDelete(record.id)">{{ t('public.delete') }}</a-button>
-                    </a-space>
-                </template>
-            </template>
-        </a-table>
+        <a-space class="mb8 justify-end">
+            <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
+        </a-space>
 
-
+        <a-table class="table-style" :scroll="{ y: 300 }" :columns="columns" :data-source="data" />
         <a-modal v-model:open="addOpen" title="添加部门" :footer=null>
             <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off"
                 @finish="onFinish">
@@ -61,7 +56,7 @@
                     :rules="[{ required: true, message: 'Please input your password!' }]">
                     <a-input v-model:value="formState.description" />
                 </a-form-item>
-  
+
                 <a-form-item label="部门位置" name="region"
                     :rules="[{ required: true, message: 'Please input your password!' }]">
                     <a-input v-model:value="formState.region" />
@@ -85,18 +80,17 @@
 
 <script setup lang="ts">
 
-import { useTableHooks } from "@/Hooks/useTableHooks"
-import { onMounted, ref, reactive } from 'vue';
-import { addDepartment, editDepartment, listDepartment, deleteDepartment } from "@/api/admin"
+import { onMounted, ref, reactive, h } from 'vue';
+import { addDepartment, editDepartment } from "@/api/admin"
 import { useI18n } from 'vue-i18n'
+import { SearchOutlined, SyncOutlined, PlusOutlined } from '@ant-design/icons-vue';
 
-
-type SearchType = {
-    dept_id: number;
-    name: string,
-    region: string,
-    parentId: number
-};
+// type SearchType = {
+//     dept_id: number;
+//     name: string,
+//     region: string,
+//     parentId: number
+// };
 
 interface FormState {
     dept_id?: number
@@ -123,9 +117,117 @@ let searchFrom = reactive({
     parentId: 0
 
 });
-// requestList,
-let { tabHeight, on_search, paginationOpt, tableData, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listDepartment, deleteApi: deleteDepartment });
 
+
+
+interface DataItem {
+    key: number;
+    name: string;
+    age: number;
+    address: string;
+    children?: DataItem[];
+}
+
+const data: DataItem[] = [
+    {
+        key: 1,
+        name: '验收部门',
+        age: 60,
+        address: 'New York No. 1 Lake Park',
+        children: [
+            {
+                key: 11,
+                name: 'John Brown',
+                age: 42,
+                address: 'New York No. 2 Lake Park',
+            },
+            {
+                key: 12,
+                name: 'John Brown jr.',
+                age: 30,
+                address: 'New York No. 3 Lake Park',
+                children: [
+                    {
+                        key: 121,
+                        name: 'Jimmy Brown',
+                        age: 16,
+                        address: 'New York No. 3 Lake Park',
+                    },
+                ],
+            },
+            {
+                key: 13,
+                name: 'Jim Green sr.',
+                age: 72,
+                address: 'London No. 1 Lake Park',
+                children: [
+                    {
+                        key: 131,
+                        name: 'Jim Green',
+                        age: 42,
+                        address: 'London No. 2 Lake Park',
+                        children: [
+                            {
+                                key: 1311,
+                                name: 'Jim Green jr.',
+                                age: 25,
+                                address: 'London No. 3 Lake Park',
+                            },
+                            {
+                                key: 1312,
+                                name: 'Jimmy Green sr.',
+                                age: 18,
+                                address: 'London No. 4 Lake Park',
+                            },
+                            {
+                                key: 1311,
+                                name: 'Jim Green jr.',
+                                age: 25,
+                                address: 'London No. 3 Lake Park',
+                            },
+                            {
+                                key: 1312,
+                                name: 'Jimmy Green sr.',
+                                age: 18,
+                                address: 'London No. 4 Lake Park',
+                            },
+                            {
+                                key: 1311,
+                                name: 'Jim Green jr.',
+                                age: 25,
+                                address: 'London No. 3 Lake Park',
+                            },
+                            {
+                                key: 1312,
+                                name: 'Jimmy Green sr.',
+                                age: 18,
+                                address: 'London No. 4 Lake Park',
+                            },
+                            {
+                                key: 1311,
+                                name: 'Jim Green jr.',
+                                age: 25,
+                                address: 'London No. 3 Lake Park',
+                            },
+                            {
+                                key: 1312,
+                                name: 'Jimmy Green sr.',
+                                age: 18,
+                                address: 'London No. 4 Lake Park',
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        key: 2,
+        name: 'Joe Black',
+        age: 32,
+        address: 'Sidney No. 1 Lake Park',
+    },
+];
 
 const formState = reactive<FormState>({
     name: "",
@@ -138,23 +240,22 @@ const formState = reactive<FormState>({
 
 
 const columns = [
-    {
-        title: '部门ID',
-        dataIndex: 'DeptId',
-
-    },
+    // {
+    //     title: '部门ID',
+    //     dataIndex: 'DeptId',
+    // },
 
     {
         title: '部门名称',
-        dataIndex: 'Name',
+        dataIndex: 'name',
 
     },
 
     {
         title: '部门描述',
-        dataIndex: 'Description',
-        key: 'Description',
-        slots: { customRender: 'Description' },
+        dataIndex: 'address',
+        key: 'address',
+        // slots: { customRender: 'Description' },
     },
     {
         title: '部门地址',
@@ -180,21 +281,19 @@ const columns = [
         title: '操作',
         dataIndex: 'operation',
     }
-
-
 ]
-const on_redact = (data: any) => {
-    console.log(data.id)
-    addOpen.value = true
-    formState.name = data.Name
-    formState.description = data.Description.String
-    formState.dept_id = data.DeptId
-    formState.parentId = data.ParentId
-    formState.childIds = data.ChildIds
-    formState.region = data.Region
-    formState.createByUid = data.CreateByUid.int64
+// const on_redact = (data: any) => {
+//     console.log(data.id)
+//     addOpen.value = true
+//     formState.name = data.Name
+//     formState.description = data.Description.String
+//     formState.dept_id = data.DeptId
+//     formState.parentId = data.ParentId
+//     formState.childIds = data.ChildIds
+//     formState.region = data.Region
+//     formState.createByUid = data.CreateByUid.int64
 
-}
+// }
 
 
 const onFinish = () => {
