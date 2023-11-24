@@ -54,7 +54,7 @@ watch(
   (newValue: any) => {
     let { name, meta: { title } } = newValue
     store.commit('tabsStore/urlAlter', { name, title })
-    console.log('newValue', newValue)
+    // console.log('newValue', newValue)
   },
   { immediate: true }
 )

@@ -23,7 +23,14 @@ export default {
         userEmailPlaceholder:`${inputPublicEn} email！`
     },
     department: {
-        name: 'industry title',
+        departmentName: 'industry title',
+        departmentId:"department id",
+        departmentDescribe:"department describe",
+        departmentLocation:'department location',
+        superiorDepartment:'superior department',
+        subordinateDepartment:'subordinate department',
+
+        addSubordinateDepartment:'add subordinate',
         description: 'Department description',
         add_user: 'add_user'
     },
@@ -38,7 +45,8 @@ export default {
         redact: 'redact',
         operation: 'operation',
         reset: "redact",
-        search: "search"
+        search: "search",
+        creationTime:"creation time",
 
     },
     menu: {

@@ -1,9 +1,17 @@
 <template>
     <div class="tablePage-style">
         <a-tabs v-model:activeKey="activeKey" @change="tabChange">
-            <a-tab-pane v-for="(item, index) in roleList" :key="index" :tab="item.name"></a-tab-pane>
+            <a-tab-pane v-for="(item, index) in roleList" :key="index">
+                <template #tab>
+                    <span>
+                        <!-- <a-badge :dot="true"> -->
+                        {{ item.name }}
+                        <!-- </a-badge> -->
+                    </span>
+                </template>
+            </a-tab-pane>
             <template #rightExtra>
-                <a-button type="primary">{{ t('public.add') }}</a-button>
+                <a-button @click="add_role" type="primary">{{ t('public.add') }}</a-button>
             </template>
         </a-tabs>
         <div class="flex-space-between-center">
@@ -48,10 +56,9 @@ type CheckAll = {
 const activeKey = ref(0);
 const roleName = ref('管理员')
 const ifRedact = ref<boolean>(false)
-const roleList = ref<{ name: string, children: string[] }[]>([
-    { name: "管理员", children: ['人员管理', '部门管理', '角色管理'] },
-    { name: "操作员", children: ['人员管理'] },
-
+const roleList = ref<{ name: string, children: string[], redactState: boolean }[]>([
+    { name: "管理员", children: ['人员管理', '部门管理', '角色管理'], redactState: true },
+    { name: "操作员", children: ['人员管理'], redactState: true },
 ])
 const roleLimitsList = ref<RoleCheckbox[]>([{
     indeterminate: true,
@@ -92,8 +99,15 @@ const ifPitch = (tier: string, checkedList: string[], label: string): string | u
  * @param e tab下标
  */
 const tabChange = (e: number) => {
-    roleName.value=roleList.value[e].name
+    roleName.value = roleList.value[e].name
+
     roleLimitsList.value[0].checkedList = roleList.value[e].children
+}
+
+
+const add_role = () => {
+    // roleList.value.push({name:"",})
+    // add_role
 }
 
 </script>

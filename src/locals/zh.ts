@@ -20,9 +20,15 @@ export default {
         userEmailPlaceholder:`${inputPublicZh}邮箱！`
     },
     department: {
-        name: '部门名称',
+        departmentName: '部门名称',
+        departmentId:"部门ID",
+        departmentDescribe:"部门描述",
+        departmentLocation:'部门地址',
+        superiorDepartment:'上级部门',
+        subordinateDepartment:'下级部门',
         description: '部门描述',
-        add_user: '添加人'
+        add_user: '添加人',
+        addSubordinateDepartment:'添加下级',
     },
     asideMenu: {
         userinfo: '用户信息'
@@ -34,7 +40,8 @@ export default {
         redact: '编 辑',
         operation: '操 作',
         reset: "重 置",
-        search: "搜 索"
+        search: "搜 索",
+        creationTime:"创建时间",
     },
     menu: {
         configuration: '配置',

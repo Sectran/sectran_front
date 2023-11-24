@@ -2,15 +2,21 @@
     <div class="tablePage-style">
         <a-button type="primary" @click="on_connect">连接设备</a-button>
         <a-modal v-model:open="open" title="选择文件" @ok="open = false" :maskClosable="false" width="50%" :footer="null">
-            <a-row class="graphical">
+            <a-row :gutter="[20, 0]">
                 <a-col :span="12" class="file-local">
-                    <div>{{ }}</div>
-                    <div v-for="(item, index) in fileArray" :key="index" @click="on_file(item)">
-                        <FileOutlined :style="{ color: store.state.globalConfiguration.colorPrimary }"
-                            v-if="item.kind === 'file'" />
-                        <FolderOpenOutlined :style="{ color: store.state.globalConfiguration.colorPrimary }"
-                            v-else-if="item.kind === 'directory'" />
-                        {{ item.name }}
+                    <div class="path-style">
+                        <ArrowLeftOutlined @click="on_Gouponelevel"
+                            :style="{ color: store.state.globalConfiguration.colorPrimary }" />
+                        <span class="path-text">{{ filePath.map((item: any) => item.name).join("/") }}</span>
+                    </div>
+                    <div class="directory-content">
+                        <div v-for="(item, index) in fileArray" :key="index" @click="on_file(item)">
+                            <FileFilled :style="{ color: store.state.globalConfiguration.colorPrimary }"
+                                v-if="item.kind === 'file'" />
+                            <FolderOpenFilled :style="{ color: store.state.globalConfiguration.colorPrimary }"
+                                v-else-if="item.kind === 'directory'" />
+                            {{ item.name }}
+                        </div> 
                     </div>
                 </a-col>
                 <a-col :span="12">col</a-col>
@@ -20,26 +26,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { FileOutlined, FolderOpenOutlined } from '@ant-design/icons-vue';
+import { ref, } from 'vue';
+// reactive
+
+import { FolderOpenFilled, FileFilled, ArrowLeftOutlined } from '@ant-design/icons-vue';
 import { useStore } from 'vuex'
 // type FileType = {
 //     kind: string
 //     name: string
 // }
 const open = ref<boolean>(false);
-
 const store = useStore()
 const fileArray = ref<any>([]);
+const filePath = ref<string[]>([])
 
-// {
-//         kind: "file",
-//         name: "natives_blob.bin"
-//     },
-//     {
-//         kind: "directory",
-//         name: "二级"
-//     },   
 
 const on_connect = async () => {
     console.log(fileArray)
@@ -50,10 +50,36 @@ const on_connect = async () => {
         };
         let handle = await window.showDirectoryPicker(pickerOpts);
         fileArray.value = await processHandle(handle);
-        console.log(fileArray)
+        filePath.value.push(handle)
         open.value = true
     } catch (error) {
         console.log(error);
+    }
+}
+/**
+ * 返回上一级
+ */
+const on_Gouponelevel = async () => {
+    filePath.value.pop()
+    fileArray.value = await processHandle(filePath.value[filePath.value.length - 1]);
+}
+/**
+ * 点击文件
+ * @param fileItem 点击的文件
+ */
+const on_file = async (fileItem: any) => {
+    console.log(fileItem)
+    if (fileItem.kind === 'directory') {
+        fileArray.value = await processHandle(fileItem)
+        filePath.value.push(fileItem)
+    } else if (fileItem.kind === 'file') {
+        const fileData = await fileItem.getFile();
+        console.log(fileData);
+        // 读文件数据
+        const buffer = await fileData.arrayBuffer();
+        // 转成Blod url地址
+        let src = URL.createObjectURL(new Blob([buffer]));
+        console.log(src)
     }
 }
 
@@ -67,42 +93,33 @@ const processHandle = async (handle: any) => {
     let iter = handle.entries()
     let fileList: any = [];
     for await (let item of iter) {
-        console.log(item)
         fileList.push(item[1]);
     }
     return fileList;
-}
-// FileType
-const on_file = async (fileItem: any) => {
-    console.log(fileItem)
-    if (fileItem.kind === 'directory') {
-        fileArray.value = await processHandle(fileItem)
-    } else if (fileItem.kind === 'file') {
-        // const file = fileItem.getFile()
-        // const reader = new FileReader();
-        // reader.onload = e => {
-        //     // 读取结果
-        //     console.log(e.target.result)
-        // }
-        // reader.readAsText(file, 'utf-8')
-    }
 }
 
 </script>
 
 <style lang="less" scoped>
-.graphical {
-    height: 60vh;
-}
-
 .file-local {
-    display: flex;
-    flex-direction: column;
-
+    .directory-content {
+        margin-top: 10px;
+        height: 50vh;
+        overflow-y: auto;
+    }
 }
 
-.file-style {
-    color: #333333;
-    font-size: 16px;
+.path-style {
+    display: flex;
+    align-items: center;
+    background-color: #F5F5F5;
+    padding: 2px 5px;
+
+    .path-text {
+        margin-left: 10px;
+        font-size: 16px;
+        color: #333333;
+    }
+
 }
 </style>
