@@ -1,0 +1,21 @@
+syntax = "proto3";//第一行指定了正在使用proto3语法：如果你没有指定这个，编译器会使用proto2。这个指定语法行必须是文件的非空非注释的第一行
+ 
+message User {
+  required string username = 0;
+  required double password = 1;
+  required bool isMan = 2;
+ 
+  message OTHER {
+    required double score = 0;
+    required string address = 1;
+  }
+ 
+  required OTHER other = 3;
+ 
+  message FRIENDS {
+    required string name = 0;
+    required double age = 1;
+  }
+ 
+  repeated FRIENDS friends = 4;
+}

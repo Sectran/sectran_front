@@ -21,9 +21,12 @@ export default {
     },
     department: {
         departmentName: '部门名称',
+        departmentNamePlaceholder: `${inputPublicZh}部门名称!`,
         departmentId:"部门ID",
+        departmentIdPlaceholder: `${inputPublicZh}部门ID!`,
         departmentDescribe:"部门描述",
         departmentLocation:'部门地址',
+        departmentLocationPlaceholder: `${inputPublicZh}部门地址!`,
         superiorDepartment:'上级部门',
         subordinateDepartment:'下级部门',
         description: '部门描述',

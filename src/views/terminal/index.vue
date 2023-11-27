@@ -173,8 +173,6 @@ watchEffect(() => {
         .Content-left {
             background: #2F2A2A;
             padding: 20px;
-
-
             ::v-deep(.ant-tree-list) {
                 background: #2F2A2A;
                 color: #ffffff;

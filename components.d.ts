@@ -7,12 +7,11 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    ABadge: typeof import('ant-design-vue/es')['Badge']
     AButton: typeof import('ant-design-vue/es')['Button']
     ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
     ACheckboxGroup: typeof import('ant-design-vue/es')['CheckboxGroup']
     ACol: typeof import('ant-design-vue/es')['Col']
-    ADatePicker: typeof import('ant-design-vue/es')['DatePicker']
+    ADirectoryTree: typeof import('ant-design-vue/es')['DirectoryTree']
     ADivider: typeof import('ant-design-vue/es')['Divider']
     ADropdown: typeof import('ant-design-vue/es')['Dropdown']
     AForm: typeof import('ant-design-vue/es')['Form']
@@ -29,10 +28,10 @@ declare module 'vue' {
     ARow: typeof import('ant-design-vue/es')['Row']
     ASpace: typeof import('ant-design-vue/es')['Space']
     ASubMenu: typeof import('ant-design-vue/es')['SubMenu']
-    ASwitch: typeof import('ant-design-vue/es')['Switch']
     ATable: typeof import('ant-design-vue/es')['Table']
     ATabPane: typeof import('ant-design-vue/es')['TabPane']
     ATabs: typeof import('ant-design-vue/es')['Tabs']
+    ATreeNode: typeof import('ant-design-vue/es')['TreeNode']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

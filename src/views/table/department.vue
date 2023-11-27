@@ -5,17 +5,17 @@
                 <a-row :gutter="[20, 16]">
                     <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('department.departmentId')">
-                            <a-input v-model:value="searchFrom.dept_id" placeholder="请输入部门ID" />
+                            <a-input v-model:value="searchFrom.dept_id" :placeholder="t('department.departmentIdPlaceholder')" />
                         </a-form-item>
                     </a-col>
                     <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('department.departmentName')">
-                            <a-input v-model:value="searchFrom.name" placeholder="请输入部门名称" />
+                            <a-input v-model:value="searchFrom.name" :placeholder="t('department.departmentNamePlaceholder')"  />
                         </a-form-item>
                     </a-col>
                     <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('department.departmentLocation')">
-                            <a-input v-model:value="searchFrom.region" placeholder="请输入部门位置" />
+                            <a-input v-model:value="searchFrom.region" :placeholder="t('department.departmentLocationPlaceholder')" />
                         </a-form-item>
                     </a-col>
                     <a-col :xl="6" :md="8" :xs="12">
@@ -47,7 +47,7 @@
                 <template v-if="column.dataIndex === 'operation'">
                     <a-space :size="8">
                         <a-button type="link"  >{{ t('public.redact') }}</a-button>
-                        <a-button type="link"  >{{ t('department.addSubordinateDepartment') }}</a-button>
+                        <a-button type="link"  @click="addOpen = true">{{ t('department.addSubordinateDepartment') }}</a-button>
                         <a-button type="link" danger >{{ t('public.delete') }}</a-button>
                     </a-space>
                 </template>
@@ -71,10 +71,10 @@
                     <a-input v-model:value="formState.region" />
                 </a-form-item>
 
-                <a-form-item label="上级部门ID" name="parentId"
+                <!-- <a-form-item label="上级部门ID" name="parentId"
                     :rules="[{ required: true, message: 'Please input your password!' }]">
                     <a-input v-model:value="formState.parentId" />
-                </a-form-item>
+                </a-form-item> -->
                 <a-form-item :wrapper-col="{ offset: 4, span: 16 }">
                     <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
                 </a-form-item>

@@ -23,10 +23,14 @@ export default {
         userEmailPlaceholder:`${inputPublicEn} email！`
     },
     department: {
-        departmentName: 'industry title',
-        departmentId:"department id",
+        departmentName: 'name',
+        departmentNamePlaceholder: `${inputPublicEn} department name`,
+        departmentId:"id",
+        departmentIdPlaceholder: `${inputPublicEn} department id`,
         departmentDescribe:"department describe",
-        departmentLocation:'department location',
+        departmentLocation:'location',
+        departmentLocationPlaceholder: `${inputPublicEn} department location`,
+
         superiorDepartment:'superior department',
         subordinateDepartment:'subordinate department',
 

@@ -9,6 +9,9 @@
         </div>
         <div class="nav-right">
 
+            <LaptopOutlined @click="on_terminal" />
+
+
             <BulbOutlined @click="on_theme" :style="{ color: store.state.globalConfiguration.colorPrimary }"
                 class="nav-icon" />
             <a-dropdown>
@@ -59,16 +62,18 @@ import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
     TranslationOutlined,
-    BulbOutlined
+    BulbOutlined,
+    LaptopOutlined
     // UserOutlined
 } from "@ant-design/icons-vue";
 // Breadcrumb
 import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
-
+import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 const { locale } = useI18n()
 const store = useStore()
+const router = useRouter();
 let langSrt = ref(localStorage.getItem('lang') || 'zh')
 type languageType = {
     name: string,
@@ -143,6 +148,14 @@ const on_color = (item: themeColorsType) => {
 
 const on_theme = () => {
     store.commit('globalConfiguration/alterTheme')
+}
+const on_terminal = () => {
+
+    const url = router.resolve({
+        path: '/terminal',
+    });
+    window.open(url.href);
+    // router.replace('/admin/user',)
 }
 </script>
 

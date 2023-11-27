@@ -15,9 +15,9 @@ export const LoginRoute = {
  * layout布局之外的路由
  */
 export const LinkConfiguration = {
-  path: '/linkConfiguration',
-  name: 'linkConfiguration',
-  component: () => import(/* webpackChunkName: "login" */ 'views/linkConfiguration/index.vue'),
+  path: '/terminal',
+  name: 'terminal',
+  component: () => import(/* webpackChunkName: "login" */ 'views/terminal/index.vue'),
   meta: {
     title: '连接配置',
   },
