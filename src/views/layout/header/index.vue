@@ -8,18 +8,10 @@
             </Breadcrumb> -->
         </div>
         <div class="nav-right">
-
             <LaptopOutlined @click="on_terminal" />
-
-
-            <BulbOutlined @click="on_theme" :style="{ color: store.state.globalConfiguration.colorPrimary }"
-                class="nav-icon" />
+            <BulbOutlined @click="on_theme" class="nav-icon" />
             <a-dropdown>
-
-                <a class="nav-right-space" @click.prevent>
-                    <TranslationOutlined :style="{ color: store.state.globalConfiguration.colorPrimary }"
-                        class="nav-icon" />
-                </a>
+                <TranslationOutlined @click.prevent class="nav-icon nav-right-space" />
                 <template #overlay>
                     <a-menu>
                         <a-menu-item :class="{ optCalss: langSrt === item.lang }" v-for="item in languageArr"

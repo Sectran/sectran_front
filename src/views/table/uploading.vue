@@ -6,14 +6,14 @@
                 <a-col :span="12" class="file-local">
                     <div class="path-style">
                         <ArrowLeftOutlined @click="on_Gouponelevel"
-                            :style="{ color: store.state.globalConfiguration.colorPrimary }" />
+                             />
                         <span class="path-text">{{ filePath.map((item: any) => item.name).join("/") }}</span>
                     </div>
                     <div class="directory-content">
                         <div v-for="(item, index) in fileArray" :key="index" @click="on_file(item)">
-                            <FileFilled :style="{ color: store.state.globalConfiguration.colorPrimary }"
+                            <FileFilled 
                                 v-if="item.kind === 'file'" />
-                            <FolderOpenFilled :style="{ color: store.state.globalConfiguration.colorPrimary }"
+                            <FolderOpenFilled 
                                 v-else-if="item.kind === 'directory'" />
                             {{ item.name }}
                         </div> 

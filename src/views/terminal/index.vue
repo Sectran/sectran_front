@@ -42,6 +42,12 @@ onBeforeMount(() => {
     //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
 onMounted(() => {
+
+    window.addEventListener('beforeunload', (e: any) => {
+        e.returnValue = '您确定要离开吗？请确认是否保存您的更改。';
+        e.preventDefault();
+   
+    });
     initXterm()
     initSocket()
     //console.log('3.-组件挂载到页面之后执行-------onMounted')
@@ -65,7 +71,7 @@ const initXterm = () => {
     // 创建terminal实例
     terms.open(terminal.value);
     // 换行并输入起始符 $
-    terms.prompt = (_: any) => {
+    terms.prompt = (_: any) => {  
         terms.write("\r\n\x1b[33m$\x1b[0m ");
     };
     // canvas背景全屏
@@ -173,6 +179,7 @@ watchEffect(() => {
         .Content-left {
             background: #2F2A2A;
             padding: 20px;
+
             ::v-deep(.ant-tree-list) {
                 background: #2F2A2A;
                 color: #ffffff;
