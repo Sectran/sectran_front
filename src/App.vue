@@ -4,8 +4,8 @@
       colorPrimary: store.state.globalConfiguration.colorPrimary,
       colorLink: store.state.globalConfiguration.colorPrimary,
     },
-   
-    algorithm: Fun_theme()
+
+    algorithm: Fun_algorithm()
   }">
     <router-view #="{ Component }">
       <component :is="Component" />
@@ -25,7 +25,7 @@ import { useI18n } from 'vue-i18n'
 import dayjs from 'dayjs';
 import { useStore } from 'vuex'
 const { locale } = useI18n()
-const { defaultAlgorithm, darkAlgorithm ,compactAlgorithm} = theme;
+const { defaultAlgorithm, darkAlgorithm, compactAlgorithm } = theme;
 let localeValue = ref<string>(locale.value)
 const store = useStore()
 dayjs.locale(locale.value);
@@ -35,14 +35,15 @@ watch(locale, (val: string) => {
 });
 
 window.document.documentElement.setAttribute('data-theme', store.state.globalConfiguration.theme)
-const Fun_theme = () => {
-  switch (store.state.globalConfiguration.theme) {
-    case "theme-light":
-      return [defaultAlgorithm,compactAlgorithm ]
-    case "theme-dark":
-      return [darkAlgorithm,compactAlgorithm]
+const Fun_algorithm = () => {
+  let algorithm = []
+  if (store.state.globalConfiguration.theme === 'theme-light') {
+    algorithm.push(defaultAlgorithm)
+  } else if (store.state.globalConfiguration.theme === 'theme-dark') {
+    algorithm.push(darkAlgorithm)
   }
-  // return defaultAlgorithm
+  if (store.state.globalConfiguration.isCompact) algorithm.push(compactAlgorithm)
+  return algorithm
 }
 
 </script>
