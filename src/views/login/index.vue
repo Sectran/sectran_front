@@ -2,17 +2,19 @@
     <div class="login">
         <div class="login-content">
             <div class="login-img">
-
+                <img src="https://photo.16pic.com/00/12/28/16pic_1228887_b.jpg" alt="">
             </div>
-
-
             <div class="login-from">
-                <div class="login-title">{{ uselocals('login.login') }}</div>
+                <div class="flex-space-between-center">
+                    <div class="login-title">{{ uselocals('login.login') }}</div>
+                    
+                </div>
+
                 <a-form :model="formState" layout="vertical" name="basic" :label-col="{ span: 8 }" autocomplete="off"
                     @finish="onFinish" @finishFailed="onFinishFailed">
                     <a-form-item :label="uselocals('login.account')"
                         :rules="[{ required: true, message: uselocals('login.accountMessage') }]" name="account">
-                        <a-input v-model:value="formState.account">
+                        <a-input class="input-heigth" v-model:value="formState.account">
                             <template #prefix>
                                 <UserOutlined class="site-form-item-icon" />
                             </template>
@@ -20,7 +22,7 @@
                     </a-form-item>
                     <a-form-item :label="uselocals('login.password')"
                         :rules="[{ required: true, message: uselocals('login.passwordMessage') }]" name="password">
-                        <a-input-password v-model:value="formState.password">
+                        <a-input-password class="input-heigth" v-model:value="formState.password">
                             <template #prefix>
                                 <LockOutlined class="site-form-item-icon" />
                             </template>
@@ -28,7 +30,7 @@
                     </a-form-item>
 
                     <a-form-item>
-                        <a-button style="width: 100%;" type="primary" html-type="submit">{{ uselocals('public.Submit')
+                        <a-button style="width: 100%;" type="primary" html-type="submit">{{ uselocals('login.login')
                         }}</a-button>
                     </a-form-item>
                 </a-form>
@@ -100,6 +102,11 @@ const onFinishFailed = (errorInfo: any) => {
 
     .login-img {
         flex: 1;
+
+        img {
+            width: 100%;
+            height: auto;
+        }
     }
 
     .login-from {
