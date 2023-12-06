@@ -5,7 +5,7 @@
 export const LoginRoute = {
   path: '/',
   name: 'login',
-  component: () => import(/* webpackChunkName: "login" */ 'views/Login/index.vue'),
+  component: () => import(/* webpackChunkName: "login" */ 'views/login/index.vue'),
   meta: {
     title: '登录',
   },

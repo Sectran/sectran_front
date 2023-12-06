@@ -1,25 +1,41 @@
 <template>
-    <div class="Login">
-        <div class="Login-from">
-            <div class="Login-title">{{ uselocals('login.login') }}</div>
-            <a-form :model="formState" layout="vertical" name="basic" :label-col="{ span: 8 }" autocomplete="off"
-                @finish="onFinish" @finishFailed="onFinishFailed">
-                <a-form-item :label="uselocals('login.account')"
-                    :rules="[{ required: true, message: uselocals('login.accountMessage')}]" name="account">
-                    <a-input v-model:value="formState.account" />
-                </a-form-item>
-                <a-form-item :label="uselocals('login.password')"
-                    :rules="[{ required: true, message: uselocals('login.passwordMessage') }]" name="password">
-                    <a-input-password v-model:value="formState.password" />
-                </a-form-item>
-                <a-form-item name="remember" :wrapper-col="{ offset: 8, span: 16 }">
-                    <a-checkbox v-model:checked="formState.remember">{{ uselocals('login.record') }}</a-checkbox>
-                </a-form-item>
-                <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-                    <a-button type="primary" html-type="submit">{{ uselocals('public.Submit') }}</a-button>
-                </a-form-item>
-            </a-form>
+    <div class="login">
+        <div class="login-content">
+            <div class="login-img">
+
+            </div>
+
+
+            <div class="login-from">
+                <div class="login-title">{{ uselocals('login.login') }}</div>
+                <a-form :model="formState" layout="vertical" name="basic" :label-col="{ span: 8 }" autocomplete="off"
+                    @finish="onFinish" @finishFailed="onFinishFailed">
+                    <a-form-item :label="uselocals('login.account')"
+                        :rules="[{ required: true, message: uselocals('login.accountMessage') }]" name="account">
+                        <a-input v-model:value="formState.account">
+                            <template #prefix>
+                                <UserOutlined class="site-form-item-icon" />
+                            </template>
+                        </a-input>
+                    </a-form-item>
+                    <a-form-item :label="uselocals('login.password')"
+                        :rules="[{ required: true, message: uselocals('login.passwordMessage') }]" name="password">
+                        <a-input-password v-model:value="formState.password">
+                            <template #prefix>
+                                <LockOutlined class="site-form-item-icon" />
+                            </template>
+                        </a-input-password>
+                    </a-form-item>
+
+                    <a-form-item>
+                        <a-button style="width: 100%;" type="primary" html-type="submit">{{ uselocals('public.Submit')
+                        }}</a-button>
+                    </a-form-item>
+                </a-form>
+            </div>
         </div>
+
+
     </div>
 </template>
 
@@ -28,18 +44,16 @@ import { reactive } from 'vue';
 import { uselocals } from "@/hooks/localsHooks"
 import { useRouter } from 'vue-router';
 // import { login } from "@/api/login"
-
+import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 const router = useRouter();
 interface FormState {
     account: string
     password: string
-    remember: boolean
 }
 
 const formState = reactive<FormState>({
     account: '',
     password: '',
-    remember: true,
 });
 
 const onFinish = (values: { account: string, password: string }) => {
@@ -57,7 +71,7 @@ const onFinish = (values: { account: string, password: string }) => {
 };
 
 const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
+    console.log('Failed11:', errorInfo);
 };
 
 
@@ -65,26 +79,41 @@ const onFinishFailed = (errorInfo: any) => {
 </script>
 
 <style lang="less" scoped>
-.Login {
+.login {
     position: relative;
     width: 100vw;
     height: 100vh;
+    background: #F3F3F3;
 
-    .Login-title {
-        font-size: 26px;
-        text-align: center;
-        margin-bottom: 20px;
-    }
 
-    .Login-from {
-        width: 300px;
-        padding: 20px;
-        border-radius: 20px;
+    .login-content {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        width: 1000px;
+        background: #ffffff;
+        display: flex;
         box-shadow: 0px 6px 24px 1px rgba(110, 110, 110, 0.18);
+        border-radius: 20px;
     }
+
+    .login-img {
+        flex: 1;
+    }
+
+    .login-from {
+        flex: 1;
+        padding: 50px;
+
+    }
+
+    .login-title {
+        font-size: 26px;
+        color: #666666;
+        margin-bottom: 20px;
+    }
+
+
 }
 </style>

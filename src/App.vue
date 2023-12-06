@@ -25,7 +25,7 @@ import { useI18n } from 'vue-i18n'
 import dayjs from 'dayjs';
 import { useStore } from 'vuex'
 const { locale } = useI18n()
-const { defaultAlgorithm, darkAlgorithm ,compactAlgorithm} = theme;
+const { defaultAlgorithm, darkAlgorithm } = theme;
 let localeValue = ref<string>(locale.value)
 const store = useStore()
 dayjs.locale(locale.value);
@@ -38,9 +38,9 @@ window.document.documentElement.setAttribute('data-theme', store.state.globalCon
 const Fun_theme = () => {
   switch (store.state.globalConfiguration.theme) {
     case "theme-light":
-      return [defaultAlgorithm,compactAlgorithm ]
+      return [defaultAlgorithm ]
     case "theme-dark":
-      return [darkAlgorithm,compactAlgorithm]
+      return [darkAlgorithm]
   }
   // return defaultAlgorithm
 }
