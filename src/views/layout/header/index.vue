@@ -8,8 +8,12 @@
             </Breadcrumb> -->
         </div>
         <div class="nav-right">
-            <LaptopOutlined @click="on_terminal" />
-            <BulbOutlined @click="on_theme" class="nav-icon" />
+            <FullscreenOutlined v-if="store.state.globalConfiguration.isCompact"
+                @click="store.commit('globalConfiguration/compactMutations')" class="nav-icon nav-right-space" />
+            <FullscreenExitOutlined v-else @click="store.commit('globalConfiguration/compactMutations')"
+                class="nav-icon nav-right-space" />
+            <LaptopOutlined class="nav-icon nav-right-space" @click="on_terminal" />
+            <BulbOutlined @click="on_theme" class="nav-icon nav-right-space" />
             <a-dropdown>
                 <TranslationOutlined @click.prevent class="nav-icon nav-right-space" />
                 <template #overlay>
@@ -40,11 +44,11 @@
                 </template>
             </a-dropdown>
 
-            <!-- <a-avatar shape="square" class="nav-right-space">
+            <a-avatar shape="square" class="nav-right-space">
                 <template #icon>
                     <UserOutlined class="nav-icon" />
                 </template>
-            </a-avatar> -->
+            </a-avatar>
         </div>
     </a-layout-header>
 </template> 
@@ -55,8 +59,10 @@ import {
     MenuFoldOutlined,
     TranslationOutlined,
     BulbOutlined,
-    LaptopOutlined
-    // UserOutlined
+    LaptopOutlined,
+    UserOutlined,
+    FullscreenExitOutlined,
+    FullscreenOutlined
 } from "@ant-design/icons-vue";
 // Breadcrumb
 import { useI18n } from 'vue-i18n'
@@ -171,7 +177,7 @@ const on_terminal = () => {
     }
 
     .nav-right-space {
-        margin-left: 30px;
+        margin-left: 20px;
     }
 
 
