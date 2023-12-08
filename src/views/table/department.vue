@@ -1,21 +1,25 @@
 <template>
     <div class="tablePage-style">
+
         <div class="table-nav">
             <a-form layout="inline" :model="searchFrom">
                 <a-row :gutter="[20, 16]">
                     <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('department.departmentId')">
-                            <a-input v-model:value="searchFrom.dept_id" :placeholder="t('department.departmentIdPlaceholder')" />
+                            <a-input v-model:value="searchFrom.dept_id"
+                                :placeholder="t('department.departmentIdPlaceholder')" />
                         </a-form-item>
                     </a-col>
                     <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('department.departmentName')">
-                            <a-input v-model:value="searchFrom.name" :placeholder="t('department.departmentNamePlaceholder')"  />
+                            <a-input v-model:value="searchFrom.name"
+                                :placeholder="t('department.departmentNamePlaceholder')" />
                         </a-form-item>
                     </a-col>
                     <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('department.departmentLocation')">
-                            <a-input v-model:value="searchFrom.region" :placeholder="t('department.departmentLocationPlaceholder')" />
+                            <a-input v-model:value="searchFrom.region"
+                                :placeholder="t('department.departmentLocationPlaceholder')" />
                         </a-form-item>
                     </a-col>
                     <a-col :xl="6" :md="8" :xs="12">
@@ -39,16 +43,18 @@
             <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
         </a-space>
 
-        <a-table class="table-style" :scroll="{ y: tabHeight}" :columns="columns" :data-source="data">
+        <a-table class="table-style" :scroll="{ y: tabHeight }" :columns="columns" :data-source="data"
+           :indentSize="10">
             <template #headerCell="{ column }">
                 <span>{{ t(column.title) }}</span>
             </template>
             <template #bodyCell="{ column }">
                 <template v-if="column.dataIndex === 'operation'">
                     <a-space :size="8">
-                        <a-button type="link"  >{{ t('public.redact') }}</a-button>
-                        <a-button type="link"  @click="addOpen = true">{{ t('department.addSubordinateDepartment') }}</a-button>
-                        <a-button type="link" danger >{{ t('public.delete') }}</a-button>
+                        <a-button type="link">{{ t('public.redact') }}</a-button>
+                        <a-button type="link" @click="addOpen = true">{{ t('department.addSubordinateDepartment')
+                        }}</a-button>
+                        <a-button type="link" danger>{{ t('public.delete') }}</a-button>
                     </a-space>
                 </template>
             </template>
@@ -80,7 +86,6 @@
                 </a-form-item>
             </a-form>
         </a-modal>
-
     </div>
 </template>
 
@@ -131,44 +136,65 @@ const addOpen = ref<boolean>(false);
 
 
 const columns = [
-    {
-        title: 'department.departmentId',
-        dataIndex: 'DeptId',
-    },
-    {
-        title: 'department.departmentName',
-        dataIndex: 'name',
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: 'Age',
+    dataIndex: 'age',
+    key: 'age',
+    width: '12%',
+  },
+  {
+    title: 'Address',
+    dataIndex: 'address',
+    width: '30%',
+    key: 'address',
+  },
+];
 
-    },
-    {
-        title: 'department.departmentDescribe',
-        dataIndex: 'address',
-    },
-    {
-        title: 'department.departmentLocation',
-        dataIndex: 'Region',
-    },
+// const columns = [
+//     {
+//         title: 'department.departmentId',
+//         dataIndex: 'DeptId',
+        
+//     },
+//     {
+//         title: 'department.departmentName',
+//         dataIndex: 'name',
 
-    {
-        title: 'department.superiorDepartment',
-        dataIndex: 'ParentId',
-    },
+//     },
+//     {
+//         title: 'department.departmentDescribe',
+//         dataIndex: 'address',
+//     },
+//     {
+//         title: 'department.departmentLocation',
+//         dataIndex: 'Region',
+//     },
 
-    {
-        title: 'department.subordinateDepartment',
-        dataIndex: 'ChildIds',
-    },
-    {
-        title: 'public.creationTime',
-        dataIndex: 'CreateTime',
-    },
-    {
-        title: 'public.operation',
-        fixed: 'right',
-        dataIndex: 'operation',
-        width:300,
-    }
-]
+//     {
+//         title: 'department.superiorDepartment',
+//         dataIndex: 'ParentId',
+//     },
+
+//     {
+//         title: 'department.subordinateDepartment',
+//         dataIndex: 'ChildIds',
+//     },
+//     {
+//         title: 'public.creationTime',
+//         dataIndex: 'CreateTime',
+//     },
+//     {
+//         title: 'public.operation',
+//         fixed: 'right',
+//         dataIndex: 'operation',
+//         width: 300,
+//     }
+// ]
 
 
 

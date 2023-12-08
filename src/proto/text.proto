@@ -1,4 +1,4 @@
-syntax = "proto3";//第一行指定了正在使用proto3语法：如果你没有指定这个，编译器会使用proto2。这个指定语法行必须是文件的非空非注释的第一行
+syntax = "proto3"
  
 message User {
   required string username = 0;

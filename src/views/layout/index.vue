@@ -6,17 +6,24 @@
     <a-layout>
       <Headers v-model:collapsed="collapsed"></Headers>
       <Tabs></Tabs>
-      <a-layout-content class="content-style ">
-        <router-view v-slot="{ Component }">
-          <template v-if="Component">
-            <transition :name="Object.is(route.meta?.transitionName, false) ? '' : 'fade-transform'" mode="out-in" appear>
-              <keep-alive :include="[store.state.tabsStore.tabsArr.map((item: any) => item.name)]">
-                <component :is="Component" :key="route.fullPath" />
-              </keep-alive>
-            </transition>
-          </template>
-        </router-view>
-      </a-layout-content>
+      <a-watermark content="Sectran">
+
+        <a-layout-content class="content-style ">
+          <router-view v-slot="{ Component }">
+            <template v-if="Component">
+              <transition :name="Object.is(route.meta?.transitionName, false) ? '' : 'fade-transform'" mode="out-in"
+                appear>
+                <keep-alive :include="[store.state.tabsStore.tabsArr.map((item: any) => item.name)]">
+
+                  <component :is="Component" :key="route.fullPath" />
+
+
+                </keep-alive>
+              </transition>
+            </template>
+          </router-view>
+        </a-layout-content>
+      </a-watermark>
     </a-layout>
   </a-layout>
 </template>
@@ -43,7 +50,7 @@ onMounted(() => {
   height: 100vh;
 }
 
-.content-style  {
+.content-style {
   height: calc(100vh - 64px - 50px);
   padding: 20px;
   background: var(--theme-content-bg);
