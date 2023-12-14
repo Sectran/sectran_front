@@ -25,12 +25,23 @@
 import { onBeforeMount, onMounted, watchEffect, ref, reactive } from 'vue';
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
+import protoUrl from  '../../proto/chard_h5_nego.proto'
 import "xterm/css/xterm.css";
 let terminal = ref(null)
 
 let path = ref<string>('ws://101.133.229.239:19529')
 let term = reactive<any>({})
 let socket = reactive<any>({})
+
+// import protobuf from 'protobufjs';
+// const protoUrl = '@/proto/chard_h5_nego.js';
+
+const response = await fetch(protoUrl);
+const content = await response.text();
+console.log(response)
+console.log(content)
+// 定义要加载的 .proto 文件 URL
+
 // ref, reactive, 
 // import { useStore } from 'vuex';
 // import { useRoute, useRouter } from 'vue-router';
