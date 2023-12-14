@@ -28,7 +28,7 @@ import { FitAddon } from "xterm-addon-fit";
 import "xterm/css/xterm.css";
 let terminal = ref(null)
 
-let path = ref<string>('ws://127.0.0.1:19527')
+let path = ref<string>('ws://101.133.229.239:19529')
 let term = reactive<any>({})
 let socket = reactive<any>({})
 // ref, reactive, 
@@ -62,14 +62,17 @@ const initXterm = () => {
         disableStdin: false, //是否应禁用输入
         cursorBlink: true, //光标闪烁
         theme: {
-            foreground: "#ECECEC", //字体
-            background: "#000000", //背景色
-            cursor: "help", //设置光标
+            foreground: "#000000", //字体
+            background: "#FFFFFF", //背景色
+            // cursor: "help", //设置光标
+            cursor: "#6376C2", //设置光标
             lineHeight: 20,
         },
     });
     // 创建terminal实例
     terms.open(terminal.value);
+  
+    // fitAddon.fit()
     // 换行并输入起始符 $
     terms.prompt = (_: any) => {  
         terms.write("\r\n\x1b[33m$\x1b[0m ");
@@ -164,6 +167,9 @@ watchEffect(() => {
 
 </script>
 <style scoped lang='less'>
+#terminal {
+    height: 800px;
+}
 .configuration-style {
     width: 100%;
     height: 100vh;
