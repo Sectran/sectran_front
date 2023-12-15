@@ -25,30 +25,19 @@
 import { onBeforeMount, onMounted, watchEffect, ref, reactive } from 'vue';
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
-import protoUrl from  '../../proto/chard_h5_nego.proto'
+// import { sectran_chard } from '../../../secterm/chard_h5_nego';
+import { sectran_chard } from '../../../secterm/secterm';
 import "xterm/css/xterm.css";
-let terminal = ref(null)
 
+// let data = sectran_chard.secterm.v1.SectermConnectResponse.encode({})
+let data = sectran_chard.secterm.v1.SectermConnectRequest.encode({ Colums: 10 }).finish()
+console.log(data)
+let terminal = ref(null)
 let path = ref<string>('ws://101.133.229.239:19529')
 let term = reactive<any>({})
 let socket = reactive<any>({})
 
-// import protobuf from 'protobufjs';
-// const protoUrl = '@/proto/chard_h5_nego.js';
 
-const response = await fetch(protoUrl);
-const content = await response.text();
-console.log(response)
-console.log(content)
-// 定义要加载的 .proto 文件 URL
-
-// ref, reactive, 
-// import { useStore } from 'vuex';
-// import { useRoute, useRouter } from 'vue-router';
-// const store = useStore();
-// const route = useRoute();
-// const router = useRouter();
-// const data = reactive({})
 onBeforeMount(() => {
     //console.log('2.组件挂载页面之前执行----onBeforeMount')
 })
@@ -57,7 +46,7 @@ onMounted(() => {
     window.addEventListener('beforeunload', (e: any) => {
         e.returnValue = '您确定要离开吗？请确认是否保存您的更改。';
         e.preventDefault();
-   
+
     });
     initXterm()
     initSocket()
@@ -82,10 +71,10 @@ const initXterm = () => {
     });
     // 创建terminal实例
     terms.open(terminal.value);
-  
+
     // fitAddon.fit()
     // 换行并输入起始符 $
-    terms.prompt = (_: any) => {  
+    terms.prompt = (_: any) => {
         terms.write("\r\n\x1b[33m$\x1b[0m ");
     };
     // canvas背景全屏
@@ -158,6 +147,8 @@ const onData = (msg: any) => {
         });
 }
 const onOpen = () => {
+
+
     console.log("socket连接成功");
 }
 const onError = (evt?: Event) => {
@@ -176,11 +167,24 @@ watchEffect(() => {
 })
 
 
+// function numberToUint32LE(value: number): Uint8Array {
+//     const buffer = new ArrayBuffer(4);
+//     const view = new DataView(buffer);
+
+//     // 设置 32 位整数，第二个参数表示是否使用小端字节序
+//     view.setUint32(0, value, true);
+
+//     // 将 DataView 转换为 Uint8Array
+//     return new Uint8Array(buffer);
+// }
+
+
 </script>
 <style scoped lang='less'>
 #terminal {
     height: 800px;
 }
+
 .configuration-style {
     width: 100%;
     height: 100vh;

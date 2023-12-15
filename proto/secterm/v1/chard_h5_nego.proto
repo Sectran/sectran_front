@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package sectran_chard.secterm.v1;
+
+option go_package = "sectran_chard/secterm/v1;sectermv1";
+
+enum AuthMethod {
+    INTERACTIVE_AUTH = 0;
+    PUBLICKEY_AUTH = 1;
+    PASSWORD_AUTH = 2;
+    NO_CREDENTIALS = 3;
+}
+
+enum SectermProtocols{
+    SECTERM_SSH = 0;
+    SECTERM_TELNET = 1;
+}
+
+//sectran term
+message SectermConnectRequest {
+    // token is the session idetify sequence.
+    string token = 1;
+    // width is sectran term's width.
+    fixed32 Colums = 2;
+    // heigth is sectran term's height.
+    fixed32 Rows = 3;
+    // this connect use sectran unmanaged account.
+    bool unmanaged = 4;
+    // the username for interactive usage.(when sectran unmanaged)
+    string username = 5;
+    // sectran unmanaged account auth credentials.(when sectran unmanaged)
+    AuthMethod auth_method = 6;
+    // user auth credentials,just need to specify one of them.(when sectran unmanaged)
+    oneof credential {
+        bytes private_key = 7;
+        bytes password = 8;
+    }
+    // target hostname.(when sectran unmanaged)
+    string hostname = 9;
+    // taeget server port (when sectran unmanaged)
+    int32 port = 10;
+    // target host auth protocol.(when sectran unmanaged)
+    SectermProtocols protocol = 11;
+}
+
+enum SectermCode {
+    WRONG_CREDENTIAL = 0;
+    NETWORK_UNREACHABLE = 1;
+    UNSURPPORTED_AUTH_METHOD = 2;
+    LOGON_SUCCESS = 3;
+}
+
+message SectermConnectResponse {
+    SectermCode code = 1;
+}
