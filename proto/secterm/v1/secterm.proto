@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package sectran_chard.secterm.v1;
+
+option go_package = "sectran_chard/secterm/v1;sectermv1";
+
+import "./chard_h5_nego.proto";
+
+//TODO: add the other message type
+enum SectermMessageType{
+    SectermConnectRequestMessage = 0;
+    SectermConnectResponseMessage = 1;
+}
+
+//need write length(uint32 little endian) before send proto message
+message SectermMessage {
+    SectermMessageType mes_type = 2;
+    oneof data{
+        SectermConnectRequest request = 3;
+    }
+}

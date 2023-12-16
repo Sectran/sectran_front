@@ -35,6 +35,290 @@ export const sectran_chard = $root.sectran_chard = (() => {
             const v1 = {};
 
             /**
+             * SectermMessageType enum.
+             * @name sectran_chard.secterm.v1.SectermMessageType
+             * @enum {number}
+             * @property {number} SectermConnectRequestMessage=0 SectermConnectRequestMessage value
+             * @property {number} SectermConnectResponseMessage=1 SectermConnectResponseMessage value
+             */
+            v1.SectermMessageType = (function() {
+                const valuesById = {}, values = Object.create(valuesById);
+                values[valuesById[0] = "SectermConnectRequestMessage"] = 0;
+                values[valuesById[1] = "SectermConnectResponseMessage"] = 1;
+                return values;
+            })();
+
+            v1.SectermMessage = (function() {
+
+                /**
+                 * Properties of a SectermMessage.
+                 * @memberof sectran_chard.secterm.v1
+                 * @interface ISectermMessage
+                 * @property {sectran_chard.secterm.v1.SectermMessageType|null} [mesType] SectermMessage mesType
+                 * @property {sectran_chard.secterm.v1.ISectermConnectRequest|null} [request] SectermMessage request
+                 */
+
+                /**
+                 * Constructs a new SectermMessage.
+                 * @memberof sectran_chard.secterm.v1
+                 * @classdesc Represents a SectermMessage.
+                 * @implements ISectermMessage
+                 * @constructor
+                 * @param {sectran_chard.secterm.v1.ISectermMessage=} [properties] Properties to set
+                 */
+                function SectermMessage(properties) {
+                    if (properties)
+                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * SectermMessage mesType.
+                 * @member {sectran_chard.secterm.v1.SectermMessageType} mesType
+                 * @memberof sectran_chard.secterm.v1.SectermMessage
+                 * @instance
+                 */
+                SectermMessage.prototype.mesType = 0;
+
+                /**
+                 * SectermMessage request.
+                 * @member {sectran_chard.secterm.v1.ISectermConnectRequest|null|undefined} request
+                 * @memberof sectran_chard.secterm.v1.SectermMessage
+                 * @instance
+                 */
+                SectermMessage.prototype.request = null;
+
+                // OneOf field names bound to virtual getters and setters
+                let $oneOfFields;
+
+                /**
+                 * SectermMessage data.
+                 * @member {"request"|undefined} data
+                 * @memberof sectran_chard.secterm.v1.SectermMessage
+                 * @instance
+                 */
+                Object.defineProperty(SectermMessage.prototype, "data", {
+                    get: $util.oneOfGetter($oneOfFields = ["request"]),
+                    set: $util.oneOfSetter($oneOfFields)
+                });
+
+                /**
+                 * Creates a new SectermMessage instance using the specified properties.
+                 * @function create
+                 * @memberof sectran_chard.secterm.v1.SectermMessage
+                 * @static
+                 * @param {sectran_chard.secterm.v1.ISectermMessage=} [properties] Properties to set
+                 * @returns {sectran_chard.secterm.v1.SectermMessage} SectermMessage instance
+                 */
+                SectermMessage.create = function create(properties) {
+                    return new SectermMessage(properties);
+                };
+
+                /**
+                 * Encodes the specified SectermMessage message. Does not implicitly {@link sectran_chard.secterm.v1.SectermMessage.verify|verify} messages.
+                 * @function encode
+                 * @memberof sectran_chard.secterm.v1.SectermMessage
+                 * @static
+                 * @param {sectran_chard.secterm.v1.ISectermMessage} message SectermMessage message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                SectermMessage.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (message.mesType != null && Object.hasOwnProperty.call(message, "mesType"))
+                        writer.uint32(/* id 2, wireType 0 =*/16).int32(message.mesType);
+                    if (message.request != null && Object.hasOwnProperty.call(message, "request"))
+                        $root.sectran_chard.secterm.v1.SectermConnectRequest.encode(message.request, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                    return writer;
+                };
+
+                /**
+                 * Encodes the specified SectermMessage message, length delimited. Does not implicitly {@link sectran_chard.secterm.v1.SectermMessage.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof sectran_chard.secterm.v1.SectermMessage
+                 * @static
+                 * @param {sectran_chard.secterm.v1.ISectermMessage} message SectermMessage message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                SectermMessage.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+
+                /**
+                 * Decodes a SectermMessage message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof sectran_chard.secterm.v1.SectermMessage
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {sectran_chard.secterm.v1.SectermMessage} SectermMessage
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                SectermMessage.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.sectran_chard.secterm.v1.SectermMessage();
+                    while (reader.pos < end) {
+                        let tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        case 2: {
+                                message.mesType = reader.int32();
+                                break;
+                            }
+                        case 3: {
+                                message.request = $root.sectran_chard.secterm.v1.SectermConnectRequest.decode(reader, reader.uint32());
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Decodes a SectermMessage message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof sectran_chard.secterm.v1.SectermMessage
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {sectran_chard.secterm.v1.SectermMessage} SectermMessage
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                SectermMessage.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+
+                /**
+                 * Verifies a SectermMessage message.
+                 * @function verify
+                 * @memberof sectran_chard.secterm.v1.SectermMessage
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                SectermMessage.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    let properties = {};
+                    if (message.mesType != null && message.hasOwnProperty("mesType"))
+                        switch (message.mesType) {
+                        default:
+                            return "mesType: enum value expected";
+                        case 0:
+                        case 1:
+                            break;
+                        }
+                    if (message.request != null && message.hasOwnProperty("request")) {
+                        properties.data = 1;
+                        {
+                            let error = $root.sectran_chard.secterm.v1.SectermConnectRequest.verify(message.request);
+                            if (error)
+                                return "request." + error;
+                        }
+                    }
+                    return null;
+                };
+
+                /**
+                 * Creates a SectermMessage message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof sectran_chard.secterm.v1.SectermMessage
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {sectran_chard.secterm.v1.SectermMessage} SectermMessage
+                 */
+                SectermMessage.fromObject = function fromObject(object) {
+                    if (object instanceof $root.sectran_chard.secterm.v1.SectermMessage)
+                        return object;
+                    let message = new $root.sectran_chard.secterm.v1.SectermMessage();
+                    switch (object.mesType) {
+                    default:
+                        if (typeof object.mesType === "number") {
+                            message.mesType = object.mesType;
+                            break;
+                        }
+                        break;
+                    case "SectermConnectRequestMessage":
+                    case 0:
+                        message.mesType = 0;
+                        break;
+                    case "SectermConnectResponseMessage":
+                    case 1:
+                        message.mesType = 1;
+                        break;
+                    }
+                    if (object.request != null) {
+                        if (typeof object.request !== "object")
+                            throw TypeError(".sectran_chard.secterm.v1.SectermMessage.request: object expected");
+                        message.request = $root.sectran_chard.secterm.v1.SectermConnectRequest.fromObject(object.request);
+                    }
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a SectermMessage message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof sectran_chard.secterm.v1.SectermMessage
+                 * @static
+                 * @param {sectran_chard.secterm.v1.SectermMessage} message SectermMessage
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                SectermMessage.toObject = function toObject(message, options) {
+                    if (!options)
+                        options = {};
+                    let object = {};
+                    if (options.defaults)
+                        object.mesType = options.enums === String ? "SectermConnectRequestMessage" : 0;
+                    if (message.mesType != null && message.hasOwnProperty("mesType"))
+                        object.mesType = options.enums === String ? $root.sectran_chard.secterm.v1.SectermMessageType[message.mesType] === undefined ? message.mesType : $root.sectran_chard.secterm.v1.SectermMessageType[message.mesType] : message.mesType;
+                    if (message.request != null && message.hasOwnProperty("request")) {
+                        object.request = $root.sectran_chard.secterm.v1.SectermConnectRequest.toObject(message.request, options);
+                        if (options.oneofs)
+                            object.data = "request";
+                    }
+                    return object;
+                };
+
+                /**
+                 * Converts this SectermMessage to JSON.
+                 * @function toJSON
+                 * @memberof sectran_chard.secterm.v1.SectermMessage
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                SectermMessage.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                /**
+                 * Gets the default type url for SectermMessage
+                 * @function getTypeUrl
+                 * @memberof sectran_chard.secterm.v1.SectermMessage
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                SectermMessage.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/sectran_chard.secterm.v1.SectermMessage";
+                };
+
+                return SectermMessage;
+            })();
+
+            /**
              * AuthMethod enum.
              * @name sectran_chard.secterm.v1.AuthMethod
              * @enum {number}
