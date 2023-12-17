@@ -3,14 +3,9 @@
         <div class="configuration-nav"></div>
         <a-row class="Content-style">
             <a-col :span="4" class="Content-left">
-                <a-directory-tree multiple default-expand-all>
-                    <a-tree-node key="0-0" title="parent 0">
-                        <a-tree-node key="0-0-0" title="leaf 0-0" is-leaf />
-                        <a-tree-node key="0-0-1" title="leaf 0-1" is-leaf />
-                    </a-tree-node>
-                    <a-tree-node key="0-1" title="parent 1">
-                        <a-tree-node key="0-1-0" title="leaf 1-0" is-leaf />
-                        <a-tree-node key="0-1-1" title="leaf 1-1" is-leaf />
+                <a-directory-tree multiple default-expand-all @select="on_node">
+                    <a-tree-node key="0-0" title="Default">
+                        <a-tree-node key="0-0-0" title="Linux" is-leaf />
                     </a-tree-node>
                 </a-directory-tree>
             </a-col>
@@ -19,33 +14,57 @@
             </a-col>
         </a-row>
     </div>
+
+    <!-- @ok="handleOk" -->
+    <!-- @click="handleOk" -->
+    <a-modal v-model:open="connectOpen" title="链接 Linux" :footer="null">
+
+
+        <a-tabs v-model:activeKey="connectKey">
+            <a-tab-pane key="1" tab="SSH">
+
+                <a-form :model="connectFormState" name="basic" @finish="on_connectFinish" :label-col="{ span: 4 }"
+                    :wrapper-col="{ span: 20 }" autocomplete="off">
+                    <a-form-item label="账号" name="username"
+                        :rules="[{ required: true, message: 'Please input your username!' }]">
+                        <a-input v-model:value="connectFormState.username" />
+                    </a-form-item>
+
+                    <a-form-item label="密码" name="password"
+                        :rules="[{ required: true, message: 'Please input your password!' }]">
+                        <a-input-password v-model:value="connectFormState.password" />
+                    </a-form-item>
+
+                    <a-form-item :wrapper-col="{ offset: 0, span: 24 }">
+                        <a-button style="width: 100%;" type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
+                    </a-form-item>
+                </a-form>
+            </a-tab-pane>
+            <!-- <a-tab-pane key="2" tab="Tab 2" force-render>Content of Tab Pane 2</a-tab-pane> -->
+        </a-tabs>
+        <!-- :loading="loading" -->
+    </a-modal>
 </template>
+
 
 <script setup lang='ts'>
 import { onBeforeMount, onMounted, watchEffect, ref, reactive } from 'vue';
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
-// import { sectran_chard } from '../../../secterm/chard_h5_nego';
 import { sectran_chard } from '../../../secterm/secterm';
 import "xterm/css/xterm.css";
-
-// let data = sectran_chard.secterm.v1.SectermConnectResponse.encode({})
-let data = sectran_chard.secterm.v1.SectermConnectRequest.encode({ Colums: 10, Rows: 3 }).finish()
-let len: number = data.length
-const uintArr = Uint32Array.from([len]);
-
-console.log(uintArr);
-
-let adta = sectran_chard.secterm.v1.SectermConnectRequest.decode(data)
-console.log(adta)
-
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 let terminal = ref(null)
 let path = ref<string>('ws://101.133.229.239:19529')
 let websocket = ref<any>('')
 let term = reactive<any>({})
 let socket = reactive<any>({})
 
+const connectKey = ref('1');
+let connectOpen = ref<Boolean>(false)
 
+// let headNavigation
 
 
 onBeforeMount(() => {
@@ -59,9 +78,6 @@ onMounted(() => {
 
     });
 
-
-
-    initSocket()
     //console.log('3.-组件挂载到页面之后执行-------onMounted')
 })
 
@@ -73,8 +89,8 @@ const initXterm = () => {
         convertEol: true, //启用时，光标将设置为下一行的开头
         disableStdin: false, //是否应禁用输入
         cursorBlink: true, //光标闪烁
-        fontSize: 18, //字体大小
-        fontWeight:"500",
+        fontSize: 14, //字体大小
+        fontWeight: "500",
         lineHeight: 0,
         theme: {
             foreground: "#000000", //字体
@@ -86,7 +102,6 @@ const initXterm = () => {
     });
     // 创建terminal实例
     terms.open(terminal.value);
-
     // fitAddon.fit()
     // 换行并输入起始符 $
     terms.prompt = (_: any) => {
@@ -97,6 +112,7 @@ const initXterm = () => {
     terms.loadAddon(fitAddon);
     fitAddon.fit();
 
+    console.log(terms)
     window.addEventListener("resize", resizeScreen);
     function resizeScreen() {
         try {
@@ -130,12 +146,15 @@ const stringToUint8Array = (str: string) => {
 }
 
 const initSocket = () => {
+    console.log(term)
+   
     if (typeof WebSocket === "undefined") {
         alert("您的浏览器不支持socket");
     } else {
         websocket = new WebSocket(path.value);
         websocket.onopen = () => {
             console.log('成功')
+
             onOpen();
         };
         websocket.onmessage = (evt: any) => {
@@ -167,16 +186,17 @@ const onData = (msg: any) => {
         });
 }
 const onOpen = () => {
+    let {cols,rows} = term._publicOptions
     let mesType = sectran_chard.secterm.v1.SectermMessageType.SectermConnectRequestMessage
     let connectMessage = new sectran_chard.secterm.v1.SectermConnectRequest
     connectMessage.token = ''
-    connectMessage.Colums = 170
-    connectMessage.Rows = 50
+    connectMessage.Colums = cols
+    connectMessage.Rows = rows
     connectMessage.unmanaged = true
-    connectMessage.username = 'root'
+    connectMessage.username = connectFormState.username
     connectMessage.hostname = '101.133.229.239'
     connectMessage.port = 22
-    connectMessage.password =  stringToUint8Array('Ryan@1218pass') 
+    connectMessage.password = stringToUint8Array(connectFormState.password)
     connectMessage.authMethod = sectran_chard.secterm.v1.AuthMethod.PASSWORD_AUTH
     let sectermMessage = new sectran_chard.secterm.v1.SectermMessage
     sectermMessage.request = connectMessage
@@ -186,8 +206,7 @@ const onOpen = () => {
     const uintArr = Uint32Array.from([len]);
     websocket.send(uintArr)
     websocket.send(data)
-    console.log("socket连接成功");
-    initXterm()
+
 }
 
 
@@ -207,6 +226,29 @@ watchEffect(() => {
 })
 
 
+const on_node = () => {
+    connectOpen.value = true
+}
+
+interface ConnectFormState {
+    username: string;
+    password: string;
+}
+
+
+
+const connectFormState = reactive<ConnectFormState>({
+    username: 'root',
+    password: 'Ryan@1218pass',
+});
+
+const on_connectFinish = () => {
+    console.log(connectFormState)
+    initXterm()
+    initSocket()
+}
+
+
 // function numberToUint32LE(value: number): Uint8Array {
 //     const buffer = new ArrayBuffer(4);
 //     const view = new DataView(buffer);
@@ -222,7 +264,7 @@ watchEffect(() => {
 </script>
 <style scoped lang='less'>
 #terminal {
-    height: 800px;
+    height: 700px;
     padding: 10px 15px;
 }
 

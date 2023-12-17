@@ -1,6 +1,8 @@
 <template>
   <div class="menu-style">
-    <div class="logo"></div>
+    <div class="logo">
+      <!-- <img src="" alt=""> -->
+    </div>
     <a-menu v-model:selectedKeys="menuState.selectedKeys" v-model:openKeys="menuState.openKeys" mode="inline">
       <a-sub-menu v-for="item in administration" :key="item.name">
         <template #title>
@@ -63,7 +65,7 @@ watch(
 <style lang="less" scoped>
 .logo {
   height: 32px;
-  // background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.3);
   margin: 16px;
 }
 </style>

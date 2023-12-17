@@ -6,7 +6,7 @@
     <a-layout>
       <Headers v-model:collapsed="collapsed"></Headers>
       <Tabs></Tabs>
-      <a-watermark v-bind="model">
+   
 
         <a-layout-content class="content-style ">
           <router-view v-slot="{ Component }">
@@ -14,21 +14,18 @@
               <transition :name="Object.is(route.meta?.transitionName, false) ? '' : 'fade-transform'" mode="out-in"
                 appear>
                 <keep-alive :include="[store.state.tabsStore.tabsArr.map((item: any) => item.name)]">
-
                   <component :is="Component" :key="route.fullPath" />
-
-
                 </keep-alive>
               </transition>
             </template>
           </router-view>
         </a-layout-content>
-      </a-watermark>
+   
     </a-layout>
   </a-layout>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted ,reactive} from "vue";
+import { ref, onMounted ,} from "vue";
 import AsideMenu from './menu/index.vue';
 import Headers from './header/index.vue';
 import Tabs from './tabs/index.vue';
@@ -39,16 +36,7 @@ const collapsed = ref<boolean>(false);
 const store = useStore()
 
 
-const model = reactive({
-  content: 'Sectran',
-  font: {
-    fontSize: 14,
-  },
-  zIndex: 11,
-  rotate: -22,
-  gap: [70, 70] as [number, number],
-  offset: [],
-});
+
 onMounted(() => {
   console.log('3.-组件挂载到页面之后执行-------onMounted,index')
 })
