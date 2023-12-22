@@ -1,4 +1,5 @@
-import requests from `@/server/request`
+// import requests from `@/server/request`
+import requests from "@/server/request"
 let prefix = "/sectran"
 //部门
 export const listDepartment =<T>(data:T)=> requests(`${prefix}/dept/list`,data)

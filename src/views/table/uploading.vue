@@ -30,13 +30,13 @@ import { ref, } from 'vue';
 // reactive
 
 import { FolderOpenFilled, FileFilled, ArrowLeftOutlined } from '@ant-design/icons-vue';
-import { useStore } from 'vuex'
+// import { useStore } from 'vuex'
 // type FileType = {
 //     kind: string
 //     name: string
 // }
 const open = ref<boolean>(false);
-const store = useStore()
+// const store = useStore()
 const fileArray = ref<any>([]);
 const filePath = ref<string[]>([])
 

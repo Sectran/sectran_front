@@ -1,6 +1,23 @@
 <template>
     <div class="configuration-style">
-        <div class="configuration-nav"></div>
+        <div class="configuration-nav">
+            <a-dropdown v-for="(item, itemIndex) in headMenu">
+                <a class="ant-dropdown-link" @click.prevent>
+                    {{ item.name }}
+                </a>
+                <template #overlay>
+                    <a-menu>
+                        <template v-for="(el, index) in item.children">
+                            <a-menu-divider v-if="el.name === 'divider'" />
+                            <a-sub-menu v-else-if="el.children" :key="index + '' + itemIndex" :title="el.name">
+                                <a-menu-item v-for="i in el.children">{{ i.name }}</a-menu-item>
+                            </a-sub-menu>
+                            <a-menu-item :key="index" v-else>{{ el.name }}</a-menu-item>
+                        </template>
+                    </a-menu>
+                </template>
+            </a-dropdown>
+        </div>
         <a-row class="Content-style">
             <a-col :span="4" class="Content-left">
                 <a-directory-tree multiple default-expand-all @select="on_node">
@@ -9,8 +26,22 @@
                     </a-tree-node>
                 </a-directory-tree>
             </a-col>
-            <a-col :span="20">
-                <div id="terminal" ref="terminal"></div>
+            <a-col :span="20" class="content-style">
+                <div v-if="isConnect" id="terminal" ref="terminal"></div>
+                <div v-else class="placeholder-style">
+
+                    <div>
+                        <div>切换实例</div>
+                        <div>最近访问</div>
+                        <div>会话列表</div>
+                        <div>显示/隐藏菜单栏</div>
+                        <div>显示/隐藏按钮栏</div>
+                        <div>显示/隐藏状态栏</div>
+                    </div>
+                </div>
+
+
+
             </a-col>
         </a-row>
     </div>
@@ -18,11 +49,8 @@
     <!-- @ok="handleOk" -->
     <!-- @click="handleOk" -->
     <a-modal v-model:open="connectOpen" title="链接 Linux" :footer="null">
-
-
         <a-tabs v-model:activeKey="connectKey">
             <a-tab-pane key="1" tab="SSH">
-
                 <a-form :model="connectFormState" name="basic" @finish="on_connectFinish" :label-col="{ span: 4 }"
                     :wrapper-col="{ span: 20 }" autocomplete="off">
                     <a-form-item label="账号" name="username"
@@ -48,10 +76,11 @@
 
 
 <script setup lang='ts'>
-import { onBeforeMount, onMounted, watchEffect, ref, reactive } from 'vue';
+import { onBeforeMount, onMounted, watchEffect, ref, reactive, nextTick } from 'vue';
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { sectran_chard } from '../../../secterm/secterm';
+// import { DownOutlined } from '@ant-design/icons-vue';
 import "xterm/css/xterm.css";
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
@@ -63,7 +92,22 @@ let socket = reactive<any>({})
 
 const connectKey = ref('1');
 let connectOpen = ref<Boolean>(false)
-
+let isConnect = ref<Boolean>(false)
+let headMenu: any = [
+    {
+        name: "文件", children: [{ name: "新建文件" }, { name: "新建文件夹" }, { name: "divider" }, { name: "打开新文件树" }, { name: "divider" }, { name: "打开新文件管理" }, { name: "divider" }, { name: "保存" }, { name: "全部保存" }]
+    }, {
+        name: "编辑", children: [{ name: "撤销" }, { name: "重做" }, { name: "divider" }, { name: "复制" }, { name: "剪切" }, { name: "divider" }, { name: "查找" }, { name: "替换" }]
+    }, {
+        name: "视图", children: [{ name: "打开视图" }, { name: "最近访问" }, { name: "divider" }, { name: "显示/隐藏菜单栏" }, { name: "显示/隐藏状态栏" }, { name: "显示/隐藏按钮栏" }, { name: "显示/隐藏工具栏" }, { name: "显示/隐藏实例菜单栏" }, { name: "divider" }, { name: "导出布局数据" }, { name: "导入布局" }, { name: "折叠所有侧边面板" }]
+    }, {
+        name: "实例", children: [{ name: "切换实例" }, { name: "新建实例窗口" }, { name: "私网链路" }, { name: "退出实例登录" }]
+    }, {
+        name: "会话", children: [{ name: "新终端" }, { name: "横向打开新终端" }, { name: "纵向打开新终端" }, { name: "divider" }, { name: "会话管理" }, { name: "最近访问" }, { name: "会话列表" }]
+    }, {
+        name: "功能", children: [{ name: "系统管理" }, { name: "运维功能", children: [{ name: "javaDump" }] }, { name: "多屏终端" }]
+    },
+]
 // let headNavigation
 
 
@@ -112,6 +156,11 @@ const initXterm = () => {
     terms.loadAddon(fitAddon);
     fitAddon.fit();
 
+    // window.onresize = () => {
+    //     console.log(123)
+    //     fitAddon.fit();
+    // };
+
     console.log(terms)
     window.addEventListener("resize", resizeScreen);
     function resizeScreen() {
@@ -147,14 +196,13 @@ const stringToUint8Array = (str: string) => {
 
 const initSocket = () => {
     console.log(term)
-   
+
     if (typeof WebSocket === "undefined") {
         alert("您的浏览器不支持socket");
     } else {
         websocket = new WebSocket(path.value);
         websocket.onopen = () => {
             console.log('成功')
-
             onOpen();
         };
         websocket.onmessage = (evt: any) => {
@@ -187,8 +235,8 @@ const onData = (msg: any) => {
         });
 }
 const onOpen = () => {
-    let {cols,rows} = term
-    console.log(cols)
+    console.log(term)
+    let { cols, rows } = term
     let mesType = sectran_chard.secterm.v1.SectermMessageType.SectermConnectRequestMessage
     let connectMessage = new sectran_chard.secterm.v1.SectermConnectRequest
     connectMessage.token = ''
@@ -246,8 +294,14 @@ const connectFormState = reactive<ConnectFormState>({
 
 const on_connectFinish = () => {
     console.log(connectFormState)
-    initXterm()
-    initSocket()
+    isConnect.value = true
+
+    nextTick(() => {
+        connectOpen.value = false
+        initXterm()
+        initSocket()
+    })
+
 }
 
 
@@ -265,22 +319,33 @@ const on_connectFinish = () => {
 
 </script>
 <style scoped lang='less'>
-#terminal {
-    height: 700px;
-    padding: 10px 15px;
+.content-style {
+    padding: 20px;
+    height: 100%;
 }
 
-.configuration-style {
-    width: 100%;
-    height: 100vh;
+#terminal {
+    height: 100%;
+    
 
+}  
+
+.configuration-style {
     .configuration-nav {
-        height: 30px;
+        height: 40px;
+        padding: 0 40px;
+        line-height: 40px;
         background: #463E3E;
+        color: #ffffff;
+        font-size: 16px;
+
+        .ant-dropdown-link {
+            margin-right: 20px;
+        }
     }
 
     .Content-style {
-        height: calc(100vh - 30px);
+        height: calc(100vh - 40px);
 
         .Content-left {
             background: #2F2A2A;
@@ -289,6 +354,21 @@ const on_connectFinish = () => {
             ::v-deep(.ant-tree-list) {
                 background: #2F2A2A;
                 color: #ffffff;
+            }
+        }
+
+        .placeholder-style {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+
+            div {
+                div {
+                    font-size: 18px;
+                    margin-bottom: 20px;
+                    color: #267BFC;
+                }
             }
         }
     }
