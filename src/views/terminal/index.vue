@@ -136,7 +136,7 @@ const write = (data: any) => {
     socket.send(stringToUint8Array(data));
 }
 const stringToUint8Array = (str: string) => {
-    console.log(str)
+    // console.log(str)
     var arr = [];
     for (var i = 0, j = str.length; i < j; ++i) {
         arr.push(str.charCodeAt(i));
@@ -158,7 +158,7 @@ const initSocket = () => {
             onOpen();
         };
         websocket.onmessage = (evt: any) => {
-            console.log(evt)
+            // console.log(evt)
             onData(evt.data);
         };
         websocket.onerror = (evt: any) => {
@@ -175,10 +175,11 @@ const initSocket = () => {
     }
 }
 const onData = (msg: any) => {
-    console.log(msg)
+    console.log(msg.text())
 
 
     msg.text().then((data: any) => {
+        console.log(data)
         term.write(data);
     })
         .catch((err: string) => {
@@ -186,7 +187,8 @@ const onData = (msg: any) => {
         });
 }
 const onOpen = () => {
-    let {cols,rows} = term._publicOptions
+    let {cols,rows} = term
+    console.log(cols)
     let mesType = sectran_chard.secterm.v1.SectermMessageType.SectermConnectRequestMessage
     let connectMessage = new sectran_chard.secterm.v1.SectermConnectRequest
     connectMessage.token = ''
