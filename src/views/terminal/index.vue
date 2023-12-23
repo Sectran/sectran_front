@@ -271,7 +271,7 @@ const initSocket = () => {
         alert("您的浏览器不支持socket");
     } else {
         websocket = new WebSocket(path.value);
-        websocket.binaryType = 'arraybuffer';
+        // websocket.binaryType = 'arraybuffer';
         websocket.onopen = () => {
             console.log("成功");
             onOpen();
@@ -296,13 +296,35 @@ const initSocket = () => {
     }
 };
 const onData = async (msg: any) => {
+
+
+    // if (msg.length > 3) {
+    //     let dataMsg = sectran_chard.secterm.v1.SectermMessage.decode(msg)
+    //     console.log(dataMsg)
+    // }
+
     console.log(msg)
+    const blob: Blob = msg;
+    // Uint8Array 接收的是arrayBuffer对象这里一定要注意如果是Blob格式的数据一定要先转为arrayBuffer
+    const buffer = await blob.arrayBuffer();
+    const data = new Uint8Array(buffer);
+    const message = sectran_chard.secterm.v1.SectermMessage.decode(data);
 
-    if (msg.length > 3) {
-        let dataMsg = sectran_chard.secterm.v1.SectermMessage.decode(msg)
-        console.log(dataMsg)
+ 
+    switch (message.mesType) {
+        case sectran_chard.secterm.v1.SectermMessageType.SectranTeminalCharactersMessage:
+            console.log(message.characters)
+            console.log(message.mesType)
+            // const blob1: Blob = message.characters;
+            // // Uint8Array 接收的是arrayBuffer对象这里一定要注意如果是Blob格式的数据一定要先转为arrayBuffer
+            // const buffer1 = await blob1.arrayBuffer();
+            // const data1 = new Uint8Array(buffer1);
+            // const message1 = sectran_chard.secterm.v1.SectermMessage.decode(data1);
+       
+            term.write(message.characters?.Data);
+
     }
-
+    return
 
 
     msg.text().then(async (data: any) => {
@@ -318,7 +340,7 @@ const onData = async (msg: any) => {
         console.log(message)
         // console.log(`Receive message from server: ${JSON.stringify(message)}`);
         // console.log(data);
-        term.write(data);
+        // term.write(data);
     }).catch((err: string) => {
         console.log(err);
     });
