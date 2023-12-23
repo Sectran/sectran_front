@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package sectran_chard.secterm.v1;
+
+option go_package = "sectran_chard/secterm/v1;sectermv1";
+
+message SectermTerminalResize {
+    // 终端宽度（每字符）
+    fixed32 colums = 1;
+    // 终端高度（没字符）
+    fixed32 rows = 2;
+}
+
+message SectranTeminalCharacters {
+    // 终端数据
+    bytes Data = 1;
+}

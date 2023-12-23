@@ -37,7 +37,7 @@ message SectermConnectRequest {
     }
     // target hostname.(when sectran unmanaged)
     string hostname = 9;
-    // taeget server port
+    // taeget server port (when sectran unmanaged)
     int32 port = 10;
     // target host auth protocol.(when sectran unmanaged)
     SectermProtocols protocol = 11;

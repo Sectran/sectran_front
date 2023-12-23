@@ -5,18 +5,11 @@ package sectran_chard.secterm.v1;
 option go_package = "sectran_chard/secterm/v1;sectermv1";
 
 import "./chard_h5_nego.proto";
-import "./chard_h5_terminal.proto";
 
 //TODO: add the other message type
 enum SectermMessageType{
-    // connect request message 连接请求消息
     SectermConnectRequestMessage = 0;
-    // connect response message 连接回应消息
     SectermConnectResponseMessage = 1;
-    // window size change message 窗口大小变动
-    SectranTeminalResizeMessage = 2;
-    // terminale message 终端消息
-    SectranTeminalCharactersMessage = 3;
 }
 
 //need write length(uint32 little endian) before send proto message
@@ -24,8 +17,5 @@ message SectermMessage {
     SectermMessageType mes_type = 2;
     oneof data{
         SectermConnectRequest request = 3;
-        SectermConnectResponse response = 4;
-        SectermTerminalResize resize = 5;
-        SectranTeminalCharacters characters = 6;
     }
 }
