@@ -268,14 +268,44 @@ const runFakeTerminal = () => {
 };
 
 const write = (data: any) => {
-  console.log(data);
+  //   let { cols, rows } = term;
+  // let mesType =
+  //   sectran_chard.secterm.v1.SectermMessageType.SectermConnectRequestMessage;
+  // let connectMessage = new sectran_chard.secterm.v1.SectermConnectRequest();
+  // connectMessage.token = "";
+  // connectMessage.Colums = cols;
+  // connectMessage.Rows = rows;
+  // connectMessage.unmanaged = true;
+  // connectMessage.username = connectFormState.username;
+  // connectMessage.hostname = "101.133.229.239";
+  // connectMessage.port = 22;
+  // connectMessage.password = stringToUint8Array(connectFormState.password);
+  // connectMessage.authMethod = sectran_chard.secterm.v1.AuthMethod.PASSWORD_AUTH;
+  // let sectermMessage = new sectran_chard.secterm.v1.SectermMessage();
+  // sectermMessage.request = connectMessage;
+  // sectermMessage.mesType = mesType;
+  // let data =
+  //   sectran_chard.secterm.v1.SectermMessage.encode(sectermMessage).finish();
+  // let len: number = data.length;
+  // const uintArr = Uint32Array.from([len]);
+  // websocket.send(uintArr);
+  // websocket.send(data);
+
   let sectermMessage = new sectran_chard.secterm.v1.SectermMessage();
   sectermMessage.mesType =
     sectran_chard.secterm.v1.SectermMessageType.SectranTeminalCharactersMessage;
-  // sectermMessage.request = stringToUint8Array(data)
-  // sectermMessage.Data = stringToUint8Array(data)
-  // sectermMessage.Data = stringToUint8Array(data)
-  socket.send(sectermMessage);
+
+  let chars = new sectran_chard.secterm.v1.SectranTeminalCharacters();
+  chars.Data = stringToUint8Array(data);
+
+  sectermMessage.characters = chars;
+  let smBuffer =
+    sectran_chard.secterm.v1.SectermMessage.encode(sectermMessage).finish();
+
+  let len: number = smBuffer.length;
+  const uintArr = Uint32Array.from([len]);
+  websocket.send(uintArr);
+  websocket.send(smBuffer);
 };
 
 const stringToUint8Array = (str: string) => {
@@ -334,6 +364,7 @@ const onData = async (msg: any) => {
       console.log("unknow secterm message type of " + sm.mesType);
   }
 };
+
 const onOpen = () => {
   let { cols, rows } = term;
   let mesType =
