@@ -2,7 +2,7 @@
 type configurationStore = {
     colorPrimary: string | null
     theme: string | null
-    isCompact:boolean
+    isCompact: boolean
 }
 
 export default {
@@ -10,7 +10,17 @@ export default {
     state: {
         colorPrimary: localStorage.getItem('colorPrimary') || "rgb(22, 119, 255)",
         theme: localStorage.getItem('theme') || "theme-light",
-        isCompact:false
+        isCompact: false,
+        watermarkConfiguration: {
+            content: 'Sectran',
+            font: {
+                fontSize: 14,
+            },
+            zIndex: 11,
+            rotate: -22,
+            gap: [70, 70] as [number, number],
+            offset: [],
+        }
     },
     mutations: {
         alterColorPrimary(state: configurationStore, color: string) {
@@ -23,7 +33,7 @@ export default {
             window.document.documentElement.setAttribute('data-theme', state.theme)
         },
         compactMutations(state: configurationStore) {
-            state.isCompact = ! state.isCompact
+            state.isCompact = !state.isCompact
         }
 
     }

@@ -7,21 +7,17 @@
 
     algorithm: Fun_algorithm()
   }">
-
-
-<a-watermark v-bind="model">
     <router-view #="{ Component }">
       <component :is="Component" />
     </router-view>
 
-  </a-watermark>
     <!-- <LockScreen /> -->
   </ConfigProvider>
 </template>
 
 <script setup lang="ts">
 import { theme } from 'ant-design-vue';
-import { watch, ref ,reactive} from 'vue';
+import { watch, ref } from 'vue';
 import { ConfigProvider } from 'ant-design-vue';
 import en from 'ant-design-vue/es/locale/en_US';
 import zh from 'ant-design-vue/es/locale/zh_CN';
@@ -39,16 +35,7 @@ watch(locale, (val: string) => {
   dayjs.locale(val);
 });
 
-const model = reactive({
-  content: 'Sectran',
-  font: {
-    fontSize: 14,
-  },
-  zIndex: 11,
-  rotate: -22,
-  gap: [70, 70] as [number, number],
-  offset: [],
-});
+
 
 window.document.documentElement.setAttribute('data-theme', store.state.globalConfiguration.theme)
 const Fun_algorithm = () => {

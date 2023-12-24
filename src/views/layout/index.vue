@@ -1,12 +1,16 @@
 <template>
-  <a-layout class="layout-style">
-    <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible class="a-sider">
-      <AsideMenu></AsideMenu>
-    </a-layout-sider>
-    <a-layout>
-      <Headers v-model:collapsed="collapsed"></Headers>
-      <Tabs></Tabs>
-   
+  <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
+
+    <a-layout class="layout-style">
+
+
+      <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible class="a-sider">
+        <AsideMenu></AsideMenu>
+      </a-layout-sider>
+      <a-layout>
+        <Headers v-model:collapsed="collapsed"></Headers>
+        <Tabs></Tabs>
+
 
         <a-layout-content class="content-style ">
           <router-view v-slot="{ Component }">
@@ -20,12 +24,13 @@
             </template>
           </router-view>
         </a-layout-content>
-   
+
+      </a-layout>
     </a-layout>
-  </a-layout>
+  </a-watermark>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted ,} from "vue";
+import { ref, onMounted, } from "vue";
 import AsideMenu from './menu/index.vue';
 import Headers from './header/index.vue';
 import Tabs from './tabs/index.vue';
@@ -43,8 +48,6 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
-
-
 @import "@/assets/css/transition.less";
 
 .layout-style {
