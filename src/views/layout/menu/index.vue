@@ -1,7 +1,10 @@
 <template>
   <div class="menu-style">
     <div class="logo">
-      <!-- <img src="" alt=""> -->
+      <img :src="logo" alt="">
+      <template v-if="!collapsed">
+        <div>Sectran</div>
+      </template>
     </div>
     <a-menu v-model:selectedKeys="menuState.selectedKeys" v-model:openKeys="menuState.openKeys" mode="inline">
       <a-sub-menu v-for="item in administration" :key="item.name">
@@ -26,6 +29,11 @@ import { useStore } from 'vuex'
 import administration from "@/router/Layout/index"
 import { routerType } from "@/utils/type"
 import { useI18n } from 'vue-i18n'
+import logo from '@/assets/img/logo.png'
+
+defineProps<{
+  collapsed: boolean,
+}>()
 const { t } = useI18n()
 const router = useRouter();
 const route = useRoute();
@@ -67,5 +75,19 @@ watch(
   height: 32px;
   background: rgba(255, 255, 255, 0.3);
   margin: 16px;
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  color: #4C7BFC;
+  font-weight: bold;
+
+  img {
+    width: 60px;
+    height: auto;
+  }
+
+  div {
+    margin-left: 5px;
+  }
 }
 </style>

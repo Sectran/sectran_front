@@ -1,9 +1,6 @@
 <template>
     <div id="terminal" ref="terminal"></div>
 </template>
-
-
-
 <script setup lang='ts'>
 import {
     onMounted,
@@ -23,10 +20,8 @@ let websocket = ref<any>("");
 let term = reactive<any>({});
 
 onMounted(() => {
-
     initXterm();
     initSocket();
-
 });
 
 const initXterm = () => {
