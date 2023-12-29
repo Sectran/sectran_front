@@ -12,12 +12,10 @@ type pageData = {
     pageSize: number
 }
 
-// type resTable = {
-//     list: any
-//     PageInfo: {
-//         total:number
-//     }
-// }
+type resTable = {
+    Data: any
+    Total:number
+}
 
 /**
  * 
@@ -86,14 +84,13 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
 
     //请求接口
     const requestList = () => {
-        console.log({ ...pageData, ...searchFrom })
 
-        return
-        // requestApi.listApi(fromData).then((res: { data: resTable }) => {
-        //     let { list, PageInfo } = res.data
-        //     tableData.value = list
-        //     paginationOpt.total = PageInfo.total
-        // })
+        let fromData = { ...pageData, ...searchFrom }
+        requestApi.listApi(fromData).then((res:resTable ) => {
+            let { Data, Total } = res.Data
+            tableData.value = Data
+            paginationOpt.total =Total
+        })
     }
     //删除接口
     const handleDelete = (params: number) => {

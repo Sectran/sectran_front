@@ -42,6 +42,18 @@ let layoutRouter = [
                     title: 'uploadingAdmin',
                 },
             },
+            {
+                path: 'device',
+                name: 'device',
+                component: () => import('views/table/device.vue'),
+                meta: {
+                    title: 'deviceAdmin',
+                },
+            },
+
+
+            
+
 
 
 

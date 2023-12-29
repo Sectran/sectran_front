@@ -36,6 +36,13 @@ export default {
     asideMenu: {
         userinfo: '用户信息'
     },
+    device: {
+        deviceName: '设备名称',
+        deviceAddress:'设备地址',
+        deviceOsKind:'系统类型',
+        deviceEncoding:'字符编码',
+
+    },
     public: {
         Submit: '提 交',
         delete: '删 除',
@@ -45,12 +52,17 @@ export default {
         reset: "重 置",
         search: "搜 索",
         creationTime:"创建时间",
+        departmentID:'部门ID',
+        Description:'描述',
+        pleaseInput:'请输入',
+        pleaseSelect:`请选择`
     },
     menu: {
         configuration: '配置',
         userAdmin: '人员管理',
         departmentAdmin: '部门管理',
         roleAdmin: "角色管理",
-        uploadingAdmin: "连接管理"
+        uploadingAdmin: "连接管理",
+        deviceAdmin:"设备管理"
     }
 }

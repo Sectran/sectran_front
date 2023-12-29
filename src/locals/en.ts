@@ -39,6 +39,14 @@ export default {
         add_user: 'add_user'
     },
 
+
+    device: {
+        deviceName: 'deviceName',
+        deviceAddress:'deviceAddress',
+        deviceOsKind:'deviceOsKind',
+        deviceEncoding:'deviceEncoding',
+    },
+
     asideMenu: {
         userinfo: 'userinfo'
     },
@@ -51,6 +59,10 @@ export default {
         reset: "redact",
         search: "search",
         creationTime:"creation time",
+        departmentID:'departmentID',
+        Description:'description',
+        pleaseInput:'please input',
+        pleaseSelect:`please select`
 
     },
     menu: {
@@ -58,7 +70,8 @@ export default {
         userAdmin: 'user admin',
         departmentAdmin: 'department admin',
         roleAdmin: "role admin",
-        uploadingAdmin: "uploading admin"
+        uploadingAdmin: "uploading admin",
+        deviceAdmin:"device admin"
     }
 
 

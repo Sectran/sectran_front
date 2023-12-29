@@ -19,6 +19,9 @@ export const addRole =<T>(data:T)=> requests(`${prefix}/role/add`,data)
 export const editRole =<T>(data:T)=> requests(`${prefix}/role/edit`,data)
 export const deleteRole =<T>(data:T)=> requests(`${prefix}/role/delete`,data)
 
+//设备列表
+export const deviceList =<T>(data:T)=> requests(`/device/listDevice`,data)
+export const addDevice =<T>(data:T)=> requests(`/device/addDevice`,data)
 
 
 
