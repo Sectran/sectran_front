@@ -72,16 +72,12 @@ const initXterm = () => {
         }
     })
 
-    terms.onSelectionChange(() => {
-        if (term.hasSelection()) {
-            // this.copy = term.getSelection();
-            // console.log("onselectchange", this.copy);
-        }
-    });
-
-
-
-
+    // terms.onSelectionChange(() => {
+    //     if (term.hasSelection()) {
+    //         // this.copy = term.getSelection();
+    //         // console.log("onselectchange", this.copy);
+    //     }
+    // });
 
     // canvas背景全屏
     const fitAddon = new FitAddon();
@@ -127,6 +123,7 @@ const initSocket = () => {
         alert("您的浏览器不支持socket");
     } else {
         websocket = new WebSocket(path.value);
+        console.log(websocket)
         websocket.binaryType = 'arraybuffer';
         websocket.onopen = () => {
             onOpen();
@@ -170,8 +167,9 @@ const onData = (msg: any) => {
 
 const onOpen = () => {
     let { cols, rows } = term;
-    console.log(props)
+
     let connectParams = { token: '', Colums: cols, Rows: rows, unmanaged: true, username: props.username, hostname: '101.133.229.239', port: 22, password: props.password }
+    console.log(connectParams)
     let { uintArr, connectData } = sectermConnectRequest(connectParams)
     websocket.send(uintArr);
     websocket.send(connectData);
@@ -197,15 +195,14 @@ onUnmounted(() => {
 
 <style scoped lang='less'>
 .terminal-div {
-    height: calc(100% - 20px);
-    padding: 10px;
+    height: calc(100% - 30px);
+    padding: 10px 10px 20px 20px;
     box-sizing: content-box;
 }
 
 #terminal {
     height: 100%;
     width: 100%;
-
     ::-webkit-scrollbar {
         width: 8px;
     }

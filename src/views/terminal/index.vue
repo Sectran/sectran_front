@@ -33,9 +33,9 @@
                         <!-- @edit="onEdit" -->
                         <a-tabs v-model:activeKey="activeKey" hide-add type="editable-card" :forceRender="true">
                             <a-tab-pane v-for="(item,index) in xtermList" :key="index" :tab="item.name" :closable="true">
+                                <!-- <div style="height: 30px;">1312312</div> -->
                                 <xterm :username="item.username" :password="item.password"></xterm>
                             </a-tab-pane>
-
                             <!-- <template #rightExtra>
                                 <div class="tab-right">
                                     <PlusSquareOutlined class="nav-icon" />
@@ -61,7 +61,6 @@
         <!-- @ok="handleOk" -->
         <!-- @click="handleOk" -->
         <a-modal v-model:open="connectOpen" title="链接 Linux" :footer="null" :width="800">
-
             <a-form :model="connectFormState" name="basic" @finish="on_connectFinish" :label-col="{ span: 3 }"
                 :wrapper-col="{ span: 21 }" autocomplete="off">
 
@@ -176,19 +175,16 @@ const { t } = useI18n();
 let connectOpen = ref<Boolean>(false);
 
 const activeKey = ref(0);
-let xtermList: XtermList[] = [ { name: '1_root@iZuf64kquo56ciwmfp', username: "root", password: "Ryan@1218pass" }, { name: '1_root@iZuf64kquo56ciwmfp', username: "root", password: "Ryan@1218pass" }]
-
+let xtermList: XtermList[] = []
+// { name: '1_root@iZuf64kquo56ciwmfp', username: "root", password: "Ryan@1218pass" }
 
 onBeforeMount(() => {
-    //console.log('2.组件挂载页面之前执行----onBeforeMount')
 });
 onMounted(() => {
     window.addEventListener("beforeunload", (e: any) => {
         e.returnValue = "您确定要离开吗？请确认是否保存您的更改。";
         e.preventDefault();
     });
-
-    //console.log('3.-组件挂载到页面之后执行-------onMounted')
 });
 watchEffect(() => { });
 
@@ -212,8 +208,9 @@ const connectFormState = reactive<ConnectFormState>({
 
 const on_connectFinish = () => {
     let { username, password } = connectFormState
-    xtermList.push({username,password,name: '1_root@iZuf64kquo56ciwmfp'})
+    
     nextTick(() => {
+        xtermList.push({username,password,name: '1_root@iZuf64kquo56ciwmfp'})
         connectOpen.value = false;
     });
 };
