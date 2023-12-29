@@ -20,27 +20,29 @@
                 </a-dropdown>
             </div>
             <!-- <div @click="value++">{{ value}}</div> -->
-            <a-row class="Content-style">
-            
-                <a-col :span="4" class="Content-left">
+            <div class="Content-style">
+                <div class="Content-left">
                     <a-directory-tree multiple default-expand-all @select="on_node">
                         <a-tree-node key="0-0" title="Default">
                             <a-tree-node key="0-0-0" title="Linux" is-leaf />
                         </a-tree-node>
                     </a-directory-tree>
-                </a-col>
-                <a-col :span="20" class="content-style">
-                    <a-row class="xterm-div" v-if="isConnect">
-                        <a-col :span="24 / value" v-for="item in value" :key="item">
-                            <xterm></xterm>
-                        </a-col>
-                        <!-- <a-col :span="12">
-                            <xterm></xterm>
-                        </a-col>
-                        <a-col :span="12">
-                            <xterm></xterm>
-                        </a-col> -->
-                    </a-row>
+                </div>
+                <div class="Content-right">
+                    <div class="xterm-div" v-if="xtermList.length !== 0">
+                        <!-- @edit="onEdit" -->
+                        <a-tabs v-model:activeKey="activeKey" hide-add type="editable-card" :forceRender="true">
+                            <a-tab-pane v-for="(item,index) in xtermList" :key="index" :tab="item.name" :closable="true">
+                                <!-- <div style="height: 30px;">1312312</div> -->
+                                <xterm :username="item.username" :password="item.password"></xterm>
+                            </a-tab-pane>
+                            <!-- <template #rightExtra>
+                                <div class="tab-right">
+                                    <PlusSquareOutlined class="nav-icon" />
+                                </div>
+                            </template> -->
+                        </a-tabs>
+                    </div>
 
                     <div v-else class="placeholder-style">
                         <div>
@@ -52,68 +54,94 @@
                             <div>显示/隐藏状态栏</div>
                         </div>
                     </div>
-                </a-col>
-            </a-row>
+                </div>
+            </div>
         </div>
 
         <!-- @ok="handleOk" -->
         <!-- @click="handleOk" -->
-        <a-modal v-model:open="connectOpen" title="链接 Linux" :footer="null">
-            <a-tabs v-model:activeKey="connectKey">
-                <a-tab-pane key="1" tab="密码验证">
-                    <a-form :model="connectFormState" name="basic" @finish="on_connectFinish" :label-col="{ span: 4 }"
-                        :wrapper-col="{ span: 20 }" autocomplete="off">
-                        <a-form-item label="账号" name="username" :rules="[
-                            { required: true, message: 'Please input your username!' },
-                        ]">
-                            <a-input v-model:value="connectFormState.username" />
-                        </a-form-item>
+        <a-modal v-model:open="connectOpen" title="链接 Linux" :footer="null" :width="800">
+            <a-form :model="connectFormState" name="basic" @finish="on_connectFinish" :label-col="{ span: 3 }"
+                :wrapper-col="{ span: 21 }" autocomplete="off">
 
-                        <a-form-item label="密码" name="password" :rules="[
-                            { required: true, message: 'Please input your password!' },
-                        ]">
-                            <a-input-password v-model:value="connectFormState.password" />
-                        </a-form-item>
+                <a-form-item label="网络连接" name="network">
+                    <a-radio-group v-model:value="connectFormState.network">
+                        <a-radio :value="1">101.133.229.239（公网）</a-radio>
+                        <a-radio :value="2">172.27.101.182（私网）</a-radio>
+                        <a-radio :value="3">运维安全中心</a-radio>
+                    </a-radio-group>
+                </a-form-item>
 
-                        <a-form-item :wrapper-col="{ offset: 0, span: 24 }">
-                            <a-button style="width: 100%" type="primary" html-type="submit">{{
-                                t("public.Submit")
-                            }}</a-button>
-                        </a-form-item>
-                    </a-form>
-                </a-tab-pane>
-                <a-tab-pane key="2" tab="SSH密钥认证" force-render>
-                    <a-form :model="connectFormState" name="basic" @finish="on_connectFinish" :label-col="{ span: 4 }"
-                        :wrapper-col="{ span: 20 }" autocomplete="off">
-                        <a-form-item label="用户名" name="username" :rules="[
-                            { required: true, message: 'Please input your username!' },
-                        ]">
-                            <a-input v-model:value="connectFormState.username" />
-                        </a-form-item>
-                        <a-form-item label="私钥" name="username" :rules="[
-                            { required: true, message: 'Please input your username!' },
-                        ]">
-                            <a-textarea v-model:value="connectFormState.password">
-                            </a-textarea>
-                            <a-upload name="file" action="https://www.mocky.io/v2/5cc8019d300000980a055e76">
-                                <a-button>
-                                    <upload-outlined></upload-outlined>
-                                    Click to Upload
-                                </a-button>
-                            </a-upload>
+                <a-form-item label="认证方式" name="attestationType">
+                    <a-radio-group v-model:value="connectFormState.attestationType">
+                        <a-radio :value="1">密码认证</a-radio>
+                        <a-radio :value="2">SSH密钥认证</a-radio>
+                    </a-radio-group>
+                </a-form-item>
 
+                <template v-if="connectFormState.attestationType === 1">
+                    <a-form-item label="账号" name="username" :rules="[
+                        { required: true, message: 'Please input your username!' },
+                    ]">
+                        <a-input v-model:value="connectFormState.username" />
+                    </a-form-item>
 
-                        </a-form-item>
+                    <a-form-item label="密码" name="password" :rules="[
+                        { required: true, message: 'Please input your password!' },
+                    ]">
+                        <a-input-password v-model:value="connectFormState.password" />
+                    </a-form-item>
+                </template>
 
+                <template v-else-if="connectFormState.attestationType === 2">
+                    <a-form-item label="用户名" name="username" :rules="[
+                        { required: true, message: 'Please input your username!' },
+                    ]">
+                        <a-input v-model:value="connectFormState.username" />
+                    </a-form-item>
+                    <a-form-item label="私钥" name="password" :rules="[
+                        { required: true, message: 'Please input your username!' },
+                    ]">
+                        <div>
+                            <div class="private-key">
+                                <a-textarea class="textarea-style" :autosize="false"
+                                    v-model:value="connectFormState.password">
+                                </a-textarea>
+                                <a-form-item-rest>
 
-                        <a-form-item :wrapper-col="{ offset: 0, span: 24 }">
-                            <a-button style="width: 100%" type="primary" html-type="submit">{{
-                                t("public.Submit")
-                            }}</a-button>
-                        </a-form-item>
-                    </a-form>
-                </a-tab-pane>
-            </a-tabs>
+                                    <a-upload name="file" action="https://www.mocky.io/v2/5cc8019d300000980a055e76">
+                                        <a-button>
+                                            <upload-outlined></upload-outlined>
+                                        </a-button>
+                                    </a-upload>
+                                </a-form-item-rest>
+                                <div class="shibboleth-style">
+                                    <div class="shibboleth-text">
+                                        私钥口令：
+                                    </div>
+                                    <a-form-item-rest>
+                                        <a-input class="shibboleth-input" v-model:value="connectFormState.password"
+                                            placeholder="Basic usage">
+                                            <template #prefix>
+                                                <LockOutlined />
+                                            </template>
+                                        </a-input>
+                                    </a-form-item-rest>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </a-form-item>
+                </template>
+                <a-form-item :wrapper-col="{ offset: 0, span: 24 }">
+                    <a-button style="width: 100%" type="primary" html-type="submit">{{
+                        t("public.Submit")
+                    }}</a-button>
+                </a-form-item>
+
+            </a-form>
+
             <!-- :loading="loading" -->
         </a-modal>
     </a-watermark>
@@ -132,30 +160,31 @@ import {
 import { useI18n } from "vue-i18n";
 import { headMenu } from "./menu.ts"
 import { useStore } from 'vuex'
-import { UploadOutlined } from '@ant-design/icons-vue';
+// PlusSquareOutlined
+import { UploadOutlined, LockOutlined, } from '@ant-design/icons-vue';
 import xterm from "./components/xterm.vue"
+
+type XtermList = {
+    name: string
+    username: string
+    password: string
+}
+
 const store = useStore()
 const { t } = useI18n();
-
-const connectKey = ref("1");
-// let dataLength = ref(0);
-let value = ref(1)
-
 let connectOpen = ref<Boolean>(false);
-let isConnect = ref<Boolean>(false);
 
-// let headNavigation
+const activeKey = ref(0);
+let xtermList: XtermList[] = []
+// { name: '1_root@iZuf64kquo56ciwmfp', username: "root", password: "Ryan@1218pass" }
 
 onBeforeMount(() => {
-    //console.log('2.组件挂载页面之前执行----onBeforeMount')
 });
 onMounted(() => {
     window.addEventListener("beforeunload", (e: any) => {
         e.returnValue = "您确定要离开吗？请确认是否保存您的更改。";
         e.preventDefault();
     });
-
-    //console.log('3.-组件挂载到页面之后执行-------onMounted')
 });
 watchEffect(() => { });
 
@@ -166,33 +195,77 @@ const on_node = () => {
 interface ConnectFormState {
     username: string;
     password: string;
+    attestationType: number
+    network: number
 }
 
 const connectFormState = reactive<ConnectFormState>({
-    username: "root",
-    password: "Ryan@1218pass",
+    username: "",
+    password: "",
+    attestationType: 1,
+    network: 1,
 });
 
 const on_connectFinish = () => {
-    isConnect.value = true;
+    let { username, password } = connectFormState
+    
     nextTick(() => {
+        xtermList.push({username,password,name: '1_root@iZuf64kquo56ciwmfp'})
         connectOpen.value = false;
-
     });
 };
 </script>
 <style scoped lang='less'>
-.content-style {
-    padding: 20px;
-    height: 100%;
-}
-
 .xterm-div {
     height: 100%;
 }
 
+::v-deep(.ant-tabs) {
+    height: 100%;
+
+    .ant-tabs-content {
+        height: 100%;
+    }
+}
+
+.private-key {
+    display: flex;
+
+    .textarea-style {
+        height: 80px;
+        border-radius: 6px 0 0 6px;
+        border-right: none;
+
+    }
+
+    button {
+        height: 100%;
+        border-radius: 0 6px 6px 0;
+    }
+
+    .shibboleth-style {
+        display: flex;
+        margin-left: 40px;
+        align-items: center;
+
+        .shibboleth-text {
+            white-space: nowrap;
+        }
+
+        .shibboleth-input {
+            width: 200px;
+            height: 45px;
+        }
+    }
+
+    ::v-deep(.ant-upload) {
+        height: 100%;
+    }
+}
+
 
 .configuration-style {
+
     .configuration-nav {
         height: 40px;
         padding: 0 40px;
@@ -201,22 +274,29 @@ const on_connectFinish = () => {
         color: #ffffff;
         font-size: 14px;
 
-        .ant-dropdown-link {
+        ::v-deep(.ant-dropdown-link) {
             margin-right: 20px;
         }
     }
 
     .Content-style {
         height: calc(100vh - 40px);
+        display: flex;
 
         .Content-left {
+            width: 300px;
             background: #2f2a2a;
             padding: 20px;
 
+            // height: 100%;
             ::v-deep(.ant-tree-list) {
                 background: #2f2a2a;
                 color: #ffffff;
             }
+        }
+
+        .Content-right {
+            flex: 1;
         }
 
         .placeholder-style {
@@ -234,5 +314,10 @@ const on_connectFinish = () => {
             }
         }
     }
+}
+
+.tab-right {
+    padding-right: 20px;
+
 }
 </style>

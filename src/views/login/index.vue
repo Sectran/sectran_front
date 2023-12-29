@@ -1,36 +1,41 @@
 <template>
     <div class="login">
+        <div class="logo-style">
+            <img :src="logo" alt="">
+            <div >Sectran</div>
+        </div>
+
         <div class="login-content">
-            <div class="login-img">
-                <img src="https://photo.16pic.com/00/12/28/16pic_1228887_b.jpg" alt="">
-            </div>
             <div class="login-from">
                 <div class="flex-space-between-center">
-                    <div class="login-title">{{ uselocals('login.login') }}</div>
-                    
-                </div>
+                    <div class="login-title">
 
+                        <div>{{ uselocals('login.login') }}</div>
+                    </div>
+
+                </div>
                 <a-form :model="formState" layout="vertical" name="basic" :label-col="{ span: 8 }" autocomplete="off"
                     @finish="onFinish" @finishFailed="onFinishFailed">
-                    <a-form-item :label="uselocals('login.account')"
+                    <!-- :label="uselocals('login.account')" -->
+                    <a-form-item 
                         :rules="[{ required: true, message: uselocals('login.accountMessage') }]" name="account">
-                        <a-input class="input-heigth" v-model:value="formState.account">
+                        <a-input class="input-heigth" v-model:value="formState.account" placeholder="请输入账号">
                             <template #prefix>
                                 <UserOutlined class="site-form-item-icon" />
                             </template>
                         </a-input>
                     </a-form-item>
-                    <a-form-item :label="uselocals('login.password')"
+                    <!-- :label="uselocals('login.password')" -->
+                    <a-form-item 
                         :rules="[{ required: true, message: uselocals('login.passwordMessage') }]" name="password">
-                        <a-input-password class="input-heigth" v-model:value="formState.password">
+                        <a-input-password class="input-heigth" v-model:value="formState.password" placeholder="请输入密码">
                             <template #prefix>
                                 <LockOutlined class="site-form-item-icon" />
                             </template>
                         </a-input-password>
                     </a-form-item>
-
                     <a-form-item>
-                        <a-button style="width: 100%;" type="primary" html-type="submit">{{ uselocals('login.login')
+                        <a-button style="width: 100%;height: 40px;" type="primary" html-type="submit">{{ uselocals('login.login')
                         }}</a-button>
                     </a-form-item>
                 </a-form>
@@ -46,6 +51,8 @@ import { reactive } from 'vue';
 import { uselocals } from "@/hooks/localsHooks"
 import { useRouter } from 'vue-router';
 // import { login } from "@/api/login"
+
+import logo from '@/assets/img/logo.png'
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 const router = useRouter();
 interface FormState {
@@ -85,19 +92,43 @@ const onFinishFailed = (errorInfo: any) => {
     position: relative;
     width: 100vw;
     height: 100vh;
-    background: #F3F3F3;
 
+    background-image: url('@/assets/img/login-bg.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    .logo-style {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        text-align: center;
+        top: 30px;
+        left: 100px;
+        color: #ffffff;
+        font-size: 28px;
+        font-weight: bold;
+        img {
+            width: 100px;
+            height: auto;
+        
+        }
+        div {
+            margin-left: 10px;
+        }
+
+    }
 
     .login-content {
         position: absolute;
         top: 50%;
-        left: 50%;
+        left: 75%;
         transform: translate(-50%, -50%);
-        width: 1000px;
+        width: 500px;
         background: #ffffff;
         display: flex;
         box-shadow: 0px 6px 24px 1px rgba(110, 110, 110, 0.18);
         border-radius: 20px;
+        overflow: hidden;
     }
 
     .login-img {
@@ -105,20 +136,21 @@ const onFinishFailed = (errorInfo: any) => {
 
         img {
             width: 100%;
-            height: auto;
+            height: 100%;
+            object-fit: cover;
         }
     }
 
     .login-from {
         flex: 1;
-        padding: 50px;
+        padding:50px 40px;
 
     }
 
     .login-title {
         font-size: 26px;
         color: #666666;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
     }
 
 

@@ -8,10 +8,10 @@
             </Breadcrumb> -->
         </div>
         <div class="nav-right">
-            <FullscreenOutlined v-if="store.state.globalConfiguration.isCompact"
+            <!-- <FullscreenOutlined v-if="store.state.globalConfiguration.isCompact"
                 @click="store.commit('globalConfiguration/compactMutations')" class="nav-icon nav-right-space" />
             <FullscreenExitOutlined v-else @click="store.commit('globalConfiguration/compactMutations')"
-                class="nav-icon nav-right-space" />
+                class="nav-icon nav-right-space" /> -->
             <LaptopOutlined class="nav-icon nav-right-space" @click="on_terminal" />
             <BulbOutlined @click="on_theme" class="nav-icon nav-right-space" />
             <a-dropdown>
@@ -61,8 +61,8 @@ import {
     BulbOutlined,
     LaptopOutlined,
     UserOutlined,
-    FullscreenExitOutlined,
-    FullscreenOutlined
+    // FullscreenExitOutlined,
+    // FullscreenOutlined
 } from "@ant-design/icons-vue";
 // Breadcrumb
 import { useI18n } from 'vue-i18n'

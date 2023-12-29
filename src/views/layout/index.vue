@@ -5,10 +5,11 @@
 
 
       <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible class="a-sider">
-        <AsideMenu></AsideMenu>
+        <AsideMenu :collapsed="collapsed"></AsideMenu>
       </a-layout-sider>
       <a-layout>
         <Headers v-model:collapsed="collapsed"></Headers>
+  
         <Tabs></Tabs>
 
 
