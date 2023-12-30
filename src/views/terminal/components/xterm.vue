@@ -16,7 +16,7 @@ import { sectran_chard } from "../../../../secterm/secterm";
 import "xterm/css/xterm.css";
 import { sectermConnectRequest, sectermTeminalResize, secTeminalCharacters } from "@/utils/method/proto"
 // import { throttle } from "@/utils/method/utils"
-import { throttle } from 'lodash'
+import { debounce } from 'lodash'
 const v1 = sectran_chard.secterm.v1
 let terminal = ref(null);
 let path = ref<string>('ws://101.133.229.239:19529')
@@ -83,7 +83,7 @@ const initXterm = () => {
     const fitAddon = new FitAddon();
     terms.loadAddon(fitAddon);
     fitAddon.fit();
-    resizeScreen = throttle(() => {
+    resizeScreen = debounce(() => {
         try {
             console.log("改变")
             // fitAddon.fit();
@@ -95,15 +95,12 @@ const initXterm = () => {
         } catch (e: any) {
             console.log("e", e.message);
         }
-    }, 3000, {
-        leading: false,
-        trailing: true
-    })
-    
-    window.addEventListener("resize", ()=>{
+    }, 3000)
+
+    window.addEventListener("resize", () => {
         fitAddon.fit();
         resizeScreen();
-    
+
     });
     term = terms;
     runFakeTerminal();
@@ -202,15 +199,17 @@ onUnmounted(() => {
 .xterm-screen {
     width: 100%;
 }
+
 .terminal-div {
-    width:  calc(100% - 30px);;
+    width: calc(100% - 30px);
+    ;
     height: calc(100% - 30px);
     padding: 10px 10px 20px 20px;
-    // box-sizing: content-box;
 }
 
 #terminal {
     height: 100%;
+
     // width: 100%;
     ::-webkit-scrollbar {
         width: 8px;
@@ -229,5 +228,4 @@ onUnmounted(() => {
         background-color: #555;
     }
 
-}
-</style>
+}</style>

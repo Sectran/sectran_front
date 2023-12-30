@@ -34,7 +34,7 @@
 
                         <a-tabs v-model:activeKey="activeKey" hide-add type="editable-card" :forceRender="true">
                             <a-tab-pane v-for="(item, index) in xtermList" :key="index" :tab="item.name" :closable="true">
-                                <xterm username="root" password="Ryan@1218pass"></xterm>
+                                <xterm :username="item.username" :password="item.password"></xterm>
 
                             </a-tab-pane>
                             <template #rightExtra>
