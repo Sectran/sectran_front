@@ -13,14 +13,13 @@ export default {
         passwordMessage: `${inputPublicEn} your password!`,
     },
     user: {
-        userName: 'userName',
-        usernamePlaceholder: `${inputPublicEn} userName`,
+        addUser:"add user",
+        userName:"userName",
         password: 'password',
-        passwordPlaceholder: `${inputPublicEn} password`,
-        userId: 'userId',
-        userIdPlaceholder: `${inputPublicEn} userId`,
+        mame: 'name',
+        userState:"user state",
         usereEmail:'email',
-        userEmailPlaceholder:`${inputPublicEn} email！`
+        telephone:'telephone'
     },
     department: {
         departmentName: 'name',
@@ -45,6 +44,15 @@ export default {
         deviceAddress:'deviceAddress',
         deviceOsKind:'deviceOsKind',
         deviceEncoding:'deviceEncoding',
+        deviceAccount :'deviceAccount',
+
+        deviceUsername:"设备账号名称",
+        Password:"password",
+        IsAdministrator:"isAdministrator",
+        Port:"port",
+        Protocol:"protocol",
+        PrivateKey:"rivateKey",
+        PrivateKeyPassword:"privateKeyPassword",
     },
 
     asideMenu: {
@@ -53,6 +61,7 @@ export default {
     public: {
         Submit: 'Submit',
         delete: 'delete',
+        deleteInBatches: 'delete in batches',
         add: 'add',
         redact: 'redact',
         operation: 'operation',
@@ -60,6 +69,7 @@ export default {
         search: "search",
         creationTime:"creation time",
         departmentID:'departmentID',
+        roleId:"role",
         Description:'description',
         pleaseInput:'please input',
         pleaseSelect:`please select`

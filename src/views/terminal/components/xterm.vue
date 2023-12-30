@@ -86,7 +86,7 @@ const initXterm = () => {
     resizeScreen = throttle(() => {
         try {
             console.log("改变")
-            fitAddon.fit();
+            // fitAddon.fit();
             let { cols, rows } = term;
             let resizeParams = { Colums: cols, Rows: rows }
             let { uintArr, resizeData } = sectermTeminalResize(resizeParams)
@@ -99,7 +99,12 @@ const initXterm = () => {
         leading: false,
         trailing: true
     })
-    window.addEventListener("resize", resizeScreen);
+    
+    window.addEventListener("resize", ()=>{
+        fitAddon.fit();
+        resizeScreen();
+    
+    });
     term = terms;
     runFakeTerminal();
 };
@@ -194,15 +199,19 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang='less'>
+.xterm-screen {
+    width: 100%;
+}
 .terminal-div {
+    width:  calc(100% - 30px);;
     height: calc(100% - 30px);
     padding: 10px 10px 20px 20px;
-    box-sizing: content-box;
+    // box-sizing: content-box;
 }
 
 #terminal {
     height: 100%;
-    width: 100%;
+    // width: 100%;
     ::-webkit-scrollbar {
         width: 8px;
     }

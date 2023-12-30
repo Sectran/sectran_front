@@ -35,10 +35,18 @@
             </a-form>
 
         </div>
-        <a-space class="mb8 justify-end">
-            <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
+        <a-space class="mb8 flex-space-between-center">
+            <a-space>
+                <a-button type="primary" @click="handleDelete(tableState.selectedRowKeys)"
+                    :disabled="tableState.selectedRowKeys.length === 0" danger>{{
+                        t('public.deleteInBatches') }}</a-button>
+            </a-space>
+            <a-space>
+                <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
+            </a-space>
         </a-space>
-        <a-table class="table-style" :columns="columns" :data-source="tableData" :pagination="paginationOpt">
+        <a-table rowKey="Id" class="table-style" :columns="columns" :data-source="tableData" :pagination="paginationOpt"
+            :row-selection="{ selectedRowKeys: tableState.selectedRowKeys, onChange: onTableSelectChange }">
             <template #headerCell="{ column }">
                 <span>{{ t(column.title) }}</span>
             </template>
@@ -47,9 +55,13 @@
                 <template v-if="column.dataIndex === 'operation'">
                     <a-space :size="8">
                         <a-button type="link" @click="on_redact(record)">{{ t('public.redact') }}</a-button>
-                        <a-button type="link" danger @click="handleDelete(record.id)">{{ t('public.delete') }}</a-button>
+                        <a-button type="link" danger @click="handleDelete([record.Id])">{{ t('public.delete') }}</a-button>
+                        <a-button type="link" @click="on_deviceAccount(record.Id, record.Name)">{{ t('device.deviceAccount')
+                        }}</a-button>
                     </a-space>
                 </template>
+                <template v-else-if="column.dataIndex === 'OsKind'">{{ record.OsKind === 1 ? 'Linux' : 'Windows'
+                }}</template>
             </template>
         </a-table>
 
@@ -76,38 +88,37 @@
                     </a-radio-group>
                 </a-form-item>
 
-                <a-form-item :label="t('device.deviceEncoding')" name="Address"
+                <a-form-item :label="t('device.deviceEncoding')" name="Encoding"
                     :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceEncoding')}` }]">
                     <a-input v-model:value="formState.Encoding"
                         :placeholder='`${t("public.pleaseInput")}${t("device.deviceEncoding")}`' />
                 </a-form-item>
 
-                <a-form-item :label="t('public.Description')" name="Address"
+                <a-form-item :label="t('public.Description')" name="Description"
                     :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('public.Description')}` }]">
                     <a-textarea v-model:value="formState.Description"
                         :placeholder='`${t("public.pleaseInput")}${t("public.Description")}`' />
                 </a-form-item>
-
-
-
-
-
                 <a-form-item :wrapper-col="{ offset: 4, span: 16 }">
                     <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
                 </a-form-item>
             </a-form>
+        </a-modal>
+
+        <a-modal v-model:open="accountOpen" width="1000px" :title='deviceItem.deviceName' :footer="null" :destroyOnClose="true">
+            <deviceAccount :deviceId="deviceItem.deviceId" />
         </a-modal>
     </div>
 </template>
 
 <script setup lang="ts">
 import { useTableHooks } from "@/hooks/useTableHooks"
-import { ref, reactive, h } from 'vue';
+import { ref, reactive, h, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n'
 // import type { Dayjs } from 'dayjs';
 import type { FormInstance } from 'ant-design-vue';
-
-import { addDevice, deviceList, deleteUser, edituser } from "@/api/admin"
+import deviceAccount from "./components/deviceAccount.vue"
+import { addDevice, deviceList, deleteDevice, updateDevice } from "@/api/admin"
 import { SearchOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons-vue';
 
 const { t } = useI18n()
@@ -122,7 +133,7 @@ type SearchType = {
 };
 
 type formStateType = {
-    id?: string
+    Id?: number | string
     Name: string
     Address: string
     OsKind: number | string
@@ -130,37 +141,43 @@ type formStateType = {
     DeptId: number
     Description: string
 }
-type listItemType = {
-    id: string,
-    userName: string,
-    password: string
-}
+
 
 type SystemType = {
     name: string
     value: number
 }
 
-let { paginationOpt, tableData, searchFormRef, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: deviceList, deleteApi: deleteUser });
+let { paginationOpt, tableData, searchFormRef, tableState, onTableSelectChange, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: deviceList, deleteApi: deleteDevice });
 const addOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({
     Name: "",
     Address: '',
-    OsKind: "", // 必填, 系统类型 1-Linux, 2-Windows
+    OsKind: "",
     Encoding: "",
     DeptId: 1,
     Description: ""
 });
 
 let systemTypeArr: SystemType[] = [{ name: "Linux", value: 1 }, { name: 'Windows', value: 2 }]
-
-
-
-
-
 const columns = [{
-    title: 'user.userName',
-    dataIndex: 'userName',
+    title: 'device.deviceName',
+    dataIndex: 'Name',
+}, {
+    title: 'device.deviceAddress',
+    dataIndex: 'Address',
+}, {
+    title: 'device.deviceOsKind',
+    dataIndex: 'OsKind',
+}, {
+    title: 'device.deviceEncoding',
+    dataIndex: 'Encoding',
+}, {
+    title: 'public.departmentID',
+    dataIndex: 'DeptId',
+}, {
+    title: 'public.Description',
+    dataIndex: 'Description',
 },
 {
     title: 'public.operation',
@@ -168,22 +185,27 @@ const columns = [{
 }
 ]
 
-const on_redact = (data: listItemType) => {
-    console.log(data.userName)
-    addOpen.value = true
-    // formState.userName = data.userName
-    // formState.password = data.password
-    formState.id = data.id
+
+const accountOpen = ref<boolean>(false);
+const deviceItem = reactive<{ deviceName: string, deviceId: number }>({ deviceName: "", deviceId: 0 })
+const on_deviceAccount = (id: number, name: string) => {
+    deviceItem.deviceId = id
+    deviceItem.deviceName = name
+    accountOpen.value = true
 }
 
+const on_redact = (data: formStateType) => {
+    addOpen.value = true
+    nextTick(() => {
+        for (const key in formState) {
+            formState[key] = data[key]
+        }
+    })
 
+    formState.Id = data.Id
+}
 const onFinish = () => {
-    let api
-    if (formState.id) {
-        api = edituser
-    } else {
-        api = addDevice
-    }
+    let api = formState.Id ? updateDevice : addDevice
     api(formState).then(() => {
         addOpen.value = false
         requestList()
@@ -192,7 +214,12 @@ const onFinish = () => {
 
 const onCancel = () => {
     formRef.value!.resetFields();
+    if (formState.Id) delete formState.Id
 }
+
+
+
+
 </script>
 
 <style lang="less" scoped></style>

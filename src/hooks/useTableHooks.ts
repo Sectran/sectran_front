@@ -1,6 +1,6 @@
 import { reactive, ref, onMounted, } from "vue";
 import type { Ref } from "vue"
-
+import { Modal } from 'ant-design-vue';
 
 type requestApi = {
     listApi: Function,
@@ -8,14 +8,15 @@ type requestApi = {
 }
 
 type pageData = {
-    pageNum: number,
-    pageSize: number
+    Offset: number,
+    Limit: number
 }
 
 type resTable = {
     Data: any
-    Total:number
+    Total: number
 }
+type Key = string | number;
 
 /**
  * 
@@ -31,8 +32,8 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
     let tabHeight = ref<number>(520)
     //分页
     let pageData = reactive<pageData>({
-        pageNum: 1,
-        pageSize: 10
+        Offset: 1,
+        Limit: 10
     })
     //表格是否正在加载
     const tableLoading = ref(false)
@@ -43,16 +44,14 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
     //分页参数
     const paginationOpt = reactive({
         current: 1,
-        pageSize: 10,
+        Limit: 10,
         pageSizeOptions: [10, 20, 50, 100, 200],
         total: 0,
         onChange: (current: number, size: number) => {
-            console.log(current)
-            console.log(size)
             paginationOpt.current = current
-            paginationOpt.pageSize = size
-            pageData.pageNum = current
-            pageData.pageSize = size
+            paginationOpt.Limit = size
+            pageData.Offset = current
+            pageData.Limit = size
             requestList()
         },
     })
@@ -78,7 +77,6 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
             let Height = tableDom.getBoundingClientRect().height
             tabHeight.value = Height - 120
         }
-        console.log(tabHeight.value)
         requestList()
     })
 
@@ -86,17 +84,40 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
     const requestList = () => {
 
         let fromData = { ...pageData, ...searchFrom }
-        requestApi.listApi(fromData).then((res:resTable ) => {
+        requestApi.listApi(fromData).then((res: resTable) => {
             let { Data, Total } = res.Data
             tableData.value = Data
-            paginationOpt.total =Total
+            paginationOpt.total = Total
+            tableState.selectedRowKeys = [];
         })
     }
     //删除接口
-    const handleDelete = (params: number) => {
-        requestApi.deleteApi(params)
+    const handleDelete = (params: Key[]) => {
 
+        Modal.confirm({
+            title: '确定要删除吗？',
+            onOk() {
+                return requestApi.deleteApi({ ids: params }).then((res: any) => {
+                    console.log(res)
+                    requestList()
+                })
+            },
+            onCancel() { },
+        });
     }
+
+    const tableState = reactive<{
+        selectedRowKeys: Key[];
+        loading: boolean;
+    }>({
+        selectedRowKeys: [],
+        loading: false,
+    });
+    const onTableSelectChange = (selectedRowKeys: Key[]) => {
+        console.log('selectedRowKeys changed: ', selectedRowKeys);
+        tableState.selectedRowKeys = selectedRowKeys;
+    };
+
 
     return {
         headerStyle,
@@ -106,6 +127,8 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
         tabHeight,
         paginationOpt,
         searchFormRef,
+        tableState,
+        onTableSelectChange,
         fromreset,
         on_search,
         requestList,

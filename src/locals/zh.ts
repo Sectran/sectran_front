@@ -10,14 +10,13 @@ export default {
         passwordMessage: `${inputPublicZh}密码!`,
     },
     user: {
-        userName: '用户',
-        usernamePlaceholder: `${inputPublicZh}账户名称！`,
+        addUser:"添加用户",
+        userName:"用户账号",
         password: '密码',
-        passwordPlaceholder: `${inputPublicZh}密码！`,
-        userId: '用户Id',
-        userIdPlaceholder: `${inputPublicZh}用户Id！`,
+        mame: '用户名称',
+        userState:"用户状态",
         usereEmail:'电子邮箱',
-        userEmailPlaceholder:`${inputPublicZh}邮箱！`
+        telephone:'手机号'
     },
     department: {
         departmentName: '部门名称',
@@ -41,18 +40,33 @@ export default {
         deviceAddress:'设备地址',
         deviceOsKind:'系统类型',
         deviceEncoding:'字符编码',
+        deviceAccount :'设备账号',
+
+
+        deviceUsername:"设备账号名称",
+        Password:"设备账号密码",
+        IsAdministrator:"是否管理员",
+        Port:"端口",
+        Protocol:"协议",
+        PrivateKey:"key",
+        PrivateKeyPassword:"key密码",
+     
+
 
     },
     public: {
         Submit: '提 交',
         delete: '删 除',
+        deleteInBatches: '批量删除',
         add: '新 增',
         redact: '编 辑',
         operation: '操 作',
         reset: "重 置",
         search: "搜 索",
         creationTime:"创建时间",
-        departmentID:'部门ID',
+        departmentID:'部门',
+        roleId:"角色",
+
         Description:'描述',
         pleaseInput:'请输入',
         pleaseSelect:`请选择`

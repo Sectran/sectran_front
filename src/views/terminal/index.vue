@@ -31,16 +31,17 @@
                 <div class="Content-right">
                     <div class="xterm-div" v-if="xtermList.length !== 0">
                         <!-- @edit="onEdit" -->
+
                         <a-tabs v-model:activeKey="activeKey" hide-add type="editable-card" :forceRender="true">
-                            <a-tab-pane v-for="(item,index) in xtermList" :key="index" :tab="item.name" :closable="true">
-                                <!-- <div style="height: 30px;">1312312</div> -->
-                                <xterm :username="item.username" :password="item.password"></xterm>
+                            <a-tab-pane v-for="(item, index) in xtermList" :key="index" :tab="item.name" :closable="true">
+                                <xterm username="root" password="Ryan@1218pass"></xterm>
+
                             </a-tab-pane>
-                            <!-- <template #rightExtra>
+                            <template #rightExtra>
                                 <div class="tab-right">
                                     <PlusSquareOutlined class="nav-icon" />
                                 </div>
-                            </template> -->
+                            </template>
                         </a-tabs>
                     </div>
 
@@ -208,9 +209,9 @@ const connectFormState = reactive<ConnectFormState>({
 
 const on_connectFinish = () => {
     let { username, password } = connectFormState
-    
+
     nextTick(() => {
-        xtermList.push({username,password,name: '1_root@iZuf64kquo56ciwmfp'})
+        xtermList.push({ username, password, name: '1_root@iZuf64kquo56ciwmfp' })
         connectOpen.value = false;
     });
 };
@@ -285,8 +286,9 @@ const on_connectFinish = () => {
 
         .Content-left {
             width: 300px;
+            // min-width: 300px;
             background: #2f2a2a;
-            padding: 20px;
+            // padding: 20px;
 
             // height: 100%;
             ::v-deep(.ant-tree-list) {
