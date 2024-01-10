@@ -24,10 +24,13 @@ let path = ref<string>('ws://101.133.229.239:19529')
 let websocket = ref<any>("");
 let term = reactive<any>({});
 let resizeScreen: any
+const emit = defineEmits(["connectResult"])
+
 
 const props = defineProps<{
     username: string
     password: string
+    submitLoading: boolean
 }>()
 onMounted(() => {
     initXterm();
@@ -128,6 +131,7 @@ const initSocket = () => {
         console.log(websocket)
         websocket.binaryType = 'arraybuffer';
         websocket.onopen = () => {
+
             onOpen();
         };
         websocket.onmessage = (evt: any) => {
@@ -147,7 +151,7 @@ const initSocket = () => {
 
 const onData = (msg: any) => {
     let sm = v1.SectermMessage.decode(new Uint8Array(msg));
-
+    console.log(msg)
     switch (sm.mesType) {
         case v1.SectermMessageType
             .SectermConnectResponseMessage:
@@ -160,6 +164,9 @@ const onData = (msg: any) => {
             break;
         case v1.SectermMessageType
             .SectranTeminalCharactersMessage:
+            if (props.submitLoading) {
+                emit("connectResult", true)
+            }
             term.write(sm.characters?.Data);
             break;
         default:
@@ -202,7 +209,6 @@ onUnmounted(() => {
 
 .terminal-div {
     width: calc(100% - 30px);
-    ;
     height: calc(100% - 30px);
     padding: 10px 10px 20px 20px;
 }
@@ -228,4 +234,5 @@ onUnmounted(() => {
         background-color: #555;
     }
 
-}</style>
+}
+</style>

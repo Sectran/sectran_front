@@ -44,6 +44,8 @@ declare module 'vue' {
     AUpload: typeof import('ant-design-vue/es')['Upload']
     AWatermark: typeof import('ant-design-vue/es')['Watermark']
     Language: typeof import('./src/components/language/index.vue')['default']
+    Logo: typeof import('./src/components/icon/logo.vue')['default']
+    LogoIcon: typeof import('./src/components/icon/logoIcon.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
