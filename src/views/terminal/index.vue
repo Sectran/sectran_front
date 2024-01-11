@@ -32,10 +32,12 @@
                     <div class="xterm-div" v-if="xtermList.length !== 0">
                         <!-- @edit="onEdit" -->
 
-                        <a-tabs v-model:activeKey="activeKey" hide-add type="editable-card" :forceRender="true">
-                            <a-tab-pane v-for="(item, index) in xtermList" :key="index" :tab="item.name" :closable="true">
-                                <xterm :username="item.username" :password="item.password"></xterm>
-
+                        <a-tabs v-model:activeKey="activeKey" hide-add type="editable-card" :forceRender="true"
+                            @edit="onTabsEdit">
+                            <a-tab-pane v-for="item in xtermList" :key="item.key" :tab="item.name" :closable="true">
+                                <xterm @connectResult="connectResult" :submitLoading="submitLoading"
+                                    :username="item.username" :password="item.password">
+                                </xterm>
                             </a-tab-pane>
                             <template #rightExtra>
                                 <div class="tab-right">
@@ -65,11 +67,10 @@
             <a-form :model="connectFormState" name="basic" @finish="on_connectFinish" :label-col="{ span: 3 }"
                 :wrapper-col="{ span: 21 }" autocomplete="off">
 
-                <a-form-item label="网络连接" name="network">
+                <a-form-item label="登录方式" name="network">
                     <a-radio-group v-model:value="connectFormState.network">
-                        <a-radio :value="1">101.133.229.239（公网）</a-radio>
-                        <a-radio :value="2">172.27.101.182（私网）</a-radio>
-                        <a-radio :value="3">运维安全中心</a-radio>
+                        <a-radio :value="1">自动登录</a-radio>
+                        <a-radio :value="2">手动登录</a-radio>
                     </a-radio-group>
                 </a-form-item>
 
@@ -136,7 +137,7 @@
                     </a-form-item>
                 </template>
                 <a-form-item :wrapper-col="{ offset: 0, span: 24 }">
-                    <a-button style="width: 100%" type="primary" html-type="submit">{{
+                    <a-button :loading="submitLoading" style="width: 100%" type="primary" html-type="submit">{{
                         t("public.Submit")
                     }}</a-button>
                 </a-form-item>
@@ -164,20 +165,26 @@ import { useStore } from 'vuex'
 // PlusSquareOutlined
 import { UploadOutlined, LockOutlined, } from '@ant-design/icons-vue';
 import xterm from "./components/xterm.vue"
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { createVNode } from 'vue';
+import { Modal } from 'ant-design-vue';
 
 type XtermList = {
     name: string
     username: string
     password: string
+    key: number
 }
 
 const store = useStore()
 const { t } = useI18n();
 let connectOpen = ref<Boolean>(false);
+const submitLoading = ref<boolean>(false);
+
 
 const activeKey = ref(0);
-let xtermList: XtermList[] = []
-// { name: '1_root@iZuf64kquo56ciwmfp', username: "root", password: "Ryan@1218pass" }
+const soleKey = ref<number>(0);
+let xtermList = ref<XtermList[]>([])
 
 onBeforeMount(() => {
 });
@@ -211,10 +218,45 @@ const on_connectFinish = () => {
     let { username, password } = connectFormState
 
     nextTick(() => {
-        xtermList.push({ username, password, name: '1_root@iZuf64kquo56ciwmfp' })
-        connectOpen.value = false;
+        soleKey.value++
+        xtermList.value.push({ username, password, name: '1_root@iZuf64kquo56ciwmfp', key: soleKey.value })
+        activeKey.value = soleKey.value
     });
+    submitLoading.value = true
 };
+
+const onTabsEdit = (targetKey: number) => {
+    console.log(targetKey)
+    Modal.confirm({
+        title: '再次确认?',
+        icon: createVNode(ExclamationCircleOutlined),
+        content: '是否要关闭标签，关闭后将失去所有消息，请谨慎操作！',
+        onOk() {
+            let targetKeyIndex = xtermList.value.findIndex((item: XtermList) => item.key === targetKey)
+            xtermList.value = xtermList.value.filter((item: XtermList) => item.key !== targetKey)
+            if (xtermList.value.length !== 0 && activeKey.value === targetKey) {
+                if (targetKeyIndex >= 0) {
+                    activeKey.value = xtermList.value[targetKeyIndex].key;
+                } else {
+                    activeKey.value = xtermList.value[0].key;
+                }
+            }
+        },
+        onCancel() { },
+    });
+
+}
+
+const connectResult = (state: boolean) => {
+    console.log(state)
+    if (state) {
+        submitLoading.value = false
+        connectOpen.value = false
+    }
+
+}
+
+
 </script>
 <style scoped lang='less'>
 .xterm-div {
