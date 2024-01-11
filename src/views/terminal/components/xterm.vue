@@ -85,8 +85,6 @@ const initXterm = () => {
     fitAddon.fit();
     resizeScreen = debounce(() => {
         try {
-            console.log("改变")
-            // fitAddon.fit();
             let { cols, rows } = term;
             let resizeParams = { Colums: cols, Rows: rows }
             let { uintArr, resizeData } = sectermTeminalResize(resizeParams)
