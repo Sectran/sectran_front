@@ -29,19 +29,19 @@
                     </a-directory-tree>
                 </div>
                 <div class="Content-right">
-                    <div class="xterm-div" v-if="xtermList.length !== 0">
-                        <!-- @edit="onEdit" -->
-
-                        <a-tabs v-model:activeKey="activeKey" hide-add type="editable-card" :forceRender="true"
+                    <div class="xterm-div" v-if="multiList.length !== 0">
+                        <a-tabs v-model:multiActiveKey="multiActiveKey" hide-add type="editable-card" :forceRender="true"
                             @edit="onTabsEdit">
-                            <a-tab-pane v-for="item in xtermList" :key="item.key" :tab="item.name" :closable="true">
-                                <xterm @connectResult="connectResult" :submitLoading="submitLoading"
+                            <a-tab-pane v-for="item in multiList" :key="item.key" :tab="item.name" :closable="true" class="tab-pane">
+                                <div class="item-nav-style">华东2上海</div>
+                                <multi-xterm :username="item.username" :password="item.password"  />
+                                <!-- <xterm @connectResult="connectResult" :submitLoading="submitLoading"
                                     :username="item.username" :password="item.password">
-                                </xterm>
+                                </xterm> -->
                             </a-tab-pane>
                             <template #rightExtra>
                                 <div class="tab-right">
-                                    <PlusSquareOutlined class="nav-icon" />
+                                    <!-- <PlusSquareOutlined class="nav-icon" /> -->
                                 </div>
                             </template>
                         </a-tabs>
@@ -152,24 +152,25 @@
 
 <script setup lang='ts'>
 import {
-    onBeforeMount,
     onMounted,
-    watchEffect,
     ref,
     reactive,
     nextTick,
+    createVNode
 } from "vue";
 import { useI18n } from "vue-i18n";
 import { headMenu } from "./menu.ts"
 import { useStore } from 'vuex'
 // PlusSquareOutlined
 import { UploadOutlined, LockOutlined, } from '@ant-design/icons-vue';
-import xterm from "./components/xterm.vue"
+import multiXterm from "./components/multiXterm.vue"
+
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { createVNode } from 'vue';
 import { Modal } from 'ant-design-vue';
 
-type XtermList = {
+
+
+type MultiList = {
     name: string
     username: string
     password: string
@@ -182,19 +183,18 @@ let connectOpen = ref<Boolean>(false);
 const submitLoading = ref<boolean>(false);
 
 
-const activeKey = ref(0);
+const multiActiveKey = ref(1);
 const soleKey = ref<number>(0);
-let xtermList = ref<XtermList[]>([])
+let multiList = ref<MultiList[]>([{ name: '1_root@iZuf64kquo56ciwmfp', key: 1, username: "1", password: "1" }])
 
-onBeforeMount(() => {
-});
+
 onMounted(() => {
     window.addEventListener("beforeunload", (e: any) => {
         e.returnValue = "您确定要离开吗？请确认是否保存您的更改。";
         e.preventDefault();
     });
 });
-watchEffect(() => { });
+
 
 const on_node = () => {
     connectOpen.value = true;
@@ -219,8 +219,8 @@ const on_connectFinish = () => {
 
     nextTick(() => {
         soleKey.value++
-        xtermList.value.push({ username, password, name: '1_root@iZuf64kquo56ciwmfp', key: soleKey.value })
-        activeKey.value = soleKey.value
+        multiList.value.push({ username, password, name: '1_root@iZuf64kquo56ciwmfp', key: soleKey.value })
+        multiActiveKey.value = soleKey.value
     });
     submitLoading.value = true
 };
@@ -232,13 +232,13 @@ const onTabsEdit = (targetKey: number) => {
         icon: createVNode(ExclamationCircleOutlined),
         content: '是否要关闭标签，关闭后将失去所有消息，请谨慎操作！',
         onOk() {
-            let targetKeyIndex = xtermList.value.findIndex((item: XtermList) => item.key === targetKey)
-            xtermList.value = xtermList.value.filter((item: XtermList) => item.key !== targetKey)
-            if (xtermList.value.length !== 0 && activeKey.value === targetKey) {
+            let targetKeyIndex = multiList.value.findIndex((item: MultiList) => item.key === targetKey)
+            multiList.value = multiList.value.filter((item: MultiList) => item.key !== targetKey)
+            if (multiList.value.length !== 0 && multiActiveKey.value === targetKey) {
                 if (targetKeyIndex >= 0) {
-                    activeKey.value = xtermList.value[targetKeyIndex].key;
+                    multiActiveKey.value = multiList.value[targetKeyIndex].key;
                 } else {
-                    activeKey.value = xtermList.value[0].key;
+                    multiActiveKey.value = multiList.value[0].key;
                 }
             }
         },
@@ -247,14 +247,13 @@ const onTabsEdit = (targetKey: number) => {
 
 }
 
-const connectResult = (state: boolean) => {
-    console.log(state)
-    if (state) {
-        submitLoading.value = false
-        connectOpen.value = false
-    }
-
-}
+// const connectResult = (state: boolean) => {
+//     console.log(state)
+//     if (state) {
+//         submitLoading.value = false
+//         connectOpen.value = false
+//     }
+// }
 
 
 </script>
@@ -308,7 +307,6 @@ const connectResult = (state: boolean) => {
 
 
 .configuration-style {
-
     .configuration-nav {
         height: 40px;
         padding: 0 40px;
@@ -341,6 +339,29 @@ const connectResult = (state: boolean) => {
 
         .Content-right {
             flex: 1;
+            ::v-deep(.ant-tabs-nav) {
+                margin: 0;
+            }
+
+            // ::v-deep(.ant-tabs-tab-active) {
+            //     background: #2E445C;
+            //     color: #ffffff;
+            //     border-radius:0;
+            // }
+            // ::v-deep(.ant-tabs-ink-bar) {
+            //     background: #2E445C;
+            // }
+
+            .item-nav-style {
+                background: #2E445C;
+                color: #ffffff;
+                font-size: 16px;
+                padding: 0 20px;
+                height: 30px;
+                line-height: 30px;
+
+            }
+
         }
 
         .placeholder-style {
@@ -358,6 +379,12 @@ const connectResult = (state: boolean) => {
             }
         }
     }
+}
+
+.tab-pane {
+    display: flex;
+    flex-direction: column;
+    
 }
 
 .tab-right {

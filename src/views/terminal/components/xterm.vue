@@ -109,7 +109,7 @@ const initXterm = () => {
 const runFakeTerminal = () => {
     if (term._initialized) return;
     term._initialized = true;
-    term.onData((raw: any) => {
+    term.onData((raw: string) => {
         console.log(raw)
         write(raw);
     });
