@@ -185,7 +185,8 @@ const submitLoading = ref<boolean>(false);
 
 const multiActiveKey = ref(1);
 const soleKey = ref<number>(0);
-let multiList = ref<MultiList[]>([{ name: '1_root@iZuf64kquo56ciwmfp', key: 1, username: "1", password: "1" }])
+// let multiList = ref<MultiList[]>([{ name: '1_root@iZuf64kquo56ciwmfp', key: 1, username: "root", password: "Ryan@1218pass" }])
+let multiList = ref<MultiList[]>([])
 
 
 onMounted(() => {
@@ -219,10 +220,10 @@ const on_connectFinish = () => {
 
     nextTick(() => {
         soleKey.value++
-        multiList.value.push({ username, password, name: '1_root@iZuf64kquo56ciwmfp', key: soleKey.value })
-        multiActiveKey.value = soleKey.value
+        // multiList.value.push({ username, password, name: '1_root@iZuf64kquo56ciwmfp', key: soleKey.value })
+        // multiActiveKey.value = soleKey.value
     });
-    submitLoading.value = true
+    // submitLoading.value = true
 };
 
 const onTabsEdit = (targetKey: number) => {
@@ -232,7 +233,7 @@ const onTabsEdit = (targetKey: number) => {
         icon: createVNode(ExclamationCircleOutlined),
         content: '是否要关闭标签，关闭后将失去所有消息，请谨慎操作！',
         onOk() {
-            let targetKeyIndex = multiList.value.findIndex((item: MultiList) => item.key === targetKey)
+            let targetKeyIndex = multiList.value.findIndex((item: MultiList) => item.key === targetKey) - 1
             multiList.value = multiList.value.filter((item: MultiList) => item.key !== targetKey)
             if (multiList.value.length !== 0 && multiActiveKey.value === targetKey) {
                 if (targetKeyIndex >= 0) {

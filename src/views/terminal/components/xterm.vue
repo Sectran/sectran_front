@@ -1,5 +1,6 @@
 <template>
-    <div class="terminal-div">
+    <!-- :style="{ height: `calc(100% / ${heightNum} - 30px)`, width: `calc(100% / ${widthNum} - 30px)`}" -->
+    <div class="terminal-div" ref="myButton">
         <div id="terminal" ref="terminal"></div>
     </div>
 </template>
@@ -8,7 +9,8 @@ import {
     onMounted,
     ref,
     reactive,
-    onUnmounted
+    onUnmounted,
+    nextTick
 } from "vue";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
@@ -23,19 +25,41 @@ let path = ref<string>('ws://101.133.229.239:19529')
 // let path = ref<string>("ws://127.0.0.1:19529");
 let websocket = ref<any>("");
 let term = reactive<any>({});
+let fitAddon = reactive<any>({});
 let resizeScreen: any
 const emit = defineEmits(["connectResult"])
-
 
 const props = defineProps<{
     username: string
     password: string
-    submitLoading: boolean
+    // submitLoading: boolean
 }>()
 onMounted(() => {
+
     initXterm();
     initSocket();
+
+    nextTick(() => {
+        //监听元素大小变化
+        observer = new ResizeObserver(handleResize);
+        if (myButton.value) {
+            observer.observe(myButton.value);
+        }
+
+    })
 });
+
+const myButton = ref(null);
+let observer: ResizeObserver | null = null;
+
+const handleResize = () => {
+
+    nextTick(() => {
+        resizeScreen();
+    })
+
+};
+
 
 const initXterm = () => {
     let terms: any = new Terminal({
@@ -83,11 +107,13 @@ const initXterm = () => {
     // });
 
     // canvas背景全屏
-    const fitAddon = new FitAddon();
+    fitAddon = new FitAddon();
     terms.loadAddon(fitAddon);
     fitAddon.fit();
     resizeScreen = debounce(() => {
         try {
+            console.log("更新页面")
+            fitAddon.fit();
             let { cols, rows } = term;
             let resizeParams = { Colums: cols, Rows: rows }
             let { uintArr, resizeData } = sectermTeminalResize(resizeParams)
@@ -99,7 +125,6 @@ const initXterm = () => {
     }, 3000)
 
     window.addEventListener("resize", () => {
-        fitAddon.fit();
         resizeScreen();
 
     });
@@ -162,9 +187,9 @@ const onData = (msg: any) => {
             break;
         case v1.SectermMessageType
             .SectranTeminalCharactersMessage:
-            if (props.submitLoading) {
-                emit("connectResult", true)
-            }
+            // if (props.submitLoading) {
+            //     emit("connectResult", true)
+            // }
             term.write(sm.characters?.Data);
             break;
         default:
@@ -201,20 +226,22 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang='less'>
-.xterm-screen {
-    width: 100%;
-}
-
 .terminal-div {
     width: calc(100% - 30px);
     height: calc(100% - 30px);
-    padding: 10px 10px 20px 20px;
+
+    // background: red;
+    position: relative;
 }
 
 #terminal {
+    position: absolute;
+    left: 0;
+    top: 0;
     height: 100%;
+    width: 100%;
+    padding: 10px 10px 20px 20px;
 
-    // width: 100%;
     ::-webkit-scrollbar {
         width: 8px;
     }
@@ -232,5 +259,11 @@ onUnmounted(() => {
         background-color: #555;
     }
 
+}
+
+.shiyan {
+    height: 100%;
+    width: 100%;
+    background: red;
 }
 </style>

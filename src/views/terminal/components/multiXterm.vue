@@ -1,30 +1,32 @@
 <template>
     <div class="xtermList-style">
-        <div v-for="item in multiData" :key="item.firstKey" class="layerTwo-style">
-            <div v-for="el in item.secondList" :key="el.secondKey" class="threeLayers-style">
-                <a-tabs v-for="(i, index) in el.list" :key="i.MultiKey" v-model:activeKey="i.MultiKey" hide-add
-                    type="editable-card" :forceRender="true" @edit="(e: number) => onTabsEdit(e, i)">
-                    <a-tab-pane v-for="e in i.multiList" :key="e.key" :tab="e.name" :closable="true">
-                        <!-- @connectResult="connectResult" :submitLoading="submitLoading" -->
-                        <!-- <xterm :username="props.username" :password="props.password">
-                </xterm> -->
-                        1321
-                    </a-tab-pane>
-                    <template #rightExtra>
-                        <div class="xterm-icon">
-                            <PlusSquareOutlined @click="on_addXterm(i)" />
-                            <ColumnWidthOutlined @click="on_SplitScreen('right', el, index)" />
-                            <ColumnHeightOutlined @click="on_SplitScreen('below', el, index)" />
-                        </div>
-                    </template>
-                </a-tabs>
+        <div v-for="(item, multiIndex) in multiData" :key="item.firstKey" class="layerTwo-style">
+            <div v-for="(el, secondIndex) in item.secondList" :key="el.secondKey" class="threeLayers-style">
+                <div v-for="(i, index) in el.list" :key="i.multiKey" style="flex:1">
+                    <a-tabs v-model:activeKey="i.xtermActiveKey" hide-add type="editable-card" :forceRender="true"
+                        @edit="(e: number) => onTabsEdit(e, i, multiIndex, secondIndex)">
+                        <a-tab-pane v-for="e in i.multiList" :key="e.key" :tab="e.name" :closable="true">
+                            <!-- @connectResult="connectResult" :submitLoading="submitLoading" -->
+                            <xterm :username="props.username" :password="props.password"> </xterm>
+                            <!-- {{ secondIndex }} - {{ multiIndex }} -->
+
+                        </a-tab-pane>
+                        <template #rightExtra>
+                            <div class="xterm-icon">
+                                <PlusSquareOutlined @click="on_addXterm(i)" />
+                                <ColumnWidthOutlined @click="on_SplitScreen('right', el, index)" />
+                                <ColumnHeightOutlined @click="on_SplitScreen('below', el, index)" />
+                            </div>
+                        </template>
+                    </a-tabs>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang='ts'>
-// import xterm from "./xterm.vue"
+import xterm from "./xterm.vue"
 import {
     PlusSquareOutlined,
     ColumnWidthOutlined,
@@ -49,7 +51,7 @@ type SecondList = {
 
 type ThreeLayers = {
     xtermActiveKey: number
-    MultiKey: number
+    multiKey: number
     multiList: Multi[]
 }
 
@@ -72,27 +74,34 @@ onMounted(() => {
         firstKey: 0,
         secondList: [{
             secondKey: 1,
-            list: [{ xtermActiveKey: 0, MultiKey: 0, multiList: [{ name: '1_root@iZuf64kquo56ciwmfp', key: soleKey.value }] }]
+            list: [{ xtermActiveKey: 0, multiKey: 0, multiList: [{ name: '1_root@iZuf64kquo56ciwmfp', key: soleKey.value }] }]
         }]
     }
-
     multiData.value.push(datas)
 });
 
-const onTabsEdit = (targetKey: number, i: ThreeLayers) => {
-    console.log(targetKey)
+const onTabsEdit = (targetKey: number, i: ThreeLayers, multiIndex: number, secondIndex: number) => {
     Modal.confirm({
         title: '再次确认?',
         icon: createVNode(ExclamationCircleOutlined),
         content: '是否要关闭标签，关闭后将失去所有消息，请谨慎操作！',
         onOk() {
-            console.log(i.multiList)
-            let targetKeyIndex = i.multiList.findIndex((item: Multi) => item.key === targetKey)
+            let targetKeyIndex = i.multiList.findIndex((item: Multi) => item.key === targetKey) - 1
             i.multiList = i.multiList.filter((item: Multi) => item.key !== targetKey)
-            if (i.multiList.length !== 0 && i.xtermActiveKey === targetKey) {
+          
+            if (i.multiList.length === 0) {
+                console.log(secondIndex)
+               let asd =  multiData.value[multiIndex].secondList.splice(secondIndex, 1)
+               console.log(asd)
+                console.log(multiData.value[multiIndex].secondList)
+                if (multiData.value[multiIndex].secondList.length === 0) {
+                
+                    // multiData.value.splice(multiIndex, 1)
+                }
+                return
+            }
+            if (i.xtermActiveKey === targetKey) {
                 if (targetKeyIndex >= 0) {
-                    console.log(targetKeyIndex)
-                    console.log(i.multiList[targetKeyIndex])
                     i.xtermActiveKey = i.multiList[targetKeyIndex].key;
                 } else {
                     i.xtermActiveKey = i.multiList[0].key;
@@ -106,7 +115,9 @@ const onTabsEdit = (targetKey: number, i: ThreeLayers) => {
 const on_addXterm = (i: ThreeLayers) => {
     soleKey.value++
     i.multiList.push({ name: '1_root@iZuf64kquo56ciwmfp', key: soleKey.value })
+
     i.xtermActiveKey = soleKey.value
+    console.log(i.xtermActiveKey)
 }
 /**
  * 分屏
@@ -118,16 +129,17 @@ const on_SplitScreen = (type: string, seconditem: SecondList, secondIndex: numbe
     soleKey.value++
     console.log(type)
     if (type === 'below') {
-        seconditem.list.push({ xtermActiveKey: soleKey.value, MultiKey: soleKey.value, multiList: [{ name: '1_root@iZuf64kquo56ciwmfp', key: soleKey.value }] })
+        seconditem.list.push({ xtermActiveKey: soleKey.value, multiKey: soleKey.value, multiList: [{ name: '1_root@iZuf64kquo56ciwmfp', key: soleKey.value }] })
     } else if (type === 'right') {
         let datas: MultiList = {
-            firstKey: 0,
+            firstKey: soleKey.value++,
             secondList: [{
-                secondKey: 1,
-                list: [{ xtermActiveKey: 0, MultiKey: 0, multiList: [{ name: '1_root@iZuf64kquo56ciwmfp', key: soleKey.value }] }]
+                secondKey: soleKey.value++,
+                list: [{ xtermActiveKey: soleKey.value, multiKey: soleKey.value, multiList: [{ name: '1_root@iZuf64kquo56ciwmfp', key: soleKey.value }] }]
             }]
         }
-        multiData.value.splice(secondIndex++, 0, datas)
+        console.log(secondIndex)
+        multiData.value.splice(secondIndex + 1, 0, datas)
         console.log(multiData.value)
     }
 }
@@ -156,5 +168,11 @@ const on_SplitScreen = (type: string, seconditem: SecondList, secondIndex: numbe
             margin-right: 10px;
         }
     }
+}
+
+.nr-style {
+    width: 100%;
+    height: 100%;
+    background: red;
 }
 </style>
