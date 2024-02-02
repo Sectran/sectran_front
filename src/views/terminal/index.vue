@@ -32,12 +32,13 @@
                     <div class="xterm-div" v-if="multiList.length !== 0">
                         <a-tabs v-model:multiActiveKey="multiActiveKey" hide-add type="editable-card" :forceRender="true"
                             @edit="onTabsEdit">
-                            <a-tab-pane v-for="item in multiList" :key="item.key" :tab="item.name" :closable="true" class="tab-pane">
+                            <a-tab-pane v-for="item in multiList" :key="item.key" :tab="item.name" :closable="true"
+                                class="tab-pane">
                                 <div class="item-nav-style">华东2上海</div>
-                                <multi-xterm :username="item.username" :password="item.password"  />
-                                <!-- <xterm @connectResult="connectResult" :submitLoading="submitLoading"
-                                    :username="item.username" :password="item.password">
-                                </xterm> -->
+                                <!-- <multi-xterm :node="item.node" /> -->
+                                <!-- :username="item.username" :password="item.password" -->
+                                <xterm :username="item.username" :password="item.password" />
+
                             </a-tab-pane>
                             <template #rightExtra>
                                 <div class="tab-right">
@@ -163,18 +164,21 @@ import { headMenu } from "./menu.ts"
 import { useStore } from 'vuex'
 // PlusSquareOutlined
 import { UploadOutlined, LockOutlined, } from '@ant-design/icons-vue';
-import multiXterm from "./components/multiXterm.vue"
+// import multiXterm from "./components/multiXterm.vue"
+import xterm from "./components/xterm.vue"
 
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
-
-
-
 type MultiList = {
     name: string
-    username: string
-    password: string
-    key: number
+    username?: string
+    password?: string
+    key: number,
+    node: NodeType
+}
+type NodeType = {
+    styleType: string,
+    children: { key: number, children: MultiList[] }
 }
 
 const store = useStore()
@@ -185,8 +189,48 @@ const submitLoading = ref<boolean>(false);
 
 const multiActiveKey = ref(1);
 const soleKey = ref<number>(0);
-// let multiList = ref<MultiList[]>([{ name: '1_root@iZuf64kquo56ciwmfp', key: 1, username: "root", password: "Ryan@1218pass" }])
-let multiList = ref<MultiList[]>([])
+// MultiList[]
+let multiList = ref<any>([{
+    name: '1_root@iZuf64kquo56ciwmfp',
+    key: 1,
+    username: "root",
+    password: "Ryan@1218pass",
+    node: {
+        styleType: "transverse",
+        key: 2,
+        node: {
+            styleType: "transverse",
+            key: 3,
+            node: {
+                styleType: "transverse",
+                key: 4,
+            },
+        },
+
+        // children: [
+        //     {
+        //         name: "123",
+        //         key: 2,
+        //         node: {
+        //             styleType: "transverse",
+        //             children: [
+        //                 {
+        //                     name: "123",
+        //                     key: 4,
+        //                 }, {
+        //                     name: "123",
+        //                     key: 5,
+        //                 },
+        //             ]
+        //         }
+        //     },
+        //     {
+        //         name: "123",
+        //         key: 3,
+        //     },
+        // ]
+    }
+}])
 
 
 onMounted(() => {
@@ -216,7 +260,7 @@ const connectFormState = reactive<ConnectFormState>({
 });
 
 const on_connectFinish = () => {
-    let { username, password } = connectFormState
+    // let { username, password } = connectFormState
 
     nextTick(() => {
         soleKey.value++
@@ -233,15 +277,15 @@ const onTabsEdit = (targetKey: number) => {
         icon: createVNode(ExclamationCircleOutlined),
         content: '是否要关闭标签，关闭后将失去所有消息，请谨慎操作！',
         onOk() {
-            let targetKeyIndex = multiList.value.findIndex((item: MultiList) => item.key === targetKey) - 1
-            multiList.value = multiList.value.filter((item: MultiList) => item.key !== targetKey)
-            if (multiList.value.length !== 0 && multiActiveKey.value === targetKey) {
-                if (targetKeyIndex >= 0) {
-                    multiActiveKey.value = multiList.value[targetKeyIndex].key;
-                } else {
-                    multiActiveKey.value = multiList.value[0].key;
-                }
-            }
+            // let targetKeyIndex = multiList.value.findIndex((item: MultiList) => item.key === targetKey) - 1
+            // multiList.value = multiList.value.filter((item: MultiList) => item.key !== targetKey)
+            // if (multiList.value.length !== 0 && multiActiveKey.value === targetKey) {
+            //     if (targetKeyIndex >= 0) {
+            //         multiActiveKey.value = multiList.value[targetKeyIndex].key;
+            //     } else {
+            //         multiActiveKey.value = multiList.value[0].key;
+            //     }
+            // }
         },
         onCancel() { },
     });
@@ -340,6 +384,7 @@ const onTabsEdit = (targetKey: number) => {
 
         .Content-right {
             flex: 1;
+
             ::v-deep(.ant-tabs-nav) {
                 margin: 0;
             }
@@ -385,7 +430,7 @@ const onTabsEdit = (targetKey: number) => {
 .tab-pane {
     display: flex;
     flex-direction: column;
-    
+
 }
 
 .tab-right {

@@ -80,12 +80,15 @@ const initXterm = () => {
             cursor: "#6376C2", //设置光标
             // lineHeight: 20
         },
-    });
+    });write
     // 创建terminal实例
     terms.open(terminal.value);
     // 换行并输入起始符 $
     terms.prompt = (_: any) => {
         terms.write("\r\n\x1b[33m$\x1b[0m ");
+
+        term.selectLines(0, 0)
+
     };
 
     terms.onKey((e: any) => {
@@ -131,6 +134,8 @@ const initXterm = () => {
     term = terms;
     runFakeTerminal();
 };
+
+
 const runFakeTerminal = () => {
     if (term._initialized) return;
     term._initialized = true;
