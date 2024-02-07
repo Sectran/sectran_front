@@ -82,6 +82,9 @@ export default {
         roleAdmin: "role admin",
         uploadingAdmin: "uploading admin",
         deviceAdmin:"device admin"
+    },
+    socket:{
+        error:"socket connection error",
     }
 
 

@@ -12,6 +12,7 @@ import {
     onUnmounted,
     nextTick
 } from "vue";
+import { message } from 'ant-design-vue';
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { sectran_chard } from "../../../../secterm/secterm";
@@ -27,12 +28,14 @@ let websocket = ref<any>("");
 let term = reactive<any>({});
 let fitAddon = reactive<any>({});
 let resizeScreen: any
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n();
 const emit = defineEmits(["connectResult"])
 
 const props = defineProps<{
     username: string
     password: string
-    // submitLoading: boolean
+    submitLoading: boolean
 }>()
 onMounted(() => {
 
@@ -41,24 +44,23 @@ onMounted(() => {
 
     nextTick(() => {
         //监听元素大小变化
-        observer = new ResizeObserver(handleResize);
-        if (myButton.value) {
-            observer.observe(myButton.value);
-        }
+        // observer = new ResizeObserver(handleResize);
+        // if (myButton.value) {
+        //     observer.observe(myButton.value);
+        // }
 
     })
 });
 
 const myButton = ref(null);
-let observer: ResizeObserver | null = null;
+// let observer: ResizeObserver | null = null;
+// const handleResize = () => {
 
-const handleResize = () => {
+//     nextTick(() => {
+//         resizeScreen();
+//     })
 
-    nextTick(() => {
-        resizeScreen();
-    })
-
-};
+// };
 
 
 const initXterm = () => {
@@ -80,12 +82,13 @@ const initXterm = () => {
             cursor: "#6376C2", //设置光标
             // lineHeight: 20
         },
-    });
+    }); write
     // 创建terminal实例
     terms.open(terminal.value);
     // 换行并输入起始符 $
     terms.prompt = (_: any) => {
         terms.write("\r\n\x1b[33m$\x1b[0m ");
+        term.selectLines(0, 0)
     };
 
     terms.onKey((e: any) => {
@@ -94,7 +97,6 @@ const initXterm = () => {
                 write(clipText);
             })
         } else if (e.key == '\x03' && term.hasSelection()) {
-            console.log(term.getSelection())
             navigator.clipboard.writeText(term.getSelection())
         }
     })
@@ -131,11 +133,12 @@ const initXterm = () => {
     term = terms;
     runFakeTerminal();
 };
+
+
 const runFakeTerminal = () => {
     if (term._initialized) return;
     term._initialized = true;
     term.onData((raw: string) => {
-        console.log(raw)
         write(raw);
     });
 };
@@ -151,10 +154,8 @@ const initSocket = () => {
         alert("您的浏览器不支持socket");
     } else {
         websocket = new WebSocket(path.value);
-        console.log(websocket)
         websocket.binaryType = 'arraybuffer';
         websocket.onopen = () => {
-
             onOpen();
         };
         websocket.onmessage = (evt: any) => {
@@ -174,7 +175,7 @@ const initSocket = () => {
 
 const onData = (msg: any) => {
     let sm = v1.SectermMessage.decode(new Uint8Array(msg));
-    console.log(msg)
+
     switch (sm.mesType) {
         case v1.SectermMessageType
             .SectermConnectResponseMessage:
@@ -187,9 +188,11 @@ const onData = (msg: any) => {
             break;
         case v1.SectermMessageType
             .SectranTeminalCharactersMessage:
-            // if (props.submitLoading) {
-            //     emit("connectResult", true)
-            // }
+            if (props.submitLoading) {
+                emit("connectResult", false)
+                localStorage.setItem('username', props.username);
+                localStorage.setItem('password', props.password);
+            }
             term.write(sm.characters?.Data);
             break;
         default:
@@ -199,9 +202,7 @@ const onData = (msg: any) => {
 
 const onOpen = () => {
     let { cols, rows } = term;
-
     let connectParams = { token: '', Colums: cols, Rows: rows, unmanaged: true, username: props.username, hostname: '101.133.229.239', port: 22, password: props.password }
-    console.log(connectParams)
     let { uintArr, connectData } = sectermConnectRequest(connectParams)
     websocket.send(uintArr);
     websocket.send(connectData);
@@ -209,7 +210,10 @@ const onOpen = () => {
 
 const onError = (evt?: Event) => {
     console.log(evt);
-    console.log("socket连接错误");
+    if (props.submitLoading) {
+        emit("connectResult", true)
+    }
+    message.error(t('socket.error'));
 };
 
 // const onSend = () => {

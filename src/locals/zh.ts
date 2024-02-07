@@ -78,5 +78,8 @@ export default {
         roleAdmin: "角色管理",
         uploadingAdmin: "连接管理",
         deviceAdmin:"设备管理"
+    },
+    socket:{
+        error:"socket连接失败",
     }
 }
