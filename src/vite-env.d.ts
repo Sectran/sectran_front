@@ -11,6 +11,7 @@ declare module 'Vue';
 declare module 'xterm';
 declare module 'xterm-addon-fit';
 declare module 'lodash';
+declare module '@novnc/novnc/core/rfb';
 interface Window {
     showDirectoryPicker:any
 }

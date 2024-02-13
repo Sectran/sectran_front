@@ -1,10 +1,8 @@
 <template>
     <div class="tablePage-style">
         <a-button type="primary" @click="on_connect">连接设备</a-button>
-
         <a-row :gutter="[20, 0]">
             <a-col :span="12" class="file-local">
-
                 <a-row class="path-style">
                     <a-col :span="6">
                         <ArrowLeftOutlined @click="on_Gouponelevel" />
@@ -14,8 +12,7 @@
                         }}</span>
                     </a-col>
                     <a-col :span="4">
-
-
+                        
                     </a-col>
                 </a-row>
 
@@ -39,6 +36,7 @@
                             <template #overlay>
                                 <a-menu>
                                     <a-menu-item key="1" @click="on_rechristen(item, index)">重命名</a-menu-item>
+                                    <a-menu-item key="2" @click="on_rechristen(item, index)">删除</a-menu-item>
                                 </a-menu>
                             </template>
                         </a-dropdown>

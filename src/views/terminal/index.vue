@@ -181,10 +181,10 @@ const soleKey = ref<number>(0);
 let multiList = ref<MultiList[]>([])
 
 onMounted(() => {
-    window.addEventListener("beforeunload", (e: any) => {
-        e.returnValue = "您确定要离开吗？请确认是否保存您的更改。";
-        e.preventDefault();
-    });
+    // window.addEventListener("beforeunload", (e: any) => {
+    //     e.returnValue = "您确定要离开吗？请确认是否保存您的更改。";
+    //     e.preventDefault();
+    // });
 });
 
 

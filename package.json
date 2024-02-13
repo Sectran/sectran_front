@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@novnc/novnc": "^1.4.0",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20.9.1",
     "ant-design-vue": "4.x",
