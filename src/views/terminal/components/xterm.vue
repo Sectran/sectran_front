@@ -51,7 +51,6 @@ const initXterm = () => {
         cursorBlink: true,
         fontSize: 14,
         fontWeight: "500",
-        lineHeight: 0,
         rightClickSelectsWord: true,
         theme: {
             foreground: "#000000",
@@ -102,7 +101,6 @@ const sendCharacters = (data: any) => { sectermTeminalCharacters(data, websocket
 
 const onData = (msg: any) => {
     let sm = v1.SectermMessage.decode(new Uint8Array(msg));
-
     if (sm instanceof v1.SectermConnectResponse) {
         if (sm.code != v1.SectermCode.LOGON_SUCCESS) {
             console.log("connect error deu to " + sm.code);
