@@ -21,9 +21,8 @@
             </div>
             <div class="Content-style">
                 <div class="Content-left">
-                    <a-directory-tree multiple default-expand-all @select="on_node">
-                        <a-tree-node key="0-0" title="Default">
-                            <a-tree-node key="0-0-0" title="Linux" is-leaf />
+                    <a-directory-tree multiple default-expand-all @select="on_node" style="padding:10px 0;">
+                        <a-tree-node  :title="item.Name" v-for="item in nodeArr" :key="item.Id">
                         </a-tree-node>
                     </a-directory-tree>
                 </div>
@@ -160,6 +159,7 @@ import { useI18n } from "vue-i18n";
 import { headMenu } from "./menu.ts"
 import { useStore } from 'vuex'
 // PlusSquareOutlined
+import { deviceList } from "@/api/admin"
 import { UploadOutlined, LockOutlined, } from '@ant-design/icons-vue';
 import xterm from "./components/xterm.vue"
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
@@ -179,12 +179,22 @@ const submitLoading = ref<boolean>(false);
 const multiActiveKey = ref(1);
 const soleKey = ref<number>(0);
 let multiList = ref<MultiList[]>([])
+let nodeArr = ref<{ Name: string, Id: number }[]>([])
+let nodeTotal = ref<number>(0)
+
 
 onMounted(() => {
     // window.addEventListener("beforeunload", (e: any) => {
     //     e.returnValue = "您确定要离开吗？请确认是否保存您的更改。";
     //     e.preventDefault();
     // });
+
+    deviceList({ Limit: 10, Offset: 1 }).then((res: { Data: { Data: any, Total: number } }) => {
+        console.log(res)
+        let { Data, Total } = res.Data
+        nodeArr.value = Data
+        nodeTotal.value = Total
+    })
 });
 
 const on_node = () => {
@@ -194,7 +204,6 @@ const on_node = () => {
         connectFormState.username = username
         connectFormState.password = password
     }
-
     connectOpen.value = true;
 };
 
@@ -307,6 +316,7 @@ const connectResult = (modalState: boolean) => {
         background: #463e3e;
         color: #ffffff;
         font-size: 14px;
+        box-sizing: border-box;
 
         ::v-deep(.ant-dropdown-link) {
             margin-right: 20px;
@@ -319,11 +329,8 @@ const connectResult = (modalState: boolean) => {
 
         .Content-left {
             width: 300px;
-            // min-width: 300px;
             background: #2f2a2a;
-            // padding: 20px;
 
-            // height: 100%;
             ::v-deep(.ant-tree-list) {
                 background: #2f2a2a;
                 color: #ffffff;

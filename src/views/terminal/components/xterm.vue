@@ -1,7 +1,14 @@
 <template>
-    <div class="terminal-div">
-        <div id="terminal" ref="terminal"></div>
-    </div>
+    <template v-if="connectionStatus">
+
+        <div class="terminal-div">
+            <div id="terminal" ref="terminal"></div>
+        </div>
+    </template>
+
+    <template v-else>
+        <div class="break-style">已断开，请重新连接</div>
+    </template>
 </template>
 
 <script setup lang='ts'>
@@ -36,7 +43,7 @@ let fitAddon = reactive<any>({});
 let resizeScreen: any;
 const { t } = useI18n();
 const emit = defineEmits(["connectResult"]);
-
+let connectionStatus = ref<boolean>(true);
 onMounted(() => {
     initXterm();
     let socket = initSocket(path.value, 5000, 'arraybuffer', onOpen, onData, onError, onClose);
@@ -84,7 +91,7 @@ const initXterm = () => {
         } catch (e: any) {
             console.log("e", e.message);
         }
-    }, 3000);
+    }, 500);
     window.addEventListener("resize", () => {
         resizeScreen();
     });
@@ -137,6 +144,7 @@ const onError = () => {
 };
 const onClose = () => {
     console.log(websocket)
+    connectionStatus.value = false
     console.log("socket已经关闭");
 };
 
@@ -178,9 +186,12 @@ onUnmounted(() => {
     }
 }
 
-.shiyan {
-    height: 100%;
+.break-style{
     width: 100%;
-    background: red;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
 }
 </style>
