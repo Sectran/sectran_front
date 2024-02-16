@@ -187,7 +187,6 @@ onMounted(() => {
     // });
 });
 
-
 const on_node = () => {
     let username = localStorage.getItem('username');
     let password = localStorage.getItem('password');
@@ -300,6 +299,7 @@ const connectResult = (modalState: boolean) => {
 
 .configuration-style {
     min-width: 1000px;
+
     .configuration-nav {
         height: 40px;
         padding: 0 40px;

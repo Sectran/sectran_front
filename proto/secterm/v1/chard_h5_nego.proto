@@ -16,6 +16,15 @@ enum SectermProtocols{
     SECTERM_TELNET = 1;
 }
 
+message SectermCredentialPrivateKey {
+    bytes private_key = 1;
+    bytes private_key_password = 2;
+}
+
+message SectermCredentialPassword {
+    bytes password = 1;
+}
+
 //sectran term
 message SectermConnectRequest {
     // token is the session idetify sequence.
@@ -32,8 +41,8 @@ message SectermConnectRequest {
     AuthMethod auth_method = 6;
     // user auth credentials,just need to specify one of them.(when sectran unmanaged)
     oneof credential {
-        bytes private_key = 7;
-        bytes password = 8;
+        SectermCredentialPrivateKey private_key = 7;
+        SectermCredentialPassword password = 8;
     }
     // target hostname.(when sectran unmanaged)
     string hostname = 9;

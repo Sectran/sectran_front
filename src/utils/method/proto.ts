@@ -17,8 +17,7 @@ type SectermConnectRequest = {
 export const sectermConnectRequest = (connectParams: SectermConnectRequest) => {
     let sectermMessage = new v1.SectermMessage();
 
-    let mesType =
-        v1.SectermMessageType.SectermConnectRequestMessage;
+
 
     let connectMessage = new v1.SectermConnectRequest();
     connectMessage.authMethod = v1.AuthMethod.PASSWORD_AUTH;
@@ -32,9 +31,7 @@ export const sectermConnectRequest = (connectParams: SectermConnectRequest) => {
     connectMessage.port = connectParams.port;
     connectMessage.password = stringToUint8Array(connectParams.password);
    
-
     sectermMessage.request = connectMessage;
-    sectermMessage.mesType = mesType;
 
     let connectData =
         v1.SectermMessage.encode(sectermMessage).finish();
@@ -47,8 +44,6 @@ export const sectermConnectRequest = (connectParams: SectermConnectRequest) => {
 export const sectermTeminalResize = (resizeParams:SectermTerminalResize) => {
     let sectermMessage = new v1.SectermMessage();
     
-    sectermMessage.mesType =
-        v1.SectermMessageType.SectranTeminalResizeMessage;
     let resize = new v1.SectermTerminalResize()
     resize.colums = resizeParams.Colums
     resize.rows = resizeParams.Rows

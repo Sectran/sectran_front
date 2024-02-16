@@ -66,6 +66,463 @@ export const sectran_chard = $root.sectran_chard = (() => {
                 return values;
             })();
 
+            v1.SectermCredentialPrivateKey = (function() {
+
+                /**
+                 * Properties of a SectermCredentialPrivateKey.
+                 * @memberof sectran_chard.secterm.v1
+                 * @interface ISectermCredentialPrivateKey
+                 * @property {Uint8Array|null} [privateKey] SectermCredentialPrivateKey privateKey
+                 * @property {Uint8Array|null} [privateKeyPassword] SectermCredentialPrivateKey privateKeyPassword
+                 */
+
+                /**
+                 * Constructs a new SectermCredentialPrivateKey.
+                 * @memberof sectran_chard.secterm.v1
+                 * @classdesc Represents a SectermCredentialPrivateKey.
+                 * @implements ISectermCredentialPrivateKey
+                 * @constructor
+                 * @param {sectran_chard.secterm.v1.ISectermCredentialPrivateKey=} [properties] Properties to set
+                 */
+                function SectermCredentialPrivateKey(properties) {
+                    if (properties)
+                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * SectermCredentialPrivateKey privateKey.
+                 * @member {Uint8Array} privateKey
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPrivateKey
+                 * @instance
+                 */
+                SectermCredentialPrivateKey.prototype.privateKey = $util.newBuffer([]);
+
+                /**
+                 * SectermCredentialPrivateKey privateKeyPassword.
+                 * @member {Uint8Array} privateKeyPassword
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPrivateKey
+                 * @instance
+                 */
+                SectermCredentialPrivateKey.prototype.privateKeyPassword = $util.newBuffer([]);
+
+                /**
+                 * Creates a new SectermCredentialPrivateKey instance using the specified properties.
+                 * @function create
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPrivateKey
+                 * @static
+                 * @param {sectran_chard.secterm.v1.ISectermCredentialPrivateKey=} [properties] Properties to set
+                 * @returns {sectran_chard.secterm.v1.SectermCredentialPrivateKey} SectermCredentialPrivateKey instance
+                 */
+                SectermCredentialPrivateKey.create = function create(properties) {
+                    return new SectermCredentialPrivateKey(properties);
+                };
+
+                /**
+                 * Encodes the specified SectermCredentialPrivateKey message. Does not implicitly {@link sectran_chard.secterm.v1.SectermCredentialPrivateKey.verify|verify} messages.
+                 * @function encode
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPrivateKey
+                 * @static
+                 * @param {sectran_chard.secterm.v1.ISectermCredentialPrivateKey} message SectermCredentialPrivateKey message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                SectermCredentialPrivateKey.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (message.privateKey != null && Object.hasOwnProperty.call(message, "privateKey"))
+                        writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.privateKey);
+                    if (message.privateKeyPassword != null && Object.hasOwnProperty.call(message, "privateKeyPassword"))
+                        writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.privateKeyPassword);
+                    return writer;
+                };
+
+                /**
+                 * Encodes the specified SectermCredentialPrivateKey message, length delimited. Does not implicitly {@link sectran_chard.secterm.v1.SectermCredentialPrivateKey.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPrivateKey
+                 * @static
+                 * @param {sectran_chard.secterm.v1.ISectermCredentialPrivateKey} message SectermCredentialPrivateKey message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                SectermCredentialPrivateKey.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+
+                /**
+                 * Decodes a SectermCredentialPrivateKey message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPrivateKey
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {sectran_chard.secterm.v1.SectermCredentialPrivateKey} SectermCredentialPrivateKey
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                SectermCredentialPrivateKey.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.sectran_chard.secterm.v1.SectermCredentialPrivateKey();
+                    while (reader.pos < end) {
+                        let tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        case 1: {
+                                message.privateKey = reader.bytes();
+                                break;
+                            }
+                        case 2: {
+                                message.privateKeyPassword = reader.bytes();
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Decodes a SectermCredentialPrivateKey message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPrivateKey
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {sectran_chard.secterm.v1.SectermCredentialPrivateKey} SectermCredentialPrivateKey
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                SectermCredentialPrivateKey.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+
+                /**
+                 * Verifies a SectermCredentialPrivateKey message.
+                 * @function verify
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPrivateKey
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                SectermCredentialPrivateKey.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    if (message.privateKey != null && message.hasOwnProperty("privateKey"))
+                        if (!(message.privateKey && typeof message.privateKey.length === "number" || $util.isString(message.privateKey)))
+                            return "privateKey: buffer expected";
+                    if (message.privateKeyPassword != null && message.hasOwnProperty("privateKeyPassword"))
+                        if (!(message.privateKeyPassword && typeof message.privateKeyPassword.length === "number" || $util.isString(message.privateKeyPassword)))
+                            return "privateKeyPassword: buffer expected";
+                    return null;
+                };
+
+                /**
+                 * Creates a SectermCredentialPrivateKey message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPrivateKey
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {sectran_chard.secterm.v1.SectermCredentialPrivateKey} SectermCredentialPrivateKey
+                 */
+                SectermCredentialPrivateKey.fromObject = function fromObject(object) {
+                    if (object instanceof $root.sectran_chard.secterm.v1.SectermCredentialPrivateKey)
+                        return object;
+                    let message = new $root.sectran_chard.secterm.v1.SectermCredentialPrivateKey();
+                    if (object.privateKey != null)
+                        if (typeof object.privateKey === "string")
+                            $util.base64.decode(object.privateKey, message.privateKey = $util.newBuffer($util.base64.length(object.privateKey)), 0);
+                        else if (object.privateKey.length >= 0)
+                            message.privateKey = object.privateKey;
+                    if (object.privateKeyPassword != null)
+                        if (typeof object.privateKeyPassword === "string")
+                            $util.base64.decode(object.privateKeyPassword, message.privateKeyPassword = $util.newBuffer($util.base64.length(object.privateKeyPassword)), 0);
+                        else if (object.privateKeyPassword.length >= 0)
+                            message.privateKeyPassword = object.privateKeyPassword;
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a SectermCredentialPrivateKey message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPrivateKey
+                 * @static
+                 * @param {sectran_chard.secterm.v1.SectermCredentialPrivateKey} message SectermCredentialPrivateKey
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                SectermCredentialPrivateKey.toObject = function toObject(message, options) {
+                    if (!options)
+                        options = {};
+                    let object = {};
+                    if (options.defaults) {
+                        if (options.bytes === String)
+                            object.privateKey = "";
+                        else {
+                            object.privateKey = [];
+                            if (options.bytes !== Array)
+                                object.privateKey = $util.newBuffer(object.privateKey);
+                        }
+                        if (options.bytes === String)
+                            object.privateKeyPassword = "";
+                        else {
+                            object.privateKeyPassword = [];
+                            if (options.bytes !== Array)
+                                object.privateKeyPassword = $util.newBuffer(object.privateKeyPassword);
+                        }
+                    }
+                    if (message.privateKey != null && message.hasOwnProperty("privateKey"))
+                        object.privateKey = options.bytes === String ? $util.base64.encode(message.privateKey, 0, message.privateKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.privateKey) : message.privateKey;
+                    if (message.privateKeyPassword != null && message.hasOwnProperty("privateKeyPassword"))
+                        object.privateKeyPassword = options.bytes === String ? $util.base64.encode(message.privateKeyPassword, 0, message.privateKeyPassword.length) : options.bytes === Array ? Array.prototype.slice.call(message.privateKeyPassword) : message.privateKeyPassword;
+                    return object;
+                };
+
+                /**
+                 * Converts this SectermCredentialPrivateKey to JSON.
+                 * @function toJSON
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPrivateKey
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                SectermCredentialPrivateKey.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                /**
+                 * Gets the default type url for SectermCredentialPrivateKey
+                 * @function getTypeUrl
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPrivateKey
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                SectermCredentialPrivateKey.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/sectran_chard.secterm.v1.SectermCredentialPrivateKey";
+                };
+
+                return SectermCredentialPrivateKey;
+            })();
+
+            v1.SectermCredentialPassword = (function() {
+
+                /**
+                 * Properties of a SectermCredentialPassword.
+                 * @memberof sectran_chard.secterm.v1
+                 * @interface ISectermCredentialPassword
+                 * @property {Uint8Array|null} [password] SectermCredentialPassword password
+                 */
+
+                /**
+                 * Constructs a new SectermCredentialPassword.
+                 * @memberof sectran_chard.secterm.v1
+                 * @classdesc Represents a SectermCredentialPassword.
+                 * @implements ISectermCredentialPassword
+                 * @constructor
+                 * @param {sectran_chard.secterm.v1.ISectermCredentialPassword=} [properties] Properties to set
+                 */
+                function SectermCredentialPassword(properties) {
+                    if (properties)
+                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null)
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * SectermCredentialPassword password.
+                 * @member {Uint8Array} password
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPassword
+                 * @instance
+                 */
+                SectermCredentialPassword.prototype.password = $util.newBuffer([]);
+
+                /**
+                 * Creates a new SectermCredentialPassword instance using the specified properties.
+                 * @function create
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPassword
+                 * @static
+                 * @param {sectran_chard.secterm.v1.ISectermCredentialPassword=} [properties] Properties to set
+                 * @returns {sectran_chard.secterm.v1.SectermCredentialPassword} SectermCredentialPassword instance
+                 */
+                SectermCredentialPassword.create = function create(properties) {
+                    return new SectermCredentialPassword(properties);
+                };
+
+                /**
+                 * Encodes the specified SectermCredentialPassword message. Does not implicitly {@link sectran_chard.secterm.v1.SectermCredentialPassword.verify|verify} messages.
+                 * @function encode
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPassword
+                 * @static
+                 * @param {sectran_chard.secterm.v1.ISectermCredentialPassword} message SectermCredentialPassword message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                SectermCredentialPassword.encode = function encode(message, writer) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (message.password != null && Object.hasOwnProperty.call(message, "password"))
+                        writer.uint32(/* id 1, wireType 2 =*/10).bytes(message.password);
+                    return writer;
+                };
+
+                /**
+                 * Encodes the specified SectermCredentialPassword message, length delimited. Does not implicitly {@link sectran_chard.secterm.v1.SectermCredentialPassword.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPassword
+                 * @static
+                 * @param {sectran_chard.secterm.v1.ISectermCredentialPassword} message SectermCredentialPassword message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                SectermCredentialPassword.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer).ldelim();
+                };
+
+                /**
+                 * Decodes a SectermCredentialPassword message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPassword
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {sectran_chard.secterm.v1.SectermCredentialPassword} SectermCredentialPassword
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                SectermCredentialPassword.decode = function decode(reader, length) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.sectran_chard.secterm.v1.SectermCredentialPassword();
+                    while (reader.pos < end) {
+                        let tag = reader.uint32();
+                        switch (tag >>> 3) {
+                        case 1: {
+                                message.password = reader.bytes();
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Decodes a SectermCredentialPassword message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPassword
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {sectran_chard.secterm.v1.SectermCredentialPassword} SectermCredentialPassword
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                SectermCredentialPassword.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+
+                /**
+                 * Verifies a SectermCredentialPassword message.
+                 * @function verify
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPassword
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                SectermCredentialPassword.verify = function verify(message) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    if (message.password != null && message.hasOwnProperty("password"))
+                        if (!(message.password && typeof message.password.length === "number" || $util.isString(message.password)))
+                            return "password: buffer expected";
+                    return null;
+                };
+
+                /**
+                 * Creates a SectermCredentialPassword message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPassword
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {sectran_chard.secterm.v1.SectermCredentialPassword} SectermCredentialPassword
+                 */
+                SectermCredentialPassword.fromObject = function fromObject(object) {
+                    if (object instanceof $root.sectran_chard.secterm.v1.SectermCredentialPassword)
+                        return object;
+                    let message = new $root.sectran_chard.secterm.v1.SectermCredentialPassword();
+                    if (object.password != null)
+                        if (typeof object.password === "string")
+                            $util.base64.decode(object.password, message.password = $util.newBuffer($util.base64.length(object.password)), 0);
+                        else if (object.password.length >= 0)
+                            message.password = object.password;
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a SectermCredentialPassword message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPassword
+                 * @static
+                 * @param {sectran_chard.secterm.v1.SectermCredentialPassword} message SectermCredentialPassword
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                SectermCredentialPassword.toObject = function toObject(message, options) {
+                    if (!options)
+                        options = {};
+                    let object = {};
+                    if (options.defaults)
+                        if (options.bytes === String)
+                            object.password = "";
+                        else {
+                            object.password = [];
+                            if (options.bytes !== Array)
+                                object.password = $util.newBuffer(object.password);
+                        }
+                    if (message.password != null && message.hasOwnProperty("password"))
+                        object.password = options.bytes === String ? $util.base64.encode(message.password, 0, message.password.length) : options.bytes === Array ? Array.prototype.slice.call(message.password) : message.password;
+                    return object;
+                };
+
+                /**
+                 * Converts this SectermCredentialPassword to JSON.
+                 * @function toJSON
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPassword
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                SectermCredentialPassword.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                /**
+                 * Gets the default type url for SectermCredentialPassword
+                 * @function getTypeUrl
+                 * @memberof sectran_chard.secterm.v1.SectermCredentialPassword
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                SectermCredentialPassword.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/sectran_chard.secterm.v1.SectermCredentialPassword";
+                };
+
+                return SectermCredentialPassword;
+            })();
+
             v1.SectermConnectRequest = (function() {
 
                 /**
@@ -78,8 +535,8 @@ export const sectran_chard = $root.sectran_chard = (() => {
                  * @property {boolean|null} [unmanaged] SectermConnectRequest unmanaged
                  * @property {string|null} [username] SectermConnectRequest username
                  * @property {sectran_chard.secterm.v1.AuthMethod|null} [authMethod] SectermConnectRequest authMethod
-                 * @property {Uint8Array|null} [privateKey] SectermConnectRequest privateKey
-                 * @property {Uint8Array|null} [password] SectermConnectRequest password
+                 * @property {sectran_chard.secterm.v1.ISectermCredentialPrivateKey|null} [privateKey] SectermConnectRequest privateKey
+                 * @property {sectran_chard.secterm.v1.ISectermCredentialPassword|null} [password] SectermConnectRequest password
                  * @property {string|null} [hostname] SectermConnectRequest hostname
                  * @property {number|null} [port] SectermConnectRequest port
                  * @property {sectran_chard.secterm.v1.SectermProtocols|null} [protocol] SectermConnectRequest protocol
@@ -150,7 +607,7 @@ export const sectran_chard = $root.sectran_chard = (() => {
 
                 /**
                  * SectermConnectRequest privateKey.
-                 * @member {Uint8Array|null|undefined} privateKey
+                 * @member {sectran_chard.secterm.v1.ISectermCredentialPrivateKey|null|undefined} privateKey
                  * @memberof sectran_chard.secterm.v1.SectermConnectRequest
                  * @instance
                  */
@@ -158,7 +615,7 @@ export const sectran_chard = $root.sectran_chard = (() => {
 
                 /**
                  * SectermConnectRequest password.
-                 * @member {Uint8Array|null|undefined} password
+                 * @member {sectran_chard.secterm.v1.ISectermCredentialPassword|null|undefined} password
                  * @memberof sectran_chard.secterm.v1.SectermConnectRequest
                  * @instance
                  */
@@ -239,9 +696,9 @@ export const sectran_chard = $root.sectran_chard = (() => {
                     if (message.authMethod != null && Object.hasOwnProperty.call(message, "authMethod"))
                         writer.uint32(/* id 6, wireType 0 =*/48).int32(message.authMethod);
                     if (message.privateKey != null && Object.hasOwnProperty.call(message, "privateKey"))
-                        writer.uint32(/* id 7, wireType 2 =*/58).bytes(message.privateKey);
+                        $root.sectran_chard.secterm.v1.SectermCredentialPrivateKey.encode(message.privateKey, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
                     if (message.password != null && Object.hasOwnProperty.call(message, "password"))
-                        writer.uint32(/* id 8, wireType 2 =*/66).bytes(message.password);
+                        $root.sectran_chard.secterm.v1.SectermCredentialPassword.encode(message.password, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
                     if (message.hostname != null && Object.hasOwnProperty.call(message, "hostname"))
                         writer.uint32(/* id 9, wireType 2 =*/74).string(message.hostname);
                     if (message.port != null && Object.hasOwnProperty.call(message, "port"))
@@ -307,11 +764,11 @@ export const sectran_chard = $root.sectran_chard = (() => {
                                 break;
                             }
                         case 7: {
-                                message.privateKey = reader.bytes();
+                                message.privateKey = $root.sectran_chard.secterm.v1.SectermCredentialPrivateKey.decode(reader, reader.uint32());
                                 break;
                             }
                         case 8: {
-                                message.password = reader.bytes();
+                                message.password = $root.sectran_chard.secterm.v1.SectermCredentialPassword.decode(reader, reader.uint32());
                                 break;
                             }
                         case 9: {
@@ -389,15 +846,21 @@ export const sectran_chard = $root.sectran_chard = (() => {
                         }
                     if (message.privateKey != null && message.hasOwnProperty("privateKey")) {
                         properties.credential = 1;
-                        if (!(message.privateKey && typeof message.privateKey.length === "number" || $util.isString(message.privateKey)))
-                            return "privateKey: buffer expected";
+                        {
+                            let error = $root.sectran_chard.secterm.v1.SectermCredentialPrivateKey.verify(message.privateKey);
+                            if (error)
+                                return "privateKey." + error;
+                        }
                     }
                     if (message.password != null && message.hasOwnProperty("password")) {
                         if (properties.credential === 1)
                             return "credential: multiple values";
                         properties.credential = 1;
-                        if (!(message.password && typeof message.password.length === "number" || $util.isString(message.password)))
-                            return "password: buffer expected";
+                        {
+                            let error = $root.sectran_chard.secterm.v1.SectermCredentialPassword.verify(message.password);
+                            if (error)
+                                return "password." + error;
+                        }
                     }
                     if (message.hostname != null && message.hasOwnProperty("hostname"))
                         if (!$util.isString(message.hostname))
@@ -462,16 +925,16 @@ export const sectran_chard = $root.sectran_chard = (() => {
                         message.authMethod = 3;
                         break;
                     }
-                    if (object.privateKey != null)
-                        if (typeof object.privateKey === "string")
-                            $util.base64.decode(object.privateKey, message.privateKey = $util.newBuffer($util.base64.length(object.privateKey)), 0);
-                        else if (object.privateKey.length >= 0)
-                            message.privateKey = object.privateKey;
-                    if (object.password != null)
-                        if (typeof object.password === "string")
-                            $util.base64.decode(object.password, message.password = $util.newBuffer($util.base64.length(object.password)), 0);
-                        else if (object.password.length >= 0)
-                            message.password = object.password;
+                    if (object.privateKey != null) {
+                        if (typeof object.privateKey !== "object")
+                            throw TypeError(".sectran_chard.secterm.v1.SectermConnectRequest.privateKey: object expected");
+                        message.privateKey = $root.sectran_chard.secterm.v1.SectermCredentialPrivateKey.fromObject(object.privateKey);
+                    }
+                    if (object.password != null) {
+                        if (typeof object.password !== "object")
+                            throw TypeError(".sectran_chard.secterm.v1.SectermConnectRequest.password: object expected");
+                        message.password = $root.sectran_chard.secterm.v1.SectermCredentialPassword.fromObject(object.password);
+                    }
                     if (object.hostname != null)
                         message.hostname = String(object.hostname);
                     if (object.port != null)
@@ -532,12 +995,12 @@ export const sectran_chard = $root.sectran_chard = (() => {
                     if (message.authMethod != null && message.hasOwnProperty("authMethod"))
                         object.authMethod = options.enums === String ? $root.sectran_chard.secterm.v1.AuthMethod[message.authMethod] === undefined ? message.authMethod : $root.sectran_chard.secterm.v1.AuthMethod[message.authMethod] : message.authMethod;
                     if (message.privateKey != null && message.hasOwnProperty("privateKey")) {
-                        object.privateKey = options.bytes === String ? $util.base64.encode(message.privateKey, 0, message.privateKey.length) : options.bytes === Array ? Array.prototype.slice.call(message.privateKey) : message.privateKey;
+                        object.privateKey = $root.sectran_chard.secterm.v1.SectermCredentialPrivateKey.toObject(message.privateKey, options);
                         if (options.oneofs)
                             object.credential = "privateKey";
                     }
                     if (message.password != null && message.hasOwnProperty("password")) {
-                        object.password = options.bytes === String ? $util.base64.encode(message.password, 0, message.password.length) : options.bytes === Array ? Array.prototype.slice.call(message.password) : message.password;
+                        object.password = $root.sectran_chard.secterm.v1.SectermCredentialPassword.toObject(message.password, options);
                         if (options.oneofs)
                             object.credential = "password";
                     }

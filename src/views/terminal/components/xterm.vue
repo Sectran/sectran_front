@@ -9,8 +9,7 @@ import {
     onMounted,
     ref,
     reactive,
-    onUnmounted,
-    nextTick
+    onUnmounted
 } from "vue";
 import { message } from 'ant-design-vue';
 import { Terminal } from "xterm";
@@ -21,6 +20,7 @@ import { sectermConnectRequest, sectermTeminalResize, secTeminalCharacters } fro
 // import { throttle } from "@/utils/method/utils"
 import { debounce } from 'lodash'
 const v1 = sectran_chard.secterm.v1
+console.log(sectran_chard)
 let terminal = ref(null);
 let path = ref<string>('ws://101.133.229.239:19529')
 // let path = ref<string>("ws://127.0.0.1:19529");
@@ -42,44 +42,24 @@ onMounted(() => {
     initXterm();
     initSocket();
 
-    nextTick(() => {
-        //监听元素大小变化
-        // observer = new ResizeObserver(handleResize);
-        // if (myButton.value) {
-        //     observer.observe(myButton.value);
-        // }
-
-    })
 });
 
 const myButton = ref(null);
-// let observer: ResizeObserver | null = null;
-// const handleResize = () => {
-
-//     nextTick(() => {
-//         resizeScreen();
-//     })
-
-// };
-
 
 const initXterm = () => {
     let terms: any = new Terminal({
-        // rendererType: "canvas", //渲染类型
-        // rows: _this.rows, //行数
-        // cols: _this.cols, // 不指定行数，自动回车后光标从下一行开始
-        convertEol: true, //启用时，光标将设置为下一行的开头
-        disableStdin: false, //是否应禁用输入
-        cursorBlink: true, //光标闪烁
-        fontSize: 14, //字体大小
+        convertEol: true,
+        disableStdin: false,
+        cursorBlink: true,
+        fontSize: 14,
         fontWeight: "500",
         lineHeight: 0,
         rightClickSelectsWord: true,
         theme: {
-            foreground: "#000000", //字体
-            background: "#FFFFFF", //背景色
-            // cursor: "help", //设置光标
-            cursor: "#6376C2", //设置光标
+            foreground: "#000000",
+            background: "#FFFFFF",
+            // cursor: "help",
+            cursor: "#6376C2",
             // lineHeight: 20
         },
     }); write
@@ -175,29 +155,33 @@ const initSocket = () => {
 
 const onData = (msg: any) => {
     let sm = v1.SectermMessage.decode(new Uint8Array(msg));
+    console.log(sm)
+    if (sm.mesType) {
+        switch (sm.mesType) {
+            case v1.SectermMessageType
+                .SectermConnectResponseMessage:
+                if (
+                    sm.response?.code != v1.SectermCode.LOGON_SUCCESS
+                ) {
+                    console.log("connect error deu to " + sm.response?.code);
+                }
+                console.log("connect success!");
+                break;
+            case v1.SectermMessageType
+                .SectranTeminalCharactersMessage:
+                if (props.submitLoading) {
+                    emit("connectResult", false)
+                    localStorage.setItem('username', props.username);
+                    localStorage.setItem('password', props.password);
+                }
+                term.write(sm.characters?.Data);
+                break;
+            default:
+                console.log("unknow secterm message type of " + sm.mesType);
+        }
 
-    switch (sm.mesType) {
-        case v1.SectermMessageType
-            .SectermConnectResponseMessage:
-            if (
-                sm.response?.code != v1.SectermCode.LOGON_SUCCESS
-            ) {
-                console.log("connect error deu to " + sm.response?.code);
-            }
-            console.log("connect success!");
-            break;
-        case v1.SectermMessageType
-            .SectranTeminalCharactersMessage:
-            if (props.submitLoading) {
-                emit("connectResult", false)
-                localStorage.setItem('username', props.username);
-                localStorage.setItem('password', props.password);
-            }
-            term.write(sm.characters?.Data);
-            break;
-        default:
-            console.log("unknow secterm message type of " + sm.mesType);
     }
+
 };
 
 const onOpen = () => {

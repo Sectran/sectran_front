@@ -6,26 +6,28 @@ option go_package = "sectran_chard/secterm/v1;sectermv1";
 
 import "./chard_h5_nego.proto";
 import "./chard_h5_terminal.proto";
-
-//TODO: add the other message type
-enum SectermMessageType{
-    // connect request message 连接请求消息
-    SectermConnectRequestMessage = 0;
-    // connect response message 连接回应消息
-    SectermConnectResponseMessage = 1;
-    // window size change message 窗口大小变动
-    SectranTeminalResizeMessage = 2;
-    // terminale message 终端消息
-    SectranTeminalCharactersMessage = 3;
-}
+import "./chard_h5_sftp.proto";
 
 //need write length(uint32 little endian) before send proto message
 message SectermMessage {
-    SectermMessageType mes_type = 2;
     oneof data{
+        // connect request message 连接请求消息
         SectermConnectRequest request = 3;
+        // connect response message 连接回应消息
         SectermConnectResponse response = 4;
+        // window size change message 窗口大小变动
         SectermTerminalResize resize = 5;
+        // terminale message 终端消息
         SectranTeminalCharacters characters = 6;
+        // sftp dir query info request 文件夹信息
+        SectermSftpDirectoryInfoRequest sftpInfoReq = 7;
+        // sftp file list response 文件列表相应
+        SectermSftpListInfoResponse sftpInfoRsp = 8;
+        // sftp file create request 文件创建请求
+        SectermSftpCreate sftpCreateReq = 9;
+        // sftp file move request 文件move操作请求
+        SectermSftpMove sftpMoveReq = 10;
+        // sftp file delete 文件删除请求
+        SectermSftpDelete sftpDelete = 11;
     }
 }
