@@ -84,7 +84,7 @@ export default {
         deviceAdmin:"device admin"
     },
     socket:{
-        error:"socket connection error",
+        error:"connection close",
     }
 
 

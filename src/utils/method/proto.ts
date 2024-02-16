@@ -13,37 +13,37 @@ type SectermConnectRequest = {
     password: string
 } & SectermTerminalResize
 
-//连接socket
-export const sectermConnectRequest = (connectParams: SectermConnectRequest) => {
+export const sectermConnectRequest = (connectParams: SectermConnectRequest, websocket: WebSocket) => {
+    const credentialPassword: sectran_chard.secterm.v1.ISectermCredentialPassword = {
+        password: stringToUint8Array(connectParams.password)
+    };
+
+    const connectRequest: sectran_chard.secterm.v1.ISectermConnectRequest = {
+        token: connectParams.token,
+        Colums: connectParams.Colums,
+        Rows: connectParams.Rows,
+        unmanaged: connectParams.unmanaged,
+        username: connectParams.username,
+        authMethod: v1.AuthMethod.PASSWORD_AUTH,
+        password: credentialPassword,
+        hostname: connectParams.hostname,
+        port: connectParams.port,
+    };
+
     let sectermMessage = new v1.SectermMessage();
-
-
-
-    let connectMessage = new v1.SectermConnectRequest();
-    connectMessage.authMethod = v1.AuthMethod.PASSWORD_AUTH;
-    connectMessage.token = connectParams.token;
-    connectMessage.Colums = connectParams.Colums;
-    connectMessage.Rows = connectParams.Rows;
-    connectMessage.unmanaged = connectParams.unmanaged;
-    connectMessage.username = connectParams.username;
-    
-    connectMessage.hostname = connectParams.hostname;
-    connectMessage.port = connectParams.port;
-    connectMessage.password = stringToUint8Array(connectParams.password);
-   
-    sectermMessage.request = connectMessage;
+    sectermMessage.request = connectRequest;
 
     let connectData =
         v1.SectermMessage.encode(sectermMessage).finish();
     const uintArr = Uint32Array.from([connectData.length]);
-
-    return { uintArr, connectData }
+    websocket.send(uintArr);
+    websocket.send(connectData);
 }
 
 //浏览器大小改变传内容到socket
-export const sectermTeminalResize = (resizeParams:SectermTerminalResize) => {
+export const sectermTeminalResize = (resizeParams: SectermTerminalResize,websocket:WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
-    
+
     let resize = new v1.SectermTerminalResize()
     resize.colums = resizeParams.Colums
     resize.rows = resizeParams.Rows
@@ -53,18 +53,14 @@ export const sectermTeminalResize = (resizeParams:SectermTerminalResize) => {
     let resizeData =
         v1.SectermMessage.encode(sectermMessage).finish();
     const uintArr = Uint32Array.from([resizeData.length]);
-
-    return {uintArr,resizeData}
+    websocket.send(uintArr);
+    websocket.send(resizeData);
 
 }
 
 //xterm输入
-export const secTeminalCharacters = (data:any) => {
+export const sectermTeminalCharacters = (data: any,websocket:WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
-
-    sectermMessage.mesType =
-        v1.SectermMessageType.SectranTeminalCharactersMessage;
-
     let chars = new v1.SectranTeminalCharacters();
     chars.Data = stringToUint8Array(data);
 
@@ -74,8 +70,8 @@ export const secTeminalCharacters = (data:any) => {
 
     let len: number = charactersData.length;
     const uintArr = Uint32Array.from([len]);
-
-    return {uintArr,charactersData}
+    websocket.send(uintArr);
+    websocket.send(charactersData);
 
 }
 

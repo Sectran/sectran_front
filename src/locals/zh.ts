@@ -80,6 +80,6 @@ export default {
         deviceAdmin:"设备管理"
     },
     socket:{
-        error:"socket连接失败",
+        error:"连接已关闭",
     }
 }
