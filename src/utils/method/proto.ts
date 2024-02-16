@@ -30,6 +30,8 @@ export const sectermConnectRequest = (connectParams: SectermConnectRequest, webs
         port: connectParams.port,
     };
 
+    console.log(connectRequest)
+
     let sectermMessage = new v1.SectermMessage();
     sectermMessage.request = connectRequest;
 

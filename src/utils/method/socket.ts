@@ -18,10 +18,13 @@ export const initSocket = (path: string, timeout: number, binaryType: BinaryType
         })
         .catch((error) => {
             console.error(error.message);
+            console.log("超时关闭")
             socket.close();
         });
-    socket.addEventListener("message", (sty) => onData(sty));
-    socket.addEventListener("close", onClose());
-    socket.addEventListener("error", onError())
+    socket.addEventListener("message", (sty) => {
+        onData(sty)
+    });
+    socket.addEventListener("close", () => onClose());
+    socket.addEventListener("error", () => onError())
     return socket
 };

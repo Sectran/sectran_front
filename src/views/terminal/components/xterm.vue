@@ -40,7 +40,6 @@ const emit = defineEmits(["connectResult"]);
 onMounted(() => {
     initXterm();
     let socket = initSocket(path.value, 5000, 'arraybuffer', onOpen, onData, onError, onClose);
-    console.log(socket)
     websocket = socket
 });
 
@@ -100,20 +99,20 @@ const initXterm = () => {
 const sendCharacters = (data: any) => { sectermTeminalCharacters(data, websocket) };
 
 const onData = (msg: any) => {
-    let sm = v1.SectermMessage.decode(new Uint8Array(msg));
-    if (sm instanceof v1.SectermConnectResponse) {
-        if (sm.code != v1.SectermCode.LOGON_SUCCESS) {
-            console.log("connect error deu to " + sm.code);
+    let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
+    if (sm?.response) {
+        if (sm.response.code != v1.SectermCode.LOGON_SUCCESS) {
+            console.log("connect error deu to " + sm.response.code);
         }
         console.log("connect success!");
     }
-    if (sm instanceof v1.SectranTeminalCharacters) {
+    if (sm?.characters) {
         if (props.submitLoading) {
             emit("connectResult", false);
             localStorage.setItem("username", props.username);
             localStorage.setItem("password", props.password);
         }
-        term.write(sm.Data);
+        term.write(sm.characters.Data);
     }
 };
 const onOpen = () => {
