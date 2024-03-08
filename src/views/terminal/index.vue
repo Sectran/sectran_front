@@ -189,7 +189,7 @@ onMounted(() => {
     //     e.preventDefault();
     // });
 
-    deviceList({ Limit: 10, Offset: 1 }).then((res: { Data: { Data: any, Total: number } }) => {
+    deviceList({ page: 10, pageSize: 1 }).then((res: { Data: { Data: any, Total: number } }) => {
         console.log(res)
         let { Data, Total } = res.Data
         nodeArr.value = Data

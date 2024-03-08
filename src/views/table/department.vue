@@ -2,33 +2,33 @@
     <div class="tablePage-style">
 
         <div class="table-nav">
-            <a-form layout="inline" :model="searchFrom">
+            <a-form layout="inline" :model="searchFrom" ref="searchFormRef">
                 <a-row :gutter="[20, 16]">
-                    <a-col :xl="6" :md="8" :xs="12">
+                    <!-- <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('department.departmentId')">
                             <a-input v-model:value="searchFrom.dept_id"
                                 :placeholder="t('department.departmentIdPlaceholder')" />
                         </a-form-item>
-                    </a-col>
+                    </a-col> -->
                     <a-col :xl="6" :md="8" :xs="12">
-                        <a-form-item :label="t('department.departmentName')">
+                        <a-form-item :label="t('department.departmentName')" name="name">
                             <a-input v-model:value="searchFrom.name"
                                 :placeholder="t('department.departmentNamePlaceholder')" />
                         </a-form-item>
                     </a-col>
                     <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('department.departmentLocation')">
-                            <a-input v-model:value="searchFrom.region"
+                            <a-input v-model:value="searchFrom.area"
                                 :placeholder="t('department.departmentLocationPlaceholder')" />
                         </a-form-item>
                     </a-col>
                     <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item>
                             <a-space wrap>
-                                <a-button :icon="h(SearchOutlined)" type="primary">
+                                <a-button :icon="h(SearchOutlined)" type="primary" @click="on_search()">
                                     {{ t('public.search') }}
                                 </a-button>
-                                <a-button :icon="h(SyncOutlined)">
+                                <a-button :icon="h(SyncOutlined)" @click="fromreset(searchFormRef)">
                                     {{ t('public.reset') }}
                                 </a-button>
                             </a-space>
@@ -43,45 +43,41 @@
             <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
         </a-space>
 
-        <a-table class="table-style" :scroll="{ y: tabHeight }" :columns="columns" :data-source="data"
-           :indentSize="10">
+        <a-table class="table-style" :scroll="{ y: tabHeight }" :columns="columns" :data-source="tableData"
+            :indentSize="10" :pagination="paginationOpt">
             <template #headerCell="{ column }">
                 <span>{{ t(column.title) }}</span>
             </template>
-            <template #bodyCell="{ column }">
+            <template #bodyCell="{ column, record }">
                 <template v-if="column.dataIndex === 'operation'">
                     <a-space :size="8">
-                        <a-button type="link">{{ t('public.redact') }}</a-button>
-                        <a-button type="link" @click="addOpen = true">{{ t('department.addSubordinateDepartment')
-                        }}</a-button>
+                        <a-button type="link" @click="onRedactDepartment(record)">{{ t('public.redact') }}</a-button>
+                        <a-button type="link" @click="onAddSubordinateDepartment(record)">
+                            {{ t('department.addSubordinateDepartment') }}
+                        </a-button>
                         <a-button type="link" danger>{{ t('public.delete') }}</a-button>
                     </a-space>
                 </template>
             </template>
-
         </a-table>
-        <a-modal v-model:open="addOpen" title="添加部门" :footer=null>
-            <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" autocomplete="off"
-                @finish="onFinish">
-                <a-form-item label="部门名称" name="name" :rules="[{ required: true, message: 'Please input your username!' }]">
+
+        <a-modal v-model:open="addOpen" title="添加部门" :footer='null'
+            :after-close="() => { fromreset(submitFormRef); id = undefined }">
+            <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+                ref="submitFormRef" autocomplete="off" @finish="onFinish">
+                <a-form-item label="部门名称" name="name"
+                    :rules="[{ required: true, message: 'Please input your username!' }]">
                     <a-input v-model:value="formState.name" />
                 </a-form-item>
-
                 <a-form-item label="部门描述" name="description"
                     :rules="[{ required: true, message: 'Please input your password!' }]">
                     <a-input v-model:value="formState.description" />
                 </a-form-item>
-
-                <a-form-item label="部门位置" name="region"
+                <a-form-item label="部门位置" name="area"
                     :rules="[{ required: true, message: 'Please input your password!' }]">
-                    <a-input v-model:value="formState.region" />
+                    <a-input v-model:value="formState.area" />
                 </a-form-item>
-
-                <!-- <a-form-item label="上级部门ID" name="parentId"
-                    :rules="[{ required: true, message: 'Please input your password!' }]">
-                    <a-input v-model:value="formState.parentId" />
-                </a-form-item> -->
-                <a-form-item :wrapper-col="{ offset: 4, span: 16 }">
+                <a-form-item :wrapper-col="{ offset: 6, span: 16 }">
                     <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
                 </a-form-item>
             </a-form>
@@ -91,199 +87,102 @@
 
 
 <script setup lang="ts">
-
 import { useTableHooks } from "@/hooks/useTableHooks"
 import { onMounted, ref, reactive, h } from 'vue';
-import { addDepartment, editDepartment } from "@/api/admin"
+import { listDepartment, addDepartment, editDepartment, deleteDepartment } from "@/api/admin"
 import { useI18n } from 'vue-i18n'
 import { SearchOutlined, SyncOutlined, PlusOutlined } from '@ant-design/icons-vue';
-import { listUser, deleteUser } from "@/api/admin"
 type SearchType = {
-    dept_id: number;
+    area: string;
     name: string,
-    region: string,
-    parentId: number
 };
-let searchFrom = reactive({
-    dept_id: 0,
-    name: "",
-    region: "",
-    parentId: 0
-
-});
-// paginationOpt, tableData, searchFormRef, requestList, on_search, fromreset, handleDelete,
-let { tabHeight } = useTableHooks<SearchType>(searchFrom, { listApi: listUser, deleteApi: deleteUser });
-
-
 interface FormState {
-    dept_id?: number
-    name: string;
-    parentId: number
+    id?: number
+    area: string,
     description: string,
-    childIds: string,
-    region: string,
-    createByUid: number
+    name: string,
+    parentDepartments: number | string,
 }
 
-// type listItemType = {
-//     id: string
-//     name: string
-//     describe: string
-// }
-const { t } = useI18n()
-const addOpen = ref<boolean>(false);
-// let listItem = reactive<listItemType>()
-
-
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
-    width: '12%',
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    width: '30%',
-    key: 'address',
-  },
-];
-
-// const columns = [
-//     {
-//         title: 'department.departmentId',
-//         dataIndex: 'DeptId',
-        
-//     },
-//     {
-//         title: 'department.departmentName',
-//         dataIndex: 'name',
-
-//     },
-//     {
-//         title: 'department.departmentDescribe',
-//         dataIndex: 'address',
-//     },
-//     {
-//         title: 'department.departmentLocation',
-//         dataIndex: 'Region',
-//     },
-
-//     {
-//         title: 'department.superiorDepartment',
-//         dataIndex: 'ParentId',
-//     },
-
-//     {
-//         title: 'department.subordinateDepartment',
-//         dataIndex: 'ChildIds',
-//     },
-//     {
-//         title: 'public.creationTime',
-//         dataIndex: 'CreateTime',
-//     },
-//     {
-//         title: 'public.operation',
-//         fixed: 'right',
-//         dataIndex: 'operation',
-//         width: 300,
-//     }
-// ]
-
-
-
-interface DataItem {
+interface DataItem extends FormState {
     key: number;
-    name: string;
-    age: number;
-    address: string;
     children?: DataItem[];
 }
 
-const data: DataItem[] = [
+let searchFrom = reactive({
+    area: "",
+    name: ""
+});
+let { tabHeight, paginationOpt, tableData, searchFormRef, submitFormRef, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listDepartment, deleteApi: deleteDepartment });
+const { t } = useI18n()
+const addOpen = ref<boolean>(false);
+const id = ref<number | undefined>(undefined);
+
+const columns = [
     {
-        key: 1,
-        name: '验收部门',
-        age: 60,
-        address: '验收部门描述',
-        children: [
-            {
-                key: 11,
-                name: '二级部门',
-                age: 42,
-                address: '二级部门',
-            },
-            {
-                key: 12,
-                name: '二级部门',
-                age: 30,
-                address: '二级部门',
-                children: [
-                    {
-                        key: 121,
-                        name: '三级部门',
-                        age: 16,
-                        address: '三级部门',
-                    },
-                ],
-            },
-        ],
+        title: 'department.departmentId',
+        dataIndex: 'id',
     },
     {
-        key: 2,
-        name: '测试部门',
-        age: 32,
-        address: '测试部门',
+        title: 'department.departmentName',
+        dataIndex: 'name',
     },
-];
+    {
+        title: 'department.departmentDescribe',
+        dataIndex: 'description',
+    },
+    {
+        title: 'department.departmentLocation',
+        dataIndex: 'area',
+    },
+
+    {
+        title: 'department.superiorDepartment',
+        dataIndex: 'parentDepartments',
+    },
+    {
+        title: 'public.creationTime',
+        dataIndex: 'updatedAt',
+    },
+    {
+        title: 'public.operation',
+        fixed: 'right',
+        dataIndex: 'operation',
+        width: 300,
+    }
+]
 
 const formState = reactive<FormState>({
-    name: "",
+    area: '',
     description: "",
-    childIds: "",
-    parentId: 0,
-    region: "",
-    createByUid: 1
+    name: "",
+    parentDepartments: "",
 });
 
-// const on_redact = (data: any) => {
-//     console.log(data.id)
-//     addOpen.value = true
-//     formState.name = data.Name
-//     formState.description = data.Description.String
-//     formState.dept_id = data.DeptId
-//     formState.parentId = data.ParentId
-//     formState.childIds = data.ChildIds
-//     formState.region = data.Region
-//     formState.createByUid = data.CreateByUid.int64
+const onRedactDepartment = (record: DataItem) => {
+    for (const key in record) formState[key] = record[key]
+    id.value = record.id
+    addOpen.value = true
+}
 
-// }
-
+const onAddSubordinateDepartment = (record: { parentDepartments: string, id: string }) => {
+    formState.parentDepartments = record.parentDepartments ? record.parentDepartments + `,${record.id}` : record.id + '';
+    addOpen.value = true
+}
 
 const onFinish = () => {
-
     let api
-    if (formState.dept_id) {
+    if (id.value !== undefined) {
         api = editDepartment
     } else {
         api = addDepartment
     }
-    formState.parentId = formState.parentId ? Number(formState.parentId) : 0
     api(formState).then(() => {
         addOpen.value = false
-        // Fun_requestList()
+        requestList()
     })
 };
 
-onMounted(() => {
-
-})
 </script>
 
 <style lang="less" scoped></style>

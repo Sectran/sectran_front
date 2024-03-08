@@ -1,11 +1,11 @@
 // import requests from `@/server/request`
 import requests from "@/server/request"
-let prefix = "/sectran"
+let prefix = ""
 //部门
-export const listDepartment =<T>(data:T)=> requests(`${prefix}/dept/list`,data)
-export const addDepartment = <T>(data:T) => requests(`${prefix}/dept/add`,data)
-export const editDepartment = <T>(data:T) => requests(`${prefix}/dept/edit`,data)
-export const deleteDepartment = <T>(data:T) => requests(`${prefix}/dept/delete`,data) 
+export const listDepartment =<T>(data:T)=> requests(`${prefix}/department/list`,data)
+export const addDepartment = <T>(data:T) => requests(`${prefix}/department/create`,data)
+export const editDepartment = <T>(data:T) => requests(`${prefix}/department/update`,data)
+export const deleteDepartment = <T>(data:T) => requests(`${prefix}/department/delete`,data) 
 
 
 
@@ -30,7 +30,7 @@ export const deleteDeviceAccount =<T>(data:T)=> requests(`/device/deleteDeviceAc
 
 
 //用户
-export const listUser =<T>(data:T)=> requests('/user/listUser',data)
+export const listUser =<T>(data:T)=> requests('/user/list',data)
 export const addUser = <T>(data:T) => requests('/user/addUser',data)
 export const updateUser = <T>(data:T) => requests('/user/updateUser',data)
 export const deleteUser = <T>(data:T) => requests('/user/deleteUser',data)

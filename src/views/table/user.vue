@@ -24,7 +24,7 @@
                             <a-space>
                                 <a-button :icon="h(SearchOutlined)" type="primary" @click="on_search()">{{
                                     t('public.search') }}</a-button>
-                                <a-button :icon="h(SyncOutlined)" @click="fromreset()">{{ t('public.reset')
+                                <a-button :icon="h(SyncOutlined)" @click="fromreset(searchFormRef)">{{ t('public.reset')
                                 }}</a-button>
                             </a-space>
                         </a-form-item>
@@ -61,50 +61,44 @@
             </template>
         </a-table>
 
-        <a-modal v-model:open="addOpen" :title="t('user.addUser')" :footer="null" :after-close="onCancel">
-            <a-form :model="formState" name="basic" ref="formRef" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
-                autocomplete="off" @finish="onFinish">
+        <a-modal v-model:open="addOpen" :title="t('user.addUser')" :footer="null" :after-close="() => { fromreset(submitFormRef); id = undefined }">
+            <a-form :model="formState" name="basic"  :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
+            ref="submitFormRef"    autocomplete="off" @finish="onFinish">
 
-                <a-form-item :label="t('user.userName')" name="Username"
+                <a-form-item :label="t('user.userName')" name="account"
                     :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.userName')}` }]">
-                    <a-input v-model:value="formState.Username"
+                    <a-input v-model:value="formState.account"
                         :placeholder='`${t("public.pleaseInput")}${t("user.userName")}`' />
                 </a-form-item>
 
-                <a-form-item :label="t('user.password')" name="Password"
+                <a-form-item :label="t('user.password')" name="password"
                     :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
-                    <a-input v-model:value="formState.Password"
+                    <a-input v-model:value="formState.password"
                         :placeholder='`${t("public.pleaseInput")}${t("user.userName")}`' />
                 </a-form-item>
 
-                <a-form-item :label="t('user.mame')" name="Name"
+                <a-form-item :label="t('user.mame')" name="name"
                     :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.mame')}` }]">
-                    <a-input v-model:value="formState.Name" :placeholder='`${t("public.pleaseInput")}${t("user.mame")}`' />
+                    <a-input v-model:value="formState.name" :placeholder='`${t("public.pleaseInput")}${t("user.mame")}`' />
                 </a-form-item>
-                <a-form-item :label="t('user.userState')" name="IsDisable"
+                <!-- <a-form-item :label="t('user.userState')" name="IsDisable"
                     :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('user.userState')}` }]">
                     <a-radio-group v-model:value="formState.IsDisable" name="radioGroup">
                         <a-radio v-for="item in [{ value: 1, name: '启用' }, { value: 2, name: '禁用' }]" :key="item.value"
                             :value="item.value">{{ item.name
                             }}</a-radio>
                     </a-radio-group>
+                </a-form-item> -->
+                <a-form-item :label="t('user.usereEmail')" name="email">
+                    <a-input v-model:value="formState.email" :placeholder='`${t("public.pleaseInput")}${t("user.usereEmail")}`' />
                 </a-form-item>
-
-                <a-form-item :label="t('user.usereEmail')" name="Email">
-                    <a-input v-model:value="formState.Email" :placeholder='`${t("public.pleaseInput")}${t("user.usereEmail")}`' />
+                <a-form-item :label="t('user.telephone')" name="phoneNumber">
+                    <a-input v-model:value="formState.phoneNumber" :placeholder='`${t("public.pleaseInput")}${t("user.telephone")}`' />
                 </a-form-item>
-
-                <a-form-item :label="t('user.telephone')" name="Telephone">
-                    <a-input v-model:value="formState.Telephone" :placeholder='`${t("public.pleaseInput")}${t("user.telephone")}`' />
+                <a-form-item :label="t('public.departmentID')" name="description">
+                    <a-textarea v-model:value="formState.description"
+                        :placeholder='`${t("public.pleaseInput")}${t("public.departmentID")}`' />
                 </a-form-item>
-                <a-form-item :label="t('public.Description')" name="Description">
-                    <a-textarea v-model:value="formState.Description"
-                        :placeholder='`${t("public.pleaseInput")}${t("public.Description")}`' />
-                </a-form-item>
-
-                
-
-
                 <a-form-item :wrapper-col="{ offset: 4, span: 16 }">
                     <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
                 </a-form-item>
@@ -118,33 +112,30 @@ import { useTableHooks } from "@/hooks/useTableHooks"
 import { ref, reactive, h, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n'
 // import type { Dayjs } from 'dayjs';
-import type { FormInstance } from 'ant-design-vue';
-
 import { addUser, listUser, deleteUser, updateUser } from "@/api/admin"
 import { SearchOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons-vue';
-
-const { t } = useI18n()
-const formRef = ref<FormInstance>();
-
 let searchFrom = reactive({
 
 });
+let { paginationOpt, tableData, searchFormRef,submitFormRef, tableState, onTableSelectChange, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listUser, deleteApi: deleteUser });
+const { t } = useI18n()
+const id = ref<number | undefined>(undefined);
 type SearchType = {
     // user: string;
     // value1?: Dayjs
 };
 
 type formStateType = {
-    Id?: number | string
-    Username: string
-    Password: string
-    Name: string
+    id?: number | string
+    account: string
+    password: string
+    name: string
     DeptId: number | string
-    IsDisable: number
-    Description: string
+    // IsDisable: number
+    description: string
     RoleId: number | string
-    Email: string
-    Telephone: string
+    email: string
+    phoneNumber: string
 }
 
 
@@ -153,29 +144,31 @@ type formStateType = {
 //     value: number
 // }
 
-let { paginationOpt, tableData, searchFormRef, tableState, onTableSelectChange, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listUser, deleteApi: deleteUser });
+
 const addOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({
-    Username: "",
-    Password: "",
-    Name: "",
+
+    name: "",
+    account: "",
+    password: "",
+
     DeptId: 1,
-    Description: "",
+    description: "",
     RoleId: 1,
-    Email: "",
-    Telephone: "",
-    IsDisable: 1
+    email: "",
+    phoneNumber: "",
+    // IsDisable: 1
 });
 
 const columns = [{
     title: 'user.userName',
-    dataIndex: 'Username',
+    dataIndex: 'account',
 }, {
     title: 'user.password',
-    dataIndex: 'Password',
+    dataIndex: 'password',
 }, {
     title: 'user.mame',
-    dataIndex: 'Name',
+    dataIndex: 'name',
 }, {
     title: 'public.departmentID',
     dataIndex: 'DeptId',
@@ -184,14 +177,14 @@ const columns = [{
     dataIndex: 'RoleId',
 }, {
     title: 'user.usereEmail',
-    dataIndex: 'Email',
+    dataIndex: 'email',
 }, {
     title: 'user.telephone',
-    dataIndex: 'Telephone',
+    dataIndex: 'phoneNumber',
 },
 {
-    title: 'public.Description',
-    dataIndex: 'Description',
+    title: 'public.departmentID',
+    dataIndex: 'description',
 },
 {
     title: 'public.operation',
@@ -206,20 +199,15 @@ const on_redact = (data: formStateType) => {
             formState[key] = data[key]
         }
     })
-    formState.Id = data.Id
+    // formState.Id = data.Id
 }
 const onFinish = () => {
-    let api = formState.Id ? updateUser : addUser
-    api(formState).then(() => {
-        addOpen.value = false
-        requestList()
-    })
+    // let api = formState.Id ? updateUser : addUser
+    // api(formState).then(() => {
+    //     addOpen.value = false
+    //     requestList()
+    // })
 };
-
-const onCancel = () => {
-    formRef.value!.resetFields();
-    if (formState.Id) delete formState.Id
-}
 
 </script>
 

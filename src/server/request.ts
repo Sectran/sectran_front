@@ -54,7 +54,7 @@ const requests: Function = (url: string, param: AxiosRequestConfig<string>, fect
         switch (fecth) {
             case "get":
                 axios.get(url, { params: param }).then((response: any) => {
-                    if (response.data.Code === 0) {
+                    if (response.data.code === 0) {
                         let { data } = response;
                         data.Msg && message.success(data.Msg);
                         resolve(data);
@@ -67,7 +67,7 @@ const requests: Function = (url: string, param: AxiosRequestConfig<string>, fect
             case "post":
                 axios.post(url, param).then(
                     (response: any) => {
-                        if (response.data.Code === 0) {
+                        if (response.data.code === 0) {
                             let { data } = response;
                             data.Msg && message.success(data.Msg);
                             resolve(data);

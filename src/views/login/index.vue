@@ -2,14 +2,13 @@
     <div class="login">
         <div class="logo-style">
             <img :src="logo" alt="">
-            <div >Sectran</div>
+            <div>Sectran</div>
         </div>
 
         <div class="login-content">
             <div class="login-from">
                 <div class="flex-space-between-center">
                     <div class="login-title">
-
                         <div>{{ uselocals('login.login') }}</div>
                     </div>
 
@@ -17,26 +16,27 @@
                 <a-form :model="formState" layout="vertical" name="basic" :label-col="{ span: 8 }" autocomplete="off"
                     @finish="onFinish" @finishFailed="onFinishFailed">
                     <!-- :label="uselocals('login.account')" -->
-                    <a-form-item 
-                        :rules="[{ required: true, message: uselocals('login.accountMessage') }]" name="account">
-                        <a-input class="input-heigth" v-model:value="formState.account" placeholder="请输入账号">
+                    <a-form-item :rules="[{ required: true, message: uselocals('login.accountMessage') }]"
+                        name="account">
+                        <a-input autocomplete  class="input-heigth" v-model:value="formState.account" placeholder="请输入账号">
                             <template #prefix>
                                 <UserOutlined class="site-form-item-icon" />
                             </template>
                         </a-input>
                     </a-form-item>
                     <!-- :label="uselocals('login.password')" -->
-                    <a-form-item 
-                        :rules="[{ required: true, message: uselocals('login.passwordMessage') }]" name="password">
-                        <a-input-password class="input-heigth" v-model:value="formState.password" placeholder="请输入密码">
+                    <a-form-item :rules="[{ required: true, message: uselocals('login.passwordMessage') }]"
+                        name="password">
+                        <a-input-password autocomplete  class="input-heigth" v-model:value="formState.password" placeholder="请输入密码">
                             <template #prefix>
                                 <LockOutlined class="site-form-item-icon" />
                             </template>
                         </a-input-password>
                     </a-form-item>
                     <a-form-item>
-                        <a-button style="width: 100%;height: 40px;" type="primary" html-type="submit">{{ uselocals('login.login')
-                        }}</a-button>
+                        <a-button style="width: 100%;height: 40px;" type="primary" html-type="submit">{{
+                uselocals('login.login')
+                            }}</a-button>
                     </a-form-item>
                 </a-form>
             </div>
@@ -50,8 +50,8 @@
 import { reactive } from 'vue';
 import { uselocals } from "@/hooks/localsHooks"
 import { useRouter } from 'vue-router';
-// import { login } from "@/api/login"
-
+import { login } from "@/api/login"
+import { message } from 'ant-design-vue';
 import logo from '@/assets/img/logo.png'
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 const router = useRouter();
@@ -66,16 +66,15 @@ const formState = reactive<FormState>({
 });
 
 const onFinish = (values: { account: string, password: string }) => {
-    console.log('Success:', values);
-    router.replace('/admin/user')
-    // let fromData = JSON.stringify({ password: values.password, account: values.account })
-    // login<string>(fromData).then((res: { data: string }) => {
-
-    //     let { data } = res
-    //     console.log(data)
-    //     localStorage.setItem('token', data)
-    //    
-    // })
+    // console.log('Success:', values);
+    // let fromData = JSON.stringify({ password: values.password, username: values.account })
+    let fromData = { password: values.password, username: values.account }
+    login(fromData).then((res: { data: string }) => {
+        let { data } = res
+        console.log(data)
+        localStorage.setItem('token', data)
+        router.replace('/admin/user')
+    })
 
 };
 
@@ -107,11 +106,13 @@ const onFinishFailed = (errorInfo: any) => {
         color: #ffffff;
         font-size: 28px;
         font-weight: bold;
+
         img {
             width: 100px;
             height: auto;
-        
+
         }
+
         div {
             margin-left: 10px;
         }
@@ -143,7 +144,7 @@ const onFinishFailed = (errorInfo: any) => {
 
     .login-from {
         flex: 1;
-        padding:50px 40px;
+        padding: 50px 40px;
 
     }
 

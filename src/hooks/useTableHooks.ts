@@ -1,20 +1,20 @@
 import { reactive, ref, onMounted, } from "vue";
 import type { Ref } from "vue"
 import { Modal } from 'ant-design-vue';
-
+import type { FormInstance } from 'ant-design-vue';
 type requestApi = {
     listApi: Function,
     deleteApi: Function
 }
 
 type pageData = {
-    Offset: number,
-    Limit: number
+    pageSize: number,
+    page: number
 }
 
 type resTable = {
-    Data: any
-    Total: number
+    data: any
+    total: number
 }
 type Key = string | number;
 
@@ -32,32 +32,29 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
     let tabHeight = ref<number>(520)
     //分页
     let pageData = reactive<pageData>({
-        Offset: 1,
-        Limit: 10
+        pageSize: 10,
+        page: 1
     })
     //表格是否正在加载
     const tableLoading = ref(false)
-    const searchFormRef = ref<any>();
-
+    const searchFormRef = ref<FormInstance>();
+    const submitFormRef = ref<FormInstance>();
     //当前表格数据
     const tableData = ref([]);
     //分页参数
     const paginationOpt = reactive({
         current: 1,
-        Limit: 10,
+        page: 10,
         pageSizeOptions: [10, 20, 50, 100, 200],
         total: 0,
         onChange: (current: number, size: number) => {
             paginationOpt.current = current
-            paginationOpt.Limit = size
-            pageData.Offset = current
-            pageData.Limit = size
+            paginationOpt.page = size
+            pageData.pageSize = current
+            pageData.page = size
             requestList()
         },
     })
-
-
-
     /**
      * 点击搜索，确认搜索条件
      * @param data 搜索条件，如果没有传入就用初始化传入的搜素条件(主要功能是为了搜索条件可能需要二次处理)  非必传
@@ -65,12 +62,8 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
     const on_search = () => {
         requestList()
     }
-
-    //搜索表单重置
-    const fromreset = () => {
-        searchFormRef.value.resetFields()
-    }
-
+    //表单重置
+    const fromreset = (FormRef: any) => FormRef?.resetFields()
     onMounted(() => {
         let tableDom = document.querySelector('.table-style')
         if (tableDom) {
@@ -82,18 +75,16 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
 
     //请求接口
     const requestList = () => {
-
         let fromData = { ...pageData, ...searchFrom }
         requestApi.listApi(fromData).then((res: resTable) => {
-            let { Data, Total } = res.Data
-            tableData.value = Data
-            paginationOpt.total = Total
+            let { data, total } = res.data
+            tableData.value = data
+            paginationOpt.total = total
             tableState.selectedRowKeys = [];
         })
     }
     //删除接口
     const handleDelete = (params: Key[]) => {
-
         Modal.confirm({
             title: '确定要删除吗？',
             onOk() {
@@ -127,6 +118,7 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
         tabHeight,
         paginationOpt,
         searchFormRef,
+        submitFormRef,
         tableState,
         onTableSelectChange,
         fromreset,
