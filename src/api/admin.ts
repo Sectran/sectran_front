@@ -11,8 +11,8 @@ export const deleteDepartment = <T>(data:T) => requests(`${prefix}/department/de
 
 //角色
 export const listRole =<T>(data:T)=> requests(`${prefix}/role/list`,data)
-export const addRole =<T>(data:T)=> requests(`${prefix}/role/add`,data)
-export const editRole =<T>(data:T)=> requests(`${prefix}/role/edit`,data)
+export const addRole =<T>(data:T)=> requests(`${prefix}/role/create`,data)
+export const editRole =<T>(data:T)=> requests(`${prefix}/role/update`,data)
 export const deleteRole =<T>(data:T)=> requests(`${prefix}/role/delete`,data)
 
 //设备列表

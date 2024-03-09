@@ -58,6 +58,10 @@ export default {
     asideMenu: {
         userinfo: 'userinfo'
     },
+    role:{
+        roleName:"roleName",
+        roleWeight:"roleWeight",
+    },
     public: {
         Submit: 'Submit',
         delete: 'delete',
@@ -72,8 +76,12 @@ export default {
         roleId:"role",
         Description:'description',
         pleaseInput:'please input',
-        pleaseSelect:`please select`
-
+        pleaseSelect:`please select`,
+        creationDate:"creation date",
+        UpdateDate:"update date",
+    },
+    message:{
+        success:"operate successfully"
     },
     menu: {
         configuration: 'configuration',

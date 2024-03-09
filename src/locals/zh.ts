@@ -17,6 +17,7 @@ export default {
         userState:"用户状态",
         usereEmail:'电子邮箱',
         telephone:'手机号'
+
     },
     department: {
         departmentName: '部门名称',
@@ -41,8 +42,6 @@ export default {
         deviceOsKind:'系统类型',
         deviceEncoding:'字符编码',
         deviceAccount :'设备账号',
-
-
         deviceUsername:"设备账号名称",
         Password:"设备账号密码",
         IsAdministrator:"是否管理员",
@@ -50,10 +49,12 @@ export default {
         Protocol:"协议",
         PrivateKey:"key",
         PrivateKeyPassword:"key密码",
-     
-
-
     },
+    role:{
+        roleName:"角色名名称",
+        roleWeight:"角色权重",
+    },
+
     public: {
         Submit: '提 交',
         delete: '删 除',
@@ -69,7 +70,14 @@ export default {
 
         Description:'描述',
         pleaseInput:'请输入',
-        pleaseSelect:`请选择`
+        pleaseSelect:`请选择`,
+        creationDate:"创建日期",
+        UpdateDate:"创建日期",
+
+       
+    },
+    message:{
+        success:"操作成功"
     },
     menu: {
         configuration: '配置',

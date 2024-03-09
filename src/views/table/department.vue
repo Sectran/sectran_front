@@ -12,13 +12,13 @@
                     </a-col> -->
                     <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('department.departmentName')" name="name">
-                            <a-input v-model:value="searchFrom.name"
+                            <a-input v-model:value="searchFrom.name" allowClear
                                 :placeholder="t('department.departmentNamePlaceholder')" />
                         </a-form-item>
                     </a-col>
                     <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('department.departmentLocation')">
-                            <a-input v-model:value="searchFrom.area"
+                            <a-input v-model:value="searchFrom.area" allowClear
                                 :placeholder="t('department.departmentLocationPlaceholder')" />
                         </a-form-item>
                     </a-col>
@@ -160,7 +160,7 @@ const formState = reactive<FormState>({
 });
 
 const onRedactDepartment = (record: DataItem) => {
-    for (const key in record) formState[key] = record[key]
+    for (const key in formState) formState[key] = record[key]
     id.value = record.id
     addOpen.value = true
 }
@@ -172,12 +172,14 @@ const onAddSubordinateDepartment = (record: { parentDepartments: string, id: str
 
 const onFinish = () => {
     let api
+    let fromData: any = { ...formState }
     if (id.value !== undefined) {
         api = editDepartment
+        fromData.id = id.value
     } else {
         api = addDepartment
     }
-    api(formState).then(() => {
+    api(fromData).then(() => {
         addOpen.value = false
         requestList()
     })

@@ -1,22 +1,70 @@
 <template>
     <div class="tablePage-style">
+        <a-space class="mb8 flex-space-between-center">
+            <a-space>
+                <a-button type="primary" @click="handleDelete(tableState.selectedRowKeys)"
+                    :disabled="tableState.selectedRowKeys.length === 0" danger>{{
+                        t('public.deleteInBatches') }}</a-button>
+            </a-space>
+            <a-space>
+                <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add')
+                    }}</a-button>
+            </a-space>
+        </a-space>
+        <a-table rowKey="id" class="table-style" :scroll="{ y: tabHeight }" :columns="columns" :data-source="tableData"
+            :indentSize="10" :pagination="paginationOpt"
+            :row-selection="{ selectedRowKeys: tableState.selectedRowKeys, onChange: onTableSelectChange }">
+            <template #headerCell="{ column }">
+                <span>{{ t(column.title) }}</span>
+            </template>
+            <template #bodyCell="{ column, record }">
+                <template v-if="column.dataIndex === 'operation'">
+                    <a-space :size="8">
+                        <a-button type="link" @click="onRedact(record)">{{ t('public.redact') }}</a-button>
+                        <a-button type="link" danger>{{ t('public.delete') }}</a-button>
+                    </a-space>
+                </template>
+                <template v-if="column.dataIndex === 'createdAt' || column.dataIndex === 'updatedAt'">
+                    {{ dayjs(record[column.dataIndex]).format("YYYY-MM-DD HH:mm:ss") }}
+                </template>
+            </template>
+        </a-table>
+
+        <a-modal v-model:open="addOpen" title="添加角色" :footer='null'
+            :after-close="() => { fromreset(submitFormRef); id = undefined }">
+            <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+                ref="submitFormRef" autocomplete="off" @finish="onFinish">
+                <a-form-item label="角色名称" name="name"
+                    :rules="[{ required: true, message: 'Please input your username!' }]">
+                    <a-input v-model:value="formState.name" />
+                </a-form-item>
+                <a-form-item label="角色权重" name="weight"
+                    :rules="[{ required: true, message: 'Please input your password!' }]">
+                    <a-input v-model:value="formState.weight" />
+                </a-form-item>
+
+                <a-form-item :wrapper-col="{ offset: 6, span: 16 }">
+                    <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
+                </a-form-item>
+            </a-form>
+        </a-modal>
+
+        <!-- <div class="tablePage-style">
         <a-tabs v-model:activeKey="activeKey" @change="tabChange">
             <a-tab-pane v-for="(item, index) in roleList" :key="index">
                 <template #tab>
                     <span>
-                        <!-- <a-badge :dot="true"> -->
                         {{ item.name }}
-                        <!-- </a-badge> -->
                     </span>
                 </template>
             </a-tab-pane>
             <template #rightExtra>
-                <a-button @click="add_role" type="primary">{{ t('public.add') }}</a-button>
+                <a-button @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
             </template>
         </a-tabs>
         <div class="flex-space-between-center">
-            <a-input :style="{ visibility: ifRedact ? 'visible' : 'hidden' }" style="width: 300px;" v-model:value="roleName"
-                placeholder="请输入角色名称" />
+            <a-input :style="{ visibility: ifRedact ? 'visible' : 'hidden' }" style="width: 300px;"
+                v-model:value="roleName" placeholder="请输入角色名称" />
             <a-button v-if="ifRedact" @click="ifRedact = false" type="link">{{ t('public.Submit') }}</a-button>
             <a-button v-else @click="ifRedact = true" type="link">{{ t('public.redact') }}</a-button>
         </div>
@@ -33,15 +81,31 @@
                 </template>
             </a-checkbox-group>
         </div>
+    </div> -->
     </div>
+
+
+
 </template>
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
-import { ref } from 'vue';
+import { ref, reactive, h } from 'vue';
+import { useTableHooks } from "@/hooks/useTableHooks"
+import { listRole, addRole, editRole, deleteRole } from "@/api/admin"
+import { SearchOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons-vue';
+import { message } from 'ant-design-vue';
+import dayjs from 'dayjs';
+type SearchType = {
+};
+let searchFrom = reactive<SearchType>({});
+
+let { tabHeight, paginationOpt, tableData, searchFormRef, tableState, submitFormRef, requestList, on_search, fromreset, handleDelete, onTableSelectChange } = useTableHooks<SearchType>(searchFrom, { listApi: listRole, deleteApi: deleteRole });
+
 const { t } = useI18n()
 const store = useStore()
+
 type RoleCheckbox = {
     indeterminate: boolean,
     checkAll: boolean,
@@ -52,6 +116,40 @@ type RoleCheckbox = {
 type CheckAll = {
     target: { checked: boolean }
 }
+type FormState = {
+    name: string
+    weight: number
+}
+interface TableItem extends FormState {
+    key: number;
+    id: number
+
+}
+
+const columns = [
+    {
+        title: 'role.roleName',
+        dataIndex: 'name',
+    },
+    {
+        title: 'role.roleWeight',
+        dataIndex: 'weight',
+    },
+    {
+        title: 'public.creationDate',
+        dataIndex: 'createdAt',
+    },
+    {
+        title: 'public.UpdateDate',
+        dataIndex: 'updatedAt',
+    },
+    {
+        title: 'public.operation',
+        fixed: 'right',
+        dataIndex: 'operation',
+        width: 300,
+    }
+]
 
 const activeKey = ref(0);
 const roleName = ref('管理员')
@@ -67,6 +165,13 @@ const roleLimitsList = ref<RoleCheckbox[]>([{
     checkedList: ['人员管理', '部门管理'],
     plainOptions: ['人员管理', '部门管理', '角色管理']
 }])
+const addOpen = ref<boolean>(false);
+const formState = reactive<FormState>({
+    name: "",
+    weight: 0
+});
+const id = ref<number | undefined>(undefined);
+
 const onCheckAllChange = (e: CheckAll, item: RoleCheckbox) => {
     console.log()
     Object.assign(item, {
@@ -74,7 +179,6 @@ const onCheckAllChange = (e: CheckAll, item: RoleCheckbox) => {
         indeterminate: false,
     });
 };
-
 const change_sonMenu = (e: any, item: RoleCheckbox) => {
     item.indeterminate = e.length !== 0 && e.length < item.plainOptions.length
     item.checkAll = e.length == item.plainOptions.length
@@ -100,15 +204,32 @@ const ifPitch = (tier: string, checkedList: string[], label: string): string | u
  */
 const tabChange = (e: number) => {
     roleName.value = roleList.value[e].name
-
     roleLimitsList.value[0].checkedList = roleList.value[e].children
 }
 
-
-const add_role = () => {
-    // roleList.value.push({name:"",})
-    // add_role
+const onRedact = (record: TableItem) => {
+    for (const key in formState) formState[key] = record[key]
+    id.value = record.id
+    addOpen.value = true
 }
+
+
+const onFinish = () => {
+    let api
+    let fromData: any = { ...formState }
+    if (id.value !== undefined) {
+        api = editRole
+        fromData.id = id.value
+    } else {
+        api = addRole
+    }
+    api(fromData).then(() => {
+        addOpen.value = false
+        requestList()
+        message.success(t('message.success'));
+    })
+};
+
 
 </script>
 
