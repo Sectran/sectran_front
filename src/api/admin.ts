@@ -31,9 +31,9 @@ export const deleteDeviceAccount =<T>(data:T)=> requests(`/device/deleteDeviceAc
 
 //用户
 export const listUser =<T>(data:T)=> requests('/user/list',data)
-export const addUser = <T>(data:T) => requests('/user/addUser',data)
-export const updateUser = <T>(data:T) => requests('/user/updateUser',data)
-export const deleteUser = <T>(data:T) => requests('/user/deleteUser',data)
+export const addUser = <T>(data:T) => requests('/user/create',data)
+export const updateUser = <T>(data:T) => requests('/user/update',data)
+export const deleteUser = <T>(data:T) => requests('/user/delete',data)
 
 
 

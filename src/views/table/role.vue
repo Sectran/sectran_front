@@ -1,10 +1,45 @@
 <template>
     <div class="tablePage-style">
+
+
+
+        <div class="table-nav">
+            <a-form layout="inline" :model="searchFrom" ref="searchFormRef">
+                <a-row :gutter="[20, 16]">
+                    <!-- <a-col :xl="6" :md="8" :xs="12">
+                        <a-form-item :label="t('department.departmentId')">
+                            <a-input v-model:value="searchFrom.dept_id"
+                                :placeholder="t('department.departmentIdPlaceholder')" />
+                        </a-form-item>
+                    </a-col> -->
+                    <a-col :xl="6" :md="8" :xs="12">
+                        <a-form-item :label="t('role.roleName')" name="name">
+                            <a-input v-model:value="searchFrom.name" allowClear
+                                :placeholder="t('role.roleName')" />
+                        </a-form-item>
+                    </a-col>
+                    <a-col :xl="6" :md="8" :xs="12">
+                        <a-form-item>
+                            <a-space wrap>
+                                <a-button :icon="h(SearchOutlined)" type="primary" @click="on_search()">
+                                    {{ t('public.search') }}
+                                </a-button>
+                                <a-button :icon="h(SyncOutlined)" @click="fromreset(searchFormRef)">
+                                    {{ t('public.reset') }}
+                                </a-button>
+                            </a-space>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+
+            </a-form>
+        </div>
+
         <a-space class="mb8 flex-space-between-center">
             <a-space>
                 <a-button type="primary" @click="handleDelete(tableState.selectedRowKeys)"
                     :disabled="tableState.selectedRowKeys.length === 0" danger>{{
-                        t('public.deleteInBatches') }}</a-button>
+                t('public.deleteInBatches') }}</a-button>
             </a-space>
             <a-space>
                 <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add')
@@ -98,8 +133,11 @@ import { SearchOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons-vu
 import { message } from 'ant-design-vue';
 import dayjs from 'dayjs';
 type SearchType = {
+    name:string
 };
-let searchFrom = reactive<SearchType>({});
+let searchFrom = reactive<SearchType>({
+    name: ""
+});
 
 let { tabHeight, paginationOpt, tableData, searchFormRef, tableState, submitFormRef, requestList, on_search, fromreset, handleDelete, onTableSelectChange } = useTableHooks<SearchType>(searchFrom, { listApi: listRole, deleteApi: deleteRole });
 
