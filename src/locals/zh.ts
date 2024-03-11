@@ -85,7 +85,7 @@ export default {
         departmentAdmin: '部门管理',
         roleAdmin: "角色管理",
         uploadingAdmin: "连接管理",
-        deviceAdmin:"设备管理"
+        deviceAdmin:"资源配置"
     },
     socket:{
         error:"连接已关闭",

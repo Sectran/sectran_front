@@ -18,7 +18,8 @@
                     <!-- :label="uselocals('login.account')" -->
                     <a-form-item :rules="[{ required: true, message: uselocals('login.accountMessage') }]"
                         name="account">
-                        <a-input autocomplete  class="input-heigth" v-model:value="formState.account" placeholder="请输入账号">
+                        <a-input autocomplete class="input-heigth" v-model:value="formState.account"
+                            placeholder="请输入账号">
                             <template #prefix>
                                 <UserOutlined class="site-form-item-icon" />
                             </template>
@@ -27,7 +28,8 @@
                     <!-- :label="uselocals('login.password')" -->
                     <a-form-item :rules="[{ required: true, message: uselocals('login.passwordMessage') }]"
                         name="password">
-                        <a-input-password autocomplete  class="input-heigth" v-model:value="formState.password" placeholder="请输入密码">
+                        <a-input-password autocomplete class="input-heigth" v-model:value="formState.password"
+                            placeholder="请输入密码">
                             <template #prefix>
                                 <LockOutlined class="site-form-item-icon" />
                             </template>
@@ -68,11 +70,12 @@ const formState = reactive<FormState>({
 const onFinish = (values: { account: string, password: string }) => {
     // console.log('Success:', values);
     // let fromData = JSON.stringify({ password: values.password, username: values.account })
+    // router.replace('/admin/user')
     let fromData = { password: values.password, username: values.account }
-    login(fromData).then((res: { data: string }) => {
-        let { data } = res
-        console.log(data)
-        localStorage.setItem('token', data)
+    login(fromData).then((res: { token: string }) => {
+        console.log(res)
+        let { token } = res
+        localStorage.setItem('token', token)
         router.replace('/admin/user')
     })
 

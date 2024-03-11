@@ -2,12 +2,10 @@
 import requests from "@/server/request"
 let prefix = ""
 //部门
-export const listDepartment =<T>(data:T)=> requests(`${prefix}/department/list`,data)
+export const listDepartment =<T>(data:T)=> requests(`${prefix}/department/children`,data)
 export const addDepartment = <T>(data:T) => requests(`${prefix}/department/create`,data)
 export const editDepartment = <T>(data:T) => requests(`${prefix}/department/update`,data)
 export const deleteDepartment = <T>(data:T) => requests(`${prefix}/department/delete`,data) 
-
-
 
 //角色
 export const listRole =<T>(data:T)=> requests(`${prefix}/role/list`,data)

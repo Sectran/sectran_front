@@ -22,9 +22,10 @@ type Key = string | number;
  * 
  * @param SearchObject 搜索表单数据
  * @param requestApi 请求api的方法
+ * @param tableDataFispose 表格数据是否需要二次处理
  * @returns sizeChange 数据
  */
-export const useTableHooks = <K extends object>(searchFrom: K, requestApi: requestApi) => {
+export const useTableHooks = <K extends object>(searchFrom: K, requestApi: requestApi, tableDataFispose?: { Fun: Function, ifDispose: boolean }) => {
     //表格头部颜色
     const headerStyle = { background: '#F8F8F9' }
     const fromSearchRef: Ref = ref<any>()
@@ -78,6 +79,9 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
         let fromData = { ...pageData, ...searchFrom }
         requestApi.listApi(fromData).then((res: resTable) => {
             let { data, total } = res.data
+            if (tableDataFispose?.ifDispose) {
+                data = tableDataFispose.Fun(data)
+            }
             tableData.value = data
             paginationOpt.total = total
             tableState.selectedRowKeys = [];

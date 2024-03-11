@@ -10,7 +10,7 @@
                                 :placeholder="t('department.departmentIdPlaceholder')" />
                         </a-form-item>
                     </a-col> -->
-                    <a-col :xl="6" :md="8" :xs="12">
+                    <!-- <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('department.departmentName')" name="name">
                             <a-input v-model:value="searchFrom.name" allowClear
                                 :placeholder="t('department.departmentNamePlaceholder')" />
@@ -21,7 +21,7 @@
                             <a-input v-model:value="searchFrom.area" allowClear
                                 :placeholder="t('department.departmentLocationPlaceholder')" />
                         </a-form-item>
-                    </a-col>
+                    </a-col> -->
                     <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item>
                             <a-space wrap>
@@ -42,12 +42,18 @@
         <a-space class="mb8 justify-end">
             <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
         </a-space>
-
-        <a-table class="table-style" :scroll="{ y: tabHeight }" :columns="columns" :data-source="tableData"
-            :indentSize="10" :pagination="paginationOpt">
-            <template #headerCell="{ column }">
-                <span>{{ t(column.title) }}</span>
+        <!-- tabHeight -->
+        <a-table class="table-style" :scroll="{ y:  80}" :columns="columns" :data-source="data" :indentSize="10"
+            :pagination="paginationOpt" @expand="expand" @scroll="handleScroll">
+            <template #expandedRowRender="{ record }">
+                <p style="margin: 0">
+                    1321
+                </p>
             </template>
+            <!-- <template #headerCell="{ column }">
+            
+                <span>{{ t(column.title) }}</span>
+            </template> -->
             <template #bodyCell="{ column, record }">
                 <template v-if="column.dataIndex === 'operation'">
                     <a-space :size="8">
@@ -59,6 +65,8 @@
                     </a-space>
                 </template>
             </template>
+
+
         </a-table>
 
         <a-modal v-model:open="addOpen" title="添加部门" :footer='null'
@@ -93,15 +101,16 @@ import { listDepartment, addDepartment, editDepartment, deleteDepartment } from 
 import { useI18n } from 'vue-i18n'
 import { SearchOutlined, SyncOutlined, PlusOutlined } from '@ant-design/icons-vue';
 type SearchType = {
-    area: string;
-    name: string,
+    id: number
+    area: string
+    name: string
 };
 interface FormState {
     id?: number
-    area: string,
-    description: string,
-    name: string,
-    parentDepartments: number | string,
+    area: string
+    description: string
+    name: string
+    parentDepartments: number | string
 }
 
 interface DataItem extends FormState {
@@ -109,48 +118,119 @@ interface DataItem extends FormState {
     children?: DataItem[];
 }
 
-let searchFrom = reactive({
+let searchFrom = reactive<SearchType>({
+    id: 1,
     area: "",
     name: ""
 });
-let { tabHeight, paginationOpt, tableData, searchFormRef, submitFormRef, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listDepartment, deleteApi: deleteDepartment });
+const tableChildren = (data: any) => {
+    data.forEach((item: any) => {
+        if (item.hasChildren) item.children = []
+    });
+    return data
+}
+let { tabHeight, paginationOpt, tableData, searchFormRef, submitFormRef, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listDepartment, deleteApi: deleteDepartment }, { ifDispose: true, Fun: tableChildren });
 const { t } = useI18n()
 const addOpen = ref<boolean>(false);
 const id = ref<number | undefined>(undefined);
 
-const columns = [
-    {
-        title: 'department.departmentId',
-        dataIndex: 'id',
-    },
-    {
-        title: 'department.departmentName',
-        dataIndex: 'name',
-    },
-    {
-        title: 'department.departmentDescribe',
-        dataIndex: 'description',
-    },
-    {
-        title: 'department.departmentLocation',
-        dataIndex: 'area',
-    },
+// const columns = [
+//     {
+//         title: 'department.departmentId',
+//         dataIndex: 'id',
+//     },
+//     {
+//         title: 'department.departmentName',
+//         dataIndex: 'name',
+//     },
+//     {
+//         title: 'department.departmentDescribe',
+//         dataIndex: 'description',
+//     },
+//     {
+//         title: 'department.departmentLocation',
+//         dataIndex: 'area',
+//     },
 
-    {
-        title: 'department.superiorDepartment',
-        dataIndex: 'parentDepartments',
-    },
-    {
-        title: 'public.creationTime',
-        dataIndex: 'updatedAt',
-    },
-    {
-        title: 'public.operation',
-        fixed: 'right',
-        dataIndex: 'operation',
-        width: 300,
-    }
-]
+//     {
+//         title: 'department.superiorDepartment',
+//         dataIndex: 'parentDepartments',
+//     },
+//     {
+//         title: 'public.creationTime',
+//         dataIndex: 'updatedAt',
+//     },
+//     {
+//         title: 'public.operation',
+//         fixed: 'right',
+//         dataIndex: 'operation',
+//         width: 300,
+//     }
+// ]
+
+
+import { DownOutlined } from '@ant-design/icons-vue';
+const columns = [
+  { title: 'Name', dataIndex: 'name', key: 'name' },
+  { title: 'Platform', dataIndex: 'platform', key: 'platform' },
+  { title: 'Version', dataIndex: 'version', key: 'version' },
+  { title: 'Upgraded', dataIndex: 'upgradeNum', key: 'upgradeNum' },
+  { title: 'Creator', dataIndex: 'creator', key: 'creator' },
+  { title: 'Date', dataIndex: 'createdAt', key: 'createdAt' },
+  { title: 'Action', key: 'operation' },
+];
+
+interface DataItem {
+  key: number;
+  name: string;
+  platform: string;
+  version: string;
+  upgradeNum: number;
+  creator: string;
+  createdAt: string;
+}
+
+const data: DataItem[] = [];
+for (let i = 0; i < 3; ++i) {
+  data.push({
+    key: i,
+    name: `Screem ${i + 1}`,
+    platform: 'iOS',
+    version: '10.3.4.5654',
+    upgradeNum: 500,
+    creator: 'Jack',
+    createdAt: '2014-12-24 23:12:00',
+  });
+}
+
+const innerColumns = [
+  { title: 'Date', dataIndex: 'date', key: 'date' },
+  { title: 'Name', dataIndex: 'name', key: 'name' },
+  { title: 'Status', key: 'state' },
+  { title: 'Upgrade Status', dataIndex: 'upgradeNum', key: 'upgradeNum' },
+  {
+    title: 'Action',
+    dataIndex: 'operation',
+    key: 'operation',
+  },
+];
+
+interface innerDataItem {
+  key: number;
+  date: string;
+  name: string;
+  upgradeNum: string;
+}
+
+const innerData: innerDataItem[] = [];
+for (let i = 0; i < 3; ++i) {
+  innerData.push({
+    key: i,
+    date: '2014-12-24 23:12:00',
+    name: `This is production name ${i + 1}`,
+    upgradeNum: 'Upgraded: 56',
+  });
+}
 
 const formState = reactive<FormState>({
     area: '',
@@ -184,6 +264,26 @@ const onFinish = () => {
         requestList()
     })
 };
+
+const handleScroll = (event:any) => {
+    const container = event.target;
+    console.log(12321)
+    if (container.scrollHeight - container.scrollTop === container.clientHeight) {
+        // 滚动条到达底部
+        console.log('滚动条到达底部');
+    }
+};
+
+const expand = (expanded: boolean, record: { children: [], id: number }) => {
+    // if (expanded === true && record.children.length !== 0) {
+    //     console.log(record.id)
+
+    // }
+    console.log(expanded)
+    console.log(record)
+}
+
+
 
 </script>
 

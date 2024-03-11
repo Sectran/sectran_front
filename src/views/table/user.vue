@@ -204,12 +204,6 @@ const columns = [{
     title: 'user.userName',
     dataIndex: 'account',
 }, {
-    title: 'user.password',
-    dataIndex: 'password',
-}, {
-    title: 'user.mame',
-    dataIndex: 'name',
-}, {
     title: 'public.departmentID',
     dataIndex: 'departmentId',
 }, {
