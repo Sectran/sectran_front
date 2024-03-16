@@ -53,6 +53,7 @@ export default {
     role:{
         roleName:"角色名名称",
         roleWeight:"角色权重",
+        permissionlist:'权限列表'
     },
 
     public: {

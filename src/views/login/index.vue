@@ -11,7 +11,6 @@
                     <div class="login-title">
                         <div>{{ uselocals('login.login') }}</div>
                     </div>
-
                 </div>
                 <a-form :model="formState" layout="vertical" name="basic" :label-col="{ span: 8 }" autocomplete="off"
                     @finish="onFinish" @finishFailed="onFinishFailed">
@@ -36,9 +35,9 @@
                         </a-input-password>
                     </a-form-item>
                     <a-form-item>
-                        <a-button style="width: 100%;height: 40px;" type="primary" html-type="submit">{{
-                uselocals('login.login')
-                            }}</a-button>
+                        <a-button style="width: 100%;height: 40px;" type="primary" html-type="submit">
+                            {{ uselocals('login.login') }}
+                        </a-button>
                     </a-form-item>
                 </a-form>
             </div>
@@ -71,11 +70,14 @@ const onFinish = (values: { account: string, password: string }) => {
     // console.log('Success:', values);
     // let fromData = JSON.stringify({ password: values.password, username: values.account })
     // router.replace('/admin/user')
+    // return
     let fromData = { password: values.password, username: values.account }
-    login(fromData).then((res: { token: string }) => {
+    login(fromData).then((res: { token: string, user: { name: string } }) => {
         console.log(res)
-        let { token } = res
+        let { token, user } = res
         localStorage.setItem('token', token)
+        localStorage.setItem('user', JSON.stringify(user))
+        localStorage.setItem('name', user.name)
         router.replace('/admin/user')
     })
 

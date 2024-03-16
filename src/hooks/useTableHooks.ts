@@ -2,6 +2,7 @@ import { reactive, ref, onMounted, } from "vue";
 import type { Ref } from "vue"
 import { Modal } from 'ant-design-vue';
 import type { FormInstance } from 'ant-design-vue';
+import { resTable } from "@/utils/type/type"
 type requestApi = {
     listApi: Function,
     deleteApi: Function
@@ -12,10 +13,7 @@ type pageData = {
     page: number
 }
 
-type resTable = {
-    data: any
-    total: number
-}
+
 type Key = string | number;
 
 /**
@@ -77,7 +75,7 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
     //请求接口
     const requestList = () => {
         let fromData = { ...pageData, ...searchFrom }
-        requestApi.listApi(fromData).then((res: resTable) => {
+        requestApi.listApi(fromData).then((res: resTable<any>) => {
             let { data, total } = res.data
             if (tableDataFispose?.ifDispose) {
                 data = tableDataFispose.Fun(data)

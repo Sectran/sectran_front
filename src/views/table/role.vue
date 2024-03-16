@@ -1,21 +1,17 @@
 <template>
     <div class="tablePage-style">
-
-
-
-        <div class="table-nav">
+        <!-- <div class="table-nav">
             <a-form layout="inline" :model="searchFrom" ref="searchFormRef">
                 <a-row :gutter="[20, 16]">
-                    <!-- <a-col :xl="6" :md="8" :xs="12">
+                    <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('department.departmentId')">
                             <a-input v-model:value="searchFrom.dept_id"
                                 :placeholder="t('department.departmentIdPlaceholder')" />
                         </a-form-item>
-                    </a-col> -->
+                    </a-col>
                     <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('role.roleName')" name="name">
-                            <a-input v-model:value="searchFrom.name" allowClear
-                                :placeholder="t('role.roleName')" />
+                            <a-input v-model:value="searchFrom.name" allowClear :placeholder="t('role.roleName')" />
                         </a-form-item>
                     </a-col>
                     <a-col :xl="6" :md="8" :xs="12">
@@ -31,15 +27,14 @@
                         </a-form-item>
                     </a-col>
                 </a-row>
-
             </a-form>
-        </div>
+        </div> -->
 
         <a-space class="mb8 flex-space-between-center">
             <a-space>
                 <a-button type="primary" @click="handleDelete(tableState.selectedRowKeys)"
                     :disabled="tableState.selectedRowKeys.length === 0" danger>{{
-                t('public.deleteInBatches') }}</a-button>
+                        t('public.deleteInBatches') }}</a-button>
             </a-space>
             <a-space>
                 <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add')
@@ -56,12 +51,34 @@
                 <template v-if="column.dataIndex === 'operation'">
                     <a-space :size="8">
                         <a-button type="link" @click="onRedact(record)">{{ t('public.redact') }}</a-button>
+                        <a-button type="link" @click="limitsOpen = true">{{ t('role.permissionlist') }}</a-button>
+                        <!-- onLimits(record) -->
                         <a-button type="link" danger>{{ t('public.delete') }}</a-button>
                     </a-space>
                 </template>
                 <template v-if="column.dataIndex === 'createdAt' || column.dataIndex === 'updatedAt'">
                     {{ dayjs(record[column.dataIndex]).format("YYYY-MM-DD HH:mm:ss") }}
                 </template>
+            </template>
+            <template #customFilterDropdown>
+                <!-- ="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }" -->
+                <div class="search-style">
+                    <a-input v-model:value="searchFrom.name" class="search-input" :placeholder="t('role.roleName')" />
+                    <div class="search-button">
+                        <a-button type="primary" size="small" @click="on_search()">
+                            <template #icon>
+                                <SearchOutlined />
+                            </template>
+                            {{ t('public.search') }}
+                        </a-button>
+                        <a-button size="small" @click="searchFrom.name = ''; on_search()">
+                            {{ t('public.reset') }}
+                        </a-button>
+                    </div>
+                </div>
+            </template>
+            <template #customFilterIcon="{ filtered }">
+                <search-outlined :style="{ color: filtered ? '#108ee9' : undefined }" />
             </template>
         </a-table>
 
@@ -75,13 +92,16 @@
                 </a-form-item>
                 <a-form-item label="角色权重" name="weight"
                     :rules="[{ required: true, message: 'Please input your password!' }]">
-                    <a-input v-model:value="formState.weight" />
+                    <a-input-number class="w100" id="inputNumber" v-model:value="formState.weight" />
                 </a-form-item>
-
                 <a-form-item :wrapper-col="{ offset: 6, span: 16 }">
                     <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
                 </a-form-item>
             </a-form>
+        </a-modal>
+        <!-- @ok="handleOk" -->
+        <a-modal v-model:open="limitsOpen"  width="800px" :title="t('role.permissionlist')" :confirm-loading="limitsLoading">
+            <a-table :scroll="{  y: 500 }" :columns="limitsColumns" :data-source="limitsData" :row-selection="rowSelection" />
         </a-modal>
 
         <!-- <div class="tablePage-style">
@@ -118,9 +138,6 @@
         </div>
     </div> -->
     </div>
-
-
-
 </template>
 
 <script setup lang="ts">
@@ -132,18 +149,6 @@ import { listRole, addRole, editRole, deleteRole } from "@/api/admin"
 import { SearchOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import dayjs from 'dayjs';
-type SearchType = {
-    name:string
-};
-let searchFrom = reactive<SearchType>({
-    name: ""
-});
-
-let { tabHeight, paginationOpt, tableData, searchFormRef, tableState, submitFormRef, requestList, on_search, fromreset, handleDelete, onTableSelectChange } = useTableHooks<SearchType>(searchFrom, { listApi: listRole, deleteApi: deleteRole });
-
-const { t } = useI18n()
-const store = useStore()
-
 type RoleCheckbox = {
     indeterminate: boolean,
     checkAll: boolean,
@@ -163,11 +168,26 @@ interface TableItem extends FormState {
     id: number
 
 }
+type SearchType = {
+    name: string
+};
+const { t } = useI18n()
+const store = useStore()
+let searchFrom = reactive<SearchType>({
+    name: ""
+});
+
+let { tabHeight, paginationOpt, tableData, searchFormRef, tableState, submitFormRef, requestList, on_search, fromreset, handleDelete, onTableSelectChange } = useTableHooks<SearchType>(searchFrom, { listApi: listRole, deleteApi: deleteRole });
+let limitsOpen = ref<boolean>(false)
+let limitsLoading = ref<boolean>(false)
+
+
 
 const columns = [
     {
         title: 'role.roleName',
         dataIndex: 'name',
+        customFilterDropdown: true,
     },
     {
         title: 'role.roleWeight',
@@ -267,6 +287,74 @@ const onFinish = () => {
         message.success(t('message.success'));
     })
 };
+
+
+
+
+
+const limitsColumns = [
+    {
+        title: '权限名',
+        dataIndex: 'name',
+        key: 'name',
+    },
+    {
+        title: '权限标识',
+        dataIndex: 'age',
+        key: 'age',
+    },
+
+];
+
+interface LimitsDataItem {
+    key: number;
+    name: string;
+    children?: LimitsDataItem[];
+}
+
+const limitsData: LimitsDataItem[] = [
+    {
+        key: 1,
+        name: '配置',
+        children: [
+            {
+                key: 11,
+                name: '人员管理',
+            },
+            {
+                key: 12,
+                name: '部门管理',
+                children: [
+                    {
+                        key: 121,
+                        name: '部门管理列表',
+                    },
+                    {
+                        key: 122,
+                        name: '部门新增',
+                    }, {
+                        key: 123,
+                        name: '部门删除',
+                    },
+                ],
+            },
+
+        ],
+    },
+];
+
+const rowSelection = ref({
+    checkStrictly: false,
+    onChange: (selectedRowKeys: (string | number)[], selectedRows: LimitsDataItem[]) => {
+        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    },
+    onSelect: (record: LimitsDataItem, selected: boolean, selectedRows: LimitsDataItem[]) => {
+        console.log(record, selected, selectedRows);
+    },
+    onSelectAll: (selected: boolean, selectedRows: LimitsDataItem[], changeRows: LimitsDataItem[]) => {
+        console.log(selected, selectedRows, changeRows);
+    },
+});
 
 
 </script>
