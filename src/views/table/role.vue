@@ -84,7 +84,7 @@
             </a-form>
         </a-modal>
 
-        <!-- <div class="tablePage-style">
+        <div class="tablePage-style">
         <a-tabs v-model:activeKey="activeKey" @change="tabChange">
             <a-tab-pane v-for="(item, index) in roleList" :key="index">
                 <template #tab>
@@ -116,7 +116,7 @@
                 </template>
             </a-checkbox-group>
         </div>
-    </div> -->
+    </div>
     </div>
 
 
