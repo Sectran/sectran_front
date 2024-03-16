@@ -5,3 +5,9 @@ export type routerType = {
         title:string
     }
 }
+
+
+export type resTable<T> = {
+    data: T
+    total: number
+}

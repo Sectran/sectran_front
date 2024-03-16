@@ -47,6 +47,7 @@ declare module 'vue' {
     AWatermark: typeof import('ant-design-vue/es')['Watermark']
     Language: typeof import('./src/components/language/index.vue')['default']
     LogoIcon: typeof import('./src/components/icon/logoIcon.vue')['default']
+    NestedTable: typeof import('./src/components/nestedTable/nestedTable.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

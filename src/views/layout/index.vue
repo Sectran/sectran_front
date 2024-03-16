@@ -58,7 +58,7 @@ onMounted(() => {
 
 .content-style {
   height: calc(100vh - 64px - 50px);
-  padding: 20px;
+  padding: 10px;
   background: var(--theme-content-bg);
 }
 </style>

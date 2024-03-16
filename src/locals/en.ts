@@ -61,6 +61,7 @@ export default {
     role:{
         roleName:"roleName",
         roleWeight:"roleWeight",
+        permissionlist:'permission list'
     },
     public: {
         Submit: 'Submit',
