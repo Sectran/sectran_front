@@ -100,43 +100,45 @@
             </a-form>
         </a-modal>
         <!-- @ok="handleOk" -->
-        <a-modal v-model:open="limitsOpen"  width="800px" :title="t('role.permissionlist')" :confirm-loading="limitsLoading">
-            <a-table :scroll="{  y: 500 }" :columns="limitsColumns" :data-source="limitsData" :row-selection="rowSelection" />
+        <a-modal v-model:open="limitsOpen" width="800px" :title="t('role.permissionlist')"
+            :confirm-loading="limitsLoading">
+            <a-table :scroll="{ y: 500 }" :columns="limitsColumns" :data-source="limitsData"
+                :row-selection="rowSelection" />
         </a-modal>
 
-        <div class="tablePage-style">
-        <a-tabs v-model:activeKey="activeKey" @change="tabChange">
-            <a-tab-pane v-for="(item, index) in roleList" :key="index">
-                <template #tab>
-                    <span>
-                        {{ item.name }}
-                    </span>
+        <!-- <div class="tablePage-style">
+            <a-tabs v-model:activeKey="activeKey" @change="tabChange">
+                <a-tab-pane v-for="(item, index) in roleList" :key="index">
+                    <template #tab>
+                        <span>
+                            {{ item.name }}
+                        </span>
+                    </template>
+                </a-tab-pane>
+                <template #rightExtra>
+                    <a-button @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
                 </template>
-            </a-tab-pane>
-            <template #rightExtra>
-                <a-button @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
-            </template>
-        </a-tabs>
-        <div class="flex-space-between-center">
-            <a-input :style="{ visibility: ifRedact ? 'visible' : 'hidden' }" style="width: 300px;"
-                v-model:value="roleName" placeholder="请输入角色名称" />
-            <a-button v-if="ifRedact" @click="ifRedact = false" type="link">{{ t('public.Submit') }}</a-button>
-            <a-button v-else @click="ifRedact = true" type="link">{{ t('public.redact') }}</a-button>
-        </div>
-        <div v-for="(item, index) in roleLimitsList" :key="index">
-            <a-divider />
-            <a-checkbox v-model:checked="item.checkAll" :indeterminate="item.indeterminate" :disabled='!ifRedact'
-                @change="(e: CheckAll) => onCheckAllChange(e, item)">
-                <span :style="{ color: ifPitch('one', item.checkedList, item.name) }">{{ item.name }}</span>
-            </a-checkbox>
-            <a-checkbox-group class="checkbox-son" v-model:value="item.checkedList" :disabled='!ifRedact'
-                @change="(e: any) => change_sonMenu(e, item)" :options="item.plainOptions">
-                <template #label="{ label }">
-                    <span :style="{ color: ifPitch('two', item.checkedList, label) }">{{ label }}</span>
-                </template>
-            </a-checkbox-group>
-        </div>
-    </div>
+            </a-tabs>
+            <div class="flex-space-between-center">
+                <a-input :style="{ visibility: ifRedact ? 'visible' : 'hidden' }" style="width: 300px;"
+                    v-model:value="roleName" placeholder="请输入角色名称" />
+                <a-button v-if="ifRedact" @click="ifRedact = false" type="link">{{ t('public.Submit') }}</a-button>
+                <a-button v-else @click="ifRedact = true" type="link">{{ t('public.redact') }}</a-button>
+            </div>
+            <div v-for="(item, index) in roleLimitsList" :key="index">
+                <a-divider />
+                <a-checkbox v-model:checked="item.checkAll" :indeterminate="item.indeterminate" :disabled='!ifRedact'
+                    @change="(e: CheckAll) => onCheckAllChange(e, item)">
+                    <span :style="{ color: ifPitch('one', item.checkedList, item.name) }">{{ item.name }}</span>
+                </a-checkbox>
+                <a-checkbox-group class="checkbox-son" v-model:value="item.checkedList" :disabled='!ifRedact'
+                    @change="(e: any) => change_sonMenu(e, item)" :options="item.plainOptions">
+                    <template #label="{ label }">
+                        <span :style="{ color: ifPitch('two', item.checkedList, label) }">{{ label }}</span>
+                    </template>
+                </a-checkbox-group>
+            </div>
+        </div> -->
     </div>
 </template>
 
@@ -365,3 +367,75 @@ const rowSelection = ref({
     margin-top: 10px;
 }
 </style>
+
+
+
+{
+"code": 0,
+"msg": "成功",
+"data": {
+"total": 6,
+"data": [
+{
+"id": 8,
+"createdAt": 1709872962000,
+"updatedAt": 1709872962000,
+"name": "广州分部",
+"area": "广州",
+"description": "广州分部门",
+"parentDepartments": "1",
+"hasChildren": false
+},
+{
+"id": 9,
+"createdAt": 1709872962000,
+"updatedAt": 1709872962000,
+"name": "广州分部",
+"area": "广州",
+"description": "广州分部门",
+"parentDepartments": "1",
+"hasChildren": false
+},
+{
+"id": 7,
+"createdAt": 1709872918000,
+"updatedAt": 1710050892000,
+"name": "南京研发中心",
+"area": "南京",
+"description": "南京研发部门",
+"parentDepartments": "1,8",
+"hasChildren": false
+},
+{
+"id": 12,
+"createdAt": 1710587107000,
+"updatedAt": 1710587107000,
+"name": "广州分布下级",
+"area": "广州",
+"description": "广州分布下级",
+"parentDepartments": "1,8",
+"hasChildren": false
+},
+{
+"id": 13,
+"createdAt": 1710587139000,
+"updatedAt": 1710587139000,
+"name": "广州分布2",
+"area": "1",
+"description": "广州分布2",
+"parentDepartments": "1,8",
+"hasChildren": false
+},
+{
+"id": 14,
+"createdAt": 1710587388000,
+"updatedAt": 1710587388000,
+"name": "南京1",
+"area": "1",
+"description": "南京1",
+"parentDepartments": "1,8,7",
+"hasChildren": false
+}
+]
+}
+}

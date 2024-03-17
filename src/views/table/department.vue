@@ -41,7 +41,7 @@
         <a-space class="mb8 justify-end">
             <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
         </a-space>
-        <nested-table :id="1" :ifshowHeader="true" />
+        <nested-table :superiorId="1" :ifshowHeader="true" />
         <!-- tabHeight -->
         <!-- <a-table class="table-style" :scroll="{ y: 150 }" :columns="columns" :data-source="data" :indentSize="10"
             :pagination="paginationOpt" @expand="expand" @scroll="handleScroll">

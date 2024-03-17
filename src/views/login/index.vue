@@ -72,12 +72,12 @@ const onFinish = (values: { account: string, password: string }) => {
     // router.replace('/admin/user')
     // return
     let fromData = { password: values.password, username: values.account }
-    login(fromData).then((res: { token: string, user: { name: string } }) => {
+    login(fromData).then((res: { token: string, user: { name: string ,account:string} }) => {
         console.log(res)
         let { token, user } = res
         localStorage.setItem('token', token)
         localStorage.setItem('user', JSON.stringify(user))
-        localStorage.setItem('name', user.name)
+        localStorage.setItem('account', user.account)
         router.replace('/admin/user')
     })
 
