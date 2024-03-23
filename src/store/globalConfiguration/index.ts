@@ -12,7 +12,7 @@ export default {
         theme: localStorage.getItem('theme') || "theme-light",
         isCompact: false,
         watermarkConfiguration: {
-            content: localStorage.getItem("name") || 'Sectran',
+            content: localStorage.getItem("account") || 'Sectran',
             font: {
                 fontSize: 14,
             },

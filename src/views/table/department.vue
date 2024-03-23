@@ -47,7 +47,7 @@
             :options="options" :show-search="{ filter }" placeholder="Please select" />
 
 
-        <nested-table :id="1" :ifshowHeader="true" />
+        <nested-table :superiorId="1" :ifshowHeader="true" />
     </div>
 </template>
 

@@ -8,7 +8,7 @@
         </template>
         <!-- index, indent, expanded -->
         <template #expandedRowRender="{ record }">
-            <nested-table @departmentDelete="departmentDelete" :id="record.id" :ifshowHeader="false" />
+            <nested-table @departmentDelete="departmentDelete" :superiorId="record.id" :ifshowHeader="false" />
         </template>
         <template #expandIcon="{ record }">
             <template v-if="record.hasChildren">
@@ -20,7 +20,14 @@
                 <span></span>
             </template>
         </template>
-        <template #bodyCell="{ column, record, index }">
+        <template #bodyCell="{ column, record, index, text }">
+            <template v-if="column.dataIndex === 'name'">
+                <a width="200" href="javascript:;">{{ text }}</a>
+            </template>
+
+            <template v-if="column.dataIndex === 'updatedAt'">
+                {{ dayjs(record[column.updatedAt]).format("YYYY-MM-DD HH:mm:ss") }}
+            </template>
             <template v-if="column.dataIndex === 'operation'">
                 <a-space :size="8">
                     <a-button type="link" @click="onRedactDepartment(record)">{{ t('public.redact') }}</a-button>
@@ -59,6 +66,7 @@ import { ref, nextTick, onMounted, onBeforeUnmount, reactive } from 'vue';
 import { listDepartment, addDepartment, editDepartment, deleteDepartment } from "@/api/admin";
 import { resTable } from "@/utils/type/type"
 import { useI18n } from 'vue-i18n';
+import dayjs from 'dayjs';
 import type { FormInstance } from 'ant-design-vue';
 import { Modal, message } from 'ant-design-vue';
 type Tableitem = {
@@ -72,9 +80,10 @@ interface FormState {
     description: string
     name: string
     parentDepartments: number | string
+    parentDepartmentId: number | string
 }
 const props = defineProps<{
-    id: number
+    superiorId: number
     ifshowHeader: boolean
     departmentDelete?: Function
 }>()
@@ -94,6 +103,7 @@ const formState = reactive<FormState>({
     description: "",
     name: "",
     parentDepartments: "",
+    parentDepartmentId: 1,
 });
 
 const onRedactDepartment = (record: Tableitem) => {
@@ -104,6 +114,8 @@ const onRedactDepartment = (record: Tableitem) => {
 
 const onAddSubordinateDepartment = (record: { parentDepartments: string, id: string }) => {
     formState.parentDepartments = record.parentDepartments ? record.parentDepartments + `,${record.id}` : record.id + '';
+    formState.parentDepartmentId = props.superiorId;
+
     openState.value = true
 }
 const emit = defineEmits(['departmentDelete'])
@@ -116,7 +128,7 @@ const onDelete = (record: Tableitem, index: number) => {
                 message.success('删除成功');
                 list.value.splice(index, 1)
                 if (id.value !== 1 && list.value.length === 0) {
-                    emit('departmentDelete', props.id);
+                    emit('departmentDelete', props.superiorId);
                 }
             })
         },
@@ -172,9 +184,10 @@ const expandRow = (key: number) => {
 
 const requestList = () => {
     let fromData = {
-        id: props.id,
+        id: props.superiorId,
         page: page.value,
         pageSize: pageSize.value,
+        deep: 1
     }
     loading.value = true
     listDepartment(fromData).then((res: resTable<{ data: Tableitem[], total: number }>) => {
@@ -219,35 +232,41 @@ onBeforeUnmount(() => {
     })
 })
 
-
-
 onMounted(() => {
     requestList()
 })
 
 
 const columns = [
-    {
-        title: 'department.departmentId',
-        dataIndex: 'id',
-    },
+    // {
+    //     title: 'department.departmentId',
+    //     dataIndex: 'id',
+    // },
     {
         title: 'department.departmentName',
         dataIndex: 'name',
-    },
-    {
-        title: 'department.departmentDescribe',
-        dataIndex: 'description',
+        customCell: column => {
+            return {
+                style: {
+                    'width': "30%",
+                }
+            };
+        }
     },
     {
         title: 'department.departmentLocation',
         dataIndex: 'area',
     },
-
     {
-        title: 'department.superiorDepartment',
-        dataIndex: 'parentDepartments',
+        title: 'department.departmentDescribe',
+        dataIndex: 'description',
     },
+ 
+
+    // {
+    //     title: 'department.superiorDepartment',
+    //     dataIndex: 'parentDepartments',
+    // },
     {
         title: 'public.creationTime',
         dataIndex: 'updatedAt',
@@ -259,9 +278,6 @@ const columns = [
         width: 300,
     }
 ]
-
-
-
 </script>
 
 
