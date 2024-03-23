@@ -4,7 +4,7 @@
 
             <a-form :model="searchFrom" ref="searchFormRef">
                 <a-row :gutter="[20, 0]">
-                    <!-- <a-col :lg="8" :md="12" :sm="24">
+                    <a-col :lg="8" :md="12" :sm="24">
                         <a-form-item :label="t('user.userName')" name="user">
                             <a-input v-model:value="searchFrom.user" :placeholder="t('user.usernamePlaceholder')" />
                         </a-form-item>
@@ -18,7 +18,7 @@
                         <a-form-item :label="t('user.usereEmail')" name="value">
                             <a-input v-model:value="searchFrom.value" :placeholder="t('user.userEmailPlaceholder')" />
                         </a-form-item>
-                    </a-col> -->
+                    </a-col>
                     <a-col :lg="8" :md="12" :sm="24">
                         <a-form-item>
                             <a-space>
@@ -31,6 +31,11 @@
                     </a-col>
                 </a-row>
             </a-form>
+        </div>
+
+        <div>
+
+            
         </div>
         <a-space class="mb8 flex-space-between-center">
             <a-space>

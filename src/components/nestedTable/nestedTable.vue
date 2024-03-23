@@ -1,19 +1,25 @@
 <template>
     <a-table :columns="columns" :data-source="list" class="components-table-demo-nested" :scroll="{ y: 400 }"
         ref="tableRef" :pagination="false" :loading="loading" :expandedRowKeys="expandedRowKeys"
-        :showHeader="props.ifshowHeader">
+        :showHeader="props.ifshowHeader" bordered :indentSize="5">
         <template #headerCell="{ column }">
             <span v-if="column && typeof column.title === 'string'">{{ t(column.title) }}</span>
         </template>
         <!-- index, indent, expanded -->
         <template #expandedRowRender="{ record }">
-            <nested-table @departmentDelete="departmentDelete" :superiorId="record.id" :ifshowHeader="false" />
+            <nested-table :columnsNameWinth="props.columnsNameWinth - 48" @departmentDelete="departmentDelete"
+                :superiorId="record.id" :ifshowHeader="false" />
         </template>
         <template #expandIcon="{ record }">
             <template v-if="record.hasChildren">
-                <button
+
+                <a-button type="link" shape="circle" @click="expandRow(record.key)"
+                    :icon="h(expandedRowKeys.includes(record.key as never) ? DownOutlined : RightOutlined)" />
+                <!-- <RightOutlined />
+                <DownOutlined /> -->
+                <!-- <button
                     :class="['ant-table-row-expand-icon', expandedRowKeys.includes(record.key as never) ? 'ant-table-row-expand-icon-expanded' : 'ant-table-row-expand-icon-collapsed']"
-                    @click="expandRow(record.key)"></button>
+                    @click="expandRow(record.key)"></button> -->
             </template>
             <template v-else>
                 <span></span>
@@ -61,12 +67,13 @@
 </template>
 <script lang="ts" setup>
 import nestedTable from "@/components/nestedTable/nestedTable.vue"
-import { ref, nextTick, onMounted, onBeforeUnmount, reactive } from 'vue';
+import { ref, nextTick, onMounted, onBeforeUnmount, reactive, h } from 'vue';
 import { listDepartment, addDepartment, editDepartment, deleteDepartment } from "@/api/admin";
 import { resTable } from "@/utils/type/type"
 import { useI18n } from 'vue-i18n';
 import dayjs from 'dayjs';
 import type { FormInstance } from 'ant-design-vue';
+import { RightOutlined, DownOutlined } from '@ant-design/icons-vue';
 import { Modal, message } from 'ant-design-vue';
 type Tableitem = {
     id: number
@@ -81,15 +88,23 @@ interface FormState {
     parentDepartments: number | string
     parentDepartmentId: number | string
 }
-const props = defineProps<{
+
+interface Iprops {
     superiorId: number
     ifshowHeader: boolean
     departmentDelete?: Function
-}>()
+    columnsNameWinth: number
+}
+
+
+const props = withDefaults(defineProps<Iprops>(), {
+    columnsNameWinth: 300,
+});
+
 const submitFormRef = ref<FormInstance>();
 const { t } = useI18n()
 const tableRef = ref();
-let expandedRowKeys = ref<number[]>([])
+
 let page = ref<number>(1);
 let pageSize = ref<number>(10);
 let toTal = ref<number>(0)
@@ -114,7 +129,6 @@ const onRedactDepartment = (record: Tableitem) => {
 const onAddSubordinateDepartment = (record: { parentDepartments: string, id: string }) => {
     formState.parentDepartments = record.parentDepartments ? record.parentDepartments + `,${record.id}` : record.id + '';
     formState.parentDepartmentId = props.superiorId;
-
     openState.value = true
 }
 const emit = defineEmits(['departmentDelete'])
@@ -133,10 +147,6 @@ const onDelete = (record: Tableitem, index: number) => {
         },
         onCancel() { },
     });
-
-
-
-
 }
 
 const departmentDelete = (id: number) => {
@@ -172,6 +182,7 @@ const onFinish = () => {
     })
 };
 
+let expandedRowKeys = ref<number[]>([])
 const expandRow = (key: number) => {
     let keyIndex = expandedRowKeys.value.findIndex((item: number) => item == key)
     if (keyIndex == -1) {
@@ -235,7 +246,6 @@ onMounted(() => {
     requestList()
 })
 
-
 const columns = [
     // {
     //     title: 'department.departmentId',
@@ -244,13 +254,7 @@ const columns = [
     {
         title: 'department.departmentName',
         dataIndex: 'name',
-        customCell: column => {
-            return {
-                style: {
-                    'width': "30%",
-                }
-            };
-        }
+        width: props.columnsNameWinth 
     },
     {
         title: 'department.departmentLocation',
@@ -260,7 +264,7 @@ const columns = [
         title: 'department.departmentDescribe',
         dataIndex: 'description',
     },
- 
+
 
     // {
     //     title: 'department.superiorDepartment',
@@ -280,4 +284,8 @@ const columns = [
 </script>
 
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+::v-deep(.ant-table-cell) {
+    padding: 12px 16px !important;
+}
+</style>

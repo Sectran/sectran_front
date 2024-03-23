@@ -66,7 +66,7 @@ export default {
     public: {
         Submit: 'Submit',
         delete: 'delete',
-        deleteInBatches: 'delete in batches',
+        deleteInBatches: 'delete',
         add: 'add',
         redact: 'redact',
         operation: 'operation',

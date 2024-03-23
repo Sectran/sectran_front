@@ -51,7 +51,7 @@ export default {
         PrivateKeyPassword:"key密码",
     },
     role:{
-        roleName:"角色名名称",
+        roleName:"角色名",
         roleWeight:"角色权重",
         permissionlist:'权限列表'
     },
@@ -59,7 +59,7 @@ export default {
     public: {
         Submit: '提 交',
         delete: '删 除',
-        deleteInBatches: '批量删除',
+        deleteInBatches: '删除',
         add: '新 增',
         redact: '编 辑',
         operation: '操 作',

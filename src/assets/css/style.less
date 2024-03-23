@@ -27,29 +27,35 @@ body {
 }
 
 .tablePage-style {
-    background: var(--table-bg);
+
     border-radius: 20px;
     height: 100%;
-    padding: 20px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
 
     .table-nav {
+        background: var(--table-bg);
         margin-bottom: 20px;
+        padding: 20px;
+        border-radius: 10px;
 
         .ant-row {
             width: 100%;
         }
 
-        // .ant-col {
-        //     margin-bottom: 10px;
-        // }
         .ant-picker {
             width: 100%;
+        }
+        .ant-form-item {
+            // margin-bottom: 20px;
         }
     }
 
     .table-style {
+        padding: 20px;
+        background: var(--table-bg);
+        border-radius: 10px;
         flex: 1;
     }
 }
@@ -62,20 +68,6 @@ body {
     width: 100%;
 }
 
-.search-style {
-    padding: 8px;
-
-    .search-input {
-        width: 188px;
-        margin-bottom: 10px;
-    }
-
-    .search-button {
-        display: flex;
-        justify-content: space-between;
-
-        button {
-            width: 40%;
-        }
-    }
+.search-button-right {
+    margin-right: 20px;
 }

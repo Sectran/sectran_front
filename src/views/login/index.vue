@@ -69,8 +69,8 @@ const formState = reactive<FormState>({
 const onFinish = (values: { account: string, password: string }) => {
     // console.log('Success:', values);
     // let fromData = JSON.stringify({ password: values.password, username: values.account })
-    // router.replace('/admin/user')
-    // return
+    router.replace('/admin/user')
+    return
     let fromData = { password: values.password, username: values.account }
     login(fromData).then((res: { token: string, user: { name: string ,account:string} }) => {
         console.log(res)

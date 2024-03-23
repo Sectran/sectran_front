@@ -25,9 +25,9 @@
                         <a-form-item>
                             <a-space>
                                 <a-button :icon="h(SearchOutlined)" type="primary" @click="on_search()">{{
-                                    t('public.search') }}</a-button>
+                t('public.search') }}</a-button>
                                 <a-button :icon="h(SyncOutlined)" @click="fromreset()">{{ t('public.reset')
-                                }}</a-button>
+                                    }}</a-button>
                             </a-space>
                         </a-form-item>
                     </a-col>
@@ -39,10 +39,11 @@
             <a-space>
                 <a-button type="primary" @click="handleDelete(tableState.selectedRowKeys)"
                     :disabled="tableState.selectedRowKeys.length === 0" danger>{{
-                        t('public.deleteInBatches') }}</a-button>
+                t('public.deleteInBatches') }}</a-button>
             </a-space>
             <a-space>
-                <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
+                <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add')
+                    }}</a-button>
             </a-space>
         </a-space>
         <a-table rowKey="Id" class="table-style" :columns="columns" :data-source="tableData" :pagination="paginationOpt"
@@ -55,13 +56,15 @@
                 <template v-if="column.dataIndex === 'operation'">
                     <a-space :size="8">
                         <a-button type="link" @click="on_redact(record)">{{ t('public.redact') }}</a-button>
-                        <a-button type="link" danger @click="handleDelete([record.Id])">{{ t('public.delete') }}</a-button>
-                        <a-button type="link" @click="on_deviceAccount(record.Id, record.Name)">{{ t('device.deviceAccount')
-                        }}</a-button>
+                        <a-button type="link" danger @click="handleDelete([record.Id])">{{ t('public.delete')
+                            }}</a-button>
+                        <a-button type="link" @click="on_deviceAccount(record.Id, record.Name)">{{
+                t('device.deviceAccount')
+            }}</a-button>
                     </a-space>
                 </template>
                 <template v-else-if="column.dataIndex === 'OsKind'">{{ record.OsKind === 1 ? 'Linux' : 'Windows'
-                }}</template>
+                    }}</template>
             </template>
         </a-table>
 
@@ -84,7 +87,7 @@
 
                     <a-radio-group v-model:value="formState.OsKind" name="radioGroup">
                         <a-radio v-for="item in systemTypeArr" :key="item.value" :value="item.value">{{ item.name
-                        }}</a-radio>
+                            }}</a-radio>
                     </a-radio-group>
                 </a-form-item>
 
@@ -105,7 +108,8 @@
             </a-form>
         </a-modal>
 
-        <a-modal v-model:open="accountOpen" width="1000px" :title='deviceItem.deviceName' :footer="null" :destroyOnClose="true">
+        <a-modal v-model:open="accountOpen" width="1000px" :title='deviceItem.deviceName' :footer="null"
+            :destroyOnClose="true">
             <deviceAccount :deviceId="deviceItem.deviceId" />
         </a-modal>
     </div>
@@ -163,6 +167,7 @@ let systemTypeArr: SystemType[] = [{ name: "Linux", value: 1 }, { name: 'Windows
 const columns = [{
     title: 'device.deviceName',
     dataIndex: 'Name',
+  
 }, {
     title: 'device.deviceAddress',
     dataIndex: 'Address',
