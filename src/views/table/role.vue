@@ -43,7 +43,8 @@
         </a-space>
         <a-table rowKey="id" class="table-style" :scroll="{ y: tabHeight }" :columns="columns" :data-source="tableData"
             :indentSize="10" :pagination="paginationOpt"
-            :row-selection="{ selectedRowKeys: tableState.selectedRowKeys, onChange: onTableSelectChange }">
+            :row-selection="{ selectedRowKeys: tableState.selectedRowKeys, onChange: onTableSelectChange }"
+            :loading="tableLoading">
             <template #headerCell="{ column }">
                 <span>{{ t(column.title) }}</span>
             </template>
@@ -51,8 +52,8 @@
                 <template v-if="column.dataIndex === 'operation'">
                     <a-space :size="8">
                         <a-button type="link" @click="onRedact(record)">{{ t('public.redact') }}</a-button>
-                        <a-button type="link" @click="limitsOpen = true">{{ t('role.permissionlist') }}</a-button>
-                        <!-- onLimits(record) -->
+                        <a-button type="link" @click="editLimits(record.id)">{{ t('role.permissionlist')
+                            }}</a-button>
                         <a-button type="link" danger>{{ t('public.delete') }}</a-button>
                     </a-space>
                 </template>
@@ -99,66 +100,26 @@
                 </a-form-item>
             </a-form>
         </a-modal>
-        <!-- @ok="handleOk" -->
-        <a-modal v-model:open="limitsOpen"  width="800px" :title="t('role.permissionlist')" :confirm-loading="limitsLoading">
-            <a-table :scroll="{  y: 500 }" :columns="limitsColumns" :data-source="limitsData" :row-selection="rowSelection" />
+        <!-- :rowKey="(record: any, index: number) => record.path || index"  -->
+        <a-modal v-model:open="limitsOpen" width="800px" :title="t('role.permissionlist')"
+            :confirm-loading="limitsButtonLoading" @ok="limitsOnOk">
+            <a-table :scroll="{ y: 500 }" :columns="limitsColumns"
+                :rowKey="(record: any, index: number) => index " :data-source="limitsData"
+                :row-selection="rowSelection" />
         </a-modal>
 
-        <!-- <div class="tablePage-style">
-        <a-tabs v-model:activeKey="activeKey" @change="tabChange">
-            <a-tab-pane v-for="(item, index) in roleList" :key="index">
-                <template #tab>
-                    <span>
-                        {{ item.name }}
-                    </span>
-                </template>
-            </a-tab-pane>
-            <template #rightExtra>
-                <a-button @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
-            </template>
-        </a-tabs>
-        <div class="flex-space-between-center">
-            <a-input :style="{ visibility: ifRedact ? 'visible' : 'hidden' }" style="width: 300px;"
-                v-model:value="roleName" placeholder="请输入角色名称" />
-            <a-button v-if="ifRedact" @click="ifRedact = false" type="link">{{ t('public.Submit') }}</a-button>
-            <a-button v-else @click="ifRedact = true" type="link">{{ t('public.redact') }}</a-button>
-        </div>
-        <div v-for="(item, index) in roleLimitsList" :key="index">
-            <a-divider />
-            <a-checkbox v-model:checked="item.checkAll" :indeterminate="item.indeterminate" :disabled='!ifRedact'
-                @change="(e: CheckAll) => onCheckAllChange(e, item)">
-                <span :style="{ color: ifPitch('one', item.checkedList, item.name) }">{{ item.name }}</span>
-            </a-checkbox>
-            <a-checkbox-group class="checkbox-son" v-model:value="item.checkedList" :disabled='!ifRedact'
-                @change="(e: any) => change_sonMenu(e, item)" :options="item.plainOptions">
-                <template #label="{ label }">
-                    <span :style="{ color: ifPitch('two', item.checkedList, label) }">{{ label }}</span>
-                </template>
-            </a-checkbox-group>
-        </div>
-    </div> -->
     </div>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { useStore } from 'vuex'
 import { ref, reactive, h } from 'vue';
 import { useTableHooks } from "@/hooks/useTableHooks"
-import { listRole, addRole, editRole, deleteRole } from "@/api/admin"
-import { SearchOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons-vue';
+import { listRole, addRole, editRole, deleteRole, updateAuthority, getMenu } from "@/api/admin"
+import { SearchOutlined, PlusOutlined, } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import dayjs from 'dayjs';
-type RoleCheckbox = {
-    indeterminate: boolean,
-    checkAll: boolean,
-    name: string,
-    checkedList: string[],
-    plainOptions: string[]
-}
-type CheckAll = {
-    target: { checked: boolean }
-}
+import limitsJson from "@/assets/json/limits.json"
 type FormState = {
     name: string
     weight: number
@@ -172,16 +133,11 @@ type SearchType = {
     name: string
 };
 const { t } = useI18n()
-const store = useStore()
 let searchFrom = reactive<SearchType>({
     name: ""
 });
-
-let { tabHeight, paginationOpt, tableData, searchFormRef, tableState, submitFormRef, requestList, on_search, fromreset, handleDelete, onTableSelectChange } = useTableHooks<SearchType>(searchFrom, { listApi: listRole, deleteApi: deleteRole });
-let limitsOpen = ref<boolean>(false)
-let limitsLoading = ref<boolean>(false)
-
-
+// searchFormRef,
+let { tabHeight, paginationOpt, tableData, tableState, submitFormRef, tableLoading, requestList, on_search, fromreset, handleDelete, onTableSelectChange } = useTableHooks<SearchType>(searchFrom, { listApi: listRole, deleteApi: deleteRole });
 
 const columns = [
     {
@@ -209,20 +165,6 @@ const columns = [
     }
 ]
 
-const activeKey = ref(0);
-const roleName = ref('管理员')
-const ifRedact = ref<boolean>(false)
-const roleList = ref<{ name: string, children: string[], redactState: boolean }[]>([
-    { name: "管理员", children: ['人员管理', '部门管理', '角色管理'], redactState: true },
-    { name: "操作员", children: ['人员管理'], redactState: true },
-])
-const roleLimitsList = ref<RoleCheckbox[]>([{
-    indeterminate: true,
-    checkAll: false,
-    name: "配置管理",
-    checkedList: ['人员管理', '部门管理'],
-    plainOptions: ['人员管理', '部门管理', '角色管理']
-}])
 const addOpen = ref<boolean>(false);
 const formState = reactive<FormState>({
     name: "",
@@ -230,40 +172,7 @@ const formState = reactive<FormState>({
 });
 const id = ref<number | undefined>(undefined);
 
-const onCheckAllChange = (e: CheckAll, item: RoleCheckbox) => {
-    console.log()
-    Object.assign(item, {
-        checkedList: e.target.checked ? item.plainOptions : [],
-        indeterminate: false,
-    });
-};
-const change_sonMenu = (e: any, item: RoleCheckbox) => {
-    item.indeterminate = e.length !== 0 && e.length < item.plainOptions.length
-    item.checkAll = e.length == item.plainOptions.length
-}
-/**
- * 设置字体颜色
- * @param tier 当前层级
- * @param checkedList 选中的数组
- * @param label 当前数据
- * @return  字体颜色
- */
-const ifPitch = (tier: string, checkedList: string[], label: string): string | undefined => {
-    if (ifRedact.value) return "#333333"
-    if (tier === 'one') {
-        return checkedList.length !== 0 ? store.state.globalConfiguration.colorPrimary : 'rgba(0, 0, 0, 0.25)'
-    } else if (tier === 'two') {
-        return checkedList.includes(label) ? store.state.globalConfiguration.colorPrimary : 'rgba(0, 0, 0, 0.25)'
-    }
-}
-/**
- * 切换tab
- * @param e tab下标
- */
-const tabChange = (e: number) => {
-    roleName.value = roleList.value[e].name
-    roleLimitsList.value[0].checkedList = roleList.value[e].children
-}
+
 
 const onRedact = (record: TableItem) => {
     for (const key in formState) formState[key] = record[key]
@@ -289,9 +198,20 @@ const onFinish = () => {
 };
 
 
+//权限功能模块
+interface LimitsDataItem {
+    path: string
+    name: string
+    method: string
+    children?: LimitsDataItem[];
+}
 
 
-
+let limitsOpen = ref<boolean>(false)
+let limitsTableLoading = ref<boolean>(false)
+let limitsButtonLoading = ref<boolean>(false)
+const limitsData: LimitsDataItem[] = limitsJson
+let roleId = 0
 const limitsColumns = [
     {
         title: '权限名',
@@ -300,62 +220,60 @@ const limitsColumns = [
     },
     {
         title: '权限标识',
-        dataIndex: 'age',
-        key: 'age',
-    },
-
-];
-
-interface LimitsDataItem {
-    key: number;
-    name: string;
-    children?: LimitsDataItem[];
-}
-
-const limitsData: LimitsDataItem[] = [
-    {
-        key: 1,
-        name: '配置',
-        children: [
-            {
-                key: 11,
-                name: '人员管理',
-            },
-            {
-                key: 12,
-                name: '部门管理',
-                children: [
-                    {
-                        key: 121,
-                        name: '部门管理列表',
-                    },
-                    {
-                        key: 122,
-                        name: '部门新增',
-                    }, {
-                        key: 123,
-                        name: '部门删除',
-                    },
-                ],
-            },
-
-        ],
+        dataIndex: 'path',
+        key: 'path',
     },
 ];
 
-const rowSelection = ref({
+
+
+
+
+const rowSelection = ref<{ checkStrictly: boolean, selectedRowKeys: (string | number)[], onChange: Function }>({
     checkStrictly: false,
+    selectedRowKeys: [],
     onChange: (selectedRowKeys: (string | number)[], selectedRows: LimitsDataItem[]) => {
+        rowSelection.value.selectedRowKeys = selectedRowKeys
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    },
-    onSelect: (record: LimitsDataItem, selected: boolean, selectedRows: LimitsDataItem[]) => {
-        console.log(record, selected, selectedRows);
-    },
-    onSelectAll: (selected: boolean, selectedRows: LimitsDataItem[], changeRows: LimitsDataItem[]) => {
-        console.log(selected, selectedRows, changeRows);
     },
 });
 
+const editLimits = (id: number) => {
+    limitsOpen.value = true;
+    roleId = id
+    limitsTableLoading.value = true
+    getMenu<{ id: number, type: 2 }>({ id, type: 2 }).then((res: { data: string[] }) => {
+        let { data } = res
+        rowSelection.value.selectedRowKeys = data
+        limitsTableLoading.value = false
+    })
+}
+
+const limitsOnOk = () => {
+    console.log(rowSelection.value)
+
+    return
+    limitsButtonLoading.value = true
+    let limitsData: { path: string, method: string }[] = []
+    // selectedRowsData.value.forEach((item: LimitsDataItem) => {
+    //     if (item.children && item.children.length !== 0) {
+    //         limitsData.push({
+    //             path: item.path,
+    //             method: item.method
+    //         })
+    //     }
+    // })
+
+    let fromData = {
+        roleId,
+        data: limitsData
+    }
+    updateAuthority(fromData).then((res: any) => {
+        console.log(res)
+    })
+
+    console.log(limitsData)
+}
 
 </script>
 

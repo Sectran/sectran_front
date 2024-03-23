@@ -12,6 +12,13 @@ export const listRole =<T>(data:T)=> requests(`${prefix}/role/list`,data)
 export const addRole =<T>(data:T)=> requests(`${prefix}/role/create`,data)
 export const editRole =<T>(data:T)=> requests(`${prefix}/role/update`,data)
 export const deleteRole =<T>(data:T)=> requests(`${prefix}/role/delete`,data)
+//获取角色权限
+export const getMenu =<T>(data:T)=> requests(`${prefix}/get_menu_authority_list`,data)
+//更新角色权限
+export const updateAuthority =<T>(data:T)=> requests(`${prefix}/update_authority_api`,data)
+
+
+
 
 //设备列表
 export const deviceList =<T>(data:T)=> requests(`/device/listDevice`,data)

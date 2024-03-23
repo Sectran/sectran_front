@@ -1,0 +1,105 @@
+[
+    {
+        "name": "用户管理",
+        "method": "POST",
+        "children":[
+            {
+                "name": "用户管理导航页",
+                "path": ":user",
+                "method": "POST"
+            },
+            {
+                "name": "通过ID查询用户",
+                "path": "/user",
+                "method": "POST"
+            },
+            {
+                "name": "用户列表",
+                "path": "/user/list",
+                "method": "POST"
+            },{
+                "name": "创建用户",
+                "path": "/user/create",
+                "method": "POST"
+            },{
+                "name": "用户更新",
+                "path": "/user/update",
+                "method": "POST"
+            },{
+                "name": "用户删除",
+                "path": "/user/delete",
+                "method": "POST"
+            }
+        ]
+    },
+    {
+        "name": "角色管理",
+        "method": "POST",
+        "children":[
+            {
+                "name": "角色管理导航页",
+                "path": ":role",
+                "method": "POST"
+            },
+            {
+                "name": "通过ID查询角色",
+                "path": "/role",
+                "method": "POST"
+            },
+            {
+                "name": "角色列表",
+                "path": "/role/list",
+                "method": "POST"
+            },{
+                "name": "创建角色",
+                "path": "/role/create",
+                "method": "POST"
+            },{
+                "name": "角色更新",
+                "path": "/role/update",
+                "method": "POST"
+            },{
+                "name": "角色删除",
+                "path": "/role/delete",
+                "method": "POST"
+            }
+        ]
+    },
+    {
+        "name": "部门管理",
+        "method": "POST",
+        "children":[
+            {
+                "name": "部门管理导航页",
+                "path": ":department",
+                "method": "POST"
+            },
+            {
+                "name": "通过ID查询部门",
+                "path": "/department",
+                "method": "POST"
+            },
+            {
+                "name": "部门列表",
+                "path": "/department/list",
+                "method": "POST"
+            },{
+                "name": "创建部门",
+                "path": "/department/create",
+                "method": "POST"
+            },{
+                "name": "部门更新",
+                "path": "/department/update",
+                "method": "POST"
+            },{
+                "name": "部门删除",
+                "path": "/department/delete",
+                "method": "POST"
+            },{
+                "name": "添加子部门",
+                "path": "/department/children",
+                "method": "POST"
+            }
+        ]
+    }
+]

@@ -39,36 +39,15 @@
             </a-form>
         </div>
         <a-space class="mb8 justify-end">
-            <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add') }}</a-button>
+            <a-button :icon="h(PlusOutlined)" @click="console.log(value)" type="primary">{{ t('public.add')
+                }}</a-button>
         </a-space>
+
+        <a-cascader :fieldNames="{ label: 'name', value: 'name', children: 'children' }" v-model:value="value"
+            :options="options" :show-search="{ filter }" placeholder="Please select" />
+
+
         <nested-table :id="1" :ifshowHeader="true" />
-        <!-- tabHeight -->
-        <!-- <a-table class="table-style" :scroll="{ y: 150 }" :columns="columns" :data-source="data" :indentSize="10"
-            :pagination="paginationOpt" @expand="expand" @scroll="handleScroll">
-            <template #expandedRowRender="{ record }">
-                <p style="margin: 0">
-                    1321
-                </p>
-            </template>
-<template #headerCell="{ column }">
-
-                <span>{{ t(column.title) }}</span>
-            </template>
-<template #bodyCell="{ column, record }">
-                <template v-if="column.dataIndex === 'operation'">
-                    <a-space :size="8">
-                        <a-button type="link" @click="onRedactDepartment(record)">{{ t('public.redact') }}</a-button>
-                        <a-button type="link" @click="onAddSubordinateDepartment(record)">
-                            {{ t('department.addSubordinateDepartment') }}
-                        </a-button>
-                        <a-button type="link" danger>{{ t('public.delete') }}</a-button>
-                    </a-space>
-                </template>
-</template>
-
-
-</a-table> -->
-
     </div>
 </template>
 
@@ -77,7 +56,10 @@
 import { ref, reactive, h } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { PlusOutlined } from '@ant-design/icons-vue';
-import nestedTable from "@/components/nestedTable/nestedTable.vue"
+import nestedTable from "@/components/nested-table/nested-table.vue"
+import TestJson from "@/assets/json/region.json";
+import type { ShowSearchType } from 'ant-design-vue/es/cascader';
+console.log(TestJson)
 type SearchType = {
     id: number
     area: string
@@ -91,8 +73,11 @@ let searchFrom = reactive<SearchType>({
     name: ""
 });
 const { t } = useI18n()
-const addOpen = ref<boolean>(false);
-
+const value = ref<string[]>([]);
+const options = TestJson
+const filter: ShowSearchType['filter'] = (inputValue, path) => {
+    return path.some(option => option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1);
+};
 // const columns = [
 //     {
 //         title: 'department.departmentId',

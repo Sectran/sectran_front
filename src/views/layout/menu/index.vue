@@ -7,7 +7,7 @@
       </template>
     </div>
     <a-menu v-model:selectedKeys="menuState.selectedKeys" v-model:openKeys="menuState.openKeys" mode="inline">
-      <a-sub-menu v-for="item in administration" :key="item.name">
+      <a-sub-menu v-for="item in store.state.router.menuData" :key="item.name">
         <template #title>
           <span>
             <pie-chart-outlined />
@@ -28,14 +28,8 @@ import { useRouter, useRoute } from 'vue-router';
 import { PieChartOutlined, } from '@ant-design/icons-vue';
 import logoIcon from "@/components/icon/logoIcon.vue"
 import { useStore } from 'vuex'
-import administration from "@/router/Layout/index"
 import { routerType } from "@/utils/type/type"
 import { useI18n } from 'vue-i18n'
-// import logo from '@/assets/img/logo.png'
-// import logo from '@/assets/img/logo.svg'
-// const MyIcon = createFromIconfontCN({
-//   scriptUrl: logo
-// });
 defineProps<{
   collapsed: boolean,
 }>()

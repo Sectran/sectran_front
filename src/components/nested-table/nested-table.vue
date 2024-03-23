@@ -1,4 +1,5 @@
 <template>
+
     <a-table :columns="columns" :data-source="list" class="components-table-demo-nested" :scroll="{ y: 400 }"
         ref="tableRef" :pagination="false" :loading="loading" :expandedRowKeys="expandedRowKeys"
         :showHeader="props.ifshowHeader">
@@ -53,7 +54,7 @@
     </a-modal>
 </template>
 <script lang="ts" setup>
-import nestedTable from "@/components/nestedTable/nestedTable.vue"
+import nestedTable from "@/components/nested-table/nested-table.vue"
 import { ref, nextTick, onMounted, onBeforeUnmount, reactive } from 'vue';
 import { listDepartment, addDepartment, editDepartment, deleteDepartment } from "@/api/admin";
 import { resTable } from "@/utils/type/type"

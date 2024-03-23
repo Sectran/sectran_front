@@ -74,12 +74,14 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
 
     //请求接口
     const requestList = () => {
+        tableLoading.value = true
         let fromData = { ...pageData, ...searchFrom }
         requestApi.listApi(fromData).then((res: resTable<any>) => {
             let { data, total } = res.data
             if (tableDataFispose?.ifDispose) {
                 data = tableDataFispose.Fun(data)
             }
+            tableLoading.value = false
             tableData.value = data
             paginationOpt.total = total
             tableState.selectedRowKeys = [];

@@ -52,6 +52,7 @@ import { reactive } from 'vue';
 import { uselocals } from "@/hooks/localsHooks"
 import { useRouter } from 'vue-router';
 import { login } from "@/api/login"
+import { getMenu } from "@/api/admin"
 import { message } from 'ant-design-vue';
 import logo from '@/assets/img/logo.png'
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
@@ -72,13 +73,23 @@ const onFinish = (values: { account: string, password: string }) => {
     // router.replace('/admin/user')
     // return
     let fromData = { password: values.password, username: values.account }
-    login(fromData).then((res: { token: string, user: { name: string } }) => {
-        console.log(res)
+    login(fromData).then((res: { token: string, user: { name: string, role_id: number } }) => {
         let { token, user } = res
+        let { role_id } = user
         localStorage.setItem('token', token)
         localStorage.setItem('user', JSON.stringify(user))
         localStorage.setItem('name', user.name)
-        router.replace('/admin/user')
+        getMenu<{ id: number, type: 2 }>({ id: role_id, type: 2 }).then((res: { data: string[] }) => {
+            let { data } = res
+            localStorage.setItem('limitsData', JSON.stringify(data))
+            let routerUrl = data.find((item: string) => item.indexOf(":") !== -1)
+            console.log(`/admin/${routerUrl!.slice(1)}`)
+            router.replace(`/admin/${routerUrl!.slice(1)}`)
+            message.success("登录成功")
+        })
+
+
+
     })
 
 };
