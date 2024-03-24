@@ -1,9 +1,18 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-import outsideLayout from './outsideLayout';
-import layoutRouter from "./layout/index"
+// import outsideLayout from './outsideLayout';
+// import layoutRouter from "./layout/index"
 const routes = [
-  ...layoutRouter,
-  ...outsideLayout
+  {
+    path: '/',
+    name: 'login',
+    component: () => import(/* webpackChunkName: "login" */ 'views/login/index.vue'),
+    meta: {
+      title: '登录',
+    },
+  },
+  // ...outsideLayout,
+  // ...layoutRouter
+
 ];
 
 const router = createRouter({

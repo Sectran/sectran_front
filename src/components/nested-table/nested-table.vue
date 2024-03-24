@@ -1,4 +1,5 @@
 <template>
+
     <a-table :columns="columns" :data-source="list" class="components-table-demo-nested" :scroll="{ y: 400 }"
         ref="tableRef" :pagination="false" :loading="loading" :expandedRowKeys="expandedRowKeys"
         :showHeader="props.ifshowHeader" bordered :indentSize="5">
@@ -12,14 +13,8 @@
         </template>
         <template #expandIcon="{ record }">
             <template v-if="record.hasChildren">
-
-                <a-button type="link" shape="circle" @click="expandRow(record.key)"
+                <a-button style="width: 0;min-width:0" type="link" shape="circle" @click="expandRow(record.key)"
                     :icon="h(expandedRowKeys.includes(record.key as never) ? DownOutlined : RightOutlined)" />
-                <!-- <RightOutlined />
-                <DownOutlined /> -->
-                <!-- <button
-                    :class="['ant-table-row-expand-icon', expandedRowKeys.includes(record.key as never) ? 'ant-table-row-expand-icon-expanded' : 'ant-table-row-expand-icon-collapsed']"
-                    @click="expandRow(record.key)"></button> -->
             </template>
             <template v-else>
                 <span></span>
@@ -29,9 +24,8 @@
             <template v-if="column.dataIndex === 'name'">
                 <a width="200" href="javascript:;">{{ text }}</a>
             </template>
-
             <template v-if="column.dataIndex === 'updatedAt'">
-                {{ dayjs(record[column.updatedAt]).format("YYYY-MM-DD HH:mm:ss") }}
+                {{ dayjs(text).format("YYYY-MM-DD HH:mm:ss") }}
             </template>
             <template v-if="column.dataIndex === 'operation'">
                 <a-space :size="8">
@@ -57,7 +51,9 @@
                 <a-input v-model:value="formState.description" />
             </a-form-item>
             <a-form-item label="部门位置" name="area" :rules="[{ required: true, message: 'Please input your password!' }]">
-                <a-input v-model:value="formState.area" />
+                <!-- <a-input v-model:value="formState.area" /> -->
+                <a-cascader :fieldNames="{ label: 'name', value: 'name', children: 'children' }"
+                    v-model:value="formState.area" :options="TestJson" :show-search="{ filter }" />
             </a-form-item>
             <a-form-item :wrapper-col="{ offset: 6, span: 16 }">
                 <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
@@ -66,7 +62,7 @@
     </a-modal>
 </template>
 <script lang="ts" setup>
-import nestedTable from "@/components/nestedTable/nestedTable.vue"
+import nestedTable from "@/components/nested-table/nested-table.vue"
 import { ref, nextTick, onMounted, onBeforeUnmount, reactive, h } from 'vue';
 import { listDepartment, addDepartment, editDepartment, deleteDepartment } from "@/api/admin";
 import { resTable } from "@/utils/type/type"
@@ -75,14 +71,17 @@ import dayjs from 'dayjs';
 import type { FormInstance } from 'ant-design-vue';
 import { RightOutlined, DownOutlined } from '@ant-design/icons-vue';
 import { Modal, message } from 'ant-design-vue';
+import TestJson from "@/assets/json/region.json";
+import type { ShowSearchType } from 'ant-design-vue/es/cascader';
 type Tableitem = {
     id: number
     key: number
+    area:string
 }
 
 interface FormState {
     id?: number
-    area: string
+    area: string[]
     description: string
     name: string
     parentDepartments: number | string
@@ -93,7 +92,7 @@ interface Iprops {
     superiorId: number
     ifshowHeader: boolean
     departmentDelete?: Function
-    columnsNameWinth: number
+    columnsNameWinth?: number
 }
 
 
@@ -113,7 +112,7 @@ let loading = ref<boolean>(false)
 let openState = ref<boolean>(false)
 const id = ref<number | undefined>(undefined);
 const formState = reactive<FormState>({
-    area: '',
+    area: [],
     description: "",
     name: "",
     parentDepartments: "",
@@ -122,6 +121,7 @@ const formState = reactive<FormState>({
 
 const onRedactDepartment = (record: Tableitem) => {
     for (const key in formState) formState[key] = record[key]
+    formState.area = record.area.split('/')
     id.value = record.id
     openState.value = true
 }
@@ -170,6 +170,7 @@ const onFinish = () => {
     } else {
         api = addDepartment
     }
+    fromData.area = fromData.area.join('/')
     api(fromData).then(() => {
         if (id.value !== undefined) {
             let itemIndex = list.value.findIndex((item: Tableitem) => item.id === id.value)
@@ -254,7 +255,8 @@ const columns = [
     {
         title: 'department.departmentName',
         dataIndex: 'name',
-        width: props.columnsNameWinth 
+        width: props.columnsNameWinth,
+        ellipsis: true,
     },
     {
         title: 'department.departmentLocation',
@@ -281,6 +283,11 @@ const columns = [
         width: 300,
     }
 ]
+
+const filter: ShowSearchType['filter'] = (inputValue, path) => {
+    return path.some(option => option.name.toLowerCase().indexOf(inputValue.toLowerCase()) > -1);
+};
+
 </script>
 
 

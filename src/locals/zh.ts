@@ -11,7 +11,8 @@ export default {
     },
     user: {
         addUser:"添加用户",
-        userName:"用户账号",
+        userName:"用户名称",
+        account: '用户账号',
         password: '密码',
         mame: '用户名称',
         userState:"用户状态",
@@ -74,6 +75,8 @@ export default {
         pleaseSelect:`请选择`,
         creationDate:"创建日期",
         UpdateDate:"创建日期",
+        nolimits:"暂无权限",
+        status:"状态"
 
        
     },
@@ -86,7 +89,7 @@ export default {
         departmentAdmin: '部门管理',
         roleAdmin: "角色管理",
         uploadingAdmin: "连接管理",
-        deviceAdmin:"资源配置"
+        deviceAdmin:"设备管理"
     },
     socket:{
         error:"连接已关闭",

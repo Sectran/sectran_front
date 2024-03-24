@@ -5,7 +5,6 @@ let layoutRouter = [
         component: () => import('views/layout/index.vue'),
         name: 'admin',
         meta: {
-            // title: '配置管理',
             title: 'configuration',
         },
         children: [
@@ -15,6 +14,7 @@ let layoutRouter = [
                 component: () => import('views/table/user.vue'),
                 meta: {
                     title: 'userAdmin',
+                    limits:":user"
                 },
             },
             {
@@ -23,6 +23,7 @@ let layoutRouter = [
                 component: () => import('views/table/department.vue'),
                 meta: {
                     title: 'departmentAdmin',
+                    limits:":department"
                 },
             },
 
@@ -32,6 +33,7 @@ let layoutRouter = [
                 component: () => import('views/table/role.vue'),
                 meta: {
                     title: 'roleAdmin',
+                    limits:":role"
                 },
             },
             {
@@ -40,6 +42,7 @@ let layoutRouter = [
                 component: () => import('views/table/uploading.vue'),
                 meta: {
                     title: 'uploadingAdmin',
+                    limits:":uploading"
                 },
             },
             {
@@ -48,14 +51,9 @@ let layoutRouter = [
                 component: () => import('views/table/device.vue'),
                 meta: {
                     title: 'deviceAdmin',
+                    limits:":device"
                 },
             },
-
-
-            
-
-
-
 
 
         ]

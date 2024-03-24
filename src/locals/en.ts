@@ -14,6 +14,7 @@ export default {
     },
     user: {
         addUser:"add user",
+        account: 'account',
         userName:"userName",
         password: 'password',
         mame: 'name',
@@ -62,6 +63,8 @@ export default {
         roleName:"roleName",
         roleWeight:"roleWeight",
         permissionlist:'permission list'
+
+
     },
     public: {
         Submit: 'Submit',
@@ -80,6 +83,10 @@ export default {
         pleaseSelect:`please select`,
         creationDate:"creation date",
         UpdateDate:"update date",
+        nolimits:"Temporarily without authority",
+        status:"status"
+        
+        
     },
     message:{
         success:"operate successfully"

@@ -34,6 +34,7 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
         pageSize: 10,
         page: 1
     })
+
     //表格是否正在加载
     const tableLoading = ref(false)
     const searchFormRef = ref<FormInstance>();
@@ -74,15 +75,19 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
 
     //请求接口
     const requestList = () => {
+        tableLoading.value = true
         let fromData = { ...pageData, ...searchFrom }
         requestApi.listApi(fromData).then((res: resTable<any>) => {
             let { data, total } = res.data
             if (tableDataFispose?.ifDispose) {
                 data = tableDataFispose.Fun(data)
             }
+            tableLoading.value = false
             tableData.value = data
             paginationOpt.total = total
             tableState.selectedRowKeys = [];
+        }, () => {
+            tableLoading.value = false
         })
     }
     //删除接口
@@ -110,6 +115,8 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
         console.log('selectedRowKeys changed: ', selectedRowKeys);
         tableState.selectedRowKeys = selectedRowKeys;
     };
+
+
 
 
     return {

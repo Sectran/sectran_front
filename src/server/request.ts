@@ -67,13 +67,13 @@ const requests: Function = (url: string, param: AxiosRequestConfig<string>, fect
             case "post":
                 axios.post(url, param).then(
                     (response: any) => {
-                        console.log(response)
-                        if (response.data.code === 0 || response.data.base.code === 0) {
+                        if (response.data.code === 0 || response.data.base?.code === 0) {
                             let { data } = response;
                             data.Msg && message.success(data.Msg);
                             resolve(data);
                         } else {
                             landing(response.data);
+                            reject(response.data)
                         }
                     },
                     (error: any) => {

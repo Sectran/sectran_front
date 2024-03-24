@@ -1,24 +1,21 @@
 <template>
     <div class="tablePage-style">
         <div class="table-nav">
-
             <a-form :model="searchFrom" ref="searchFormRef">
                 <a-row :gutter="[20, 0]">
                     <a-col :lg="8" :md="12" :sm="24">
-                        <a-form-item :label="t('user.userName')" name="user">
-                            <a-input v-model:value="searchFrom.user" :placeholder="t('user.usernamePlaceholder')" />
+                        <a-form-item :label="t('user.userName')" name="name">
+                            <a-input v-model:value="searchFrom.name"
+                                :placeholder='`${t("public.pleaseInput")}${t("user.userName")}`' />
                         </a-form-item>
                     </a-col>
                     <a-col :lg="8" :md="12" :sm="24">
-                        <a-form-item :label="t('user.userId')" name="value">
-                            <a-input v-model:value="searchFrom.value" :placeholder="t('user.userIdPlaceholder')" />
+                        <a-form-item :label="t('user.account')" name="account">
+                            <a-input v-model:value="searchFrom.account"
+                                :placeholder='`${t("public.pleaseInput")}${t("user.account")}`' />
                         </a-form-item>
                     </a-col>
-                    <a-col :lg="8" :md="12" :sm="24">
-                        <a-form-item :label="t('user.usereEmail')" name="value">
-                            <a-input v-model:value="searchFrom.value" :placeholder="t('user.userEmailPlaceholder')" />
-                        </a-form-item>
-                    </a-col>
+
                     <a-col :lg="8" :md="12" :sm="24">
                         <a-form-item>
                             <a-space>
@@ -33,52 +30,61 @@
             </a-form>
         </div>
 
-        <div>
-
-            
-        </div>
-        <a-space class="mb8 flex-space-between-center">
-            <a-space>
-                <a-button type="primary" @click="handleDelete(tableState.selectedRowKeys)"
-                    :disabled="tableState.selectedRowKeys.length === 0" danger>{{
+        <div class="table-style">
+            <a-space class="mb8 flex-space-between-center">
+                <a-space>
+                    <a-button v-has="'/user/delete'" type="primary" @click="handleDelete(tableState.selectedRowKeys)"
+                        :disabled="tableState.selectedRowKeys.length === 0" danger>{{
                 t('public.deleteInBatches') }}</a-button>
+                </a-space>
+                <a-space>
+                    <a-button v-has="'/user/create'" :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{
+                t('public.add')
+            }}</a-button>
+                </a-space>
             </a-space>
-            <a-space>
-                <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add')
-                    }}</a-button>
-            </a-space>
-        </a-space>
 
-        <a-table rowKey="id" class="table-style" :columns="columns" :data-source="tableData" :pagination="paginationOpt"
-            :row-selection="{ selectedRowKeys: tableState.selectedRowKeys, onChange: onTableSelectChange }">
-            <template #headerCell="{ column }">
-                <span>{{ t(column.title) }}</span>
-            </template>
-            <template #bodyCell="{ column, record }">
-                <template v-if="column.dataIndex === 'updatedAt'">
-                    {{ Dayjs(record[column.dataIndex]).format("YYYY-MM-DD HH:mm:ss") }}
+            <a-table :loading="tableLoading" rowKey="id" :columns="columns" :data-source="tableData"
+                :pagination="paginationOpt"
+                :row-selection="{ selectedRowKeys: tableState.selectedRowKeys, onChange: onTableSelectChange }">
+                <template #headerCell="{ column }">
+                    <span>{{ t(column.title) }}</span>
                 </template>
-                <template v-if="column.dataIndex === 'description'">
-                    <div @click="Modal.success({
+                <template #bodyCell="{ column, record, text }">
+                    <template v-if="column.dataIndex === 'updatedAt'">
+                        {{ Dayjs(record[column.dataIndex]).format("YYYY-MM-DD HH:mm:ss") }}
+                    </template>
+                    <template v-if="column.dataIndex === 'description'">
+                        <div @click="Modal.success({
                 title: `${t('public.Description')}`,
                 content: record[column.dataIndex],
             });">
-                        {{ record[column.dataIndex].length > 63 ? record[column.dataIndex].slice(0, 63) :
+                            {{ record[column.dataIndex].length > 34 ? record[column.dataIndex].slice(0, 34) :
                 record[column.dataIndex]
-                        }}
-                    </div>
+                            }}
+                        </div>
+                    </template>
+                    <template v-if="column.dataIndex === 'operation'">
+                        <a-space :size="8">
+                            <a-button type="link" v-has="'/user/update'" @click="onRedact(record)">{{ t('public.redact')
+                                }}</a-button>
+                            <a-button type="link" v-has="'/user/delete'" danger @click="handleDelete([record.id])">{{
+                t('public.delete')
+            }}</a-button>
+                        </a-space>
+                    </template>
+                    <template v-else-if="column.dataIndex === 'status'">
+                        {{ text }}
+                        <a-switch  />
+                    </template>
                 </template>
-                <template v-if="column.dataIndex === 'operation'">
-                    <a-space :size="8">
-                        <a-button type="link" @click="onRedact(record)">{{ t('public.redact') }}</a-button>
-                        <a-button type="link" danger @click="handleDelete([record.id])">{{ t('public.delete')
-                            }}</a-button>
-                    </a-space>
+                <template #emptyText v-has="'/user/list'">
+                    <FrownOutlined class="no-limits-icon" />
+                    <div class="no-limits-icon">{{ t('public.nolimits') }}</div>
                 </template>
-                <template v-else-if="column.dataIndex === 'OsKind'">{{ record.OsKind === 1 ? 'Linux' : 'Windows'
-                    }}</template>
-            </template>
-        </a-table>
+            </a-table>
+        </div>
+
 
         <a-modal v-model:open="addOpen" :title="t('user.addUser')" :footer="null"
             :after-close="() => { fromreset(submitFormRef); id = undefined }">
@@ -89,10 +95,10 @@
                         :placeholder='`${t("public.pleaseInput")}${t("user.usereEmail")}`' />
                 </a-form-item>
                 <template v-if="id === undefined">
-                    <a-form-item :label="t('user.userName')" name="account"
-                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.userName')}` }]">
+                    <a-form-item :label="t('user.account')" name="account"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.account')}` }]">
                         <a-input v-model:value="formState.account"
-                            :placeholder='`${t("public.pleaseInput")}${t("user.userName")}`' />
+                            :placeholder='`${t("public.pleaseInput")}${t("user.account")}`' />
                     </a-form-item>
                     <a-form-item :label="t('public.departmentID')" name="departmentId"
                         :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('public.departmentID')}` }]">
@@ -100,7 +106,7 @@
                             :placeholder='`${t("public.pleaseInput")}${t("public.departmentID")}`' style="width: 100%"
                             :filter-option="false" :not-found-content="departmentState.fetching ? undefined : null"
                             :options="departmentState.data"
-                            @search="(value: string) => searchDepartment(value, departmentState, listDepartment)"
+                            @search="(value: string) => searchDepartment(value, departmentState, listDepartment, { deep: 0, id: user.department_id })"
                             show-search :field-names="{ label: 'name', value: 'id' }">
                             <template v-if="departmentState.fetching" #notFoundContent>
                                 <a-spin size="small" />
@@ -163,17 +169,21 @@ import { ref, reactive, h } from 'vue';
 import { useI18n } from 'vue-i18n'
 import Dayjs from 'dayjs';
 import { addUser, listUser, deleteUser, updateUser, listDepartment, listRole } from "@/api/admin"
-import { SearchOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons-vue';
+import { SearchOutlined, PlusOutlined, SyncOutlined, FrownOutlined } from '@ant-design/icons-vue';
 import { message, Modal } from 'ant-design-vue';
 import { debounce } from 'lodash';
-let searchFrom = reactive({});
-let { paginationOpt, tableData, searchFormRef, submitFormRef, tableState, onTableSelectChange, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listUser, deleteApi: deleteUser });
+type SearchType = {
+    name: string;
+    account: string
+};
+let searchFrom = reactive<SearchType>({
+    name: "",
+    account: ""
+});
+let { paginationOpt, tableData, searchFormRef, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listUser, deleteApi: deleteUser });
 const { t } = useI18n()
 const id = ref<number | undefined>(undefined);
-type SearchType = {
-    // user: string;
-    // value1?: Dayjs
-};
+
 
 type formStateType = {
     id?: number | undefined
@@ -206,8 +216,11 @@ const formState = reactive<formStateType>({
 });
 
 const columns = [{
-    title: 'user.userName',
+    title: 'user.account',
     dataIndex: 'account',
+}, {
+    title: 'user.userName',
+    dataIndex: 'name',
 }, {
     title: 'public.departmentID',
     dataIndex: 'departmentId',
@@ -215,10 +228,7 @@ const columns = [{
     title: 'public.roleId',
     dataIndex: 'roleId',
 },
-// {
-//     title: 'user.usereEmail',
-//     dataIndex: 'email',
-// }, 
+
 {
     title: 'user.telephone',
     dataIndex: 'phoneNumber',
@@ -227,14 +237,17 @@ const columns = [{
     title: 'public.Description',
     dataIndex: 'description',
 },
-// {
-//     title: 'public.UpdateDate',
-//     dataIndex: 'updatedAt',
-// },
+{
+    title: 'public.status',
+    dataIndex: 'status',
+},
 {
     title: 'public.operation',
     dataIndex: 'operation',
-}
+},
+
+
+
 ]
 
 const departmentState = reactive({
@@ -247,13 +260,15 @@ const roleState = reactive({
     fetching: false,
 });
 
-const searchDepartment = debounce((value: string, State: any, api: Function) => {
+let user = JSON.parse(localStorage.getItem('user') as string);
+
+const searchDepartment = debounce((value: string, State: any, api: Function, obj: any) => {
     console.log('fetching user', value);
     console.log('fetching State', State);
 
     State.data = [];
     State.fetching = true;
-    api({ page: 1, pageSize: 10, name: value }).then((res: any) => {
+    api({ page: 1, pageSize: 10, name: value, ...obj }).then((res: any) => {
         let { data } = res.data
         State.data = data;
         State.fetching = false;

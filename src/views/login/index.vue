@@ -49,11 +49,14 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
+import { useStore } from 'vuex'
 import { uselocals } from "@/hooks/localsHooks"
 import { useRouter } from 'vue-router';
 import { login } from "@/api/login"
+import { getMenu } from "@/api/admin"
 import { message } from 'ant-design-vue';
 import logo from '@/assets/img/logo.png'
+const store = useStore()
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 const router = useRouter();
 interface FormState {
@@ -69,16 +72,27 @@ const formState = reactive<FormState>({
 const onFinish = (values: { account: string, password: string }) => {
     // console.log('Success:', values);
     // let fromData = JSON.stringify({ password: values.password, username: values.account })
-    router.replace('/admin/user')
-    return
+    // router.replace('/admin/user')
+    // return
     let fromData = { password: values.password, username: values.account }
-    login(fromData).then((res: { token: string, user: { name: string ,account:string} }) => {
-        console.log(res)
+    login(fromData).then((res: { token: string, user: { name: string, role_id: number } }) => {
         let { token, user } = res
+        let { role_id } = user
         localStorage.setItem('token', token)
         localStorage.setItem('user', JSON.stringify(user))
-        localStorage.setItem('account', user.account)
-        router.replace('/admin/user')
+        localStorage.setItem('name', user.name)
+        getMenu<{ id: number, type: 2 }>({ id: role_id, type: 2 }).then((res: { data: string[] }) => {
+            let { data } = res
+            localStorage.setItem('limitsData', JSON.stringify(data))
+            let routerUrl = data.find((item: string) => item.indexOf(":") !== -1)
+            store.commit('router/amendMenuData', [])
+            console.log(`/admin/${routerUrl!.slice(1)}`)
+            router.replace(`/admin/${routerUrl!.slice(1)}`)
+            message.success("登录成功")
+        })
+
+
+
     })
 
 };

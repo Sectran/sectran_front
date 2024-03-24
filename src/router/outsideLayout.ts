@@ -2,18 +2,6 @@
 /**
  * layout布局之外的路由
  */
-export const LoginRoute = {
-  path: '/',
-  name: 'login',
-  component: () => import(/* webpackChunkName: "login" */ 'views/login/index.vue'),
-  meta: {
-    title: '登录',
-  },
-};
-
-/**
- * layout布局之外的路由
- */
 export const LinkConfiguration = {
   path: '/terminal',
   name: 'terminal',
@@ -23,4 +11,4 @@ export const LinkConfiguration = {
   },
 };
 
-export default [LoginRoute,LinkConfiguration];
+export default [LinkConfiguration];
