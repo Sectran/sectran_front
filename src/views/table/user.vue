@@ -75,7 +75,7 @@
                     </template>
                     <template v-else-if="column.dataIndex === 'status'">
                         {{ text }}
-                        <a-switch  />
+                        <a-switch />
                     </template>
                 </template>
                 <template #emptyText v-has="'/user/list'">
