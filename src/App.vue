@@ -22,7 +22,7 @@ import { useRouter } from 'vue-router';
 import { ConfigProvider } from 'ant-design-vue';
 import en from 'ant-design-vue/es/locale/en_US';
 import zh from 'ant-design-vue/es/locale/zh_CN';
-import layout from "@/router/Layout/index"
+import layout from "@/router/layout/index"
 import 'dayjs/locale/zh-cn';
 import { useI18n } from 'vue-i18n'
 import dayjs from 'dayjs';
@@ -53,15 +53,14 @@ const Fun_algorithm = () => {
   return algorithm
 }
 
-router.beforeEach((to: { path: string }, {}: {}, next: Function) => {
-
+router.beforeEach((to: { path: string }, { }: {}, next: Function) => {
   const token: string | null = localStorage.getItem("token");
   if (!token && to.path !== "/") {
     return next({ path: "/" })
   }
+  console.log(layout)
   if (store.state.router.menuData.length === 0) {
     let menu = recursionMenu(layout)
-    console.log(menu)
     menu.forEach((item: Router) => {
       router.addRoute(item)
     })
@@ -87,8 +86,6 @@ const recursionMenu = (data: Router[]) => {
     if (item.meta.limits && limitsData?.includes(item.meta.limits)) {
       routerData.push(item)
     }
-
-
   })
   return routerData
 }

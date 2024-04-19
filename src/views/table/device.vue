@@ -1,7 +1,6 @@
 <template>
-    <div class="tablePage-style">
+    <div class="tablePage-style" style="position: relative;">
         <div class="table-nav">
-
             <a-form :model="searchFrom" ref="searchFormRef">
                 <a-row :gutter="[20, 0]">
                     <a-col :lg="8" :md="12" :sm="24">
@@ -26,6 +25,7 @@
                             <a-space>
                                 <a-button :icon="h(SearchOutlined)" type="primary" @click="on_search()">{{
                 t('public.search') }}</a-button>
+
                                 <a-button :icon="h(SyncOutlined)" @click="fromreset(searchFormRef)">{{ t('public.reset')
                                     }}</a-button>
                             </a-space>
@@ -33,6 +33,7 @@
                     </a-col>
                 </a-row>
             </a-form>
+
 
         </div>
 
@@ -58,24 +59,23 @@
                     <template v-if="column.dataIndex === 'operation'">
                         <a-space :size="8">
                             <a-button type="link" @click="on_redact(record)">{{ t('public.redact') }}</a-button>
-                            <a-button type="link" danger @click="handleDelete([record.Id])">{{ t('public.delete')
+
+                            <a-button type="link" danger @click="handleDelete([record.id])">{{ t('public.delete')
                                 }}</a-button>
-                            <!-- <a-button type="link" @click="on_deviceAccount(record.Id, record.Name)">{{
+                            <a-button type="link" @click="on_deviceAccount(record.id, record.name)">{{
                 t('device.deviceAccount')
-            }}</a-button> -->
+            }}</a-button>
                         </a-space>
                     </template>
                     <template v-else-if="column.dataIndex === 'OsKind'">{{ record.OsKind === 1 ? 'Linux' : 'Windows'
                         }}</template>
                 </template>
             </a-table>
-
         </div>
-
-
-        <a-modal v-model:open="addOpen" title="添加设备" :footer="null" :after-close="onCancel">
-            <a-form :model="formState" name="basic" ref="formRef" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
-                autocomplete="off" @finish="onFinish">
+        <a-modal v-model:open="addOpen" title="添加设备" :footer="null"
+            :after-close="() => { fromreset(submitFormRef); deviceId = undefined }">
+            <a-form :model="formState" name="basic" ref="submitFormRef" :label-col="{ span: 6 }"
+                :wrapper-col="{ span: 18 }" autocomplete="off" @finish="onFinish">
                 <a-form-item :label="t('device.deviceName')" name="name"
                     :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceName')}` }]">
                     <a-input v-model:value="formState.name"
@@ -112,11 +112,10 @@
                 </a-form-item>
             </a-form>
         </a-modal>
-
-        <a-modal v-model:open="accountOpen" width="1000px" :title='deviceItem.deviceName' :footer="null"
-            :destroyOnClose="true">
-            <deviceAccount :deviceId="deviceItem.deviceId" />
-        </a-modal>
+        <a-drawer :title='`${deviceItem.deviceName}设备账号`' placement="right" :open="accountOpen" :get-container="false"
+            :style="{ position: 'absolute' }" width="100%" @close="accountOpen = false">
+            <device-account :deviceId="deviceItem.deviceId" />
+        </a-drawer>
     </div>
 </template>
 
@@ -125,13 +124,11 @@ import { useTableHooks } from "@/hooks/useTableHooks"
 import { ref, reactive, h, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n'
 // import type { Dayjs } from 'dayjs';
-import type { FormInstance } from 'ant-design-vue';
 import deviceAccount from "./components/deviceAccount.vue"
 import { addDevice, deviceList, deleteDevice, updateDevice } from "@/api/admin"
 import { SearchOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons-vue';
 
 const { t } = useI18n()
-const formRef = ref<FormInstance>();
 type SearchType = {
     name: string
     host: string
@@ -145,11 +142,11 @@ let searchFrom = reactive({
 });
 
 type formStateType = {
-    Id?: number | string
+    id?: number
 } & SearchType
 
 
-let { paginationOpt, tableData, searchFormRef, tableState, onTableSelectChange, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: deviceList, deleteApi: deleteDevice });
+let { paginationOpt, tableData, searchFormRef, tableState, submitFormRef, onTableSelectChange, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: deviceList, deleteApi: deleteDevice });
 const addOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({
     name: "",
@@ -181,12 +178,13 @@ const columns = [{
 
 const accountOpen = ref<boolean>(false);
 const deviceItem = reactive<{ deviceName: string, deviceId: number }>({ deviceName: "", deviceId: 0 })
-// const on_deviceAccount = (id: number, name: string) => {
-//     deviceItem.deviceId = id
-//     deviceItem.deviceName = name
-//     accountOpen.value = true
-// }
-
+const on_deviceAccount = (id: number, name: string) => {
+    deviceItem.deviceId = id
+    deviceItem.deviceName = name
+    console.log( deviceItem.deviceName);
+    accountOpen.value = true
+}
+let deviceId: number | undefined = undefined
 const on_redact = (data: formStateType) => {
     addOpen.value = true
     nextTick(() => {
@@ -194,24 +192,20 @@ const on_redact = (data: formStateType) => {
             formState[key] = data[key]
         }
     })
-
-    formState.Id = data.Id
+    deviceId = data.id
 }
 const onFinish = () => {
-    let api = formState.Id ? updateDevice : addDevice
-    api(formState).then(() => {
+    let paramFrom = { ...formState }
+    let api = addDevice
+    if (deviceId) {
+        api = updateDevice
+        paramFrom.id = deviceId
+    }
+    api(paramFrom).then(() => {
         addOpen.value = false
         requestList()
     })
 };
-
-const onCancel = () => {
-    formRef.value!.resetFields();
-    if (formState.Id) delete formState.Id
-}
-
-
-
 
 </script>
 

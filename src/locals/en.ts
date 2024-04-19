@@ -54,6 +54,7 @@ export default {
         Protocol:"protocol",
         PrivateKey:"rivateKey",
         PrivateKeyPassword:"privateKeyPassword",
+        bindAccount:"Bind account",
     },
 
     asideMenu: {
@@ -97,7 +98,7 @@ export default {
         departmentAdmin: 'department admin',
         roleAdmin: "role admin",
         uploadingAdmin: "uploading admin",
-        deviceAdmin:"device admin"
+        deviceAdmin:"device admin",
     },
     socket:{
         error:"connection close",

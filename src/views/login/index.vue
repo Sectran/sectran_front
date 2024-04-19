@@ -90,9 +90,6 @@ const onFinish = (values: { account: string, password: string }) => {
             router.replace(`/admin/${routerUrl!.slice(1)}`)
             message.success("登录成功")
         })
-
-
-
     })
 
 };

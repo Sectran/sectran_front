@@ -14,7 +14,8 @@ let layoutRouter = [
                 component: () => import('views/table/user.vue'),
                 meta: {
                     title: 'userAdmin',
-                    limits:":user"
+                    limits: ":user",
+                    ismenu:true,
                 },
             },
             {
@@ -23,7 +24,8 @@ let layoutRouter = [
                 component: () => import('views/table/department.vue'),
                 meta: {
                     title: 'departmentAdmin',
-                    limits:":department"
+                    limits: ":department",
+                    ismenu:true,
                 },
             },
 
@@ -33,7 +35,8 @@ let layoutRouter = [
                 component: () => import('views/table/role.vue'),
                 meta: {
                     title: 'roleAdmin',
-                    limits:":role"
+                    limits: ":role",
+                    ismenu:true,
                 },
             },
             {
@@ -42,7 +45,8 @@ let layoutRouter = [
                 component: () => import('views/table/uploading.vue'),
                 meta: {
                     title: 'uploadingAdmin',
-                    limits:":uploading"
+                    limits: ":uploading",
+                    ismenu:true,
                 },
             },
             {
@@ -51,11 +55,10 @@ let layoutRouter = [
                 component: () => import('views/table/device.vue'),
                 meta: {
                     title: 'deviceAdmin',
-                    limits:":device"
+                    limits: ":device",
+                    ismenu:true,
                 },
-            },
-
-
+            }
         ]
     }]
 

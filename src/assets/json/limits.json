@@ -136,6 +136,22 @@
                 "name": "设备删除",
                 "path": "/device/delete",
                 "method": "POST"
+            },{
+                "name": "账号管理列表",
+                "path": "/account/list",
+                "method": "POST"
+            },{
+                "name": "创建账号",
+                "path": "/account/create",
+                "method": "POST"
+            },{
+                "name": "更新账号",
+                "path": "/account/update",
+                "method": "POST"
+            },{
+                "name": "删除账号",
+                "path": "/account/delete",
+                "method": "POST"
             }
         ]
     }
