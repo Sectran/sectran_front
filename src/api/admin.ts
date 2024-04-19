@@ -30,8 +30,11 @@ export const listDeviceAccount =<T>(data:T)=> requests(`/device/listDeviceAccoun
 export const addDeviceAccount =<T>(data:T)=> requests(`/device/addDeviceAccount`,data)
 export const updateDeviceAccount =<T>(data:T)=> requests(`/device/updateDeviceAccount`,data)
 export const deleteDeviceAccount =<T>(data:T)=> requests(`/device/deleteDeviceAccount`,data)
-
-
+//设备账号模块
+export const accountList =<T>(data:T)=> requests(`/account/list`,data)
+export const accountCreate =<T>(data:T)=> requests(`/account/create`,data)
+export const accountUpdate =<T>(data:T)=> requests(`/account/update`,data)
+export const accountDelete =<T>(data:T)=> requests(`/account/delete`,data)
 
 
 //用户

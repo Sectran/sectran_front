@@ -14,8 +14,11 @@
             <span>{{ t(`menu.${item.meta.title}`) }}</span>
           </span>
         </template>
-        <a-menu-item v-for="el in item.children" :key="el.name" @click="onPath(el)">{{ t(`menu.${el.meta.title}`)
-        }}</a-menu-item>
+        <template v-for="el in item.children" :key="el.name">
+          <a-menu-item v-if="el.meta.ismenu" :key="el.name"  @click="onPath(el)">
+            {{ t(`menu.${el.meta.title}`) }}
+          </a-menu-item>
+        </template>
       </a-sub-menu>
     </a-menu>
   </div>

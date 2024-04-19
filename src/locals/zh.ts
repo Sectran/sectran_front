@@ -43,13 +43,18 @@ export default {
         deviceOsKind:'系统类型',
         deviceEncoding:'字符编码',
         deviceAccount :'设备账号',
-        deviceUsername:"设备账号名称",
+        deviceUsername:"账号名称",
         Password:"设备账号密码",
         IsAdministrator:"是否管理员",
         Port:"端口",
         Protocol:"协议",
         PrivateKey:"key",
         PrivateKeyPassword:"key密码",
+        bindAccount:"绑定账号",
+        
+
+
+
     },
     role:{
         roleName:"角色名",
