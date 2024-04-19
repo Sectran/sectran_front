@@ -32,11 +32,11 @@
                 t('public.deleteInBatches') }}</a-button>
                 </a-space>
                 <a-space>
-                    <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add')
+                    <a-button :icon="h(PlusOutlined)" @click="modelOpen = true" type="primary">{{ t('public.add')
                         }}</a-button>
                 </a-space>
             </a-space>
-            <a-table rowKey="id"  :columns="columns" :data-source="tableData" :indentSize="10"
+            <a-table rowKey="id" :columns="columns" :data-source="tableData" :indentSize="10"
                 :pagination="paginationOpt"
                 :row-selection="{ selectedRowKeys: tableState.selectedRowKeys, onChange: onTableSelectChange }"
                 :loading="tableLoading">
@@ -80,9 +80,7 @@
             </a-table>
         </div>
 
-
-
-        <a-modal v-model:open="addOpen" title="添加角色" :footer='null' :maskClosable="false"
+        <a-modal v-model:open="modelOpen" title="添加角色" :footer='null' :maskClosable="false"
             :after-close="() => { fromreset(submitFormRef); id = undefined }">
             <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
                 ref="submitFormRef" autocomplete="off" @finish="onFinish">
@@ -111,7 +109,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { ref, reactive, h } from 'vue';
+import { ref, reactive, h, nextTick } from 'vue';
 import { useTableHooks } from "@/hooks/useTableHooks"
 import { listRole, addRole, editRole, deleteRole, updateAuthority, getMenu } from "@/api/admin"
 import { SearchOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons-vue';
@@ -135,7 +133,7 @@ let searchFrom = reactive<SearchType>({
     name: ""
 });
 
-let {  paginationOpt, tableData, searchFormRef, tableState, submitFormRef, tableLoading, requestList, on_search, fromreset, handleDelete, onTableSelectChange } = useTableHooks<SearchType>(searchFrom, { listApi: listRole, deleteApi: deleteRole });
+let { paginationOpt, tableData, searchFormRef, tableState, submitFormRef, tableLoading, requestList, on_search, fromreset, handleDelete, onTableSelectChange } = useTableHooks<SearchType>(searchFrom, { listApi: listRole, deleteApi: deleteRole });
 
 const columns = [
     {
@@ -163,19 +161,17 @@ const columns = [
     }
 ]
 
-const addOpen = ref<boolean>(false);
+const modelOpen = ref<boolean>(false);
 const formState = reactive<FormState>({
     name: "",
     weight: 0
 });
 const id = ref<number | undefined>(undefined);
-
-
-
 const onRedact = (record: TableItem) => {
     for (const key in formState) formState[key] = record[key]
     id.value = record.id
-    addOpen.value = true
+    modelOpen.value = true
+
 }
 
 
@@ -188,12 +184,25 @@ const onFinish = () => {
     } else {
         api = addRole
     }
+    modelOpen.value = false
+
+    nextTick(() => {
+        console.log(id.value)
+    })
+    return
     api(fromData).then(() => {
-        addOpen.value = false
+        modelOpen.value = false
+
+
+
+
+
+
         requestList()
         message.success(t('message.success'));
     })
 };
+
 
 
 //权限功能模块
