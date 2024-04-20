@@ -183,26 +183,32 @@ const onAddSubordinateDepartment = (record?: { parentDepartments: string, id: st
     openState.value = true
 }
 const onDelete = (record: Tableitem, index: Number) => {
+
+    console.log(record.id)
+
+    let parentDepartmentsArr = record.parentDepartments.split(",")
+    if (parentDepartmentsArr.length > 1) {
+        let presentDepartmentsObj: any = {
+            children: tableList.value
+        }
+        for (let index = 0; index < parentDepartmentsArr.length; index++) {
+            if (index !== 0) {
+                presentDepartmentsObj = presentDepartmentsObj.children.find((item: Tableitem) => item.id === Number(parentDepartmentsArr[index]))
+            }
+        }
+        presentDepartmentsObj.children.splice(presentDepartmentsObj.children.find((item: Tableitem) => item.id === record.id), 1)
+        if (presentDepartmentsObj.children.length === 0) presentDepartmentsObj.children = undefined
+        console.log(presentDepartmentsObj)
+    } else {
+        tableList.value.splice(index, 1)
+    }
+    return
+
     Modal.confirm({
         title: '确定要删除当前部门吗？',
         onOk() {
-            return deleteDepartment({ ids: [record.id] }).then(() => {
-                let parentDepartmentsArr = record.parentDepartments.split(",")
-                if (parentDepartmentsArr.length > 1) {
-                    let presentDepartmentsObj: any = {
-                        children: tableList.value
-                    }
-                    for (let index = 0; index < parentDepartmentsArr.length; index++) {
-                        if (index !== 0) {
-                            presentDepartmentsObj = presentDepartmentsObj.children.find((item: Tableitem) => item.id === Number(parentDepartmentsArr[index]))
-                        }
-                    }
-                    presentDepartmentsObj.children.splice(presentDepartmentsObj.children.find((item: Tableitem) => item.id === record.id), 1)
-                    if (presentDepartmentsObj.children.length === 0) presentDepartmentsObj.children = undefined
-                    console.log(presentDepartmentsObj)
-                } else {
-                    tableList.value.splice(index, 1)
-                }
+            deleteDepartment({ ids: [record.id] }).then(() => {
+
 
             })
         },
