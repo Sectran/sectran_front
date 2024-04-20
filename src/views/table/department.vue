@@ -36,13 +36,13 @@
                         </a-form-item>
                     </a-col> -->
                 </a-row>
-
             </a-form>
         </div>
-        <!-- <a-space class="mb8 justify-end">
-            <a-button :icon="h(PlusOutlined)" @click="console.log(value)" type="primary">{{ t('public.add')
+        <a-space class="mb8 justify-end">
+
+            <a-button @click="onAddSubordinateDepartment()" :icon="h(PlusOutlined)" type="primary">{{ t('public.add')
                 }}</a-button>
-        </a-space> -->
+        </a-space>
         <!-- :scroll="{ y: 400 }" -->
         <a-table :columns="columns" :data-source="tableList" class="components-table-demo-nested" ref="tableRef"
             :pagination="false" :loading="loading" rowKey="id" bordered :indentSize="5" @expand="expandTable">
@@ -82,7 +82,7 @@
                     <a-input v-model:value="formState.description" />
                 </a-form-item>
                 <a-form-item label="部门位置" name="area"
-                    :rules="[{ required: true, message: 'Please input your password!' }]">
+                :rules="[{ required: true, message: 'Please input your password!' }]">
                     <!-- <a-input v-model:value="formState.area" /> -->
                     <a-cascader :fieldNames="{ label: 'name', value: 'name', children: 'children' }"
                         v-model:value="formState.area" :options="TestJson" :show-search="{ filter }" />
@@ -97,13 +97,13 @@
 
 
 <script setup lang="ts">
-import { ref, onMounted, reactive, } from 'vue';
+import { ref, onMounted, reactive, h } from 'vue';
 import { listDepartment, addDepartment, editDepartment, deleteDepartment } from "@/api/admin";
 import { resTable } from "@/utils/type/type"
 import { useI18n } from 'vue-i18n';
 import dayjs from 'dayjs';
 import type { FormInstance } from 'ant-design-vue';
-// import { RightOutlined, DownOutlined } from '@ant-design/icons-vue';
+import { PlusOutlined } from '@ant-design/icons-vue';
 import { Modal, message } from 'ant-design-vue';
 import TestJson from "@/assets/json/region.json";
 import type { ShowSearchType } from 'ant-design-vue/es/cascader';
@@ -136,7 +136,7 @@ let toTal = ref<number>(0)
 let tableList = ref<any>([])
 let loading = ref<boolean>(false)
 let openState = ref<boolean>(false)
-const departmentId = ref<number | undefined>(1);
+const departmentId = ref<number | undefined>(undefined);
 const formState = reactive<FormState>({
     area: [],
     description: "",
@@ -170,12 +170,15 @@ const onRedactDepartment = (record: Tableitem) => {
     openState.value = true
 }
 
-let addRecord = {}
-
-const onAddSubordinateDepartment = (record: { parentDepartments: string, id: string }) => {
-    formState.parentDepartments = record.parentDepartments ? record.parentDepartments + `,${record.id}` : record.id + '';
-    addRecord = record || {}
-    // formState.parentDepartmentId = props.superiorId;
+const onAddSubordinateDepartment = (record?: { parentDepartments: string, id: string }) => {
+    let user = JSON.parse(localStorage.getItem("user") as string)
+    if (record) {
+        formState.parentDepartmentId = record.id
+        formState.parentDepartments = record?.parentDepartments ? record?.parentDepartments + `,${record.id}` : record?.id + '';
+    } else {
+        formState.parentDepartmentId = user.department_id
+        formState.parentDepartments = `${user.department_id}`
+    }
     openState.value = true
 }
 const onDelete = (record: Tableitem) => {
@@ -229,8 +232,9 @@ const onFinish = () => {
 // }
 
 const requestList = (id?: number) => {
+    let user = JSON.parse(localStorage.getItem("user") as string)
     let fromData = {
-        id: id || departmentId.value,
+        id: id || user.department_id,
         page: page.value,
         pageSize: pageSize.value,
         deep: 1
@@ -257,6 +261,7 @@ const filter: ShowSearchType['filter'] = (inputValue, path) => {
 };
 
 onMounted(async () => {
+
     tableList.value = await requestList()
 })
 

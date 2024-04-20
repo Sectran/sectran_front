@@ -1,8 +1,18 @@
 <template>
+    <!-- :scroll="{ y: 400 }" -->
 
-    <a-table :columns="columns" :data-source="list" class="components-table-demo-nested" :scroll="{ y: 400 }"
-        ref="tableRef" :pagination="false" :loading="loading" :expandedRowKeys="expandedRowKeys"
-        :showHeader="props.ifshowHeader" bordered :indentSize="5">
+    <div   @mouseenter.stop="()=>console.log(1)" @mouseleave.stop="()=>console.log(2)">
+
+   
+
+    <a-table :columns="columns" :data-source="list" class="components-table-demo-nested" ref="tableRef"
+        :pagination="false" :loading="loading" :showHeader="props.ifshowHeader" :indentSize="5"
+        :expandedRowKeys="expandedRowKeys" :customRow="rowClick"
+        
+      
+        >
+        <!-- bordered -->
+        <!--  -->
         <template #headerCell="{ column }">
             <span v-if="column && typeof column.title === 'string'">{{ t(column.title) }}</span>
         </template>
@@ -14,7 +24,7 @@
         <template #expandIcon="{ record }">
             <template v-if="record.hasChildren">
                 <a-button style="width: 0;min-width:0" type="link" shape="circle" @click="expandRow(record.key)"
-                    :icon="h(expandedRowKeys.includes(record.key as never) ? DownOutlined : RightOutlined)" />
+                    :icon="h(expandedRowKeys.includes(record.key as never) ? MinusCircleOutlined : PlusCircleOutlined)" />
             </template>
             <template v-else>
                 <span></span>
@@ -38,7 +48,7 @@
             </template>
         </template>
     </a-table>
-
+</div>
     <a-modal v-model:open="openState" title="添加部门" :footer='null'
         :after-close="() => { submitFormRef?.resetFields(); id = undefined }">
         <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" ref="submitFormRef"
@@ -69,14 +79,14 @@ import { resTable } from "@/utils/type/type"
 import { useI18n } from 'vue-i18n';
 import dayjs from 'dayjs';
 import type { FormInstance } from 'ant-design-vue';
-import { RightOutlined, DownOutlined } from '@ant-design/icons-vue';
+import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons-vue';
 import { Modal, message } from 'ant-design-vue';
 import TestJson from "@/assets/json/region.json";
 import type { ShowSearchType } from 'ant-design-vue/es/cascader';
 type Tableitem = {
     id: number
     key: number
-    area:string
+    area: string
 }
 
 interface FormState {
@@ -208,6 +218,18 @@ const requestList = () => {
         toTal.value = total
         loading.value = false
     })
+}
+
+// let 
+const rowClick = (record: any, index: number) => {
+    return {
+        // onMouseenter: (event) => {
+        //     console.log("移入")
+        // },  // 鼠标移入行
+        // onMouseleave: (event) => {
+        //     console.log("移出")
+        // }
+    };
 }
 
 // 定义滚动函数

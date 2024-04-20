@@ -16,11 +16,12 @@
     </div>
     <div :class="{ isShow: myMenuVisible }" class="myMenu">
         <ul>
-            <li v-show="rightClickIndex !== 0" @click.stop="close('left')">关闭左边</li>
-            <li v-show="rightClickIndex !== store.state.tabsStore.tabsArr.length - 1" @click.stop="close('right')">关闭右边
-            </li>
-            <li @click.stop="close('all')">关闭全部</li>
             <li v-show="store.state.tabsStore.tabsArr.length !== 1" @click.stop="close('others')">关闭其他</li>
+            <li v-show="rightClickIndex !== 0" @click.stop="close('left')">关闭左侧标签</li>
+            <li v-show="rightClickIndex !== store.state.tabsStore.tabsArr.length - 1" @click.stop="close('right')">关闭右侧标签
+            </li>
+            <li @click.stop="close('all')">全部关闭</li>
+      
 
         </ul>
     </div>
