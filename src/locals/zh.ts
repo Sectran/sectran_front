@@ -48,7 +48,7 @@ export default {
         IsAdministrator:"是否管理员",
         Port:"端口",
         Protocol:"协议",
-        PrivateKey:"key",
+        PrivateKey:"私钥",
         PrivateKeyPassword:"key密码",
         bindAccount:"绑定账号",
         
@@ -79,7 +79,7 @@ export default {
         pleaseInput:'请输入',
         pleaseSelect:`请选择`,
         creationDate:"创建日期",
-        UpdateDate:"创建日期",
+        UpdateDate:"更新日期",
         nolimits:"暂无权限",
         status:"状态"
 

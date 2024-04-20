@@ -1,5 +1,5 @@
 <template>
-    <div class="tablePage-style" style="position: relative;">
+    <div class="tablePage-style">
         <div class="table-nav">
             <a-form :model="searchFrom" ref="searchFormRef">
                 <a-row :gutter="[20, 0]">
@@ -39,11 +39,11 @@
 
         <div class="table-style">
             <a-space class="mb8 flex-space-between-center">
-                <a-space>
+                <!-- <a-space>
                     <a-button type="primary" @click="handleDelete(tableState.selectedRowKeys)"
                         :disabled="tableState.selectedRowKeys.length === 0" danger>{{
                 t('public.deleteInBatches') }}</a-button>
-                </a-space>
+                </a-space> -->
                 <a-space>
                     <a-button :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{ t('public.add')
                         }}</a-button>
@@ -111,10 +111,12 @@
                 </a-form-item>
             </a-form>
         </a-modal>
-        <a-drawer :title='`${deviceItem.deviceName}设备账号`' placement="right" :open="accountOpen" :get-container="false"
-            :style="{ position: 'absolute' }" width="100%" @close="accountOpen = false">
+
+        <a-modal v-model:open="accountOpen" width="1000px" :title='`${deviceItem.deviceName}设备账号`'>
             <device-account :deviceId="deviceItem.deviceId" />
-        </a-drawer>
+        </a-modal>
+
+
     </div>
 </template>
 
@@ -180,7 +182,7 @@ const deviceItem = reactive<{ deviceName: string, deviceId: number }>({ deviceNa
 const on_deviceAccount = (id: number, name: string) => {
     deviceItem.deviceId = id
     deviceItem.deviceName = name
-    console.log( deviceItem.deviceName);
+    console.log(deviceItem.deviceName);
     accountOpen.value = true
 }
 let deviceId: number | undefined = undefined

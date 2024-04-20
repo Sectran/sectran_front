@@ -50,19 +50,10 @@
                 <template #headerCell="{ column }">
                     <span>{{ t(column.title) }}</span>
                 </template>
-                <template #bodyCell="{ column, record, text }">
-                    <template v-if="column.dataIndex === 'updatedAt'">
-                        {{ Dayjs(record[column.dataIndex]).format("YYYY-MM-DD HH:mm:ss") }}
-                    </template>
-                    <template v-if="column.dataIndex === 'description'">
-                        <div @click="Modal.success({
-                title: `${t('public.Description')}`,
-                content: record[column.dataIndex],
-            });">
-                            {{ record[column.dataIndex].length > 34 ? record[column.dataIndex].slice(0, 34) :
-                record[column.dataIndex]
-                            }}
-                        </div>
+                <template #bodyCell="{ column, record }">
+
+                    <template v-if="column.dataIndex === 'createdAt' || column.dataIndex === 'updatedAt'">
+                        {{ dayjs(record[column.dataIndex]).format("YYYY-MM-DD HH:mm:ss") }}
                     </template>
                     <template v-if="column.dataIndex === 'operation'">
                         <a-space :size="8">
@@ -72,10 +63,6 @@
                 t('public.delete')
             }}</a-button>
                         </a-space>
-                    </template>
-                    <template v-else-if="column.dataIndex === 'status'">
-                        {{ text }}
-                        <a-switch />
                     </template>
                 </template>
                 <template #emptyText v-has="'/account/list'">
@@ -94,22 +81,22 @@
                         :placeholder='`${t("public.pleaseInput")}${t("device.deviceUsername")}`' />
                 </a-form-item>
                 <a-form-item :label="t('device.Protocol')" name="protocol"
-                :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.Protocol')}` }]">
-                    <a-input-number v-model:value="formState.protocol" class="input-width100"
+                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.Protocol')}` }]">
+                    <a-input-number :min="1" :max="65535" v-model:value="formState.protocol" class="input-width100"
                         :placeholder='`${t("public.pleaseInput")}${t("device.Protocol")}`' />
                 </a-form-item>
                 <a-form-item :label="t('device.PrivateKey')" name="privateKey"
-                :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.PrivateKey')}` }]">
+                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.PrivateKey')}` }]">
                     <a-input v-model:value="formState.privateKey"
                         :placeholder='`${t("public.pleaseInput")}${t("device.PrivateKey")}`' />
                 </a-form-item>
                 <a-form-item :label="t('device.Port')" name="port"
-                :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.Port')}` }]">
-                    <a-input-number v-model:value="formState.port" class="input-width100"
+                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.Port')}` }]">
+                    <a-input-number :min="1" v-model:value="formState.port" class="input-width100"
                         :placeholder='`${t("public.pleaseInput")}${t("device.Port")}`' />
                 </a-form-item>
                 <a-form-item :label="t('user.password')" name="password"
-                :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
+                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
                     <a-input-password v-model:value="formState.password" autocomplete="off"
                         :placeholder='`${t("public.pleaseInput")}${t("user.password")}`' />
                 </a-form-item>
@@ -125,11 +112,11 @@
 import { useTableHooks } from "@/hooks/useTableHooks"
 import { ref, reactive, h } from 'vue';
 import { useI18n } from 'vue-i18n'
-import Dayjs from 'dayjs';
+
 import { accountCreate, accountList, accountDelete, accountUpdate } from "@/api/admin"
 import { SearchOutlined, PlusOutlined, SyncOutlined, FrownOutlined } from '@ant-design/icons-vue';
-import { message, Modal } from 'ant-design-vue';
-
+import { message } from 'ant-design-vue';
+import dayjs from 'dayjs';
 type SearchType = {
     username: string;
     privateKey: string
@@ -171,57 +158,44 @@ const formState = reactive<formStateType>({
 });
 
 const columns = [{
-    title: 'user.account',
-    dataIndex: 'account',
+    title: 'device.deviceUsername',
+    dataIndex: 'username',
 }, {
-    title: 'user.userName',
-    dataIndex: 'name',
+    title: 'device.Protocol',
+    dataIndex: 'protocol',
 }, {
-    title: 'public.departmentID',
-    dataIndex: 'departmentId',
+    title: 'device.Port',
+    dataIndex: 'port',
 }, {
-    title: 'public.roleId',
-    dataIndex: 'roleId',
-},
-
-{
-    title: 'user.telephone',
-    dataIndex: 'phoneNumber',
+    title: 'device.PrivateKey',
+    dataIndex: 'privateKey',
 },
 {
-    title: 'public.Description',
-    dataIndex: 'description',
+    title: 'public.UpdateDate',
+    dataIndex: 'updatedAt',
 },
 {
-    title: 'public.status',
-    dataIndex: 'status',
+    title: 'public.creationDate',
+    dataIndex: 'createdAt',
 },
 {
     title: 'public.operation',
     dataIndex: 'operation',
-},
-]
+}]
 
 const onRedact = (record: tableType) => {
-    for (const key in formState) formState[key] = record[key]
+    for (const key in formState) {
+        if(record[key])  formState[key] = record[key]
+    }
     id.value = record.id
     modelOpen.value = true
-
 }
 const onFinish = () => {
-    let api
-    let fromData: any
+    let api = accountCreate
+    let fromData: any = { ...formState }
     if (id.value !== undefined) {
         api = accountUpdate
-        // fromData = {
-        //     id: id.value,
-        //     name: formState.name,
-        //     email: formState.email,
-        //     status: formState.status,
-        // }
-    } else {
-        api = accountCreate
-        fromData = { ...formState }
+        fromData.id = id.value
     }
     api(fromData).then(() => {
         modelOpen.value = false

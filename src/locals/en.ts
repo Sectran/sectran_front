@@ -52,7 +52,7 @@ export default {
         IsAdministrator:"isAdministrator",
         Port:"port",
         Protocol:"protocol",
-        PrivateKey:"rivateKey",
+        PrivateKey:"PrivateKey",
         PrivateKeyPassword:"privateKeyPassword",
         bindAccount:"Bind account",
     },

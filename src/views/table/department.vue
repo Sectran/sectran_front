@@ -39,7 +39,6 @@
             </a-form>
         </div>
         <a-space class="mb8 justify-end">
-
             <a-button @click="onAddSubordinateDepartment()" :icon="h(PlusOutlined)" type="primary">{{ t('public.add')
                 }}</a-button>
         </a-space>
@@ -49,7 +48,7 @@
             <template #headerCell="{ column }">
                 <span v-if="column && typeof column.title === 'string'">{{ t(column.title) }}</span>
             </template>
-            <template #bodyCell="{ column, record, text }">
+            <template #bodyCell="{ column, record, text, index }">
                 <template v-if="column.dataIndex === 'name'">
                     <a width="200" href="javascript:;">{{ text }}</a>
                 </template>
@@ -62,7 +61,7 @@
                         <a-button type="link" @click="onAddSubordinateDepartment(record)">
                             {{ t('department.addSubordinateDepartment') }}
                         </a-button>
-                        <a-button type="link" danger @click="onDelete(record)">{{ t('public.delete')
+                        <a-button type="link" danger @click="onDelete(record, index)">{{ t('public.delete')
                             }}</a-button>
                     </a-space>
                 </template>
@@ -82,7 +81,7 @@
                     <a-input v-model:value="formState.description" />
                 </a-form-item>
                 <a-form-item label="部门位置" name="area"
-                :rules="[{ required: true, message: 'Please input your password!' }]">
+                    :rules="[{ required: true, message: 'Please input your password!' }]">
                     <!-- <a-input v-model:value="formState.area" /> -->
                     <a-cascader :fieldNames="{ label: 'name', value: 'name', children: 'children' }"
                         v-model:value="formState.area" :options="TestJson" :show-search="{ filter }" />
@@ -104,7 +103,7 @@ import { useI18n } from 'vue-i18n';
 import dayjs from 'dayjs';
 import type { FormInstance } from 'ant-design-vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
-import { Modal, message } from 'ant-design-vue';
+import { Modal } from 'ant-design-vue';
 import TestJson from "@/assets/json/region.json";
 import type { ShowSearchType } from 'ant-design-vue/es/cascader';
 type Tableitem = {
@@ -112,6 +111,7 @@ type Tableitem = {
     key: number
     area: string
     hasChildren: boolean
+    parentDepartments: string
     children?: Tableitem[]
 }
 
@@ -171,6 +171,7 @@ const onRedactDepartment = (record: Tableitem) => {
 }
 
 const onAddSubordinateDepartment = (record?: { parentDepartments: string, id: string }) => {
+    editRecord = record
     let user = JSON.parse(localStorage.getItem("user") as string)
     if (record) {
         formState.parentDepartmentId = record.id
@@ -181,15 +182,27 @@ const onAddSubordinateDepartment = (record?: { parentDepartments: string, id: st
     }
     openState.value = true
 }
-const onDelete = (record: Tableitem) => {
-    console.log(record)
-    return
+const onDelete = (record: Tableitem, index: Number) => {
     Modal.confirm({
         title: '确定要删除当前部门吗？',
         onOk() {
             return deleteDepartment({ ids: [record.id] }).then(() => {
-                message.success('删除成功');
-                // tableList.value.splice(index, 1)
+                let parentDepartmentsArr = record.parentDepartments.split(",")
+                if (parentDepartmentsArr.length > 1) {
+                    let presentDepartmentsObj: any = {
+                        children: tableList.value
+                    }
+                    for (let index = 0; index < parentDepartmentsArr.length; index++) {
+                        if (index !== 0) {
+                            presentDepartmentsObj = presentDepartmentsObj.children.find((item: Tableitem) => item.id === Number(parentDepartmentsArr[index]))
+                        }
+                    }
+                    presentDepartmentsObj.children.splice(presentDepartmentsObj.children.find((item: Tableitem) => item.id === record.id), 1)
+                    if (presentDepartmentsObj.children.length === 0) presentDepartmentsObj.children = undefined
+                    console.log(presentDepartmentsObj)
+                } else {
+                    tableList.value.splice(index, 1)
+                }
 
             })
         },
@@ -208,16 +221,15 @@ const onFinish = () => {
     }
     fromData.area = fromData.area.join('/')
     api(fromData).then((res: any) => {
-        console.log(res.data)
         if (departmentId.value !== undefined) {
             for (const key in fromData) {
                 editRecord[key] = fromData[key]
             }
         } else {
             editRecord.children = [...editRecord.children || [], res.data]
+            console.log(editRecord)
         }
         openState.value = false
-        // requestList()
     })
 };
 
