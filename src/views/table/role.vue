@@ -49,7 +49,7 @@
                             <a-button type="link" @click="onRedact(record)">{{ t('public.redact') }}</a-button>
                             <a-button type="link" @click="editLimits(record.id)">{{ t('role.permissionlist')
                                 }}</a-button>
-                            <a-button type="link" danger>{{ t('public.delete') }}</a-button>
+                            <a-button type="link" v-has="'/role/delete'" danger @click="handleDelete([record.id])">{{ t('public.delete') }}</a-button>
                         </a-space>
                     </template>
                     <template v-if="column.dataIndex === 'createdAt' || column.dataIndex === 'updatedAt'">
@@ -109,11 +109,10 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { ref, reactive, h, nextTick } from 'vue';
+import { ref, reactive, h } from 'vue';
 import { useTableHooks } from "@/hooks/useTableHooks"
 import { listRole, addRole, editRole, deleteRole, updateAuthority, getMenu } from "@/api/admin"
 import { SearchOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons-vue';
-import { message } from 'ant-design-vue';
 import dayjs from 'dayjs';
 import limitsJson from "@/assets/json/limits.json"
 type FormState = {
@@ -184,22 +183,14 @@ const onFinish = () => {
     } else {
         api = addRole
     }
-    modelOpen.value = false
 
-    nextTick(() => {
-        console.log(id.value)
-    })
-    return
-    api(fromData).then(() => {
+
+    // return
+    api(fromData).then((res: { data: TableItem }) => {
+        console.log(res)
+        if (id.value === undefined)  editLimits(res.data.id)
         modelOpen.value = false
-
-
-
-
-
-
         requestList()
-        message.success(t('message.success'));
     })
 };
 
@@ -248,7 +239,7 @@ const editLimits = (id: number) => {
     limitsOpen.value = true;
     roleId = id
     limitsTableLoading.value = true
-    getMenu<{ id: number, type: 2 }>({ id, type: 2 }).then((res: { data: string[] }) => {
+    getMenu<{ id: number, type: number }>({ id, type: 2 }).then((res: { data: string[] }) => {
         let { data } = res
         rowSelection.value.selectedRowKeys = data
         limitsTableLoading.value = false
@@ -277,8 +268,6 @@ const limitsOnOk = () => {
         console.log(res)
         limitsButtonLoading.value = false
         limitsOpen.value = false
-        message.success("操作成功")
-
     })
 }
 

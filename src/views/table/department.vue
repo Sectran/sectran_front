@@ -69,7 +69,7 @@
         </a-table>
 
         <a-modal v-model:open="openState" title="添加部门" :footer='null'
-            :after-close="() => { submitFormRef?.resetFields(); departmentId = undefined }">
+            :after-close="() => { submitFormRef?.resetFields(); departmentId = undefined; editRecord = {} }">
             <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
                 ref="submitFormRef" autocomplete="off" @finish="onFinish">
                 <a-form-item label="部门名称" name="name"
@@ -157,7 +157,7 @@ const expandTable = async (expanded: boolean, record: Tableitem) => {
     }
 }
 
-let editRecord: any = {}
+let editRecord: any = undefined
 /**
  * 表格编辑
  * @param record 当前数据
@@ -184,31 +184,26 @@ const onAddSubordinateDepartment = (record?: { parentDepartments: string, id: st
 }
 const onDelete = (record: Tableitem, index: Number) => {
 
-    console.log(record.id)
-
-    let parentDepartmentsArr = record.parentDepartments.split(",")
-    if (parentDepartmentsArr.length > 1) {
-        let presentDepartmentsObj: any = {
-            children: tableList.value
-        }
-        for (let index = 0; index < parentDepartmentsArr.length; index++) {
-            if (index !== 0) {
-                presentDepartmentsObj = presentDepartmentsObj.children.find((item: Tableitem) => item.id === Number(parentDepartmentsArr[index]))
-            }
-        }
-        presentDepartmentsObj.children.splice(presentDepartmentsObj.children.find((item: Tableitem) => item.id === record.id), 1)
-        if (presentDepartmentsObj.children.length === 0) presentDepartmentsObj.children = undefined
-        console.log(presentDepartmentsObj)
-    } else {
-        tableList.value.splice(index, 1)
-    }
-    return
-
     Modal.confirm({
         title: '确定要删除当前部门吗？',
         onOk() {
             deleteDepartment({ ids: [record.id] }).then(() => {
-
+                let parentDepartmentsArr = record.parentDepartments.split(",")
+                if (parentDepartmentsArr.length > 1) {
+                    let presentDepartmentsObj: any = {
+                        children: tableList.value
+                    }
+                    for (let index = 0; index < parentDepartmentsArr.length; index++) {
+                        if (index !== 0) {
+                            presentDepartmentsObj = presentDepartmentsObj.children.find((item: Tableitem) => item.id === Number(parentDepartmentsArr[index]))
+                        }
+                    }
+                    presentDepartmentsObj.children.splice(presentDepartmentsObj.children.findIndex((item: Tableitem) => item.id === record.id), 1)
+                    if (presentDepartmentsObj.children.length === 0) presentDepartmentsObj.children = undefined
+                    console.log(presentDepartmentsObj)
+                } else {
+                    tableList.value.splice(index, 1)
+                }
 
             })
         },
@@ -232,8 +227,12 @@ const onFinish = () => {
                 editRecord[key] = fromData[key]
             }
         } else {
-            editRecord.children = [...editRecord.children || [], res.data]
-            console.log(editRecord)
+            if (editRecord) {
+                editRecord.children = [...editRecord.children || [], res.data]
+            } else {
+                tableList.value.push(res.data)
+            }
+
         }
         openState.value = false
     })
@@ -252,10 +251,10 @@ const onFinish = () => {
 const requestList = (id?: number) => {
     let user = JSON.parse(localStorage.getItem("user") as string)
     let fromData = {
-        id: id || user.department_id,
+        parentDeptId: id || user.department_id,
         page: page.value,
         pageSize: pageSize.value,
-        deep: 1
+        flag: 0
     }
     loading.value = true
 

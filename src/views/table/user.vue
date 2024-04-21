@@ -50,7 +50,7 @@
                 <template #headerCell="{ column }">
                     <span>{{ t(column.title) }}</span>
                 </template>
-                <template #bodyCell="{ column, record, text }">
+                <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'updatedAt'">
                         {{ Dayjs(record[column.dataIndex]).format("YYYY-MM-DD HH:mm:ss") }}
                     </template>
@@ -74,8 +74,7 @@
                         </a-space>
                     </template>
                     <template v-else-if="column.dataIndex === 'status'">
-                        {{ text }}
-                        <a-switch />
+                        <a-switch  @change="(value:any) => handleSwitchChange(value, record)" :checked="record.status" />
                     </template>
                 </template>
                 <template #emptyText v-has="'/user/list'">
@@ -244,11 +243,16 @@ const columns = [{
 {
     title: 'public.operation',
     dataIndex: 'operation',
-},
+}]
 
-
-
-]
+const handleSwitchChange = (value:any, record:formStateType) =>{
+    console.log(value)
+    console.log(record)
+    updateUser({id:record.id, status:value}).then(()=>{
+        requestList()
+    })
+    
+}
 
 const departmentState = reactive({
     data: [],

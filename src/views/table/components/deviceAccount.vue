@@ -9,12 +9,12 @@
                                 :placeholder='`${t("public.pleaseInput")}${t("device.deviceUsername")}`' />
                         </a-form-item>
                     </a-col>
-                    <a-col :lg="8" :md="12" :sm="24">
+                    <!-- <a-col :lg="8" :md="12" :sm="24">
                         <a-form-item :label="t('device.PrivateKey')" name="privateKey">
                             <a-input v-model:value="searchFrom.privateKey"
                                 :placeholder='`${t("public.pleaseInput")}${t("device.PrivateKey")}`' />
                         </a-form-item>
-                    </a-col>
+                    </a-col> -->
 
                     <a-col :lg="8" :md="12" :sm="24">
                         <a-form-item>
@@ -71,9 +71,9 @@
                 </template>
             </a-table>
         </div>
-        <a-modal v-model:open="modelOpen" :title="t('device.deviceAccount')" :footer="null"
+        <a-modal v-model:open="modelOpen" :title="t('device.deviceAccount')"
             :after-close="() => { fromreset(submitFormRef); id = undefined }">
-            <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
+            <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
                 ref="submitFormRef" autocomplete="off" @finish="onFinish">
                 <a-form-item :label="t('device.deviceUsername')" name="username"
                     :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceUsername')}` }]">
@@ -100,9 +100,10 @@
                     <a-input-password v-model:value="formState.password" autocomplete="off"
                         :placeholder='`${t("public.pleaseInput")}${t("user.password")}`' />
                 </a-form-item>
-                <a-form-item :wrapper-col="{ offset: 4, span: 16 }">
+                <a-form-item :wrapper-col="{ offset: 4,}">
                     <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
                 </a-form-item>
+
             </a-form>
         </a-modal>
     </div>
@@ -119,17 +120,14 @@ import { message } from 'ant-design-vue';
 import dayjs from 'dayjs';
 type SearchType = {
     username: string;
-    privateKey: string
     deviceId: number
 };
 const props = defineProps(['deviceId']);
 
-console.log(props.deviceId);
 
 let searchFrom = reactive<SearchType>({
     deviceId: props.deviceId,
     username: "",
-    privateKey: ""
 });
 let { paginationOpt, tableData, searchFormRef, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: accountList, deleteApi: accountDelete });
 const { t } = useI18n()
@@ -185,7 +183,7 @@ const columns = [{
 
 const onRedact = (record: tableType) => {
     for (const key in formState) {
-        if(record[key])  formState[key] = record[key]
+        if (record[key]) formState[key] = record[key]
     }
     id.value = record.id
     modelOpen.value = true

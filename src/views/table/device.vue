@@ -86,20 +86,14 @@
                         :placeholder='`${t("public.pleaseInput")}${t("device.deviceAddress")}`' />
                 </a-form-item>
 
-                <!-- <a-form-item :label="t('device.deviceOsKind')" name="OsKind"
+                <a-form-item :label="t('device.deviceOsKind')" name="type"
                     :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('device.deviceOsKind')}` }]">
+                    <a-select  v-model:value="formState.type" class="input-width100">
+                        <a-select-option v-for="item in  ['Linux', 'Windows']" :key="item" :value="item">{{ item
+                            }}</a-select-option>
+                    </a-select>
+                </a-form-item>
 
-                    <a-radio-group v-model:value="formState.OsKind" name="radioGroup">
-                        <a-radio v-for="item in [{ name: "Linux", value: 1 }, { name: 'Windows', value: 2 }]" :key="item.value" :value="item.value">{{ item.name
-                            }}</a-radio>
-                    </a-radio-group>
-                </a-form-item> -->
-
-                <!-- <a-form-item :label="t('device.deviceEncoding')" name="Encoding"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceEncoding')}` }]">
-                    <a-input v-model:value="formState.Encoding"
-                        :placeholder='`${t("public.pleaseInput")}${t("device.deviceEncoding")}`' />
-                </a-form-item> -->
 
                 <a-form-item :label="t('public.Description')" name="description"
                     :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('public.Description')}` }]">
@@ -144,6 +138,8 @@ let searchFrom = reactive({
 
 type formStateType = {
     id?: number
+    department_id: Number | string
+    type: string
 } & SearchType
 
 
@@ -152,10 +148,9 @@ const addOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({
     name: "",
     host: '',
-    // OsKind: "",
-    // Encoding: "",
-    // DeptId: 1,
-    description: ""
+    department_id: "",
+    description: "",
+    type: ""
 });
 
 
@@ -167,9 +162,13 @@ const columns = [{
     title: 'device.deviceAddress',
     dataIndex: 'host',
 }, {
+    title: 'device.deviceOsKind',
+    dataIndex: 'type',
+}, {
     title: 'public.Description',
     dataIndex: 'description',
 },
+
 {
     title: 'public.operation',
     dataIndex: 'operation',
@@ -198,9 +197,12 @@ const on_redact = (data: formStateType) => {
 const onFinish = () => {
     let paramFrom = { ...formState }
     let api = addDevice
+    let user = JSON.parse(localStorage.getItem("user") as string)
     if (deviceId) {
         api = updateDevice
         paramFrom.id = deviceId
+    } else {
+        paramFrom.department_id = user.department_id
     }
     api(paramFrom).then(() => {
         addOpen.value = false

@@ -49,7 +49,7 @@ axios.interceptors.response.use(
  */
 
 //统一接口处理，返回数据
-const requests: Function = (url: string, param: AxiosRequestConfig<string>, fecth = "post"): Promise<any> => {
+const requests: Function = (url: string, param: AxiosRequestConfig<string>, fecth = "post", ismessage = true): Promise<any> => {
     return new Promise((resolve, reject) => {
         switch (fecth) {
             case "get":
@@ -69,7 +69,7 @@ const requests: Function = (url: string, param: AxiosRequestConfig<string>, fect
                     (response: any) => {
                         if (response.data.code === 0 || response.data.base?.code === 0) {
                             let { data } = response;
-                            data.msg && message.success(data.msg);
+                            (data.msg && ismessage) && message.success(data.msg);
                             resolve(data);
                         } else {
                             landing(response.data);
