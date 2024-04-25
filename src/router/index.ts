@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-// import outsideLayout from './outsideLayout';
+import outsideLayout from './outsideLayout';
 // import layoutRouter from "./layout/index"
 const routes = [
   {
@@ -10,11 +10,7 @@ const routes = [
       title: '登录',
     },
   },
-
-
-
-
-  // ...outsideLayout,
+  ...outsideLayout,
   // ...layoutRouter
   
 ];
