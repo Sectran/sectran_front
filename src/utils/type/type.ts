@@ -11,8 +11,6 @@ export type resTable<T> = {
     total: number
 }
 
-
-
 export type Router = {
     path: string
     component: Function
@@ -22,4 +20,10 @@ export type Router = {
         limits?: string
     }
     children?: Router[]
+}
+
+export type SearchFronModel = {
+    key: string
+    name: string
+    value?:string | number
 }

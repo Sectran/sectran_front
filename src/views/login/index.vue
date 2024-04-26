@@ -83,7 +83,6 @@ const onFinish = (values: { account: string, password: string }) => {
         localStorage.setItem('name', user.name)
         getMenu<{ id: number, type: 2 }>({ id: role_id, type: 2 }).then((res: { data: string[] }) => {
             let { data } = res
-            
             localStorage.setItem('limitsData', JSON.stringify(data))
             let routerUrl = data.find((item: string) => item.indexOf(":") !== -1)
             store.commit('router/amendMenuData', [])

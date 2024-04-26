@@ -27,15 +27,13 @@ export default {
         departmentNamePlaceholder: `${inputPublicEn} department name`,
         departmentId:"id",
         departmentIdPlaceholder: `${inputPublicEn} department id`,
-        departmentDescribe:"department describe",
+        departmentDescribe:"describe",
         departmentLocation:'location',
         departmentLocationPlaceholder: `${inputPublicEn} department location`,
-
         superiorDepartment:'superior department',
         subordinateDepartment:'subordinate department',
-
         addSubordinateDepartment:'add subordinate',
-        description: 'Department description',
+        description: 'description',
         add_user: 'add_user'
     },
 
@@ -46,7 +44,6 @@ export default {
         deviceOsKind:'deviceOsKind',
         deviceEncoding:'deviceEncoding',
         deviceAccount :'deviceAccount',
-
         deviceUsername:"设备账号名称",
         Password:"password",
         IsAdministrator:"isAdministrator",

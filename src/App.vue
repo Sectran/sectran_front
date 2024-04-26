@@ -58,7 +58,6 @@ router.beforeEach((to: { path: string }, { }: {}, next: Function) => {
   if (!token && to.path !== "/") {
     return next({ path: "/" })
   }
-  console.log(layout)
   if (store.state.router.menuData.length === 0) {
     let menu = recursionMenu(layout)
     menu.forEach((item: Router) => {

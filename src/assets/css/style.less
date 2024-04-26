@@ -39,7 +39,8 @@ body {
         margin-bottom: 20px;
         padding: 20px;
         border-radius: 10px;
-
+        display: flex;
+        flex-wrap: wrap;
         .ant-row {
             width: 100%;
         }
@@ -47,8 +48,22 @@ body {
         .ant-picker {
             width: 100%;
         }
-        .ant-form-item {
-            // margin-bottom: 20px;
+        & > div,button {
+            margin-right: 10px;
+            margin-bottom: 20px;
+        }
+        .search-style-input {
+            min-width: 200px;
+        }
+        .ant-tag {
+            display: flex;
+        }
+        .tags-style-text {
+            width: 200px;
+            display: block;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
         }
     }
 
@@ -74,10 +89,31 @@ body {
 
 .no-limits-icon {
     margin-top: 30px;
-    height:80px;
+    height: 80px;
     font-size: 48px;
 }
-.no-limits-text{
+
+.no-limits-text {
     font-size: 18px;
     margin-bottom: 30px;
+}
+
+.search-style {
+    display: flex;
+    align-items: center;
+    line-height: 32px;
+    border: 1px solid #dcdee2;
+    border-radius: 5px;
+    padding: 0 5px;
+    white-space: nowrap;
+
+    .tags-style {
+        margin: 0 5px;
+    }
+
+    .input-text {
+        font-size: 14px;
+        color: #666666;
+    }
+
 }

@@ -1,17 +1,62 @@
 <template>
     <div class="tablePage-style">
-
         <div class="table-nav">
+            <div class="search-style">
+                <a-dropdown>
+                    <a class="ant-dropdown-link" @click.prevent>
+                        <DownOutlined />
+                    </a>
+                    <template #overlay>
+                        <a-menu @click="handleMenuClick">
+                            <a-menu-item v-for="item in searchFronModel" :key="item">{{ t(item.name)
+                                }}</a-menu-item>
+                        </a-menu>
+                    </template>
+                </a-dropdown>
+                <div class="tags-style">
+                    <a-tag v-for="item in searchTags" :key="item" closable>
+                        <a-tooltip>
+                            <template #title>{{ t(item.name) }}：{{ item.value }}</template>
+                            <span class="tags-style-text">{{ t(item.name) }}：{{ item.value }}</span>
+                        </a-tooltip>
+                    </a-tag>
+                </div>
+                <div class="input-text" v-if="searchModelItem">{{ t(searchModelItem.name) }} :</div>
+                <a-input class="search-style-input"
+                    v-show="searchModelItem?.key === 'name' || searchModelItem?.key === 'description'"
+                    v-model:value="searchInputValue" :bordered="false" @pressEnter="onInputTag">
+                    <template #suffix>
+                        <SearchOutlined @click="onInputTag" />
+                    </template>
+                </a-input>
+                <a-cascader class="search-style-input" v-show="searchModelItem?.key === 'area'"
+                    v-model:value="searchcascaderValue" :bordered="false"
+                    :fieldNames="{ label: 'name', value: 'name', children: 'children' }" :options="TestJson"
+                    :show-search="{ filter }" @change="changeCascader" />
+            </div>
+
+            <!-- @click="on_search()" -->
+            <a-button :icon="h(SearchOutlined)" type="primary">
+                {{ t('public.search') }}
+            </a-button>
+            <a-button class="search-" :icon="h(SyncOutlined)">
+                {{ t('public.reset') }}
+            </a-button>
+
+            <!-- @click="fromreset(searchFormRef)" -->
+
+
+
             <!-- :model="searchFrom"  -->
-            <a-form layout="inline" ref="searchFormRef">
-                <a-row :gutter="[20, 16]">
-                    <!-- <a-col :xl="6" :md="8" :xs="12">
+            <!-- <a-form layout="inline" ref="searchFormRef">
+                <a-row :gutter="[20, 16]"> -->
+            <!-- <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('department.departmentId')">
                             <a-input v-model:value="searchFrom.dept_id"
                                 :placeholder="t('department.departmentIdPlaceholder')" />
                         </a-form-item>
                     </a-col> -->
-                    <!-- <a-col :xl="6" :md="8" :xs="12">
+            <!-- <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item :label="t('department.departmentName')" name="name">
                             <a-input v-model:value="searchFrom.name" allowClear
                                 :placeholder="t('department.departmentNamePlaceholder')" />
@@ -23,7 +68,7 @@
                                 :placeholder="t('department.departmentLocationPlaceholder')" />
                         </a-form-item>
                     </a-col> -->
-                    <!-- <a-col :xl="6" :md="8" :xs="12">
+            <!-- <a-col :xl="6" :md="8" :xs="12">
                         <a-form-item>
                             <a-space wrap>
                                 <a-button :icon="h(SearchOutlined)" type="primary" @click="on_search()">
@@ -35,8 +80,8 @@
                             </a-space>
                         </a-form-item>
                     </a-col> -->
-                </a-row>
-            </a-form>
+            <!-- </a-row>
+            </a-form> -->
         </div>
         <a-space class="mb8 justify-end">
             <a-button @click="onAddSubordinateDepartment()" :icon="h(PlusOutlined)" type="primary">{{ t('public.add')
@@ -72,19 +117,21 @@
             :after-close="() => { submitFormRef?.resetFields(); departmentId = undefined; editRecord = {} }">
             <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
                 ref="submitFormRef" autocomplete="off" @finish="onFinish">
-                <a-form-item label="部门名称" name="name"
-                    :rules="[{ required: true, message: 'Please input your username!' }]">
-                    <a-input v-model:value="formState.name" />
+                <a-form-item :label="t('department.departmentName')" name="name"
+                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('department.departmentName')}` }]">
+                    <a-input v-model:value="formState.name"
+                        :placeholder='`${t("public.pleaseInput")}${t("department.departmentName")}`' />
                 </a-form-item>
-                <a-form-item label="部门描述" name="description"
-                    :rules="[{ required: true, message: 'Please input your password!' }]">
-                    <a-input v-model:value="formState.description" />
+                <a-form-item :label="t('department.departmentDescribe')" name="description"
+                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('department.departmentDescribe')}` }]">
+                    <a-input v-model:value="formState.description"
+                        :placeholder='`${t("public.pleaseInput")}${t("department.departmentDescribe")}`' />
                 </a-form-item>
-                <a-form-item label="部门位置" name="area"
-                    :rules="[{ required: true, message: 'Please input your password!' }]">
-                    <!-- <a-input v-model:value="formState.area" /> -->
+                <a-form-item :label="t('department.departmentLocation')" name="area"
+                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('department.departmentLocation')}` }]">
                     <a-cascader :fieldNames="{ label: 'name', value: 'name', children: 'children' }"
-                        v-model:value="formState.area" :options="TestJson" :show-search="{ filter }" />
+                        v-model:value="formState.area" :options="TestJson" :show-search="{ filter }"
+                        :placeholder='`${t("public.pleaseInput")}${t("department.departmentLocation")}`' />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ offset: 6, span: 16 }">
                     <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
@@ -102,10 +149,12 @@ import { resTable } from "@/utils/type/type"
 import { useI18n } from 'vue-i18n';
 import dayjs from 'dayjs';
 import type { FormInstance } from 'ant-design-vue';
-import { PlusOutlined } from '@ant-design/icons-vue';
+
+import { PlusOutlined, DownOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
 import TestJson from "@/assets/json/region.json";
 import type { ShowSearchType } from 'ant-design-vue/es/cascader';
+import { SearchFronModel } from "@/utils/type/type"
 type Tableitem = {
     id: number
     key: number
@@ -123,8 +172,6 @@ interface FormState {
     parentDepartments: number | string
     parentDepartmentId: number | string
 }
-
-
 
 const submitFormRef = ref<FormInstance>();
 const { t } = useI18n()
@@ -144,6 +191,59 @@ const formState = reactive<FormState>({
     parentDepartments: "",
     parentDepartmentId: 1,
 });
+
+const searchTags = ref<SearchFronModel[]>([])
+
+let searchInputValue = ref<string | number>("")
+let searchcascaderValue = ref<string[]>([])
+const searchFronModel: SearchFronModel[] = [
+    {
+        key: 'name',
+        name: "department.departmentName"
+    }, {
+        key: 'description',
+        name: "department.departmentDescribe"
+    }, {
+        key: 'area',
+        name: "department.departmentLocation"
+    }
+]
+let searchModelItem = ref<SearchFronModel>()
+const handleMenuClick = (item: { key: SearchFronModel }) => {
+    searchModelItem.value = item.key
+}
+
+const onInputTag = () => {
+    if (searchInputValue.value && searchModelItem.value) {
+        operateTags(searchInputValue.value)
+        searchInputValue.value = ""
+    }
+}
+
+const changeCascader = () => {
+    if (searchcascaderValue.value) {
+        operateTags(searchcascaderValue.value.join("/"))
+    }
+}
+/**
+ * 操作tags
+ * @param value 值
+ */
+const operateTags = (value: string | number) => {
+    let tagsIndex = searchTags.value.findIndex((item: SearchFronModel) => item.key === searchModelItem.value?.key)
+    if (searchModelItem.value) {
+        let tags: SearchFronModel = {
+            ...searchModelItem.value,
+            value,
+        }
+        if (tagsIndex !== -1) {
+            searchTags.value.splice(tagsIndex, 1, tags);
+        } else {
+            searchTags.value.push({ ...tags })
+        }
+    }
+}
+
 /**
  * 展开行
  * @param expanded 展开/关闭
@@ -280,6 +380,7 @@ const filter: ShowSearchType['filter'] = (inputValue, path) => {
 onMounted(async () => {
 
     tableList.value = await requestList()
+    searchModelItem.value = searchFronModel[0]
 })
 
 const columns = [
