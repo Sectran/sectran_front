@@ -21,10 +21,16 @@
             </div>
             <div class="Content-style">
                 <div class="Content-left">
-                    <a-directory-tree multiple default-expand-all @select="on_node" style="padding:10px 0;">
-                        <a-tree-node  :title="item.Name" v-for="item in nodeArr" :key="item.Id">
-                        </a-tree-node>
-                    </a-directory-tree>
+                    <div class="Content-left-search">
+                        <MenuUnfoldOutlined />
+                    </div>
+                    <div class="Content-left-tree">
+                        <a-directory-tree multiple default-expand-all @select="on_node">
+                            <a-tree-node :title="item.name" v-for="item in nodeArr" :key="item.id">
+                            </a-tree-node>
+                        </a-directory-tree>
+                    </div>
+
                 </div>
                 <div class="Content-right">
                     <div class="xterm-div" v-if="multiList.length !== 0">
@@ -76,14 +82,14 @@
 
                     <template v-if="connectFormState.attestationType === 1">
                         <a-form-item label="账号" name="username" :rules="[
-                            { required: true, message: 'Please input your username!' },
-                        ]">
+        { required: true, message: 'Please input your username!' },
+    ]">
                             <a-input v-model:value="connectFormState.username" />
                         </a-form-item>
 
                         <a-form-item label="密码" name="password" :rules="[
-                            { required: true, message: 'Please input your password!' },
-                        ]">
+        { required: true, message: 'Please input your password!' },
+    ]">
                             <a-input-password v-model:value="connectFormState.password" />
                         </a-form-item>
 
@@ -95,13 +101,13 @@
 
                     <template v-else-if="connectFormState.attestationType === 2">
                         <a-form-item label="用户名" name="username" :rules="[
-                            { required: true, message: 'Please input your username!' },
-                        ]">
+        { required: true, message: 'Please input your username!' },
+    ]">
                             <a-input v-model:value="connectFormState.username" />
                         </a-form-item>
                         <a-form-item label="私钥" name="password" :rules="[
-                            { required: true, message: 'Please input your username!' },
-                        ]">
+        { required: true, message: 'Please input your username!' },
+    ]">
                             <div>
                                 <div class="private-key">
                                     <a-textarea class="textarea-style" :autosize="false"
@@ -136,8 +142,8 @@
                 </template>
                 <a-form-item :wrapper-col="{ offset: 0, span: 24 }">
                     <a-button :loading="submitLoading" style="width: 100%" type="primary" html-type="submit">{{
-                        t("public.Submit")
-                    }}</a-button>
+        t("public.Submit")
+                        }}</a-button>
                 </a-form-item>
 
             </a-form>
@@ -164,12 +170,18 @@ import { UploadOutlined, LockOutlined, } from '@ant-design/icons-vue';
 import xterm from "./components/xterm.vue"
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
-
+import { resTable } from "@/utils/type/type"
+import { MenuUnfoldOutlined } from '@ant-design/icons-vue';
 type MultiList = {
     name: string
     username: string
     password: string
-    key: number,
+    key: number
+}
+type TableType = {
+    name: string
+    host: string
+    id: number
 }
 
 const store = useStore()
@@ -179,7 +191,7 @@ const submitLoading = ref<boolean>(false);
 const multiActiveKey = ref(1);
 const soleKey = ref<number>(0);
 let multiList = ref<MultiList[]>([])
-let nodeArr = ref<{ Name: string, Id: number }[]>([])
+let nodeArr = ref<TableType[]>([])
 let nodeTotal = ref<number>(0)
 
 
@@ -189,11 +201,11 @@ onMounted(() => {
     //     e.preventDefault();
     // });
 
-    deviceList({ page: 10, pageSize: 1 }).then((res: { Data: { Data: any, Total: number } }) => {
+    deviceList({ page: 1, pageSize: 10 }).then((res: { data: resTable<TableType[]> }) => {
         console.log(res)
-        let { Data, Total } = res.Data
-        nodeArr.value = Data
-        nodeTotal.value = Total
+        let { data, total } = res.data
+        nodeArr.value = data
+        nodeTotal.value = total
     })
 });
 
@@ -330,10 +342,26 @@ const connectResult = (modalState: boolean) => {
         .Content-left {
             width: 300px;
             background: #2f2a2a;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
 
             ::v-deep(.ant-tree-list) {
                 background: #2f2a2a;
                 color: #ffffff;
+            }
+
+            .Content-left-search {
+                height: 40px
+            }
+
+            .Content-left-tree {
+                flex: 1;
+                overflow: auto
+            }
+
+            .Content-left-icon {
+                height: 80px
             }
         }
 
