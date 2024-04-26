@@ -23,6 +23,13 @@
                 <div class="Content-left">
                     <div class="Content-left-search">
                         <MenuUnfoldOutlined />
+
+                        <div class="search-sty">
+                         
+                                <SearchOutlined class="search-icon" />
+                        
+                            <input type="text" placeholder=" " />
+                        </div>
                     </div>
                     <div class="Content-left-tree">
                         <a-directory-tree multiple default-expand-all @select="on_node">
@@ -166,7 +173,7 @@ import { headMenu } from "./menu.ts"
 import { useStore } from 'vuex'
 // PlusSquareOutlined
 import { deviceList } from "@/api/admin"
-import { UploadOutlined, LockOutlined, } from '@ant-design/icons-vue';
+import { UploadOutlined, LockOutlined, SearchOutlined } from '@ant-design/icons-vue';
 import xterm from "./components/xterm.vue"
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
@@ -419,5 +426,63 @@ const connectResult = (modalState: boolean) => {
 .tab-right {
     padding-right: 20px;
 
+}
+
+
+.search-sty {
+    color: #fff;
+    width: auto;
+    border-radius: 20px;
+    min-width: 40px;
+    height: 40px;
+    line-height: 40px;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    background-image: linear-gradient(315deg, #6772FF 0, #00F9E5 100%);
+    // background-color: #463E3E;
+    background-size: 104% 104%;
+    cursor: pointer;
+}
+
+.search-icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.search-sty input {
+    display: inline-block;
+    background: 0 0;
+    border: none;
+    color: #fff;
+    padding-left: 20px;
+    line-height: 50px !important;
+    height: 50px;
+    box-sizing: border-box;
+    vertical-align: 4px;
+    font-size: 16px;
+    width: 50px;
+    transition: all .2s linear;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+}
+
+.search-sty:hover input {
+    display: inline-block;
+    width: 250px;
+    padding-right: 50px
+}
+
+.search-sty input:not(:placeholder-shown) {
+    display: inline-block;
+    width: 250px;
+    padding-right: 50px
 }
 </style>
