@@ -122,17 +122,19 @@
                     <a-input v-model:value="formState.name"
                         :placeholder='`${t("public.pleaseInput")}${t("department.departmentName")}`' />
                 </a-form-item>
-                <a-form-item :label="t('department.departmentDescribe')" name="description"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('department.departmentDescribe')}` }]">
-                    <a-input v-model:value="formState.description"
-                        :placeholder='`${t("public.pleaseInput")}${t("department.departmentDescribe")}`' />
-                </a-form-item>
                 <a-form-item :label="t('department.departmentLocation')" name="area"
                     :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('department.departmentLocation')}` }]">
                     <a-cascader :fieldNames="{ label: 'name', value: 'name', children: 'children' }"
                         v-model:value="formState.area" :options="TestJson" :show-search="{ filter }"
                         :placeholder='`${t("public.pleaseInput")}${t("department.departmentLocation")}`' />
                 </a-form-item>
+                <a-form-item :label="t('department.departmentDescribe')" name="description"
+                    >
+                    <!-- :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('department.departmentDescribe')}` }]" -->
+                    <a-input v-model:value="formState.description"
+                        :placeholder='`${t("public.pleaseInput")}${t("department.departmentDescribe")}`' />
+                </a-form-item>
+      
                 <a-form-item :wrapper-col="{ offset: 6, span: 16 }">
                     <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
                 </a-form-item>
@@ -169,7 +171,7 @@ interface FormState {
     area: string[]
     description: string
     name: string
-    parentDepartments: number | string
+    // parentDepartments: number | string
     parentDepartmentId: number | string
 }
 
@@ -188,7 +190,7 @@ const formState = reactive<FormState>({
     area: [],
     description: "",
     name: "",
-    parentDepartments: "",
+    // parentDepartments: "",
     parentDepartmentId: 1,
 });
 
@@ -275,10 +277,10 @@ const onAddSubordinateDepartment = (record?: { parentDepartments: string, id: st
     let user = JSON.parse(localStorage.getItem("user") as string)
     if (record) {
         formState.parentDepartmentId = record.id
-        formState.parentDepartments = record?.parentDepartments ? record?.parentDepartments + `,${record.id}` : record?.id + '';
+        // formState.parentDepartments = record?.parentDepartments ? record?.parentDepartments + `,${record.id}` : record?.id + '';
     } else {
         formState.parentDepartmentId = user.department_id
-        formState.parentDepartments = `${user.department_id}`
+        // formState.parentDepartments = `${user.department_id}`
     }
     openState.value = true
 }
@@ -314,6 +316,8 @@ const onDelete = (record: Tableitem, index: Number) => {
 const onFinish = () => {
     let api
     let fromData: any = { ...formState }
+    console.log(formState)
+
     if (departmentId.value !== undefined) {
         api = editDepartment
         fromData.id = departmentId.value
