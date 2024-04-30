@@ -74,7 +74,7 @@
                         </a-space>
                     </template>
                     <template v-else-if="column.dataIndex === 'status'">
-                        <a-switch  @change="(value:any) => handleSwitchChange(value, record)" :checked="record.status" />
+                        <a-switch @change="(value: any) => handleSwitchChange(value, record)" :checked="record.status" />
                     </template>
                 </template>
                 <template #emptyText v-has="'/user/list'">
@@ -89,16 +89,30 @@
             :after-close="() => { fromreset(submitFormRef); id = undefined }">
             <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
                 ref="submitFormRef" autocomplete="off" @finish="onFinish">
-                <a-form-item :label="t('user.usereEmail')" name="email">
-                    <a-input v-model:value="formState.email"
-                        :placeholder='`${t("public.pleaseInput")}${t("user.usereEmail")}`' />
-                </a-form-item>
+
                 <template v-if="id === undefined">
                     <a-form-item :label="t('user.account')" name="account"
                         :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.account')}` }]">
                         <a-input v-model:value="formState.account"
                             :placeholder='`${t("public.pleaseInput")}${t("user.account")}`' />
                     </a-form-item>
+
+                </template>
+                <a-form-item :label="t('user.mame')" name="name"
+                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.mame')}` }]">
+                    <a-input v-model:value="formState.name"
+                        :placeholder='`${t("public.pleaseInput")}${t("user.mame")}`' />
+                </a-form-item>
+                <template v-if="id === undefined">
+
+
+
+                    <a-form-item :label="t('user.password')" name="password"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
+                        <a-input v-model:value="formState.password"
+                            :placeholder='`${t("public.pleaseInput")}${t("user.userName")}`' />
+                    </a-form-item>
+
                     <a-form-item :label="t('public.departmentID')" name="departmentId"
                         :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('public.departmentID')}` }]">
                         <a-select v-model:value="formState.departmentId"
@@ -126,16 +140,6 @@
                         </a-select>
                     </a-form-item>
                 </template>
-                <a-form-item :label="t('user.mame')" name="name"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.mame')}` }]">
-                    <a-input v-model:value="formState.name"
-                        :placeholder='`${t("public.pleaseInput")}${t("user.mame")}`' />
-                </a-form-item>
-                <a-form-item v-if="id === undefined" :label="t('user.password')" name="password"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
-                    <a-input v-model:value="formState.password"
-                        :placeholder='`${t("public.pleaseInput")}${t("user.userName")}`' />
-                </a-form-item>
                 <template v-if="id === undefined">
                     <a-form-item :label="t('user.userState')" name="status"
                         :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('user.userState')}` }]">
@@ -150,6 +154,10 @@
                             :placeholder='`${t("public.pleaseInput")}${t("user.telephone")}`' />
                     </a-form-item>
                 </template>
+                <a-form-item :label="t('user.usereEmail')" name="email">
+                    <a-input v-model:value="formState.email"
+                        :placeholder='`${t("public.pleaseInput")}${t("user.usereEmail")}`' />
+                </a-form-item>
                 <a-form-item :label="t('public.Description')" name="description">
                     <a-textarea v-model:value="formState.description"
                         :placeholder='`${t("public.pleaseInput")}${t("public.Description")}`' />
@@ -245,13 +253,13 @@ const columns = [{
     dataIndex: 'operation',
 }]
 
-const handleSwitchChange = (value:any, record:formStateType) =>{
+const handleSwitchChange = (value: any, record: formStateType) => {
     console.log(value)
     console.log(record)
-    updateUser({id:record.id, status:value}).then(()=>{
+    updateUser({ id: record.id, status: value }).then(() => {
         requestList()
     })
-    
+
 }
 
 const departmentState = reactive({

@@ -23,17 +23,17 @@
                     </a-tag>
                 </div>
                 <div class="input-text" v-if="searchModelItem">{{ t(searchModelItem.name) }} :</div>
-                <a-input class="search-style-input"
-                    v-show="searchModelItem?.key === 'name' || searchModelItem?.key === 'description'"
-                    v-model:value="searchInputValue" :bordered="false" @pressEnter="onInputTag">
+                <!-- v-show="searchModelItem?.key === 'name' || searchModelItem?.key === 'description'" -->
+                <a-input class="search-style-input" v-model:value="searchInputValue" :bordered="false"
+                    @pressEnter="onInputTag">
                     <template #suffix>
                         <SearchOutlined @click="onInputTag" />
                     </template>
                 </a-input>
-                <a-cascader class="search-style-input" v-show="searchModelItem?.key === 'area'"
+                <!-- <a-cascader class="search-style-input" v-show="searchModelItem?.key === 'area'"
                     v-model:value="searchcascaderValue" :bordered="false"
                     :fieldNames="{ label: 'name', value: 'name', children: 'children' }" :options="TestJson"
-                    :show-search="{ filter }" @change="changeCascader" />
+                    :show-search="{ filter }" @change="changeCascader" /> -->
             </div>
 
             <a-button :icon="h(SearchOutlined)" @click="onSearch()" type="primary">
@@ -55,7 +55,8 @@
                         <a-menu>
                             <a-checkbox-group v-model:value="columnsCheckboxArray" @change="changeColumnsCheckbox">
                                 <div>
-                                    <div class="table-style-columnsCheckbox" v-for="item in columns" :key="item.title">
+                                    <div class="table-style-columnsCheckbox" v-for="item in columnsData"
+                                        :key="item.title">
                                         <a-checkbox :value="item.dataIndex">
                                             {{ t(item.title) }}
                                         </a-checkbox>
@@ -67,8 +68,9 @@
                 </a-dropdown-button>
             </a-space>
             <!-- :scroll="{ y: 400 }" -->
-            <a-table :columns="columns" :data-source="tableList" class="components-table-demo-nested" ref="tableRef"
-                :pagination="false" :loading="loading" rowKey="id" bordered :indentSize="5" @expand="expandTable">
+            <a-table :columns="tableColumns" :data-source="tableList" class="components-table-demo-nested"
+                ref="tableRef" :pagination="false" :loading="loading" rowKey="id" bordered :indentSize="5"
+                @expand="expandTable">
                 <template #headerCell="{ column }">
                     <span v-if="column && typeof column.title === 'string'">{{ t(column.title) }}</span>
                 </template>
@@ -175,7 +177,7 @@ let searchFrom = reactive({
 })
 const searchTags = ref<SearchFronModel[]>([])
 let searchInputValue = ref<string | number>("")
-let searchcascaderValue = ref<string[]>([])
+// let searchcascaderValue = ref<string[]>([])
 const searchFronModel: SearchFronModel[] = [
     {
         key: 'name',
@@ -197,14 +199,16 @@ const onInputTag = () => {
     if (searchInputValue.value && searchModelItem.value) {
         operateTags(searchInputValue.value)
         searchInputValue.value = ""
+        onSearch()
+        
     }
 }
 
-const changeCascader = () => {
-    if (searchcascaderValue.value) {
-        operateTags(searchcascaderValue.value.join("/"))
-    }
-}
+// const changeCascader = () => {
+//     if (searchcascaderValue.value) {
+//         operateTags(searchcascaderValue.value.join("/"))
+//     }
+// }
 /**
  * 操作tags
  * @param value 值
@@ -322,21 +326,22 @@ const onSearch = async () => {
     searchTags.value.forEach((item: SearchFronModel) => {
         if (item.value) searchFrom[item.key] = item.value
     })
-    console.log(searchFrom)
     tableList.value = await requestList()
 }
 
 const requestList = (id?: number) => {
     let user = JSON.parse(localStorage.getItem("user") as string)
-    let fromData = {
-        parentDeptId: id || user.department_id,
+    let fromData: any = {
         page: page.value,
         pageSize: pageSize.value,
-        flag: 0,
         ...searchFrom
     }
-    loading.value = true
+    if (Object.values(searchFrom).every(item => item == "")) {
+        fromData.parentDeptId = id || user.department_id
+        fromData.flag = 0
+    }
 
+    loading.value = true
     return listDepartment(fromData).then((res: resTable<{ data: Tableitem[], total: number }>) => {
         let { data } = res.data
         if (data) {
@@ -361,22 +366,27 @@ onMounted(async () => {
     if (columnsStorageJson) {
         columnsCheckboxArray.value = JSON.parse(columnsStorageJson)
     } else {
-        columnsCheckboxArray.value = columns.value.map((item: Columns) => item.dataIndex)
+        columnsCheckboxArray.value = columnsData.map((item: Columns) => item.dataIndex)
     }
+    changeColumnsCheckbox()
 })
 
 const changeColumnsCheckbox = () => {
-    columns.value = columns.value.filter((item: Columns) => columnsCheckboxArray.value.some((el: string) => el == item.dataIndex))
-    sessionStorage.setItem('columnsStorageJson', JSON.stringify(columnsCheckboxArray.value));
-}
+    tableColumns.value = columnsData.filter((item: Columns) => columnsCheckboxArray.value.some((el: string) => el == item.dataIndex))
 
-const columns = ref<Columns[]>([
-    {
+    tableColumns.value.unshift({
         title: 'department.departmentName',
         dataIndex: 'name',
         width: 200,
         ellipsis: true,
-    },
+    })
+    sessionStorage.setItem('columnsStorageJson', JSON.stringify(columnsCheckboxArray.value));
+}
+
+const tableColumns = ref<Columns[]>()
+
+const columnsData: Columns[] = [
+
     {
         title: 'department.departmentLocation',
         dataIndex: 'area',
@@ -395,7 +405,7 @@ const columns = ref<Columns[]>([
         dataIndex: 'operation',
         width: 300,
     }
-])
+]
 
 </script>
 

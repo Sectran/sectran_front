@@ -13,12 +13,11 @@ export default {
         addUser:"添加用户",
         userName:"用户名称",
         account: '用户账号',
-        password: '密码',
+        password: '用户密码',
         mame: '用户名称',
         userState:"用户状态",
         usereEmail:'电子邮箱',
         telephone:'手机号'
-
     },
     department: {
         departmentName: '部门名称',
