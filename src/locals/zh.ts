@@ -81,7 +81,8 @@ export default {
         creationDate:"创建日期",
         UpdateDate:"更新日期",
         nolimits:"暂无权限",
-        status:"状态"
+        status:"状态",
+        columnShow:"显示列"
 
        
     },

@@ -22,6 +22,14 @@ export type Router = {
     children?: Router[]
 }
 
+export type Columns = {
+    title: string
+    dataIndex: string
+    width?: number
+    ellipsis?:boolean
+    fixed?:string
+}
+
 export type SearchFronModel = {
     key: string
     name: string

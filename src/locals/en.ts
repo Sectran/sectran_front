@@ -82,8 +82,8 @@ export default {
         creationDate:"creation date",
         UpdateDate:"update date",
         nolimits:"Temporarily without authority",
-        status:"status"
-        
+        status:"status",
+        columnShow:"columnShow"
         
     },
     message:{

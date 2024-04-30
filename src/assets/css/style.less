@@ -65,7 +65,7 @@ body {
             display: flex;
         }
         .tags-style-text {
-            width: 200px;
+            max-width: 200px;
             display: block;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -78,9 +78,13 @@ body {
         background: var(--table-bg);
         border-radius: 10px;
         flex: 1;
+     
     }
-}
 
+}
+.table-style-columnsCheckbox {
+    margin: 10px 5px;
+}
 .input-heigth {
     height: 40px;
 }
@@ -115,6 +119,7 @@ body {
 
     .tags-style {
         margin: 0 5px;
+        display: flex;
     }
 
     .input-text {

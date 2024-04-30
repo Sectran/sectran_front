@@ -14,7 +14,8 @@
                     </template>
                 </a-dropdown>
                 <div class="tags-style">
-                    <a-tag v-for="item in searchTags" :key="item" closable>
+                    <a-tag v-for="(item, index) in searchTags" :key="index" closable
+                        @close="() => searchTags.splice(index, 1)">
                         <a-tooltip>
                             <template #title>{{ t(item.name) }}：{{ item.value }}</template>
                             <span class="tags-style-text">{{ t(item.name) }}：{{ item.value }}</span>
@@ -35,84 +36,63 @@
                     :show-search="{ filter }" @change="changeCascader" />
             </div>
 
-            <!-- @click="on_search()" -->
-            <a-button :icon="h(SearchOutlined)" type="primary">
+            <a-button :icon="h(SearchOutlined)" @click="onSearch()" type="primary">
                 {{ t('public.search') }}
             </a-button>
-            <a-button class="search-" :icon="h(SyncOutlined)">
+            <a-button class="search-" @click="searchTags = []; onSearch()" :icon="h(SyncOutlined)">
                 {{ t('public.reset') }}
             </a-button>
-
-            <!-- @click="fromreset(searchFormRef)" -->
-
-
-
-            <!-- :model="searchFrom"  -->
-            <!-- <a-form layout="inline" ref="searchFormRef">
-                <a-row :gutter="[20, 16]"> -->
-            <!-- <a-col :xl="6" :md="8" :xs="12">
-                        <a-form-item :label="t('department.departmentId')">
-                            <a-input v-model:value="searchFrom.dept_id"
-                                :placeholder="t('department.departmentIdPlaceholder')" />
-                        </a-form-item>
-                    </a-col> -->
-            <!-- <a-col :xl="6" :md="8" :xs="12">
-                        <a-form-item :label="t('department.departmentName')" name="name">
-                            <a-input v-model:value="searchFrom.name" allowClear
-                                :placeholder="t('department.departmentNamePlaceholder')" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :xl="6" :md="8" :xs="12">
-                        <a-form-item :label="t('department.departmentLocation')">
-                            <a-input v-model:value="searchFrom.area" allowClear
-                                :placeholder="t('department.departmentLocationPlaceholder')" />
-                        </a-form-item>
-                    </a-col> -->
-            <!-- <a-col :xl="6" :md="8" :xs="12">
-                        <a-form-item>
-                            <a-space wrap>
-                                <a-button :icon="h(SearchOutlined)" type="primary" @click="on_search()">
-                                    {{ t('public.search') }}
-                                </a-button>
-                                <a-button :icon="h(SyncOutlined)" @click="fromreset(searchFormRef)">
-                                    {{ t('public.reset') }}
-                                </a-button>
-                            </a-space>
-                        </a-form-item>
-                    </a-col> -->
-            <!-- </a-row>
-            </a-form> -->
         </div>
-        <a-space class="mb8 justify-end">
-            <a-button @click="onAddSubordinateDepartment()" :icon="h(PlusOutlined)" type="primary">{{ t('public.add')
-                }}</a-button>
-        </a-space>
-        <!-- :scroll="{ y: 400 }" -->
-        <a-table :columns="columns" :data-source="tableList" class="components-table-demo-nested" ref="tableRef"
-            :pagination="false" :loading="loading" rowKey="id" bordered :indentSize="5" @expand="expandTable">
-            <template #headerCell="{ column }">
-                <span v-if="column && typeof column.title === 'string'">{{ t(column.title) }}</span>
-            </template>
-            <template #bodyCell="{ column, record, text, index }">
-                <template v-if="column.dataIndex === 'name'">
-                    <a width="200" href="javascript:;">{{ text }}</a>
-                </template>
-                <template v-if="column.dataIndex === 'updatedAt'">
-                    {{ dayjs(text).format("YYYY-MM-DD HH:mm:ss") }}
-                </template>
-                <template v-if="column.dataIndex === 'operation'">
-                    <a-space :size="8">
-                        <a-button type="link" @click="onRedactDepartment(record)">{{ t('public.redact') }}</a-button>
-                        <a-button type="link" @click="onAddSubordinateDepartment(record)">
-                            {{ t('department.addSubordinateDepartment') }}
-                        </a-button>
-                        <a-button type="link" danger @click="onDelete(record, index)">{{ t('public.delete')
-                            }}</a-button>
-                    </a-space>
-                </template>
-            </template>
-        </a-table>
 
+        <div class="table-style">
+            <a-space class="mb8 justify-end">
+                <a-button @click="onAddSubordinateDepartment()" :icon="h(PlusOutlined)" type="primary">{{
+                            t('public.add')
+                        }}</a-button>
+                <a-dropdown-button trigger='click'>
+                    {{ t('public.columnShow') }}
+                    <template #overlay>
+                        <a-menu>
+                            <a-checkbox-group v-model:value="columnsCheckboxArray" @change="changeColumnsCheckbox">
+                                <div>
+                                    <div class="table-style-columnsCheckbox" v-for="item in columns" :key="item.title">
+                                        <a-checkbox :value="item.dataIndex">
+                                            {{ t(item.title) }}
+                                        </a-checkbox>
+                                    </div>
+                                </div>
+                            </a-checkbox-group>
+                        </a-menu>
+                    </template>
+                </a-dropdown-button>
+            </a-space>
+            <!-- :scroll="{ y: 400 }" -->
+            <a-table :columns="columns" :data-source="tableList" class="components-table-demo-nested" ref="tableRef"
+                :pagination="false" :loading="loading" rowKey="id" bordered :indentSize="5" @expand="expandTable">
+                <template #headerCell="{ column }">
+                    <span v-if="column && typeof column.title === 'string'">{{ t(column.title) }}</span>
+                </template>
+                <template #bodyCell="{ column, record, text, index }">
+                    <template v-if="column.dataIndex === 'name'">
+                        <a width="200" href="javascript:;">{{ text }}</a>
+                    </template>
+                    <template v-if="column.dataIndex === 'updatedAt'">
+                        {{ dayjs(text).format("YYYY-MM-DD HH:mm:ss") }}
+                    </template>
+                    <template v-if="column.dataIndex === 'operation'">
+                        <a-space :size="8">
+                            <a-button type="link" @click="onRedactDepartment(record)">{{ t('public.redact')
+                                }}</a-button>
+                            <a-button type="link" @click="onAddSubordinateDepartment(record)">
+                                {{ t('department.addSubordinateDepartment') }}
+                            </a-button>
+                            <a-button type="link" danger @click="onDelete(record, index)">{{ t('public.delete')
+                                }}</a-button>
+                        </a-space>
+                    </template>
+                </template>
+            </a-table>
+        </div>
         <a-modal v-model:open="openState" title="添加部门" :footer='null'
             :after-close="() => { submitFormRef?.resetFields(); departmentId = undefined; editRecord = {} }">
             <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
@@ -128,13 +108,12 @@
                         v-model:value="formState.area" :options="TestJson" :show-search="{ filter }"
                         :placeholder='`${t("public.pleaseInput")}${t("department.departmentLocation")}`' />
                 </a-form-item>
-                <a-form-item :label="t('department.departmentDescribe')" name="description"
-                    >
+                <a-form-item :label="t('department.departmentDescribe')" name="description">
                     <!-- :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('department.departmentDescribe')}` }]" -->
                     <a-input v-model:value="formState.description"
                         :placeholder='`${t("public.pleaseInput")}${t("department.departmentDescribe")}`' />
                 </a-form-item>
-      
+
                 <a-form-item :wrapper-col="{ offset: 6, span: 16 }">
                     <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
                 </a-form-item>
@@ -156,7 +135,7 @@ import { PlusOutlined, DownOutlined, SearchOutlined, SyncOutlined } from '@ant-d
 import { Modal } from 'ant-design-vue';
 import TestJson from "@/assets/json/region.json";
 import type { ShowSearchType } from 'ant-design-vue/es/cascader';
-import { SearchFronModel } from "@/utils/type/type"
+import { SearchFronModel, Columns } from "@/utils/type/type"
 type Tableitem = {
     id: number
     key: number
@@ -171,17 +150,14 @@ interface FormState {
     area: string[]
     description: string
     name: string
-    // parentDepartments: number | string
     parentDepartmentId: number | string
 }
 
 const submitFormRef = ref<FormInstance>();
 const { t } = useI18n()
 const tableRef = ref();
-
 let page = ref<number>(1);
 let pageSize = ref<number>(20);
-let toTal = ref<number>(0)
 let tableList = ref<any>([])
 let loading = ref<boolean>(false)
 let openState = ref<boolean>(false)
@@ -190,12 +166,14 @@ const formState = reactive<FormState>({
     area: [],
     description: "",
     name: "",
-    // parentDepartments: "",
     parentDepartmentId: 1,
 });
-
+let searchFrom = reactive({
+    name: "",
+    description: "",
+    area: ""
+})
 const searchTags = ref<SearchFronModel[]>([])
-
 let searchInputValue = ref<string | number>("")
 let searchcascaderValue = ref<string[]>([])
 const searchFronModel: SearchFronModel[] = [
@@ -277,10 +255,8 @@ const onAddSubordinateDepartment = (record?: { parentDepartments: string, id: st
     let user = JSON.parse(localStorage.getItem("user") as string)
     if (record) {
         formState.parentDepartmentId = record.id
-        // formState.parentDepartments = record?.parentDepartments ? record?.parentDepartments + `,${record.id}` : record?.id + '';
     } else {
         formState.parentDepartmentId = user.department_id
-        // formState.parentDepartments = `${user.department_id}`
     }
     openState.value = true
 }
@@ -341,16 +317,14 @@ const onFinish = () => {
         openState.value = false
     })
 };
-
-// let expandedRowKeys = ref<number[]>([])
-// const expandRow = (key: number) => {
-//     let keyIndex = expandedRowKeys.value.findIndex((item: number) => item == key)
-//     if (keyIndex == -1) {
-//         expandedRowKeys.value.push(key)
-//     } else {
-//         expandedRowKeys.value.splice(keyIndex, 1)
-//     }
-// }
+const onSearch = async () => {
+    for (const key in searchFrom) searchFrom[key] = ""
+    searchTags.value.forEach((item: SearchFronModel) => {
+        if (item.value) searchFrom[item.key] = item.value
+    })
+    console.log(searchFrom)
+    tableList.value = await requestList()
+}
 
 const requestList = (id?: number) => {
     let user = JSON.parse(localStorage.getItem("user") as string)
@@ -358,12 +332,13 @@ const requestList = (id?: number) => {
         parentDeptId: id || user.department_id,
         page: page.value,
         pageSize: pageSize.value,
-        flag: 0
+        flag: 0,
+        ...searchFrom
     }
     loading.value = true
 
     return listDepartment(fromData).then((res: resTable<{ data: Tableitem[], total: number }>) => {
-        let { data, total } = res.data
+        let { data } = res.data
         if (data) {
             data.forEach((item: Tableitem) => {
                 if (item.hasChildren) item.children = []
@@ -371,8 +346,6 @@ const requestList = (id?: number) => {
         }
         loading.value = false
         return data
-        tableList.value = data
-        toTal.value = total
 
     })
 }
@@ -380,18 +353,24 @@ const requestList = (id?: number) => {
 const filter: ShowSearchType['filter'] = (inputValue, path) => {
     return path.some(option => option.name.toLowerCase().indexOf(inputValue.toLowerCase()) > -1);
 };
-
+let columnsCheckboxArray = ref<string[]>([])
 onMounted(async () => {
-
     tableList.value = await requestList()
     searchModelItem.value = searchFronModel[0]
+    let columnsStorageJson = localStorage.getItem('columnsStorageJson') as string | null;
+    if (columnsStorageJson) {
+        columnsCheckboxArray.value = JSON.parse(columnsStorageJson)
+    } else {
+        columnsCheckboxArray.value = columns.value.map((item: Columns) => item.dataIndex)
+    }
 })
 
-const columns = [
-    // {
-    //     title: 'department.departmentId',
-    //     dataIndex: 'id',
-    // },
+const changeColumnsCheckbox = () => {
+    columns.value = columns.value.filter((item: Columns) => columnsCheckboxArray.value.some((el: string) => el == item.dataIndex))
+    sessionStorage.setItem('columnsStorageJson', JSON.stringify(columnsCheckboxArray.value));
+}
+
+const columns = ref<Columns[]>([
     {
         title: 'department.departmentName',
         dataIndex: 'name',
@@ -406,12 +385,6 @@ const columns = [
         title: 'department.departmentDescribe',
         dataIndex: 'description',
     },
-
-
-    // {
-    //     title: 'department.superiorDepartment',
-    //     dataIndex: 'parentDepartments',
-    // },
     {
         title: 'public.creationTime',
         dataIndex: 'updatedAt',
@@ -422,7 +395,7 @@ const columns = [
         dataIndex: 'operation',
         width: 300,
     }
-]
+])
 
 </script>
 
