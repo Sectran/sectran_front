@@ -87,7 +87,7 @@
 
         <a-modal v-model:open="addOpen" :title="t('user.addUser')" :footer="null"
             :after-close="() => { fromreset(submitFormRef); id = undefined }">
-            <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
+            <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 18 }"
                 ref="submitFormRef" autocomplete="off" @finish="onFinish">
 
                 <template v-if="id === undefined">
