@@ -143,7 +143,7 @@ type formStateType = {
 } & SearchType
 
 
-let { paginationOpt, tableData, searchFormRef, tableState, submitFormRef, onTableSelectChange, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: deviceList, deleteApi: deleteDevice });
+let { paginationOpt, tableData, searchFormRef, tableState, submitFormRef, onTableSelectChange, requestList, on_search, fromreset, handleDelete } = useTableHooks( { listApi: deviceList, deleteApi: deleteDevice });
 const addOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({
     name: "",

@@ -132,7 +132,7 @@ let searchFrom = reactive<SearchType>({
     name: ""
 });
 
-let { paginationOpt, tableData, searchFormRef, tableState, submitFormRef, tableLoading, requestList, on_search, fromreset, handleDelete, onTableSelectChange } = useTableHooks<SearchType>(searchFrom, { listApi: listRole, deleteApi: deleteRole });
+let { paginationOpt, tableData, searchFormRef, tableState, submitFormRef, tableLoading, requestList, on_search, fromreset, handleDelete, onTableSelectChange } = useTableHooks({ listApi: listRole, deleteApi: deleteRole });
 
 const columns = [
     {
