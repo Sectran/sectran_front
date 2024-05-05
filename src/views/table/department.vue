@@ -72,7 +72,7 @@
             <!-- :scroll="{ y: 400 }" -->
             <a-table :key="tableKey" :columns="tableColumns" :data-source="tableList"
                 class="components-table-demo-nested" ref="tableRef" :pagination="false" :loading="loading" rowKey="id"
-                bordered :indentSize="5" @expand="expandTable">
+                bordered :indentSize="10" @expand="expandTable" >
                 <template #headerCell="{ column }">
                     <span v-if="column && typeof column.title === 'string'">{{ t(column.title) }}</span>
                 </template>
