@@ -55,12 +55,14 @@
                         <a-menu>
                             <a-checkbox-group v-model:value="columnsCheckboxArray" @change="changeColumnsCheckbox">
                                 <div>
-                                    <div class="table-style-columnsCheckbox" v-for="item in columnsData"
-                                        :key="item.title">
-                                        <a-checkbox :value="item.dataIndex">
-                                            {{ t(item.title) }}
-                                        </a-checkbox>
-                                    </div>
+                                    <template v-for="item in columnsData" :key="item.title">
+                                        <div class="table-style-columnsCheckbox" v-show="!item.noCancel">
+                                            <a-checkbox :value="item.dataIndex">
+                                                {{ t(item.title) }}
+                                            </a-checkbox>
+                                        </div>
+                                    </template>
+
                                 </div>
                             </a-checkbox-group>
                         </a-menu>
@@ -68,9 +70,9 @@
                 </a-dropdown-button>
             </a-space>
             <!-- :scroll="{ y: 400 }" -->
-            <a-table :columns="tableColumns" :data-source="tableList" class="components-table-demo-nested"
-                ref="tableRef" :pagination="false" :loading="loading" rowKey="id" bordered :indentSize="5"
-                @expand="expandTable">
+            <a-table :key="tableKey" :columns="tableColumns" :data-source="tableList"
+                class="components-table-demo-nested" ref="tableRef" :pagination="false" :loading="loading" rowKey="id"
+                bordered :indentSize="5" @expand="expandTable">
                 <template #headerCell="{ column }">
                     <span v-if="column && typeof column.title === 'string'">{{ t(column.title) }}</span>
                 </template>
@@ -115,7 +117,6 @@
                     <a-input v-model:value="formState.description"
                         :placeholder='`${t("public.pleaseInput")}${t("department.departmentDescribe")}`' />
                 </a-form-item>
-
                 <a-form-item :wrapper-col="{ offset: 6, span: 16 }">
                     <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
                 </a-form-item>
@@ -124,7 +125,6 @@
     </div>
 </template>
 
-
 <script setup lang="ts">
 import { ref, onMounted, reactive, h } from 'vue';
 import { listDepartment, addDepartment, editDepartment, deleteDepartment } from "@/api/admin";
@@ -132,7 +132,6 @@ import { resTable } from "@/utils/type/type"
 import { useI18n } from 'vue-i18n';
 import dayjs from 'dayjs';
 import type { FormInstance } from 'ant-design-vue';
-
 import { PlusOutlined, DownOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
 import TestJson from "@/assets/json/region.json";
@@ -191,16 +190,12 @@ const searchFronModel: SearchFronModel[] = [
     }
 ]
 let searchModelItem = ref<SearchFronModel>()
-const handleMenuClick = (item: { key: SearchFronModel }) => {
-    searchModelItem.value = item.key
-}
 
 const onInputTag = () => {
     if (searchInputValue.value && searchModelItem.value) {
         operateTags(searchInputValue.value)
         searchInputValue.value = ""
         onSearch()
-        
     }
 }
 
@@ -316,12 +311,13 @@ const onFinish = () => {
             } else {
                 tableList.value.push(res.data)
             }
-
         }
         openState.value = false
     })
 };
+let tableKey = ref(0)
 const onSearch = async () => {
+    tableKey.value++
     for (const key in searchFrom) searchFrom[key] = ""
     searchTags.value.forEach((item: SearchFronModel) => {
         if (item.value) searchFrom[item.key] = item.value
@@ -350,11 +346,14 @@ const requestList = (id?: number) => {
             })
         }
         loading.value = false
-        return data
+        return data || []
 
     })
 }
-
+const handleMenuClick = (item: { key: SearchFronModel }) => {
+    console.log(item.key)
+    searchModelItem.value = item.key
+}
 const filter: ShowSearchType['filter'] = (inputValue, path) => {
     return path.some(option => option.name.toLowerCase().indexOf(inputValue.toLowerCase()) > -1);
 };
@@ -362,9 +361,9 @@ let columnsCheckboxArray = ref<string[]>([])
 onMounted(async () => {
     tableList.value = await requestList()
     searchModelItem.value = searchFronModel[0]
-    let columnsStorageJson = localStorage.getItem('columnsStorageJson') as string | null;
-    if (columnsStorageJson) {
-        columnsCheckboxArray.value = JSON.parse(columnsStorageJson)
+    let departmentColumnsStorage = localStorage.getItem('departmentColumnsStorage') as string | null;
+    if (departmentColumnsStorage) {
+        columnsCheckboxArray.value = JSON.parse(departmentColumnsStorage)
     } else {
         columnsCheckboxArray.value = columnsData.map((item: Columns) => item.dataIndex)
     }
@@ -372,21 +371,22 @@ onMounted(async () => {
 })
 
 const changeColumnsCheckbox = () => {
-    tableColumns.value = columnsData.filter((item: Columns) => columnsCheckboxArray.value.some((el: string) => el == item.dataIndex))
+    console.log(columnsCheckboxArray.value)
 
-    tableColumns.value.unshift({
-        title: 'department.departmentName',
-        dataIndex: 'name',
-        width: 200,
-        ellipsis: true,
-    })
-    sessionStorage.setItem('columnsStorageJson', JSON.stringify(columnsCheckboxArray.value));
+    tableColumns.value = columnsData.filter((item: Columns) => columnsCheckboxArray.value.some((el: string) => el == item.dataIndex))
+    localStorage.setItem('departmentColumnsStorage', JSON.stringify(columnsCheckboxArray.value));
 }
 
 const tableColumns = ref<Columns[]>()
 
 const columnsData: Columns[] = [
-
+    {
+        title: 'department.departmentName',
+        dataIndex: 'name',
+        width: 200,
+        ellipsis: true,
+        noCancel: true
+    },
     {
         title: 'department.departmentLocation',
         dataIndex: 'area',

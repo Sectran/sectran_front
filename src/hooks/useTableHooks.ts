@@ -3,6 +3,7 @@ import type { Ref } from "vue"
 import { Modal } from 'ant-design-vue';
 import type { FormInstance } from 'ant-design-vue';
 import { resTable } from "@/utils/type/type"
+import { SearchFronModel, Columns } from "@/utils/type/type"
 type requestApi = {
     listApi: Function,
     deleteApi: Function
@@ -23,7 +24,7 @@ type Key = string | number;
  * @param tableDataFispose 表格数据是否需要二次处理
  * @returns sizeChange 数据
  */
-export const useTableHooks = <K extends object>(searchFrom: K, requestApi: requestApi, tableDataFispose?: { Fun: Function, ifDispose: boolean }) => {
+export const useTableHooks =( requestApi: requestApi, tableDataFispose?: { Fun: Function, ifDispose: boolean }) => {
     //表格头部颜色
     const headerStyle = { background: '#F8F8F9' }
     const fromSearchRef: Ref = ref<any>()
@@ -41,13 +42,15 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
     const submitFormRef = ref<FormInstance>();
     //当前表格数据
     const tableData = ref([]);
+    //搜索字段
+    const searchFrom = reactive({})
     //分页参数
     const paginationOpt = reactive({
         current: 1,
         page: 10,
         pageSizeOptions: [10, 20, 50, 100, 200],
         total: 0,
-        showTotal: (total:number) => `共 ${total} 条数据`,
+        showTotal: (total: number) => `共 ${total} 条数据`,
         onChange: (current: number, size: number) => {
             paginationOpt.current = current
             paginationOpt.page = size
@@ -117,8 +120,76 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
         tableState.selectedRowKeys = selectedRowKeys;
     };
 
+    //查询
+    let searchInputValue = ref<string | number>("")
+    // let searchFronModel: SearchFronModel[] = []
+    let searchModelItem = ref<SearchFronModel>()
+    const searchTags = ref<SearchFronModel[]>([])
+    let columnsCheckboxArray = ref<string[]>([])
+    const tableColumns = ref<Columns[]>()
+    let columnsData:Columns[] = []
+    let columnsStorageKey = ""
+    /**
+     * 初始化搜索表单
+     * @param searchFronModelData 搜索表单数据
+     * @param columnsDataSource 表格columns
+     * @param searchFronModelData 搜索表单数据
+     */
+    const initializeSearchTable = (searchFronModelData:SearchFronModel[],columnsDataSource:Columns[],columnsStorage:string) => {
+        columnsStorageKey = columnsStorage
+        // searchFronModel = searchFronModelData
+        searchModelItem.value = searchFronModelData[0]
+        console.log(columnsDataSource)
+        columnsData = columnsDataSource
+        let columnsStorageJson = localStorage.getItem(columnsStorageKey) as string | null;
+        if (columnsStorageJson) {
+            columnsCheckboxArray.value = JSON.parse(columnsStorageJson)
+        } else {
+            columnsCheckboxArray.value = columnsData.map((item: Columns) => item.dataIndex)
+        }
+        changeColumnsCheckbox()
+    }
+
+    const handleMenuClick = (item: { key: SearchFronModel }) => {
+        searchModelItem.value = item.key
+    }
+    const onInputTag = () => {
+        if (searchInputValue.value && searchModelItem.value) {
+            operateTags(searchInputValue.value)
+            searchInputValue.value = ""
+            onSearch()
+        }
+    }
+    //点击搜索
+    const  onSearch = () =>{
+        
+    }
 
 
+    /**
+     * 操作tags
+     * @param value 值
+    */
+    const operateTags = (value: string | number) => {
+        let tagsIndex = searchTags.value.findIndex((item: SearchFronModel) => item.key === searchModelItem.value?.key)
+        if (searchModelItem.value) {
+            let tags: SearchFronModel = {
+                ...searchModelItem.value,
+                value,
+            }
+            if (tagsIndex !== -1) {
+                searchTags.value.splice(tagsIndex, 1, tags);
+            } else {
+                searchTags.value.push({ ...tags })
+            }
+        }
+    }
+
+    const changeColumnsCheckbox = () => {
+        console.log(columnsData);
+        tableColumns.value = columnsData.filter((item: Columns) => columnsCheckboxArray.value.some((el: string) => el == item.dataIndex))
+        sessionStorage.setItem(columnsStorageKey, JSON.stringify(columnsCheckboxArray.value));
+    }
 
     return {
         headerStyle,
@@ -134,6 +205,16 @@ export const useTableHooks = <K extends object>(searchFrom: K, requestApi: reque
         fromreset,
         on_search,
         requestList,
-        handleDelete
+        handleDelete,
+        //查询
+        onInputTag,
+        handleMenuClick,
+        changeColumnsCheckbox,
+        initializeSearchTable,
+        searchInputValue,
+        searchModelItem,
+        searchTags,
+        columnsCheckboxArray,
+        tableColumns
     };
 }

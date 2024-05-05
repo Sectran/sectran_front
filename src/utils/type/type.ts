@@ -28,6 +28,7 @@ export type Columns = {
     width?: number
     ellipsis?:boolean
     fixed?:string
+    noCancel?:boolean
 }
 
 export type SearchFronModel = {

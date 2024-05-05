@@ -4,13 +4,11 @@
       colorPrimary: store.state.globalConfiguration.colorPrimary,
       colorLink: store.state.globalConfiguration.colorPrimary,
     },
-
     algorithm: Fun_algorithm()
   }">
     <router-view #="{ Component }">
       <component :is="Component" />
     </router-view>
-
     <!-- <LockScreen /> -->
   </ConfigProvider>
 </template>
@@ -60,10 +58,10 @@ router.beforeEach((to: { path: string }, { }: {}, next: Function) => {
   }
   if (store.state.router.menuData.length === 0) {
     let menu = recursionMenu(layout)
+    // let menu = layout
     menu.forEach((item: Router) => {
       router.addRoute(item)
     })
-    console.log(menu)
     store.commit('router/amendMenuData', menu)
     return next({ ...to, replace: true })
   } else {

@@ -1,33 +1,43 @@
 <template>
     <div class="tablePage-style">
         <div class="table-nav">
-            <a-form :model="searchFrom" ref="searchFormRef">
-                <a-row :gutter="[20, 0]">
-                    <a-col :lg="8" :md="12" :sm="24">
-                        <a-form-item :label="t('user.userName')" name="name">
-                            <a-input v-model:value="searchFrom.name"
-                                :placeholder='`${t("public.pleaseInput")}${t("user.userName")}`' />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :lg="8" :md="12" :sm="24">
-                        <a-form-item :label="t('user.account')" name="account">
-                            <a-input v-model:value="searchFrom.account"
-                                :placeholder='`${t("public.pleaseInput")}${t("user.account")}`' />
-                        </a-form-item>
-                    </a-col>
-
-                    <a-col :lg="8" :md="12" :sm="24">
-                        <a-form-item>
-                            <a-space>
-                                <a-button :icon="h(SearchOutlined)" type="primary" @click="on_search()">{{
-                t('public.search') }}</a-button>
-                                <a-button :icon="h(SyncOutlined)" @click="fromreset(searchFormRef)">{{ t('public.reset')
-                                    }}</a-button>
-                            </a-space>
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-            </a-form>
+            <div class="search-style">
+                <a-dropdown>
+                    <a class="ant-dropdown-link" @click.prevent>
+                        <DownOutlined />
+                    </a>
+                    <template #overlay>
+                        <a-menu @click="handleMenuClick">
+                            <a-menu-item v-for="item in searchFronModel" :key="item">{{ t(item.name)
+                                }}</a-menu-item>
+                        </a-menu>
+                    </template>
+                </a-dropdown>
+                <div class="tags-style">
+                    <a-tag v-for="(item, index) in searchTags" :key="index" closable
+                        @close="() => searchTags.splice(index, 1)">
+                        <a-tooltip>
+                            <template #title>{{ t(item.name) }}：{{ item.value }}</template>
+                            <span class="tags-style-text">{{ t(item.name) }}：{{ item.value }}</span>
+                        </a-tooltip>
+                    </a-tag>
+                </div>
+                <div class="input-text" v-if="searchModelItem">{{ t(searchModelItem.name) }} :</div>
+                <a-input class="search-style-input" v-model:value="searchInputValue" :bordered="false"
+                    @pressEnter="onInputTag">
+                    <template #suffix>
+                        <SearchOutlined @click="onInputTag" />
+                    </template>
+                </a-input>
+            </div>
+            <!-- @click="onSearch()" -->
+            <a-button :icon="h(SearchOutlined)" type="primary">
+                {{ t('public.search') }}
+            </a-button>
+            <!-- onSearch() -->
+            <a-button class="search-" @click="searchTags = [];" :icon="h(SyncOutlined)">
+                {{ t('public.reset') }}
+            </a-button>
         </div>
 
         <div class="table-style">
@@ -35,16 +45,34 @@
                 <a-space>
                     <a-button v-has="'/user/delete'" type="primary" @click="handleDelete(tableState.selectedRowKeys)"
                         :disabled="tableState.selectedRowKeys.length === 0" danger>{{
-                t('public.deleteInBatches') }}</a-button>
+                            t('public.deleteInBatches') }}</a-button>
                 </a-space>
                 <a-space>
                     <a-button v-has="'/user/create'" :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{
-                t('public.add')
-            }}</a-button>
+                            t('public.add')
+                        }}</a-button>
+                    <a-dropdown-button trigger='click'>
+                        {{ t('public.columnShow') }}
+                        <template #overlay>
+                            <a-menu>
+                                <a-checkbox-group v-model:value="columnsCheckboxArray" @change="changeColumnsCheckbox">
+                                    <div>
+                                        <template v-for="item in columnsData" :key="item.title">
+                                            <div class="table-style-columnsCheckbox" v-show="!item.noCancel">
+                                                <a-checkbox :value="item.dataIndex">
+                                                    {{ t(item.title) }}
+                                                </a-checkbox>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </a-checkbox-group>
+                            </a-menu>
+                        </template>
+                    </a-dropdown-button>
                 </a-space>
             </a-space>
 
-            <a-table :loading="tableLoading" rowKey="id" :columns="columns" :data-source="tableData"
+            <a-table :loading="tableLoading" rowKey="id" :columns="tableColumns" :data-source="tableData"
                 :pagination="paginationOpt"
                 :row-selection="{ selectedRowKeys: tableState.selectedRowKeys, onChange: onTableSelectChange }">
                 <template #headerCell="{ column }">
@@ -56,11 +84,11 @@
                     </template>
                     <template v-if="column.dataIndex === 'description'">
                         <div @click="Modal.success({
-                title: `${t('public.Description')}`,
-                content: record[column.dataIndex],
-            });">
+                            title: `${t('public.Description')}`,
+                            content: record[column.dataIndex],
+                        });">
                             {{ record[column.dataIndex].length > 34 ? record[column.dataIndex].slice(0, 34) :
-                record[column.dataIndex]
+                            record[column.dataIndex]
                             }}
                         </div>
                     </template>
@@ -69,12 +97,13 @@
                             <a-button type="link" v-has="'/user/update'" @click="onRedact(record)">{{ t('public.redact')
                                 }}</a-button>
                             <a-button type="link" v-has="'/user/delete'" danger @click="handleDelete([record.id])">{{
-                t('public.delete')
-            }}</a-button>
+                            t('public.delete')
+                        }}</a-button>
                         </a-space>
                     </template>
                     <template v-else-if="column.dataIndex === 'status'">
-                        <a-switch @change="(value: any) => handleSwitchChange(value, record)" :checked="record.status" />
+                        <a-switch @change="(value: any) => handleSwitchChange(value, record)"
+                            :checked="record.status" />
                     </template>
                 </template>
                 <template #emptyText v-has="'/user/list'">
@@ -84,12 +113,10 @@
             </a-table>
         </div>
 
-
         <a-modal v-model:open="addOpen" :title="t('user.addUser')" :footer="null"
             :after-close="() => { fromreset(submitFormRef); id = undefined }">
             <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
                 ref="submitFormRef" autocomplete="off" @finish="onFinish">
-
                 <template v-if="id === undefined">
                     <a-form-item :label="t('user.account')" name="account"
                         :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.account')}` }]">
@@ -104,9 +131,6 @@
                         :placeholder='`${t("public.pleaseInput")}${t("user.mame")}`' />
                 </a-form-item>
                 <template v-if="id === undefined">
-
-
-
                     <a-form-item :label="t('user.password')" name="password"
                         :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
                         <a-input v-model:value="formState.password"
@@ -172,26 +196,18 @@
 
 <script setup lang="ts">
 import { useTableHooks } from "@/hooks/useTableHooks"
-import { ref, reactive, h } from 'vue';
+import { ref, reactive, h, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n'
 import Dayjs from 'dayjs';
 import { addUser, listUser, deleteUser, updateUser, listDepartment, listRole } from "@/api/admin"
-import { SearchOutlined, PlusOutlined, SyncOutlined, FrownOutlined } from '@ant-design/icons-vue';
+import { SearchOutlined, PlusOutlined, SyncOutlined, FrownOutlined, DownOutlined } from '@ant-design/icons-vue';
 import { message, Modal } from 'ant-design-vue';
 import { debounce } from 'lodash';
-type SearchType = {
-    name: string;
-    account: string
-};
-let searchFrom = reactive<SearchType>({
-    name: "",
-    account: ""
-});
-let { paginationOpt, tableData, searchFormRef, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: listUser, deleteApi: deleteUser });
+import { SearchFronModel, } from "@/utils/type/type"
+
+let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, fromreset, handleDelete, onInputTag, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox } = useTableHooks( { listApi: listUser, deleteApi: deleteUser });
 const { t } = useI18n()
 const id = ref<number | undefined>(undefined);
-
-
 type formStateType = {
     id?: number | undefined
     account: string
@@ -221,10 +237,23 @@ const formState = reactive<formStateType>({
     phoneNumber: "",
     status: true
 });
+const searchFronModel: SearchFronModel[] = [
+    {
+        key: 'account',
+        name: "user.account"
+    }, {
+        key: 'name',
+        name: "user.userName"
+    }
+]
+onMounted(() => {
+    initializeSearchTable(searchFronModel, columnsData, 'userColumnsStorage')
+})
 
-const columns = [{
+const columnsData = [{
     title: 'user.account',
     dataIndex: 'account',
+    noCancel: true
 }, {
     title: 'user.userName',
     dataIndex: 'name',
