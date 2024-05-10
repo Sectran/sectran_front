@@ -21,10 +21,10 @@ type Key = string | number;
  * 
  * @param SearchObject 搜索表单数据
  * @param requestApi 请求api的方法
- * @param tableDataFispose 表格数据是否需要二次处理
+ * @param tableDataHandle 表格数据二次处理
  * @returns sizeChange 数据
  */
-export const useTableHooks =( requestApi: requestApi, tableDataFispose?: { Fun: Function, ifDispose: boolean }) => {
+export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function = (data: any) => data) => {
     //表格头部颜色
     const headerStyle = { background: '#F8F8F9' }
     const fromSearchRef: Ref = ref<any>()
@@ -43,7 +43,7 @@ export const useTableHooks =( requestApi: requestApi, tableDataFispose?: { Fun: 
     //当前表格数据
     const tableData = ref([]);
     //搜索字段
-    const searchFrom = reactive({})
+    let searchFrom = reactive({})
     //分页参数
     const paginationOpt = reactive({
         current: 1,
@@ -59,13 +59,7 @@ export const useTableHooks =( requestApi: requestApi, tableDataFispose?: { Fun: 
             requestList()
         },
     })
-    /**
-     * 点击搜索，确认搜索条件
-     * @param data 搜索条件，如果没有传入就用初始化传入的搜素条件(主要功能是为了搜索条件可能需要二次处理)  非必传
-     */
-    const on_search = () => {
-        requestList()
-    }
+
     //表单重置
     const fromreset = (FormRef: any) => FormRef?.resetFields()
     onMounted(() => {
@@ -77,17 +71,26 @@ export const useTableHooks =( requestApi: requestApi, tableDataFispose?: { Fun: 
         requestList()
     })
 
+
+
+    const on_search = () => {
+        pageData.page = 1
+        searchFrom = {}
+        searchTags.value.forEach((item: SearchFronModel) => {
+            if (item.value) searchFrom[item.key] = item.value
+        })
+
+        requestList()
+    }
     //请求接口
     const requestList = () => {
         tableLoading.value = true
         let fromData = { ...pageData, ...searchFrom }
         requestApi.listApi(fromData).then((res: resTable<any>) => {
             let { data, total } = res.data
-            if (tableDataFispose?.ifDispose) {
-                data = tableDataFispose.Fun(data)
-            }
+
             tableLoading.value = false
-            tableData.value = data
+            tableData.value = tableDataHandle(data)
             paginationOpt.total = total
             tableState.selectedRowKeys = [];
         }, () => {
@@ -127,7 +130,7 @@ export const useTableHooks =( requestApi: requestApi, tableDataFispose?: { Fun: 
     const searchTags = ref<SearchFronModel[]>([])
     let columnsCheckboxArray = ref<string[]>([])
     const tableColumns = ref<Columns[]>()
-    let columnsData:Columns[] = []
+    let columnsData: Columns[] = []
     let columnsStorageKey = ""
     /**
      * 初始化搜索表单
@@ -135,7 +138,7 @@ export const useTableHooks =( requestApi: requestApi, tableDataFispose?: { Fun: 
      * @param columnsDataSource 表格columns
      * @param searchFronModelData 搜索表单数据
      */
-    const initializeSearchTable = (searchFronModelData:SearchFronModel[],columnsDataSource:Columns[],columnsStorage:string) => {
+    const initializeSearchTable = (searchFronModelData: SearchFronModel[], columnsDataSource: Columns[], columnsStorage: string) => {
         columnsStorageKey = columnsStorage
         // searchFronModel = searchFronModelData
         searchModelItem.value = searchFronModelData[0]
@@ -157,13 +160,10 @@ export const useTableHooks =( requestApi: requestApi, tableDataFispose?: { Fun: 
         if (searchInputValue.value && searchModelItem.value) {
             operateTags(searchInputValue.value)
             searchInputValue.value = ""
-            onSearch()
+            on_search()
         }
     }
-    //点击搜索
-    const  onSearch = () =>{
-        
-    }
+
 
 
     /**
