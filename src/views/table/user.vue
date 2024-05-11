@@ -220,10 +220,6 @@ type formStateType = {
     email: string
     phoneNumber: string
 }
-// type SystemType = {
-//     name: string
-//     value: number
-// }
 
 const addOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({
