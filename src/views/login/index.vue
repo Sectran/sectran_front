@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { useStore } from 'vuex'
-import { uselocals } from "@/hooks/localsHooks"
+import { uselocals } from "@/hooks/uselocalsHooks"
 import { useRouter } from 'vue-router';
 import { login } from "@/api/login"
 import { getMenu } from "@/api/admin"
@@ -172,4 +172,4 @@ const onFinishFailed = (errorInfo: any) => {
 
 
 }
-</style>
+</style>@/hooks/uselocalsHooks

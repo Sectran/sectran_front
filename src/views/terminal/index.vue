@@ -22,13 +22,10 @@
             <div class="Content-style">
                 <div class="Content-left">
                     <div class="Content-left-search">
-                        <MenuUnfoldOutlined />
-
+                        <MenuUnfoldOutlined class="menu-icon" />
                         <div class="search-sty">
-                         
-                                <SearchOutlined class="search-icon" />
-                        
-                            <input type="text" placeholder=" " />
+                            <a-input  :bordered="false" placeholder="" />
+                           <SearchOutlined class="search-icon" />
                         </div>
                     </div>
                     <div class="Content-left-tree">
@@ -352,14 +349,21 @@ const connectResult = (modalState: boolean) => {
             display: flex;
             flex-direction: column;
             height: 100%;
-
+            padding: 20px 10px;
+            box-sizing: border-box;
             ::v-deep(.ant-tree-list) {
                 background: #2f2a2a;
                 color: #ffffff;
             }
 
             .Content-left-search {
-                height: 40px
+                display: flex;
+                justify-content: space-between;
+                height: 30px;
+                .menu-icon {
+                    color: #ffffff;
+                    font-size: 18px;
+                }
             }
 
             .Content-left-tree {
@@ -430,19 +434,19 @@ const connectResult = (modalState: boolean) => {
 
 
 .search-sty {
-    color: #fff;
+    color: #333;
     width: auto;
     border-radius: 20px;
-    min-width: 40px;
-    height: 40px;
-    line-height: 40px;
+    height: 100%;
     display: inline-block;
     position: relative;
     overflow: hidden;
-    background-image: linear-gradient(315deg, #6772FF 0, #00F9E5 100%);
-    // background-color: #463E3E;
+    // background-image: linear-gradient(315deg, #6772FF 0, #00F9E5 100%);
+    background-color: #ffffff;
     background-size: 104% 104%;
     cursor: pointer;
+    display: flex;
+    align-items: center;
 }
 
 .search-icon {
@@ -450,34 +454,29 @@ const connectResult = (modalState: boolean) => {
     right: 0;
     top: 0;
     width: 40px;
-    height: 40px;
+    height: 100%;
     text-align: center;
     font-size: 18px;
     cursor: pointer;
+    color: #333333;
 }
 
 .search-sty input {
     display: inline-block;
     background: 0 0;
     border: none;
-    color: #fff;
     padding-left: 20px;
-    line-height: 50px !important;
-    height: 50px;
     box-sizing: border-box;
+    width: 50px;
     vertical-align: 4px;
     font-size: 16px;
-    width: 50px;
     transition: all .2s linear;
-    font-style: italic;
-    text-transform: uppercase;
-    letter-spacing: 5px;
 }
 
 .search-sty:hover input {
     display: inline-block;
     width: 250px;
-    padding-right: 50px
+    padding-right: 50px;
 }
 
 .search-sty input:not(:placeholder-shown) {

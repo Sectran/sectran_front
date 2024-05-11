@@ -125,7 +125,6 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
 
     //查询
     let searchInputValue = ref<string | number>("")
-    // let searchFronModel: SearchFronModel[] = []
     let searchModelItem = ref<SearchFronModel>()
     const searchTags = ref<SearchFronModel[]>([])
     let columnsCheckboxArray = ref<string[]>([])

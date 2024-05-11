@@ -107,8 +107,7 @@
                     </template>
                 </template>
                 <template #emptyText v-has="'/user/list'">
-                    <FrownOutlined class="no-limits-icon" />
-                    <div class="no-limits-icon">{{ t('public.nolimits') }}</div>
+                    <tabNoPermissin />
                 </template>
             </a-table>
         </div>
@@ -200,12 +199,12 @@ import { ref, reactive, h, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n'
 import Dayjs from 'dayjs';
 import { addUser, listUser, deleteUser, updateUser, listDepartment, listRole } from "@/api/admin"
-import { SearchOutlined, PlusOutlined, SyncOutlined, FrownOutlined, DownOutlined } from '@ant-design/icons-vue';
+import { SearchOutlined, PlusOutlined, SyncOutlined, DownOutlined } from '@ant-design/icons-vue';
 import { message, Modal } from 'ant-design-vue';
+import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
 import { debounce } from 'lodash';
 import { SearchFronModel, } from "@/utils/type/type"
-
-let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, fromreset, handleDelete, onInputTag, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox } = useTableHooks( { listApi: listUser, deleteApi: deleteUser });
+let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, fromreset, handleDelete, onInputTag, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox } = useTableHooks({ listApi: listUser, deleteApi: deleteUser });
 const { t } = useI18n()
 const id = ref<number | undefined>(undefined);
 type formStateType = {
