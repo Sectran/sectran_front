@@ -37,8 +37,6 @@ watch(locale, (val: string) => {
   dayjs.locale(val);
 });
 
-
-
 window.document.documentElement.setAttribute('data-theme', store.state.globalConfiguration.theme)
 const Fun_algorithm = () => {
   let algorithm = []

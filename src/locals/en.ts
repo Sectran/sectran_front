@@ -75,7 +75,12 @@ export default {
         search: "search",
         creationTime:"creation time",
         departmentID:'departmentID',
+        departmentName:'departmentName',
         roleId:"role",
+        roleName:"roleName",
+
+  
+
         Description:'description',
         pleaseInput:'please input',
         pleaseSelect:`please select`,

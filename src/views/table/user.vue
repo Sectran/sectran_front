@@ -239,7 +239,13 @@ const searchFronModel: SearchFronModel[] = [
     }, {
         key: 'name',
         name: "user.userName"
-    }
+    },{
+        key: 'departmentName',
+        name: "public.departmentName"
+    },{
+        key: 'roleName',
+        name: "public.roleName"
+    },
 ]
 onMounted(() => {
     initializeSearchTable(searchFronModel, columnsData, 'userColumnsStorage')
@@ -253,11 +259,11 @@ const columnsData = [{
     title: 'user.userName',
     dataIndex: 'name',
 }, {
-    title: 'public.departmentID',
-    dataIndex: 'departmentId',
+    title: 'public.departmentName',
+    dataIndex: 'departmentName',
 }, {
-    title: 'public.roleId',
-    dataIndex: 'roleId',
+    title: 'public.roleName',
+    dataIndex: 'roleName',
 },
 
 {

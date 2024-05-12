@@ -71,8 +71,10 @@ export default {
         reset: "重 置",
         search: "搜 索",
         creationTime:"创建时间",
-        departmentID:'部门',
-        roleId:"角色",
+        departmentID:'部门ID',
+        departmentName:'部门名称',
+        roleId:"角色ID",
+        roleName:"角色名称",
 
         Description:'描述',
         pleaseInput:'请输入',
