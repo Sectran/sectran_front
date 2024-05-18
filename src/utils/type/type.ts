@@ -26,13 +26,15 @@ export type Columns = {
     title: string
     dataIndex: string
     width?: number
-    ellipsis?:boolean
-    fixed?:string
-    noCancel?:boolean
+    ellipsis?: boolean
+    fixed?: string
+    noCancel?: boolean
 }
 
 export type SearchFronModel = {
     key: string
     name: string
-    value?:string | number
+    value?: string | number | boolean
+    children?: SearchFronModel[]
+    disposefun?:Function
 }

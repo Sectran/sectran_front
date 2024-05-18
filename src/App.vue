@@ -55,8 +55,8 @@ router.beforeEach((to: { path: string }, { }: {}, next: Function) => {
     return next({ path: "/" })
   }
   if (store.state.router.menuData.length === 0) {
-    // let menu = recursionMenu(layout)
-    let menu = layout
+    let menu = recursionMenu(layout)
+    // let menu = layout
     menu.forEach((item: Router) => {
       router.addRoute(item)
     })

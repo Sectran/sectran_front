@@ -50,10 +50,6 @@ export default {
         PrivateKey:"私钥",
         PrivateKeyPassword:"key密码",
         bindAccount:"绑定账号",
-        
-
-
-
     },
     role:{
         roleName:"角色名",
@@ -83,7 +79,10 @@ export default {
         UpdateDate:"更新日期",
         nolimits:"暂无权限",
         status:"状态",
-        columnShow:"显示列"
+        columnShow:"显示列",
+        open:"开启",
+        close:"关闭",
+        cancel:"取消"
 
        
     },

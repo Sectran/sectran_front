@@ -77,7 +77,7 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
         pageData.page = 1
         searchFrom = {}
         searchTags.value.forEach((item: SearchFronModel) => {
-            if (item.value) searchFrom[item.key] = item.value
+            if (item.value !== "" || item.value !== undefined) searchFrom[item.key] = item.value
         })
 
         requestList()
@@ -153,7 +153,9 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
     }
 
     const handleMenuClick = (item: { key: SearchFronModel }) => {
-        searchModelItem.value = item.key
+        if (item.key.disposefun) item.key.disposefun(item)
+        else searchModelItem.value = item.key
+
     }
     const onInputTag = () => {
         if (searchInputValue.value && searchModelItem.value) {
@@ -169,13 +171,15 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
      * 操作tags
      * @param value 值
     */
-    const operateTags = (value: string | number) => {
-        let tagsIndex = searchTags.value.findIndex((item: SearchFronModel) => item.key === searchModelItem.value?.key)
-        if (searchModelItem.value) {
+    const operateTags = (value: string | number | boolean, assignSearchFronModel?: SearchFronModel) => {
+        let Item = assignSearchFronModel || searchModelItem.value
+        let tagsIndex = searchTags.value.findIndex((item: SearchFronModel) => item.key === Item?.key)
+        if (Item) {
             let tags: SearchFronModel = {
-                ...searchModelItem.value,
+                ...Item,
                 value,
             }
+            console.log(tags)
             if (tagsIndex !== -1) {
                 searchTags.value.splice(tagsIndex, 1, tags);
             } else {
@@ -187,9 +191,8 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
     const changeColumnsCheckbox = () => {
         console.log(columnsData);
         tableColumns.value = columnsData.filter((item: Columns) => columnsCheckboxArray.value.some((el: string) => el == item.dataIndex))
-        sessionStorage.setItem(columnsStorageKey, JSON.stringify(columnsCheckboxArray.value));
+        localStorage.setItem(columnsStorageKey, JSON.stringify(columnsCheckboxArray.value));
     }
-
     return {
         headerStyle,
         tableData,
@@ -207,6 +210,7 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
         handleDelete,
         //查询
         onInputTag,
+        operateTags,
         handleMenuClick,
         changeColumnsCheckbox,
         initializeSearchTable,

@@ -7,6 +7,7 @@ body {
     justify-content: space-between;
     align-items: center;
 }
+
 .flex-center-center {
     display: flex;
     align-items: center;
@@ -47,6 +48,7 @@ body {
         border-radius: 10px;
         display: flex;
         flex-wrap: wrap;
+
         .ant-row {
             width: 100%;
         }
@@ -54,16 +56,21 @@ body {
         .ant-picker {
             width: 100%;
         }
-        & > div,button {
+
+        &>div,
+        button {
             margin-right: 10px;
             margin-bottom: 20px;
         }
+
         .search-style-input {
             min-width: 200px;
         }
+
         .ant-tag {
             display: flex;
         }
+
         .tags-style-text {
             max-width: 200px;
             display: block;
@@ -82,9 +89,11 @@ body {
     }
 
 }
+
 .table-style-columnsCheckbox {
     margin: 10px 5px;
 }
+
 .input-heigth {
     height: 40px;
 }
@@ -127,4 +136,21 @@ body {
         color: #666666;
     }
 
+}
+
+.operation-style {
+
+    .operation-style-button {
+        padding: 0;
+        margin-right: 10px;
+    }
+}
+
+.pop-button {
+    display: flex;
+    justify-content: end;
+}
+
+.ant-dropdown-link{
+    width: 30px;
 }

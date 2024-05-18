@@ -8,17 +8,29 @@
                     </a>
                     <template #overlay>
                         <a-menu @click="handleMenuClick">
-                            <a-menu-item v-for="item in searchFronModel" :key="item">{{ t(item.name)
-                                }}</a-menu-item>
+                            <template v-for="(item, index) in searchFronModel" :key="item">
+                                <a-sub-menu v-if="item.children && item.children.length !== 0" :key="index"
+                                    :title="t(item.name)">
+                                    <a-menu-item v-for="el in item.children" :key="el">{{ t(el.name)
+                                        }}</a-menu-item>
+                                </a-sub-menu>
+                                <a-menu-item v-else :key="item">{{ t(item.name)
+                                    }}</a-menu-item>
+                            </template>
                         </a-menu>
                     </template>
-                </a-dropdown>
+                </a-dropdown> 
                 <div class="tags-style">
                     <a-tag v-for="(item, index) in searchTags" :key="index" closable
                         @close="() => searchTags.splice(index, 1)">
-                        <a-tooltip>
+                        <a-tooltip v-if="item.name === 'public.open' || item.name === 'public.close'">
+                            <template #title>{{ t('public.status') }}：{{ item.value ? '开启' : "关闭" }}</template>
+                            <span class="tags-style-text"> {{ t('public.status') }}：{{ item.value ? '开启' : "关闭" }}</span>
+                        </a-tooltip>
+
+                        <a-tooltip v-else>
                             <template #title>{{ t(item.name) }}：{{ item.value }}</template>
-                            <span class="tags-style-text">{{ t(item.name) }}：{{ item.value }}</span>
+                            <span class="tags-style-text"> {{ t(item.name) }}：{{ item.value }}</span>
                         </a-tooltip>
                     </a-tag>
                 </div>
@@ -30,12 +42,11 @@
                     </template>
                 </a-input>
             </div>
-            <!-- @click="onSearch()" -->
-            <a-button :icon="h(SearchOutlined)" type="primary">
+            <a-button @click="on_search()" :icon="h(SearchOutlined)" type="primary">
                 {{ t('public.search') }}
             </a-button>
-            <!-- onSearch() -->
-            <a-button class="search-" @click="searchTags = [];" :icon="h(SyncOutlined)">
+
+            <a-button @click="searchTags = []; on_search()" :icon="h(SyncOutlined)">
                 {{ t('public.reset') }}
             </a-button>
         </div>
@@ -48,7 +59,7 @@
                             t('public.deleteInBatches') }}</a-button>
                 </a-space>
                 <a-space>
-                    <a-button v-has="'/user/create'" :icon="h(PlusOutlined)" @click="addOpen = true" type="primary">{{
+                    <a-button v-has="'/user/create'" :icon="h(PlusOutlined)" @click="onUser" type="primary">{{
                             t('public.add')
                         }}</a-button>
                     <a-dropdown-button trigger='click'>
@@ -93,13 +104,14 @@
                         </div>
                     </template>
                     <template v-if="column.dataIndex === 'operation'">
-                        <a-space :size="8">
-                            <a-button type="link" v-has="'/user/update'" @click="onRedact(record)">{{ t('public.redact')
+                        <div class="operation-style">
+                            <a-button type="link" class="operation-style-button" v-has="'/user/update'" @click="onRedact(record)">{{ t('public.redact')
                                 }}</a-button>
-                            <a-button type="link" v-has="'/user/delete'" danger @click="handleDelete([record.id])">{{
+                            <a-button type="link" class="operation-style-button"  v-has="'/user/delete'" danger @click="handleDelete([record.id])">{{
                             t('public.delete')
                         }}</a-button>
-                        </a-space>
+                        </div>
+
                     </template>
                     <template v-else-if="column.dataIndex === 'status'">
                         <a-switch @change="(value: any) => handleSwitchChange(value, record)"
@@ -114,7 +126,7 @@
 
         <a-modal v-model:open="addOpen" :title="t('user.addUser')" :footer="null"
             :after-close="() => { fromreset(submitFormRef); id = undefined }">
-            <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 18 }"
+            <a-form :model="formState" name="basic" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }"
                 ref="submitFormRef" autocomplete="off" @finish="onFinish">
                 <template v-if="id === undefined">
                     <a-form-item :label="t('user.account')" name="account"
@@ -122,61 +134,60 @@
                         <a-input v-model:value="formState.account"
                             :placeholder='`${t("public.pleaseInput")}${t("user.account")}`' />
                     </a-form-item>
-
                 </template>
                 <a-form-item :label="t('user.mame')" name="name"
                     :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.mame')}` }]">
                     <a-input v-model:value="formState.name"
                         :placeholder='`${t("public.pleaseInput")}${t("user.mame")}`' />
                 </a-form-item>
-                <template v-if="id === undefined">
-                    <a-form-item :label="t('user.password')" name="password"
-                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
-                        <a-input v-model:value="formState.password"
-                            :placeholder='`${t("public.pleaseInput")}${t("user.userName")}`' />
-                    </a-form-item>
 
-                    <a-form-item :label="t('public.departmentID')" name="departmentId"
-                        :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('public.departmentID')}` }]">
-                        <a-select v-model:value="formState.departmentId"
-                            :placeholder='`${t("public.pleaseInput")}${t("public.departmentID")}`' style="width: 100%"
-                            :filter-option="false" :not-found-content="departmentState.fetching ? undefined : null"
-                            :options="departmentState.data"
-                            @search="(value: string) => searchDepartment(value, departmentState, listDepartment, { deep: 0, id: user.department_id })"
-                            show-search :field-names="{ label: 'name', value: 'id' }">
-                            <template v-if="departmentState.fetching" #notFoundContent>
-                                <a-spin size="small" />
-                            </template>
-                        </a-select>
-                    </a-form-item>
-                    <a-form-item :label="t('public.roleId')" name="roleId"
-                        :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('public.roleId')}` }]">
-                        <a-select v-model:value="formState.roleId"
-                            :placeholder='`${t("public.pleaseInput")}${t("public.roleId")}`' style="width: 100%"
-                            :filter-option="false" :not-found-content="roleState.fetching ? undefined : null"
-                            :options="roleState.data"
-                            @search="(value: string) => searchDepartment(value, roleState, listRole)" show-search
-                            :field-names="{ label: 'name', value: 'id' }">
-                            <template v-if="roleState.fetching" #notFoundContent>
-                                <a-spin size="small" />
-                            </template>
-                        </a-select>
-                    </a-form-item>
-                </template>
-                <template v-if="id === undefined">
-                    <a-form-item :label="t('user.userState')" name="status"
-                        :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('user.userState')}` }]">
-                        <a-radio-group v-model:value="formState.status" name="radioGroup">
-                            <a-radio v-for="item in [{ value: true, name: '启用' }, { value: false, name: '禁用' }]"
-                                :key="item.value" :value="item.value">{{ item.name
-                                }}</a-radio>
-                        </a-radio-group>
-                    </a-form-item>
-                    <a-form-item :label="t('user.telephone')" name="phoneNumber">
-                        <a-input v-model:value="formState.phoneNumber"
-                            :placeholder='`${t("public.pleaseInput")}${t("user.telephone")}`' />
-                    </a-form-item>
-                </template>
+                <a-form-item :label="t('user.password')" name="password"
+                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
+                    <a-input v-model:value="formState.password"
+                        :placeholder='`${t("public.pleaseInput")}${t("user.userName")}`' />
+                </a-form-item>
+
+                <a-form-item :label="t('public.departmentName')" name="departmentId"
+                    :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('public.departmentName')}` }]">
+                    <a-select v-model:value="formState.departmentId"
+                        :placeholder='`${t("public.pleaseInput")}${t("public.departmentName")}`' style="width: 100%"
+                        :filter-option="false" :not-found-content="departmentState.fetching ? undefined : null"
+                        :options="departmentState.data"
+                        @search="(value: string) => searchDepartment(value, departmentState, listDepartment, { deep: 0, id: user.department_id })"
+                        show-search :field-names="{ label: 'name', value: 'id' }">
+                        <template v-if="departmentState.fetching" #notFoundContent>
+                            <a-spin size="small" />
+                        </template>
+                    </a-select>
+                </a-form-item>
+                <a-form-item :label="t('public.roleName')" name="roleId"
+                    :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('public.roleId')}` }]">
+                    <a-select v-model:value="formState.roleId"
+                        :placeholder='`${t("public.pleaseInput")}${t("public.roleName")}`' style="width: 100%"
+                        :filter-option="false" :not-found-content="roleState.fetching ? undefined : null"
+                        :options="roleState.data"
+                        @search="(value: string) => searchDepartment(value, roleState, listRole)" show-search
+                        :field-names="{ label: 'name', value: 'id' }">
+                        <template v-if="roleState.fetching" #notFoundContent>
+                            <a-spin size="small" />
+                        </template>
+                    </a-select>
+                </a-form-item>
+
+
+                <a-form-item :label="t('user.userState')" name="status"
+                    :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('user.userState')}` }]">
+                    <a-radio-group v-model:value="formState.status" name="radioGroup">
+                        <a-radio v-for="item in [{ value: true, name: '启用' }, { value: false, name: '禁用' }]"
+                            :key="item.value" :value="item.value">{{ item.name
+                            }}</a-radio>
+                    </a-radio-group>
+                </a-form-item>
+                <a-form-item :label="t('user.telephone')" name="phoneNumber">
+                    <a-input v-model:value="formState.phoneNumber"
+                        :placeholder='`${t("public.pleaseInput")}${t("user.telephone")}`' />
+                </a-form-item>
+
                 <a-form-item :label="t('user.usereEmail')" name="email">
                     <a-input v-model:value="formState.email"
                         :placeholder='`${t("public.pleaseInput")}${t("user.usereEmail")}`' />
@@ -185,9 +196,13 @@
                     <a-textarea v-model:value="formState.description"
                         :placeholder='`${t("public.pleaseInput")}${t("public.Description")}`' />
                 </a-form-item>
-                <a-form-item :wrapper-col="{ offset: 4, span: 16 }">
+                <div class="pop-button">
+                    <a-button @click="() => { addOpen = false }" class="search-button-right " tml-type="submit">{{
+                            t('public.cancel') }}</a-button>
                     <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
-                </a-form-item>
+
+                </div>
+
             </a-form>
         </a-modal>
     </div>
@@ -204,7 +219,7 @@ import { message, Modal } from 'ant-design-vue';
 import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
 import { debounce } from 'lodash';
 import { SearchFronModel, } from "@/utils/type/type"
-let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, fromreset, handleDelete, onInputTag, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox } = useTableHooks({ listApi: listUser, deleteApi: deleteUser });
+let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, fromreset, handleDelete, onInputTag, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, operateTags, changeColumnsCheckbox, on_search } = useTableHooks({ listApi: listUser, deleteApi: deleteUser });
 const { t } = useI18n()
 const id = ref<number | undefined>(undefined);
 type formStateType = {
@@ -239,13 +254,36 @@ const searchFronModel: SearchFronModel[] = [
     }, {
         key: 'name',
         name: "user.userName"
-    },{
+    }, {
         key: 'departmentName',
         name: "public.departmentName"
-    },{
+    }, {
         key: 'roleName',
         name: "public.roleName"
-    },
+    }, {
+        key: 'status',
+        name: "public.status",
+        children: [
+            {
+                value: true,
+                name: "public.open",
+                key: "status",
+                disposefun: (value: any) => {
+                    operateTags(true, value.key)
+                    on_search()
+                }
+            }, {
+                value: false,
+                name: "public.close",
+                key: "status",
+                disposefun: (value: any) => {
+                    operateTags(false, value.key)
+                    on_search()
+                }
+            }
+        ]
+
+    }
 ]
 onMounted(() => {
     initializeSearchTable(searchFronModel, columnsData, 'userColumnsStorage')
@@ -264,33 +302,35 @@ const columnsData = [{
 }, {
     title: 'public.roleName',
     dataIndex: 'roleName',
-},
-
-{
+}, {
     title: 'user.telephone',
     dataIndex: 'phoneNumber',
-},
-{
+}, {
     title: 'public.Description',
     dataIndex: 'description',
-},
-{
+}, {
     title: 'public.status',
     dataIndex: 'status',
-},
-{
+}, {
     title: 'public.operation',
     dataIndex: 'operation',
 }]
 
 const handleSwitchChange = (value: any, record: formStateType) => {
-    console.log(value)
-    console.log(record)
     updateUser({ id: record.id, status: value }).then(() => {
         requestList()
     })
+}
+
+const onUser = () => {
+    addOpen.value = true;
+    searchDepartment("", departmentState, listDepartment, { deep: 0, id: user.department_id });
+    setTimeout(function () {
+        searchDepartment("", roleState, listRole)
+    }, 1000);
 
 }
+
 
 const departmentState = reactive({
     data: [],
@@ -305,9 +345,6 @@ const roleState = reactive({
 let user = JSON.parse(localStorage.getItem('user') as string);
 
 const searchDepartment = debounce((value: string, State: any, api: Function, obj: any) => {
-    console.log('fetching user', value);
-    console.log('fetching State', State);
-
     State.data = [];
     State.fetching = true;
     api({ page: 1, pageSize: 10, name: value, ...obj }).then((res: any) => {
