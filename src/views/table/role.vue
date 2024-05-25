@@ -1,42 +1,91 @@
 <template>
     <div class="tablePage-style">
-        <div class="table-nav">
-            <a-form layout="inline" :model="searchFrom" ref="searchFormRef">
-                <a-row :gutter="[20, 16]">
 
-                    <a-col :xl="6" :md="8" :xs="12">
-                        <a-form-item :label="t('role.roleName')" name="name">
-                            <a-input v-model:value="searchFrom.name" allowClear :placeholder="t('role.roleName')" />
-                        </a-form-item>
-                    </a-col>
-                    <a-col :xl="6" :md="8" :xs="12">
-                        <a-form-item>
-                            <a-space wrap>
-                                <a-button :icon="h(SearchOutlined)" type="primary" @click="on_search()">
-                                    {{ t('public.search') }}
-                                </a-button>
-                                <a-button :icon="h(SyncOutlined)" @click="fromreset(searchFormRef)">
-                                    {{ t('public.reset') }}
-                                </a-button>
-                            </a-space>
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-            </a-form>
+
+        <div class="table-nav">
+            <div class="search-style">
+                <a-dropdown>
+                    <a class="ant-dropdown-link" @click.prevent>
+                        <DownOutlined />
+                    </a>
+                    <template #overlay>
+                        <a-menu @click="handleMenuClick">
+                            <template v-for="(item, index) in searchFronModel" :key="item">
+                                <a-sub-menu v-if="item.children && item.children.length !== 0" :key="index"
+                                    :title="t(item.name)">
+                                    <a-menu-item v-for="el in item.children" :key="el">{{ t(el.name)
+                                        }}</a-menu-item>
+                                </a-sub-menu>
+                                <a-menu-item v-else :key="item">{{ t(item.name)
+                                    }}</a-menu-item>
+                            </template>
+                        </a-menu>
+                    </template>
+                </a-dropdown>
+                <div class="tags-style">
+                    <a-tag v-for="(item, index) in searchTags" :key="index" closable
+                        @close="() => searchTags.splice(index, 1)">
+                        <a-tooltip v-if="item.name === 'public.open' || item.name === 'public.close'">
+                            <template #title>{{ t('public.status') }}：{{ item.value ? '开启' : "关闭" }}</template>
+                            <span class="tags-style-text"> {{ t('public.status') }}：{{ item.value ? '开启' : "关闭"
+                                }}</span>
+                        </a-tooltip>
+                        <a-tooltip v-else>
+                            <template #title>{{ t(item.name) }}：{{ item.value }}</template>
+                            <span class="tags-style-text"> {{ t(item.name) }}：{{ item.value }}</span>
+                        </a-tooltip>
+                    </a-tag>
+                </div>
+                <div class="input-text" v-if="searchModelItem">{{ t(searchModelItem.name) }} :</div>
+                <a-input class="search-style-input" v-model:value="searchInputValue" :bordered="false"
+                    @pressEnter="onInputTag">
+                    <template #suffix>
+                        <SearchOutlined @click="onInputTag" />
+                    </template>
+                </a-input>
+            </div>
+            <a-button @click="on_search()" :icon="h(SearchOutlined)" type="primary">
+                {{ t('public.search') }}
+            </a-button>
+
+            <a-button @click="searchTags = []; on_search()" :icon="h(SyncOutlined)">
+                {{ t('public.reset') }}
+            </a-button>
         </div>
+
+
+
         <div class="table-style">
             <a-space class="mb8 flex-space-between-center">
                 <a-space>
                     <a-button type="primary" @click="handleDelete(tableState.selectedRowKeys)"
                         :disabled="tableState.selectedRowKeys.length === 0" danger>{{
-                t('public.deleteInBatches') }}</a-button>
+                            t('public.deleteInBatches') }}</a-button>
                 </a-space>
                 <a-space>
                     <a-button :icon="h(PlusOutlined)" @click="modelOpen = true" type="primary">{{ t('public.add')
                         }}</a-button>
+                    <a-dropdown-button trigger='click'>
+                        {{ t('public.columnShow') }}
+                        <template #overlay>
+                            <a-menu>
+                                <a-checkbox-group v-model:value="columnsCheckboxArray" @change="changeColumnsCheckbox">
+                                    <div>
+                                        <template v-for="item in columnsData" :key="item.title">
+                                            <div class="table-style-columnsCheckbox" v-show="!item.noCancel">
+                                                <a-checkbox :value="item.dataIndex">
+                                                    {{ t(item.title) }}
+                                                </a-checkbox>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </a-checkbox-group>
+                            </a-menu>
+                        </template>
+                    </a-dropdown-button>
                 </a-space>
             </a-space>
-            <a-table rowKey="id" :columns="columns" :data-source="tableData" :indentSize="10"
+            <a-table rowKey="id" :columns="tableColumns" :data-source="tableData" :indentSize="10"
                 :pagination="paginationOpt"
                 :row-selection="{ selectedRowKeys: tableState.selectedRowKeys, onChange: onTableSelectChange }"
                 :loading="tableLoading">
@@ -49,7 +98,8 @@
                             <a-button type="link" @click="onRedact(record)">{{ t('public.redact') }}</a-button>
                             <a-button type="link" @click="editLimits(record.id)">{{ t('role.permissionlist')
                                 }}</a-button>
-                            <a-button type="link" v-has="'/role/delete'" danger @click="handleDelete([record.id])">{{ t('public.delete') }}</a-button>
+                            <a-button type="link" v-has="'/role/delete'" danger @click="handleDelete([record.id])">{{
+                            t('public.delete') }}</a-button>
                         </a-space>
                     </template>
                     <template v-if="column.dataIndex === 'createdAt' || column.dataIndex === 'updatedAt'">
@@ -76,6 +126,11 @@
                 </template>
                 <template #customFilterIcon="{ filtered }">
                     <search-outlined :style="{ color: filtered ? '#108ee9' : undefined }" />
+                </template>
+
+
+                <template #emptyText v-if="!permsJudge('/device/list')">
+                    <tabNoPermissin />
                 </template>
             </a-table>
         </div>
@@ -109,12 +164,15 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { ref, reactive, h } from 'vue';
+import { ref, reactive, h, onMounted } from 'vue';
 import { useTableHooks } from "@/hooks/useTableHooks"
 import { listRole, addRole, editRole, deleteRole, updateAuthority, getMenu } from "@/api/admin"
-import { SearchOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons-vue';
+import { SearchOutlined, PlusOutlined, SyncOutlined ,DownOutlined} from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import limitsJson from "@/assets/json/limits.json"
+import { permsJudge } from "@/common/method/utils"
+import { SearchFronModel, } from "@/common/type/type"
+import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
 type FormState = {
     name: string
     weight: number
@@ -132,13 +190,14 @@ let searchFrom = reactive<SearchType>({
     name: ""
 });
 
-let { paginationOpt, tableData, searchFormRef, tableState, submitFormRef, tableLoading, requestList, on_search, fromreset, handleDelete, onTableSelectChange } = useTableHooks({ listApi: listRole, deleteApi: deleteRole });
+let { paginationOpt, tableData, tableLoading, onInputTag, tableState, submitFormRef, onTableSelectChange, requestList, on_search, fromreset, handleDelete, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox } = useTableHooks({ listApi: listRole, deleteApi: deleteRole });
 
-const columns = [
+const columnsData = [
     {
         title: 'role.roleName',
         dataIndex: 'name',
         key: 'name',
+        noCancel: true
     },
 
     {
@@ -159,6 +218,16 @@ const columns = [
         width: 300,
     }
 ]
+
+const searchFronModel: SearchFronModel[] = [
+    {
+        key: 'name',
+        name: "role.roleName"
+    }
+]
+onMounted(() => {
+    initializeSearchTable(searchFronModel, columnsData, 'roleColumnsStorage')
+})
 
 const modelOpen = ref<boolean>(false);
 const formState = reactive<FormState>({
@@ -188,7 +257,7 @@ const onFinish = () => {
     // return
     api(fromData).then((res: { data: TableItem }) => {
         console.log(res)
-        if (id.value === undefined)  editLimits(res.data.id)
+        if (id.value === undefined) editLimits(res.data.id)
         modelOpen.value = false
         requestList()
     })

@@ -25,7 +25,7 @@ import 'dayjs/locale/zh-cn';
 import { useI18n } from 'vue-i18n'
 import dayjs from 'dayjs';
 import { useStore } from 'vuex'
-import { Router } from "@/utils/type/type"
+import { Router } from "@/common/type/type"
 const { locale } = useI18n()
 const { defaultAlgorithm, darkAlgorithm, compactAlgorithm } = theme;
 let localeValue = ref<string>(locale.value)

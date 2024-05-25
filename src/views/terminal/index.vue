@@ -174,7 +174,7 @@ import { UploadOutlined, LockOutlined, SearchOutlined } from '@ant-design/icons-
 import xterm from "./components/xterm.vue"
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
-import { resTable } from "@/utils/type/type"
+import { resTable } from "@/common/type/type"
 import { MenuUnfoldOutlined } from '@ant-design/icons-vue';
 type MultiList = {
     name: string

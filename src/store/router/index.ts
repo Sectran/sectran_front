@@ -1,5 +1,5 @@
 //对路由表的处理
-import { Router } from "@/utils/type/type"
+import { Router } from "@/common/type/type"
 interface stateinterface {
     if_routeMenu: Boolean,
     menuData:Router[]

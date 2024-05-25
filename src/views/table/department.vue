@@ -128,7 +128,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, h } from 'vue';
 import { listDepartment, addDepartment, editDepartment, deleteDepartment } from "@/api/admin";
-import { resTable } from "@/utils/type/type"
+import { resTable } from "@/common/type/type"
 import { useI18n } from 'vue-i18n';
 import dayjs from 'dayjs';
 import type { FormInstance } from 'ant-design-vue';
@@ -136,7 +136,7 @@ import { PlusOutlined, DownOutlined, SearchOutlined, SyncOutlined } from '@ant-d
 import { Modal } from 'ant-design-vue';
 import TestJson from "@/assets/json/region.json";
 import type { ShowSearchType } from 'ant-design-vue/es/cascader';
-import { SearchFronModel, Columns } from "@/utils/type/type"
+import { SearchFronModel, Columns } from "@/common/type/type"
 type Tableitem = {
     id: number
     key: number

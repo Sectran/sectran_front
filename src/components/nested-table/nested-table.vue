@@ -75,7 +75,7 @@
 import nestedTable from "@/components/nested-table/nested-table.vue"
 import { ref, nextTick, onMounted, onBeforeUnmount, reactive, h } from 'vue';
 import { listDepartment, addDepartment, editDepartment, deleteDepartment } from "@/api/admin";
-import { resTable } from "@/utils/type/type"
+import { resTable } from "@/common/type/type"
 import { useI18n } from 'vue-i18n';
 import dayjs from 'dayjs';
 import type { FormInstance } from 'ant-design-vue';

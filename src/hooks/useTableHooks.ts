@@ -2,8 +2,8 @@ import { reactive, ref, onMounted, } from "vue";
 import type { Ref } from "vue"
 import { Modal } from 'ant-design-vue';
 import type { FormInstance } from 'ant-design-vue';
-import { resTable } from "@/utils/type/type"
-import { SearchFronModel, Columns } from "@/utils/type/type"
+import { resTable } from "@/common/type/type"
+import { SearchFronModel, Columns } from "@/common/type/type"
 type requestApi = {
     listApi: Function,
     deleteApi: Function

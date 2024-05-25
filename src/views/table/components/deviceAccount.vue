@@ -1,6 +1,6 @@
 <template>
     <div class="tablePage-style">
-        <div class="table-nav">
+        <!-- <div class="table-nav">
             <a-form :model="searchFrom" ref="searchFormRef">
                 <a-row :gutter="[20, 0]">
                     <a-col :lg="8" :md="12" :sm="24">
@@ -9,12 +9,7 @@
                                 :placeholder='`${t("public.pleaseInput")}${t("device.deviceUsername")}`' />
                         </a-form-item>
                     </a-col>
-                    <!-- <a-col :lg="8" :md="12" :sm="24">
-                        <a-form-item :label="t('device.PrivateKey')" name="privateKey">
-                            <a-input v-model:value="searchFrom.privateKey"
-                                :placeholder='`${t("public.pleaseInput")}${t("device.PrivateKey")}`' />
-                        </a-form-item>
-                    </a-col> -->
+             
 
                     <a-col :lg="8" :md="12" :sm="24">
                         <a-form-item>
@@ -28,6 +23,57 @@
                     </a-col>
                 </a-row>
             </a-form>
+        </div> -->
+
+        <div class="table-nav">
+            <div class="search-style">
+                <a-dropdown>
+                    <a class="ant-dropdown-link" @click.prevent>
+                        <DownOutlined />
+                    </a>
+                    <template #overlay>
+                        <a-menu @click="handleMenuClick">
+                            <template v-for="(item, index) in searchFronModel" :key="item">
+                                <a-sub-menu v-if="item.children && item.children.length !== 0" :key="index"
+                                    :title="t(item.name)">
+                                    <a-menu-item v-for="el in item.children" :key="el">{{ t(el.name)
+                                        }}</a-menu-item>
+                                </a-sub-menu>
+                                <a-menu-item v-else :key="item">{{ t(item.name)
+                                    }}</a-menu-item>
+                            </template>
+                        </a-menu>
+                    </template>
+                </a-dropdown>
+                <div class="tags-style">
+                    <a-tag v-for="(item, index) in searchTags" :key="index" closable
+                        @close="() => searchTags.splice(index, 1)">
+                        <a-tooltip v-if="item.name === 'public.open' || item.name === 'public.close'">
+                            <template #title>{{ t('public.status') }}：{{ item.value ? '开启' : "关闭" }}</template>
+                            <span class="tags-style-text"> {{ t('public.status') }}：{{ item.value ? '开启' : "关闭"
+                                }}</span>
+                        </a-tooltip>
+                        <a-tooltip v-else>
+                            <template #title>{{ t(item.name) }}：{{ item.value }}</template>
+                            <span class="tags-style-text"> {{ t(item.name) }}：{{ item.value }}</span>
+                        </a-tooltip>
+                    </a-tag>
+                </div>
+                <div class="input-text" v-if="searchModelItem">{{ t(searchModelItem.name) }} :</div>
+                <a-input class="search-style-input" v-model:value="searchInputValue" :bordered="false"
+                    @pressEnter="onInputTag">
+                    <template #suffix>
+                        <SearchOutlined @click="onInputTag" />
+                    </template>
+                </a-input>
+            </div>
+            <a-button @click="on_search()" :icon="h(SearchOutlined)" type="primary">
+                {{ t('public.search') }}
+            </a-button>
+
+            <a-button @click="searchTags = []; on_search()" :icon="h(SyncOutlined)">
+                {{ t('public.reset') }}
+            </a-button>
         </div>
 
         <div class="table-style">
@@ -35,16 +81,34 @@
                 <a-space>
                     <a-button v-has="'/user/delete'" type="primary" @click="handleDelete(tableState.selectedRowKeys)"
                         :disabled="tableState.selectedRowKeys.length === 0" danger>{{
-                t('public.deleteInBatches') }}</a-button>
+                            t('public.deleteInBatches') }}</a-button>
                 </a-space>
                 <a-space>
                     <a-button v-has="'/user/create'" :icon="h(PlusOutlined)" @click="modelOpen = true" type="primary">{{
-                t('public.add')
-            }}</a-button>
+                            t('public.add')
+                        }}</a-button>
+                    <a-dropdown-button trigger='click'>
+                        {{ t('public.columnShow') }}
+                        <template #overlay>
+                            <a-menu>
+                                <a-checkbox-group v-model:value="columnsCheckboxArray" @change="changeColumnsCheckbox">
+                                    <div>
+                                        <template v-for="item in columnsData" :key="item.title">
+                                            <div class="table-style-columnsCheckbox" v-show="!item.noCancel">
+                                                <a-checkbox :value="item.dataIndex">
+                                                    {{ t(item.title) }}
+                                                </a-checkbox>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </a-checkbox-group>
+                            </a-menu>
+                        </template>
+                    </a-dropdown-button>
                 </a-space>
             </a-space>
 
-            <a-table :loading="tableLoading" rowKey="id" :columns="columns" :data-source="tableData"
+            <a-table :loading="tableLoading" rowKey="id" :columns="tableColumns" :data-source="tableData"
                 :pagination="paginationOpt"
                 :row-selection="{ selectedRowKeys: tableState.selectedRowKeys, onChange: onTableSelectChange }">
                 <template #headerCell="{ column }">
@@ -60,15 +124,15 @@
                             <a-button type="link" v-has="'/user/update'" @click="onRedact(record)">{{ t('public.redact')
                                 }}</a-button>
                             <a-button type="link" v-has="'/user/delete'" danger @click="handleDelete([record.id])">{{
-                t('public.delete')
-            }}</a-button>
+                            t('public.delete')
+                        }}</a-button>
                         </a-space>
                     </template>
                 </template>
-                <template #emptyText v-has="'/account/list'">
-                    <FrownOutlined class="no-limits-icon" />
-                    <div class="no-limits-icon">{{ t('public.nolimits') }}</div>
+                <template #emptyText v-if="!permsJudge('/account/list')">
+                    <tabNoPermissin />
                 </template>
+
             </a-table>
         </div>
         <a-modal v-model:open="modelOpen" :title="t('device.deviceAccount')"
@@ -100,7 +164,7 @@
                     <a-input-password v-model:value="formState.password" autocomplete="off"
                         :placeholder='`${t("public.pleaseInput")}${t("user.password")}`' />
                 </a-form-item>
-                <a-form-item :wrapper-col="{ offset: 4,}">
+                <a-form-item :wrapper-col="{ offset: 4, }">
                     <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
                 </a-form-item>
 
@@ -111,25 +175,18 @@
 
 <script setup lang="ts">
 import { useTableHooks } from "@/hooks/useTableHooks"
-import { ref, reactive, h } from 'vue';
+import { ref, reactive, h, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n'
-
+import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
 import { accountCreate, accountList, accountDelete, accountUpdate } from "@/api/admin"
-import { SearchOutlined, PlusOutlined, SyncOutlined, FrownOutlined } from '@ant-design/icons-vue';
+import { SearchOutlined, PlusOutlined, SyncOutlined, DownOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import dayjs from 'dayjs';
-type SearchType = {
-    username: string;
-    deviceId: number
-};
+import { SearchFronModel, } from "@/common/type/type"
+import { permsJudge } from "@/common/method/utils"
 const props = defineProps(['deviceId']);
 
-
-let searchFrom = reactive<SearchType>({
-    deviceId: props.deviceId,
-    username: "",
-});
-let { paginationOpt, tableData, searchFormRef, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: accountList, deleteApi: accountDelete });
+let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, on_search, fromreset, handleDelete, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox, onInputTag } = useTableHooks({ listApi: accountList, deleteApi: accountDelete });
 const { t } = useI18n()
 const id = ref<number | undefined>(undefined);
 type tableType = {
@@ -155,9 +212,10 @@ const formState = reactive<formStateType>({
     password: ""
 });
 
-const columns = [{
+const columnsData = [{
     title: 'device.deviceUsername',
     dataIndex: 'username',
+    noCancel: true
 }, {
     title: 'device.Protocol',
     dataIndex: 'protocol',
@@ -180,6 +238,16 @@ const columns = [{
     title: 'public.operation',
     dataIndex: 'operation',
 }]
+
+const searchFronModel: SearchFronModel[] = [
+    {
+        key: 'name',
+        name: "device.deviceUsername"
+    }
+]
+onMounted(() => {
+    initializeSearchTable(searchFronModel, columnsData, 'deviceUserColumnsStorage')
+})
 
 const onRedact = (record: tableType) => {
     for (const key in formState) {

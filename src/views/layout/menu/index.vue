@@ -31,7 +31,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { PieChartOutlined, } from '@ant-design/icons-vue';
 import logoIcon from "@/components/icon/logoIcon.vue"
 import { useStore } from 'vuex'
-import { routerType } from "@/utils/type/type"
+import { routerType } from "@/common/type/type"
 import { useI18n } from 'vue-i18n'
 defineProps<{
   collapsed: boolean,

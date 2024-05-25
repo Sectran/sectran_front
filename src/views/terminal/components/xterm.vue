@@ -25,8 +25,8 @@ import {
     sectermConnectRequest,
     sectermTeminalResize,
     sectermTeminalCharacters,
-} from "@/utils/method/proto";
-import { initSocket } from "@/utils/method/socket"
+} from "@/common/method/proto";
+import { initSocket } from "@/common/method/socket"
 
 const props = defineProps<{
     username: string;
