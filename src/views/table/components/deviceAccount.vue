@@ -132,10 +132,9 @@
                 <template #emptyText v-if="!permsJudge('/account/list')">
                     <tabNoPermissin />
                 </template>
-
             </a-table>
         </div>
-        <a-modal v-model:open="modelOpen" :title="t('device.deviceAccount')"
+        <a-modal v-model:open="modelOpen" :title="t('device.deviceAccount')" :footer="null"
             :after-close="() => { fromreset(submitFormRef); id = undefined }">
             <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
                 ref="submitFormRef" autocomplete="off" @finish="onFinish">
@@ -164,10 +163,14 @@
                     <a-input-password v-model:value="formState.password" autocomplete="off"
                         :placeholder='`${t("public.pleaseInput")}${t("user.password")}`' />
                 </a-form-item>
-                <a-form-item :wrapper-col="{ offset: 4, }">
-                    <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
-                </a-form-item>
-
+                <div class="pop-button">
+                    <a-button @click="() => { modelOpen = false }" class="search-button-right " tml-type="submit">
+                        {{ t('public.cancel') }}
+                    </a-button>
+                    <a-button type="primary" html-type="submit">
+                        {{ t('public.Submit') }}
+                    </a-button>
+                </div>
             </a-form>
         </a-modal>
     </div>

@@ -15,7 +15,7 @@
                 </a-dropdown>
                 <div class="tags-style">
                     <a-tag v-for="(item, index) in searchTags" :key="index" closable
-                        @close="() => searchTags.splice(index, 1)">
+                        @close="() => {searchTags.splice(index, 1);onSearch()}">
                         <a-tooltip>
                             <template #title>{{ t(item.name) }}：{{ item.value }}</template>
                             <span class="tags-style-text">{{ t(item.name) }}：{{ item.value }}</span>

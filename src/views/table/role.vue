@@ -24,7 +24,7 @@
                 </a-dropdown>
                 <div class="tags-style">
                     <a-tag v-for="(item, index) in searchTags" :key="index" closable
-                        @close="() => searchTags.splice(index, 1)">
+                        @close="() => { searchTags.splice(index, 1); on_search() }">
                         <a-tooltip v-if="item.name === 'public.open' || item.name === 'public.close'">
                             <template #title>{{ t('public.status') }}：{{ item.value ? '开启' : "关闭" }}</template>
                             <span class="tags-style-text"> {{ t('public.status') }}：{{ item.value ? '开启' : "关闭"
@@ -167,7 +167,7 @@ import { useI18n } from 'vue-i18n'
 import { ref, reactive, h, onMounted } from 'vue';
 import { useTableHooks } from "@/hooks/useTableHooks"
 import { listRole, addRole, editRole, deleteRole, updateAuthority, getMenu } from "@/api/admin"
-import { SearchOutlined, PlusOutlined, SyncOutlined ,DownOutlined} from '@ant-design/icons-vue';
+import { SearchOutlined, PlusOutlined, SyncOutlined, DownOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import limitsJson from "@/assets/json/limits.json"
 import { permsJudge } from "@/common/method/utils"
