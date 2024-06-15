@@ -144,7 +144,7 @@ function msag(err: { response: { status: number; data: { error: { details: strin
 function landing(data: { code: number, status: number | string; msg: string }) {
     let { code, msg } = data
     message.error(msg);
-    if (code === 401) {
+    if (code === 20004) {
         router.push('/')
     }
 }

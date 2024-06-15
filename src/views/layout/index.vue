@@ -1,18 +1,12 @@
 <template>
   <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
-
     <a-layout class="layout-style">
-
-
       <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible class="a-sider">
         <AsideMenu :collapsed="collapsed"></AsideMenu>
       </a-layout-sider>
       <a-layout>
         <Headers v-model:collapsed="collapsed"></Headers>
-  
-        <Tabs></Tabs>
-
-
+        <Tabs />
         <a-layout-content class="content-style ">
           <router-view v-slot="{ Component }">
             <template v-if="Component">

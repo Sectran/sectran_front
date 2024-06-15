@@ -94,4 +94,7 @@ const recursionMenu = (data: Router[]) => {
   padding: 0;
   margin: 0;
 }
+body{
+  min-height: 600px;
+}
 </style>

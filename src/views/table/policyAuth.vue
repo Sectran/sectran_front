@@ -74,6 +74,7 @@
 
 
         <a-modal v-model:open="addOpen" title="添加设备" :footer="null" :after-close="onCancel">
+            <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
             <a-form :model="formState" name="basic" ref="formRef" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
                 autocomplete="off" @finish="onFinish">
                 <a-form-item :label="t('device.deviceName')" name="name"
@@ -111,11 +112,15 @@
                     <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
                 </a-form-item>
             </a-form>
+        </a-watermark>
         </a-modal>
 
         <a-modal v-model:open="accountOpen" width="1000px" :title='deviceItem.deviceName' :footer="null"
             :destroyOnClose="true">
+            <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
+
             <deviceAccount :deviceId="deviceItem.deviceId" />
+        </a-watermark>
         </a-modal>
     </div>
 </template>
@@ -129,7 +134,8 @@ import type { FormInstance } from 'ant-design-vue';
 import deviceAccount from "./components/deviceAccount.vue"
 import { addDevice, deviceList, deleteDevice, updateDevice } from "@/api/admin"
 import { SearchOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons-vue';
-
+import { useStore } from 'vuex'
+const store = useStore()
 const { t } = useI18n()
 const formRef = ref<FormInstance>();
 type SearchType = {

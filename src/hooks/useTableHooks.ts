@@ -61,7 +61,10 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
     })
 
     //表单重置
-    const fromreset = (FormRef: any) => FormRef?.resetFields()
+    const fromreset = (FormRef: any) => {
+        console.log(FormRef)
+        FormRef?.resetFields()
+    } 
     onMounted(() => {
         let tableDom = document.querySelector('.table-style')
         if (tableDom) {
@@ -70,8 +73,6 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
         }
         requestList()
     })
-
-
 
     const on_search = () => {
         pageData.page = 1

@@ -24,8 +24,8 @@
                     <div class="Content-left-search">
                         <MenuUnfoldOutlined class="menu-icon" />
                         <div class="search-sty">
-                            <a-input  :bordered="false" placeholder="" />
-                           <SearchOutlined class="search-icon" />
+                            <a-input :bordered="false" placeholder="" />
+                            <SearchOutlined class="search-icon" />
                         </div>
                     </div>
                     <div class="Content-left-tree">
@@ -68,90 +68,85 @@
         </div>
 
         <a-modal v-model:open="connectOpen" title="链接 Linux" :footer="null" :width="800">
-            <a-form :model="connectFormState" name="basic" @finish="on_connectFinish" :label-col="{ span: 3 }"
-                :wrapper-col="{ span: 21 }" autocomplete="off">
-                <a-form-item label="登录方式" name="network">
-                    <a-radio-group v-model:value="connectFormState.network">
-                        <a-radio :value="1">手动登录</a-radio>
-                        <a-radio :value="2">自动登录</a-radio>
-                    </a-radio-group>
-                </a-form-item>
-                <template v-if="connectFormState.network === 1">
-                    <a-form-item label="认证方式" name="attestationType">
-                        <a-radio-group v-model:value="connectFormState.attestationType">
-                            <a-radio :value="1">密码认证</a-radio>
-                            <a-radio :value="2">SSH密钥认证</a-radio>
+            <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
+                <a-form :model="connectFormState" name="basic" @finish="on_connectFinish" :label-col="{ span: 3 }"
+                    :wrapper-col="{ span: 21 }" autocomplete="off">
+                    <a-form-item label="登录方式" name="network">
+                        <a-radio-group v-model:value="connectFormState.network">
+                            <a-radio :value="1">手动登录</a-radio>
+                            <a-radio :value="2">自动登录</a-radio>
                         </a-radio-group>
                     </a-form-item>
-
-                    <template v-if="connectFormState.attestationType === 1">
-                        <a-form-item label="账号" name="username" :rules="[
-        { required: true, message: 'Please input your username!' },
-    ]">
-                            <a-input v-model:value="connectFormState.username" />
+                    <template v-if="connectFormState.network === 1">
+                        <a-form-item label="认证方式" name="attestationType">
+                            <a-radio-group v-model:value="connectFormState.attestationType">
+                                <a-radio :value="1">密码认证</a-radio>
+                                <a-radio :value="2">SSH密钥认证</a-radio>
+                            </a-radio-group>
                         </a-form-item>
 
-                        <a-form-item label="密码" name="password" :rules="[
-        { required: true, message: 'Please input your password!' },
-    ]">
-                            <a-input-password v-model:value="connectFormState.password" />
-                        </a-form-item>
+                        <template v-if="connectFormState.attestationType === 1">
+                            <a-form-item label="账号" name="username"
+                                :rules="[{ required: true, message: 'Please input your username!' }]">
+                                <a-input v-model:value="connectFormState.username" />
+                            </a-form-item>
 
-
-                        <!-- <a-form-item name="remember" :wrapper-col="{ offset: 1, span: 16 }">
+                            <a-form-item label="密码" name="password"
+                                :rules="[{ required: true, message: 'Please input your password!' }]">
+                                <a-input-password v-model:value="connectFormState.password" />
+                            </a-form-item>
+                            <!-- <a-form-item name="remember" :wrapper-col="{ offset: 1, span: 16 }">
                             <a-checkbox v-model:checked="connectFormState.remember">记住我</a-checkbox>
                         </a-form-item> -->
-                    </template>
-
-                    <template v-else-if="connectFormState.attestationType === 2">
-                        <a-form-item label="用户名" name="username" :rules="[
-        { required: true, message: 'Please input your username!' },
-    ]">
-                            <a-input v-model:value="connectFormState.username" />
-                        </a-form-item>
-                        <a-form-item label="私钥" name="password" :rules="[
-        { required: true, message: 'Please input your username!' },
-    ]">
-                            <div>
-                                <div class="private-key">
-                                    <a-textarea class="textarea-style" :autosize="false"
-                                        v-model:value="connectFormState.password">
-                                    </a-textarea>
-                                    <a-form-item-rest>
-
-                                        <a-upload name="file" action="https://www.mocky.io/v2/5cc8019d300000980a055e76">
-                                            <a-button>
-                                                <upload-outlined></upload-outlined>
-                                            </a-button>
-                                        </a-upload>
-                                    </a-form-item-rest>
-                                    <div class="shibboleth-style">
-                                        <div class="shibboleth-text">
-                                            私钥口令：
-                                        </div>
+                        </template>
+                        <template v-else-if="connectFormState.attestationType === 2">
+                            <a-form-item label="用户名" name="username"
+                                :rules="[{ required: true, message: 'Please input your username!' }]">
+                                <a-input v-model:value="connectFormState.username" />
+                            </a-form-item>
+                            <a-form-item label="私钥" name="password"
+                                :rules="[{ required: true, message: 'Please input your username!' }]">
+                                <div>
+                                    <div class="private-key">
+                                        <a-textarea class="textarea-style" :autosize="false"
+                                            v-model:value="connectFormState.password">
+                                        </a-textarea>
                                         <a-form-item-rest>
-                                            <a-input class="shibboleth-input" v-model:value="connectFormState.password"
-                                                placeholder="Basic usage">
-                                                <template #prefix>
-                                                    <LockOutlined />
-                                                </template>
-                                            </a-input>
+
+                                            <a-upload name="file"
+                                                action="https://www.mocky.io/v2/5cc8019d300000980a055e76">
+                                                <a-button>
+                                                    <upload-outlined></upload-outlined>
+                                                </a-button>
+                                            </a-upload>
                                         </a-form-item-rest>
+                                        <div class="shibboleth-style">
+                                            <div class="shibboleth-text">
+                                                私钥口令：
+                                            </div>
+                                            <a-form-item-rest>
+                                                <a-input class="shibboleth-input"
+                                                    v-model:value="connectFormState.password" placeholder="Basic usage">
+                                                    <template #prefix>
+                                                        <LockOutlined />
+                                                    </template>
+                                                </a-input>
+                                            </a-form-item-rest>
+                                        </div>
+
                                     </div>
-
                                 </div>
-                            </div>
-                        </a-form-item>
+                            </a-form-item>
+                        </template>
                     </template>
-                </template>
-                <a-form-item :wrapper-col="{ offset: 0, span: 24 }">
-                    <a-button :loading="submitLoading" style="width: 100%" type="primary" html-type="submit">{{
-        t("public.Submit")
-                        }}</a-button>
-                </a-form-item>
+                    <a-form-item :wrapper-col="{ offset: 0, span: 24 }">
+                        <a-button :loading="submitLoading" style="width: 100%" type="primary" html-type="submit">
+                            {{ t("public.Submit") }}
+                        </a-button>
+                    </a-form-item>
 
-            </a-form>
-
+                </a-form>
+            </a-watermark>
             <!-- :loading="loading" -->
         </a-modal>
     </a-watermark>
@@ -176,6 +171,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
 import { resTable } from "@/common/type/type"
 import { MenuUnfoldOutlined } from '@ant-design/icons-vue';
+
 type MultiList = {
     name: string
     username: string
@@ -351,6 +347,7 @@ const connectResult = (modalState: boolean) => {
             height: 100%;
             padding: 20px 10px;
             box-sizing: border-box;
+
             ::v-deep(.ant-tree-list) {
                 background: #2f2a2a;
                 color: #ffffff;
@@ -360,6 +357,7 @@ const connectResult = (modalState: boolean) => {
                 display: flex;
                 justify-content: space-between;
                 height: 30px;
+
                 .menu-icon {
                     color: #ffffff;
                     font-size: 18px;

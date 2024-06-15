@@ -1,74 +1,76 @@
 <template>
     <!-- :scroll="{ y: 400 }" -->
 
-    <div   @mouseenter.stop="()=>console.log(1)" @mouseleave.stop="()=>console.log(2)">
+    <div @mouseenter.stop="() => console.log(1)" @mouseleave.stop="() => console.log(2)">
 
-   
 
-    <a-table :columns="columns" :data-source="list" class="components-table-demo-nested" ref="tableRef"
-        :pagination="false" :loading="loading" :showHeader="props.ifshowHeader" :indentSize="5"
-        :expandedRowKeys="expandedRowKeys" :customRow="rowClick"
-        
-      
-        >
-        <!-- bordered -->
-        <!--  -->
-        <template #headerCell="{ column }">
-            <span v-if="column && typeof column.title === 'string'">{{ t(column.title) }}</span>
-        </template>
-        <!-- index, indent, expanded -->
-        <template #expandedRowRender="{ record }">
-            <nested-table :columnsNameWinth="props.columnsNameWinth - 48" @departmentDelete="departmentDelete"
-                :superiorId="record.id" :ifshowHeader="false" />
-        </template>
-        <template #expandIcon="{ record }">
-            <template v-if="record.hasChildren">
-                <a-button style="width: 0;min-width:0" type="link" shape="circle" @click="expandRow(record.key)"
-                    :icon="h(expandedRowKeys.includes(record.key as never) ? MinusCircleOutlined : PlusCircleOutlined)" />
+
+        <a-table :columns="columns" :data-source="list" class="components-table-demo-nested" ref="tableRef"
+            :pagination="false" :loading="loading" :showHeader="props.ifshowHeader" :indentSize="5"
+            :expandedRowKeys="expandedRowKeys" :customRow="rowClick">
+            <!-- bordered -->
+            <!--  -->
+            <template #headerCell="{ column }">
+                <span v-if="column && typeof column.title === 'string'">{{ t(column.title) }}</span>
             </template>
-            <template v-else>
-                <span></span>
+            <!-- index, indent, expanded -->
+            <template #expandedRowRender="{ record }">
+                <nested-table :columnsNameWinth="props.columnsNameWinth - 48" @departmentDelete="departmentDelete"
+                    :superiorId="record.id" :ifshowHeader="false" />
             </template>
-        </template>
-        <template #bodyCell="{ column, record, index, text }">
-            <template v-if="column.dataIndex === 'name'">
-                <a width="200" href="javascript:;">{{ text }}</a>
+            <template #expandIcon="{ record }">
+                <template v-if="record.hasChildren">
+                    <a-button style="width: 0;min-width:0" type="link" shape="circle" @click="expandRow(record.key)"
+                        :icon="h(expandedRowKeys.includes(record.key as never) ? MinusCircleOutlined : PlusCircleOutlined)" />
+                </template>
+                <template v-else>
+                    <span></span>
+                </template>
             </template>
-            <template v-if="column.dataIndex === 'updatedAt'">
-                {{ dayjs(text).format("YYYY-MM-DD HH:mm:ss") }}
+            <template #bodyCell="{ column, record, index, text }">
+                <template v-if="column.dataIndex === 'name'">
+                    <a width="200" href="javascript:;">{{ text }}</a>
+                </template>
+                <template v-if="column.dataIndex === 'updatedAt'">
+                    {{ dayjs(text).format("YYYY-MM-DD HH:mm:ss") }}
+                </template>
+                <template v-if="column.dataIndex === 'operation'">
+                    <a-space :size="8">
+                        <a-button type="link" @click="onRedactDepartment(record)">{{ t('public.redact') }}</a-button>
+                        <a-button type="link" @click="onAddSubordinateDepartment(record)">
+                            {{ t('department.addSubordinateDepartment') }}
+                        </a-button>
+                        <a-button type="link" danger @click="onDelete(record, index)">{{ t('public.delete')
+                            }}</a-button>
+                    </a-space>
+                </template>
             </template>
-            <template v-if="column.dataIndex === 'operation'">
-                <a-space :size="8">
-                    <a-button type="link" @click="onRedactDepartment(record)">{{ t('public.redact') }}</a-button>
-                    <a-button type="link" @click="onAddSubordinateDepartment(record)">
-                        {{ t('department.addSubordinateDepartment') }}
-                    </a-button>
-                    <a-button type="link" danger @click="onDelete(record, index)">{{ t('public.delete') }}</a-button>
-                </a-space>
-            </template>
-        </template>
-    </a-table>
-</div>
+        </a-table>
+    </div>
     <a-modal v-model:open="openState" title="添加部门" :footer='null'
         :after-close="() => { submitFormRef?.resetFields(); id = undefined }">
-        <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }" ref="submitFormRef"
-            autocomplete="off" @finish="onFinish">
-            <a-form-item label="部门名称" name="name" :rules="[{ required: true, message: 'Please input your username!' }]">
-                <a-input v-model:value="formState.name" />
-            </a-form-item>
-            <a-form-item label="部门描述" name="description"
-                :rules="[{ required: true, message: 'Please input your password!' }]">
-                <a-input v-model:value="formState.description" />
-            </a-form-item>
-            <a-form-item label="部门位置" name="area" :rules="[{ required: true, message: 'Please input your password!' }]">
-                <!-- <a-input v-model:value="formState.area" /> -->
-                <a-cascader :fieldNames="{ label: 'name', value: 'name', children: 'children' }"
-                    v-model:value="formState.area" :options="TestJson" :show-search="{ filter }" />
-            </a-form-item>
-            <a-form-item :wrapper-col="{ offset: 6, span: 16 }">
-                <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
-            </a-form-item>
-        </a-form>
+        <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
+            <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
+                ref="submitFormRef" autocomplete="off" @finish="onFinish">
+                <a-form-item label="部门名称" name="name"
+                    :rules="[{ required: true, message: 'Please input your username!' }]">
+                    <a-input v-model:value="formState.name" />
+                </a-form-item>
+                <a-form-item label="部门描述" name="description"
+                    :rules="[{ required: true, message: 'Please input your password!' }]">
+                    <a-input v-model:value="formState.description" />
+                </a-form-item>
+                <a-form-item label="部门位置" name="area"
+                    :rules="[{ required: true, message: 'Please input your password!' }]">
+                    <!-- <a-input v-model:value="formState.area" /> -->
+                    <a-cascader :fieldNames="{ label: 'name', value: 'name', children: 'children' }"
+                        v-model:value="formState.area" :options="TestJson" :show-search="{ filter }" />
+                </a-form-item>
+                <a-form-item :wrapper-col="{ offset: 6, span: 16 }">
+                    <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
+                </a-form-item>
+            </a-form>
+        </a-watermark>
     </a-modal>
 </template>
 <script lang="ts" setup>
@@ -83,6 +85,8 @@ import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons-vue';
 import { Modal, message } from 'ant-design-vue';
 import TestJson from "@/assets/json/region.json";
 import type { ShowSearchType } from 'ant-design-vue/es/cascader';
+import { useStore } from 'vuex'
+const store = useStore()
 type Tableitem = {
     id: number
     key: number
@@ -221,7 +225,8 @@ const requestList = () => {
 }
 
 // let 
-const rowClick = (record: any, index: number) => {
+const rowClick = () => {
+    // record: any, index: number
     return {
         // onMouseenter: (event) => {
         //     console.log("移入")
