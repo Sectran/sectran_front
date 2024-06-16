@@ -60,6 +60,7 @@ router.beforeEach((to: { path: string }, { }: {}, next: Function) => {
     menu.forEach((item: Router) => {
       router.addRoute(item)
     })
+    console.log(menu)
     store.commit('router/amendMenuData', menu)
     return next({ ...to, replace: true })
   } else {
@@ -70,6 +71,7 @@ router.beforeEach((to: { path: string }, { }: {}, next: Function) => {
 //acquire menu
 const recursionMenu = (data: Router[]) => {
   const limitsData: string | null = JSON.parse(localStorage.getItem("limitsData") as string);
+  console.log(limitsData)
   let routerData: Router[] = []
   data.forEach((item: Router) => {
     if (item.children && item.children.length !== 0) {

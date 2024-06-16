@@ -86,7 +86,6 @@ const onFinish = (values: { account: string, password: string }) => {
             localStorage.setItem('limitsData', JSON.stringify(data))
             let routerUrl = data.find((item: string) => item.indexOf(":") !== -1)
             store.commit('router/amendMenuData', [])
-            console.log(`/admin/${routerUrl!.slice(1)}`)
             router.replace(`/admin/${routerUrl!.slice(1)}`)
             message.success("登录成功")
         })

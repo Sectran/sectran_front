@@ -134,7 +134,7 @@
         </div>
 
         <a-modal v-model:open="modelOpen" title="添加角色" :footer='null' :maskClosable="false"
-            :after-close="() => { fromreset(submitFormRef); id = undefined }">
+            :after-close="() => { fromreset(submitFormRef); id = undefined }" :forceRender="true">
             <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
                 <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
                     ref="submitFormRef" autocomplete="off" @finish="onFinish">

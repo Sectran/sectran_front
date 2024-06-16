@@ -98,7 +98,7 @@
             </a-table>
         </div>
         <a-modal v-model:open="openState" title="添加部门" :footer='null'
-            :after-close="() => { submitFormRef?.resetFields(); departmentId = undefined; editRecord = {} }">
+            :after-close="() => { submitFormRef?.resetFields(); departmentId = undefined; editRecord = {} }" :forceRender="true">
             <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
                 <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
                     ref="submitFormRef" autocomplete="off" @finish="onFinish">

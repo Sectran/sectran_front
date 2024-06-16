@@ -126,7 +126,7 @@
             </a-table>
         </div>
         <a-modal v-model:open="addRedactOpen" :title="t('user.addUser')" :footer="null"
-            :after-close="() => { fromreset(submitFormRef); id = undefined }">
+            :after-close="() => { fromreset(submitFormRef); id = undefined }" :forceRender="true">
             <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
                 <a-form :model="formState" name="basic" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }"
                     ref="submitFormRef" autocomplete="off" @finish="onFinish">
@@ -241,7 +241,7 @@ type formStateType = {
 }
 
 const addRedactOpen = ref<boolean>(false);
-const formState = reactive<formStateType>({
+let formState = reactive<formStateType>({
     name: "",
     account: "",
     password: "",
@@ -327,8 +327,6 @@ const handleSwitchChange = (value: any, record: formStateType) => {
     })
 }
 
-
-
 const departmentState = reactive({
     data: [],
     fetching: false,
@@ -353,6 +351,7 @@ const searchFun = debounce((value: string, State: any, api: Function, obj: any) 
 const onOperate = (record?: formStateType) => {
     let departmentName = ""
     let roleName = ""
+    addRedactOpen.value = true
     if (record) {
         departmentName = record.departmentName || ""
         roleName = record.roleName || ""
@@ -363,7 +362,7 @@ const onOperate = (record?: formStateType) => {
     setTimeout(function () {
         searchFun(roleName, roleState, listRole)
     }, 500);
-    addRedactOpen.value = true
+
 }
 const onFinish = () => {
     let api
@@ -372,9 +371,7 @@ const onFinish = () => {
         api = updateUser
         fromData = {
             id: id.value,
-            name: formState.name,
-            email: formState.email,
-            status: formState.status,
+            ...formState
         }
     } else {
         api = addUser
