@@ -22,7 +22,7 @@
                 </a-dropdown>
                 <div class="tags-style">
                     <a-tag v-for="(item, index) in searchTags" :key="index" closable
-                        @close="() => searchTags.splice(index, 1)">
+                        @close="() => { searchTags.splice(index, 1); on_search() }">
                         <a-tooltip v-if="item.name === 'public.open' || item.name === 'public.close'">
                             <template #title>{{ t('public.status') }}：{{ item.value ? '开启' : "关闭" }}</template>
                             <span class="tags-style-text"> {{ t('public.status') }}：{{ item.value ? '开启' : "关闭"
@@ -127,83 +127,83 @@
         </div>
         <a-modal v-model:open="addRedactOpen" :title="t('user.addUser')" :footer="null"
             :after-close="() => { fromreset(submitFormRef); id = undefined }">
-            <a-form :model="formState" name="basic" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }"
-                ref="submitFormRef" autocomplete="off" @finish="onFinish">
-                <template v-if="id === undefined">
-                    <a-form-item :label="t('user.account')" name="account"
+            <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
+                <a-form :model="formState" name="basic" :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }"
+                    ref="submitFormRef" autocomplete="off" @finish="onFinish">
+
+                    <a-form-item v-show="id === undefined" :label="t('user.account')" name="account"
                         :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.account')}` }]">
                         <a-input v-model:value="formState.account"
                             :placeholder='`${t("public.pleaseInput")}${t("user.account")}`' />
                     </a-form-item>
-                </template>
-                <a-form-item :label="t('user.mame')" name="name"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.mame')}` }]">
-                    <a-input v-model:value="formState.name"
-                        :placeholder='`${t("public.pleaseInput")}${t("user.mame")}`' />
-                </a-form-item>
 
-                <a-form-item :label="t('user.password')" name="password"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
-                    <a-input-password v-model:value="formState.password"
-                        :placeholder='`${t("public.pleaseInput")}${t("user.userName")}`' />
-                </a-form-item>
+                    <a-form-item :label="t('user.mame')" name="name"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.mame')}` }]">
+                        <a-input v-model:value="formState.name"
+                            :placeholder='`${t("public.pleaseInput")}${t("user.mame")}`' />
+                    </a-form-item>
 
-                <a-form-item :label="t('public.departmentName')" name="departmentId"
-                    :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('public.departmentName')}` }]">
-                    <a-select v-model:value="formState.departmentId"
-                        :placeholder='`${t("public.pleaseInput")}${t("public.departmentName")}`' style="width: 100%"
-                        :filter-option="false" :not-found-content="departmentState.fetching ? undefined : null"
-                        :options="departmentState.data"
-                        @search="(value: string) => searchFun(value, departmentState, listDepartment, { deep: 0, id: user.department_id })"
-                        show-search :field-names="{ label: 'name', value: 'id' }">
-                        <template v-if="departmentState.fetching" #notFoundContent>
-                            <a-spin size="small" />
-                        </template>
-                    </a-select>
-                </a-form-item>
-                <a-form-item :label="t('public.roleName')" name="roleId"
-                    :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('public.roleId')}` }]">
-                    <a-select v-model:value="formState.roleId"
-                        :placeholder='`${t("public.pleaseInput")}${t("public.roleName")}`' style="width: 100%"
-                        :filter-option="false" :not-found-content="roleState.fetching ? undefined : null"
-                        :options="roleState.data" @search="(value: string) => searchFun(value, roleState, listRole)"
-                        show-search :field-names="{ label: 'name', value: 'id' }">
-                        <template v-if="roleState.fetching" #notFoundContent>
-                            <a-spin size="small" />
-                        </template>
-                    </a-select>
-                </a-form-item>
+                    <a-form-item :label="t('user.password')" name="password"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
+                        <a-input-password v-model:value="formState.password" autocomplete
+                            :placeholder='`${t("public.pleaseInput")}${t("user.password")}`' />
+                    </a-form-item>
 
+                    <a-form-item :label="t('public.departmentName')" name="departmentId"
+                        :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('public.departmentName')}` }]">
+                        <a-select v-model:value="formState.departmentId"
+                            :placeholder='`${t("public.pleaseSelect")}${t("public.departmentName")}`'
+                            style="width: 100%" :filter-option="false"
+                            :not-found-content="departmentState.fetching ? undefined : null"
+                            :options="departmentState.data"
+                            @search="(value: string) => searchFun(value, departmentState, listDepartment, { deep: 0, id: user.department_id })"
+                            show-search :field-names="{ label: 'name', value: 'id' }">
+                            <template v-if="departmentState.fetching" #notFoundContent>
+                                <a-spin size="small" />
+                            </template>
+                        </a-select>
+                    </a-form-item>
+                    <a-form-item :label="t('public.roleName')" name="roleId"
+                        :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('public.roleId')}` }]">
+                        <a-select v-model:value="formState.roleId"
+                            :placeholder='`${t("public.pleaseSelect")}${t("public.roleName")}`' style="width: 100%"
+                            :filter-option="false" :not-found-content="roleState.fetching ? undefined : null"
+                            :options="roleState.data" @search="(value: string) => searchFun(value, roleState, listRole)"
+                            show-search :field-names="{ label: 'name', value: 'id' }">
+                            <template v-if="roleState.fetching" #notFoundContent>
+                                <a-spin size="small" />
+                            </template>
+                        </a-select>
+                    </a-form-item>
+                    <a-form-item :label="t('user.userState')" name="status"
+                        :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('user.userState')}` }]">
+                        <a-radio-group v-model:value="formState.status" name="radioGroup">
+                            <a-radio v-for="item in [{ value: true, name: '启用' }, { value: false, name: '禁用' }]"
+                                :key="item.value" :value="item.value">{{ item.name
+                                }}</a-radio>
+                        </a-radio-group>
+                    </a-form-item>
+                    <a-form-item :label="t('user.telephone')" name="phoneNumber">
+                        <a-input v-model:value="formState.phoneNumber"
+                            :placeholder='`${t("public.pleaseInput")}${t("user.telephone")}`' />
+                    </a-form-item>
 
-                <a-form-item :label="t('user.userState')" name="status"
-                    :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('user.userState')}` }]">
-                    <a-radio-group v-model:value="formState.status" name="radioGroup">
-                        <a-radio v-for="item in [{ value: true, name: '启用' }, { value: false, name: '禁用' }]"
-                            :key="item.value" :value="item.value">{{ item.name
-                            }}</a-radio>
-                    </a-radio-group>
-                </a-form-item>
-                <a-form-item :label="t('user.telephone')" name="phoneNumber">
-                    <a-input v-model:value="formState.phoneNumber"
-                        :placeholder='`${t("public.pleaseInput")}${t("user.telephone")}`' />
-                </a-form-item>
-
-                <a-form-item :label="t('user.usereEmail')" name="email">
-                    <a-input v-model:value="formState.email"
-                        :placeholder='`${t("public.pleaseInput")}${t("user.usereEmail")}`' />
-                </a-form-item>
-                <a-form-item :label="t('public.Description')" name="description">
-                    <a-textarea v-model:value="formState.description"
-                        :placeholder='`${t("public.pleaseInput")}${t("public.Description")}`' />
-                </a-form-item>
-                <div class="pop-button">
-                    <a-button @click="() => { addRedactOpen = false }" class="search-button-right " tml-type="submit">{{
+                    <a-form-item :label="t('user.usereEmail')" name="email">
+                        <a-input v-model:value="formState.email"
+                            :placeholder='`${t("public.pleaseInput")}${t("user.usereEmail")}`' />
+                    </a-form-item>
+                    <a-form-item :label="t('public.Description')" name="description">
+                        <a-textarea v-model:value="formState.description"
+                            :placeholder='`${t("public.pleaseInput")}${t("public.Description")}`' />
+                    </a-form-item>
+                    <div class="pop-button">
+                        <a-button @click="() => { addRedactOpen = false }" class="search-button-right "
+                            tml-type="submit">{{
                             t('public.cancel') }}</a-button>
-                    <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
-
-                </div>
-
-            </a-form>
+                        <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
+                    </div>
+                </a-form>
+            </a-watermark>
         </a-modal>
     </div>
 </template>
@@ -220,6 +220,8 @@ import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
 import { debounce } from 'lodash';
 import { SearchFronModel, } from "@/common/type/type"
 import { permsJudge } from "@/common/method/utils"
+import { useStore } from 'vuex'
+const store = useStore()
 let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, fromreset, handleDelete, onInputTag, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, operateTags, changeColumnsCheckbox, on_search } = useTableHooks({ listApi: listUser, deleteApi: deleteUser });
 const { t } = useI18n()
 const id = ref<number | undefined>(undefined);
@@ -228,10 +230,10 @@ type formStateType = {
     account: string
     password: string
     name: string
-    departmentId: number | string
+    departmentId: number | string | undefined
     status: boolean
     description: string
-    roleId: number | string
+    roleId: number | string | undefined
     email: string
     phoneNumber: string
     departmentName?: string
@@ -243,9 +245,9 @@ const formState = reactive<formStateType>({
     name: "",
     account: "",
     password: "",
-    departmentId: "",
+    departmentId: undefined,
     description: "",
-    roleId: "",
+    roleId: undefined,
     email: "",
     phoneNumber: "",
     status: true

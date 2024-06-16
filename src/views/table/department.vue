@@ -15,7 +15,7 @@
                 </a-dropdown>
                 <div class="tags-style">
                     <a-tag v-for="(item, index) in searchTags" :key="index" closable
-                        @close="() => searchTags.splice(index, 1)">
+                        @close="() => { searchTags.splice(index, 1); onSearch() }">
                         <a-tooltip>
                             <template #title>{{ t(item.name) }}：{{ item.value }}</template>
                             <span class="tags-style-text">{{ t(item.name) }}：{{ item.value }}</span>
@@ -72,7 +72,7 @@
             <!-- :scroll="{ y: 400 }" -->
             <a-table :key="tableKey" :columns="tableColumns" :data-source="tableList"
                 class="components-table-demo-nested" ref="tableRef" :pagination="false" :loading="loading" rowKey="id"
-                bordered :indentSize="10" @expand="expandTable" >
+                bordered :indentSize="10" @expand="expandTable">
                 <template #headerCell="{ column }">
                     <span v-if="column && typeof column.title === 'string'">{{ t(column.title) }}</span>
                 </template>
@@ -99,28 +99,33 @@
         </div>
         <a-modal v-model:open="openState" title="添加部门" :footer='null'
             :after-close="() => { submitFormRef?.resetFields(); departmentId = undefined; editRecord = {} }">
-            <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
-                ref="submitFormRef" autocomplete="off" @finish="onFinish">
-                <a-form-item :label="t('department.departmentName')" name="name"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('department.departmentName')}` }]">
-                    <a-input v-model:value="formState.name"
-                        :placeholder='`${t("public.pleaseInput")}${t("department.departmentName")}`' />
-                </a-form-item>
-                <a-form-item :label="t('department.departmentLocation')" name="area"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('department.departmentLocation')}` }]">
-                    <a-cascader :fieldNames="{ label: 'name', value: 'name', children: 'children' }"
-                        v-model:value="formState.area" :options="TestJson" :show-search="{ filter }"
-                        :placeholder='`${t("public.pleaseInput")}${t("department.departmentLocation")}`' />
-                </a-form-item>
-                <a-form-item :label="t('department.departmentDescribe')" name="description">
-                    <!-- :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('department.departmentDescribe')}` }]" -->
-                    <a-input v-model:value="formState.description"
-                        :placeholder='`${t("public.pleaseInput")}${t("department.departmentDescribe")}`' />
-                </a-form-item>
-                <a-form-item :wrapper-col="{ offset: 6, span: 16 }">
-                    <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
-                </a-form-item>
-            </a-form>
+            <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
+                <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
+                    ref="submitFormRef" autocomplete="off" @finish="onFinish">
+                    <a-form-item :label="t('department.departmentName')" name="name"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('department.departmentName')}` }]">
+                        <a-input v-model:value="formState.name"
+                            :placeholder='`${t("public.pleaseInput")}${t("department.departmentName")}`' />
+                    </a-form-item>
+                    <a-form-item :label="t('department.departmentLocation')" name="area"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('department.departmentLocation')}` }]">
+                        <a-cascader :fieldNames="{ label: 'name', value: 'name', children: 'children' }"
+                            v-model:value="formState.area" :options="TestJson" :show-search="{ filter }"
+                            :placeholder='`${t("public.pleaseInput")}${t("department.departmentLocation")}`' />
+                    </a-form-item>
+                    <a-form-item :label="t('department.departmentDescribe')" name="description">
+                        <!-- :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('department.departmentDescribe')}` }]" -->
+                        <a-input v-model:value="formState.description"
+                            :placeholder='`${t("public.pleaseInput")}${t("department.departmentDescribe")}`' />
+                    </a-form-item>
+                    <div class="pop-button">
+                        <a-button @click="() => { openState = false }" class="search-button-right " tml-type="submit">{{
+                            t('public.cancel') }}</a-button>
+                        <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
+                    </div>
+
+                </a-form>
+            </a-watermark>
         </a-modal>
     </div>
 </template>
@@ -137,6 +142,8 @@ import { Modal } from 'ant-design-vue';
 import TestJson from "@/assets/json/region.json";
 import type { ShowSearchType } from 'ant-design-vue/es/cascader';
 import { SearchFronModel, Columns } from "@/common/type/type"
+import { useStore } from 'vuex'
+const store = useStore()
 type Tableitem = {
     id: number
     key: number

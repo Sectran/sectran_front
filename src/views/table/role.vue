@@ -24,7 +24,7 @@
                 </a-dropdown>
                 <div class="tags-style">
                     <a-tag v-for="(item, index) in searchTags" :key="index" closable
-                        @close="() => searchTags.splice(index, 1)">
+                        @close="() => { searchTags.splice(index, 1); on_search() }">
                         <a-tooltip v-if="item.name === 'public.open' || item.name === 'public.close'">
                             <template #title>{{ t('public.status') }}：{{ item.value ? '开启' : "关闭" }}</template>
                             <span class="tags-style-text"> {{ t('public.status') }}：{{ item.value ? '开启' : "关闭"
@@ -127,8 +127,6 @@
                 <template #customFilterIcon="{ filtered }">
                     <search-outlined :style="{ color: filtered ? '#108ee9' : undefined }" />
                 </template>
-
-
                 <template #emptyText v-if="!permsJudge('/device/list')">
                     <tabNoPermissin />
                 </template>
@@ -137,26 +135,32 @@
 
         <a-modal v-model:open="modelOpen" title="添加角色" :footer='null' :maskClosable="false"
             :after-close="() => { fromreset(submitFormRef); id = undefined }">
-            <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 16 }"
-                ref="submitFormRef" autocomplete="off" @finish="onFinish">
-                <a-form-item label="角色名称" name="name"
-                    :rules="[{ required: true, message: 'Please input your username!' }]">
-                    <a-input v-model:value="formState.name" />
-                </a-form-item>
-                <a-form-item label="角色权重" name="weight"
-                    :rules="[{ required: true, message: 'Please input your password!' }]">
-                    <a-input-number class="w100" id="inputNumber" v-model:value="formState.weight" />
-                </a-form-item>
-                <a-form-item :wrapper-col="{ offset: 6, span: 16 }">
-                    <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
-                </a-form-item>
-            </a-form>
+            <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
+                <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
+                    ref="submitFormRef" autocomplete="off" @finish="onFinish">
+                    <a-form-item label="角色名称" name="name"
+                        :rules="[{ required: true, message: 'Please input your username!' }]">
+                        <a-input v-model:value="formState.name" />
+                    </a-form-item>
+                    <a-form-item label="角色权重" name="weight"
+                        :rules="[{ required: true, message: 'Please input your password!' }]">
+                        <a-input-number class="w100" id="inputNumber" v-model:value="formState.weight" />
+                    </a-form-item>
+                    <div class="pop-button">
+                        <a-button @click="() => { modelOpen = false }" class="search-button-right " tml-type="submit">{{
+                            t('public.cancel') }}</a-button>
+                        <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
+                    </div>
+                </a-form>
+            </a-watermark>
         </a-modal>
         <!-- :rowKey="(record: any, index: number) => record.path || index"  -->
         <a-modal v-model:open="limitsOpen" width="800px" :title="t('role.permissionlist')"
             :confirm-loading="limitsButtonLoading" @ok="limitsOnOk" :maskClosable="false">
-            <a-table :scroll="{ y: 500 }" :columns="limitsColumns" rowKey="path" :data-source="limitsJson"
-                :row-selection="rowSelection" />
+            <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
+                <a-table :scroll="{ y: 500 }" :columns="limitsColumns" rowKey="path" :data-source="limitsJson"
+                    :row-selection="rowSelection" />
+            </a-watermark>
         </a-modal>
 
     </div>
@@ -167,12 +171,14 @@ import { useI18n } from 'vue-i18n'
 import { ref, reactive, h, onMounted } from 'vue';
 import { useTableHooks } from "@/hooks/useTableHooks"
 import { listRole, addRole, editRole, deleteRole, updateAuthority, getMenu } from "@/api/admin"
-import { SearchOutlined, PlusOutlined, SyncOutlined ,DownOutlined} from '@ant-design/icons-vue';
+import { SearchOutlined, PlusOutlined, SyncOutlined, DownOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
 import limitsJson from "@/assets/json/limits.json"
 import { permsJudge } from "@/common/method/utils"
 import { SearchFronModel, } from "@/common/type/type"
 import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
+import { useStore } from 'vuex'
+const store = useStore()
 type FormState = {
     name: string
     weight: number

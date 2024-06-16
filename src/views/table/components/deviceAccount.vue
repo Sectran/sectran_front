@@ -132,43 +132,48 @@
                 <template #emptyText v-if="!permsJudge('/account/list')">
                     <tabNoPermissin />
                 </template>
-
             </a-table>
         </div>
-        <a-modal v-model:open="modelOpen" :title="t('device.deviceAccount')"
+        <a-modal v-model:open="modelOpen" :title="t('device.deviceAccount')" :footer="null"
             :after-close="() => { fromreset(submitFormRef); id = undefined }">
-            <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
-                ref="submitFormRef" autocomplete="off" @finish="onFinish">
-                <a-form-item :label="t('device.deviceUsername')" name="username"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceUsername')}` }]">
-                    <a-input v-model:value="formState.username"
-                        :placeholder='`${t("public.pleaseInput")}${t("device.deviceUsername")}`' />
-                </a-form-item>
-                <a-form-item :label="t('device.Protocol')" name="protocol"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.Protocol')}` }]">
-                    <a-input-number :min="1" :max="65535" v-model:value="formState.protocol" class="input-width100"
-                        :placeholder='`${t("public.pleaseInput")}${t("device.Protocol")}`' />
-                </a-form-item>
-                <a-form-item :label="t('device.PrivateKey')" name="privateKey"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.PrivateKey')}` }]">
-                    <a-input v-model:value="formState.privateKey"
-                        :placeholder='`${t("public.pleaseInput")}${t("device.PrivateKey")}`' />
-                </a-form-item>
-                <a-form-item :label="t('device.Port')" name="port"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.Port')}` }]">
-                    <a-input-number :min="1" v-model:value="formState.port" class="input-width100"
-                        :placeholder='`${t("public.pleaseInput")}${t("device.Port")}`' />
-                </a-form-item>
-                <a-form-item :label="t('user.password')" name="password"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
-                    <a-input-password v-model:value="formState.password" autocomplete="off"
-                        :placeholder='`${t("public.pleaseInput")}${t("user.password")}`' />
-                </a-form-item>
-                <a-form-item :wrapper-col="{ offset: 4, }">
-                    <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
-                </a-form-item>
-
-            </a-form>
+            <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
+                <a-form :model="formState" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
+                    ref="submitFormRef" autocomplete="off" @finish="onFinish">
+                    <a-form-item :label="t('device.deviceUsername')" name="username"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceUsername')}` }]">
+                        <a-input v-model:value="formState.username"
+                            :placeholder='`${t("public.pleaseInput")}${t("device.deviceUsername")}`' />
+                    </a-form-item>
+                    <a-form-item :label="t('device.Protocol')" name="protocol"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.Protocol')}` }]">
+                        <a-input-number :min="1" :max="65535" v-model:value="formState.protocol" class="input-width100"
+                            :placeholder='`${t("public.pleaseInput")}${t("device.Protocol")}`' />
+                    </a-form-item>
+                    <a-form-item :label="t('device.PrivateKey')" name="privateKey"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.PrivateKey')}` }]">
+                        <a-input v-model:value="formState.privateKey"
+                            :placeholder='`${t("public.pleaseInput")}${t("device.PrivateKey")}`' />
+                    </a-form-item>
+                    <a-form-item :label="t('device.Port')" name="port"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.Port')}` }]">
+                        <a-input-number :min="1" v-model:value="formState.port" class="input-width100"
+                            :placeholder='`${t("public.pleaseInput")}${t("device.Port")}`' />
+                    </a-form-item>
+                    <a-form-item :label="t('user.password')" name="password"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
+                        <a-input-password v-model:value="formState.password" autocomplete="off"
+                            :placeholder='`${t("public.pleaseInput")}${t("user.password")}`' />
+                    </a-form-item>
+                    <div class="pop-button">
+                        <a-button @click="() => { modelOpen = false }" class="search-button-right " tml-type="submit">
+                            {{ t('public.cancel') }}
+                        </a-button>
+                        <a-button type="primary" html-type="submit">
+                            {{ t('public.Submit') }}
+                        </a-button>
+                    </div>
+                </a-form>
+            </a-watermark>
         </a-modal>
     </div>
 </template>
@@ -184,6 +189,8 @@ import { message } from 'ant-design-vue';
 import dayjs from 'dayjs';
 import { SearchFronModel, } from "@/common/type/type"
 import { permsJudge } from "@/common/method/utils"
+import { useStore } from 'vuex'
+const store = useStore()
 const props = defineProps(['deviceId']);
 
 let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, on_search, fromreset, handleDelete, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox, onInputTag } = useTableHooks({ listApi: accountList, deleteApi: accountDelete });

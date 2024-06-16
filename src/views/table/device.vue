@@ -22,7 +22,7 @@
                 </a-dropdown>
                 <div class="tags-style">
                     <a-tag v-for="(item, index) in searchTags" :key="index" closable
-                        @close="() => searchTags.splice(index, 1)">
+                        @close="() => { searchTags.splice(index, 1); on_search() }">
                         <a-tooltip v-if="item.name === 'public.open' || item.name === 'public.close'">
                             <template #title>{{ t('public.status') }}：{{ item.value ? '开启' : "关闭" }}</template>
                             <span class="tags-style-text"> {{ t('public.status') }}：{{ item.value ? '开启' : "关闭"
@@ -50,7 +50,6 @@
                 {{ t('public.reset') }}
             </a-button>
         </div>
-
         <div class="table-style">
             <a-space class="mb8 flex-space-between-center">
                 <a-space>
@@ -59,7 +58,7 @@
                             t('public.deleteInBatches') }}</a-button>
                 </a-space>
                 <a-space>
-                    <a-button :icon="h(PlusOutlined)" @click="addRedactOpen = true" type="primary">{{ t('public.add')
+                    <a-button :icon="h(PlusOutlined)" @click="modelOpen = true" type="primary">{{ t('public.add')
                         }}</a-button>
                     <a-dropdown-button trigger='click'>
                         {{ t('public.columnShow') }}
@@ -108,42 +107,50 @@
                 </template>
             </a-table>
         </div>
-        <a-modal v-model:open="addRedactOpen" title="添加设备" :footer="null"
+        <a-modal v-model:open="modelOpen" title="添加设备" :footer="null"
             :after-close="() => { fromreset(submitFormRef); deviceId = undefined }">
-            <a-form :model="formState" name="basic" ref="submitFormRef" :label-col="{ span: 6 }"
-                :wrapper-col="{ span: 18 }" autocomplete="off" @finish="onFinish">
-                <a-form-item :label="t('device.deviceName')" name="name"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceName')}` }]">
-                    <a-input v-model:value="formState.name"
-                        :placeholder='`${t("public.pleaseInput")}${t("device.deviceName")}`' />
-                </a-form-item>
-                <a-form-item :label="t('device.deviceAddress')" name="host"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceAddress')}` }]">
-                    <a-input v-model:value="formState.host"
-                        :placeholder='`${t("public.pleaseInput")}${t("device.deviceAddress")}`' />
-                </a-form-item>
+            <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
+                <a-form :model="formState" name="basic" ref="submitFormRef" :label-col="{ span: 6 }"
+                    :wrapper-col="{ span: 18 }" autocomplete="off" @finish="onFinish">
+                    <a-form-item :label="t('device.deviceName')" name="name"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceName')}` }]">
+                        <a-input v-model:value="formState.name"
+                            :placeholder='`${t("public.pleaseInput")}${t("device.deviceName")}`' />
+                    </a-form-item>
+                    <a-form-item :label="t('device.deviceAddress')" name="host"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceAddress')}` }]">
+                        <a-input v-model:value="formState.host"
+                            :placeholder='`${t("public.pleaseInput")}${t("device.deviceAddress")}`' />
+                    </a-form-item>
 
-                <a-form-item :label="t('device.deviceOsKind')" name="type"
-                    :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('device.deviceOsKind')}` }]">
-                    <a-select v-model:value="formState.type" class="input-width100">
-                        <a-select-option v-for="item in  ['Linux', 'Windows']" :key="item" :value="item">{{ item
-                            }}</a-select-option>
-                    </a-select>
-                </a-form-item>
+                    <a-form-item :label="t('device.deviceOsKind')" name="type"
+                        :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('device.deviceOsKind')}` }]">
+                        <a-select v-model:value="formState.type" class="input-width100"
+                            :placeholder='`${t("public.pleaseSelect")}${t("device.deviceOsKind")}`'>
+                            <a-select-option v-for="item in  ['Linux', 'Windows']" :key="item" :value="item">{{ item
+                                }}</a-select-option>
+                        </a-select>
+                    </a-form-item>
 
 
-                <a-form-item :label="t('public.Description')" name="description"
-                    :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('public.Description')}` }]">
-                    <a-textarea v-model:value="formState.description"
-                        :placeholder='`${t("public.pleaseInput")}${t("public.Description")}`' />
-                </a-form-item>
-                <a-form-item :wrapper-col="{ offset: 4, span: 16 }">
-                    <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
-                </a-form-item>
-            </a-form>
+                    <a-form-item :label="t('public.Description')" name="description"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('public.Description')}` }]">
+                        <a-textarea v-model:value="formState.description"
+                            :placeholder='`${t("public.pleaseInput")}${t("public.Description")}`' />
+                    </a-form-item>
+                    <div class="pop-button">
+                        <a-button @click="() => { modelOpen = false }" class="search-button-right " tml-type="submit">{{
+                            t('public.cancel') }}</a-button>
+                        <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
+                    </div>
+          
+                </a-form>
+            </a-watermark>
         </a-modal>
         <a-modal v-model:open="accountOpen" width="1000px" :title='`${deviceItem.deviceName}设备账号`'>
-            <device-account :deviceId="deviceItem.deviceId" />
+            <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
+                <device-account :deviceId="deviceItem.deviceId" />
+            </a-watermark>
         </a-modal>
     </div>
 </template>
@@ -159,6 +166,8 @@ import { SearchOutlined, PlusOutlined, SyncOutlined, DownOutlined } from '@ant-d
 import { permsJudge } from "@/common/method/utils"
 import { SearchFronModel, } from "@/common/type/type"
 import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
+import { useStore } from 'vuex'
+const store = useStore()
 const { t } = useI18n()
 type SearchType = {
     name: string
@@ -168,18 +177,18 @@ type SearchType = {
 type formStateType = {
     id?: number
     department_id: Number | string
-    type: string
+    type: string | undefined
 } & SearchType
 
 
 let { paginationOpt, tableData, onInputTag, tableLoading, tableState, submitFormRef, onTableSelectChange, requestList, on_search, fromreset, handleDelete, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox } = useTableHooks({ listApi: deviceList, deleteApi: deleteDevice });
-const addRedactOpen = ref<boolean>(false);
+const modelOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({
     name: "",
     host: '',
     department_id: "",
     description: "",
-    type: ""
+    type: undefined
 });
 
 const columnsData = [{
@@ -231,7 +240,7 @@ const on_deviceAccount = (id: number, name: string) => {
 }
 let deviceId: number | undefined = undefined
 const on_redact = (data: formStateType) => {
-    addRedactOpen.value = true
+    modelOpen.value = true
     nextTick(() => {
         for (const key in formState) {
             formState[key] = data[key]
@@ -250,7 +259,7 @@ const onFinish = () => {
         paramFrom.department_id = user.department_id
     }
     api(paramFrom).then(() => {
-        addRedactOpen.value = false
+        modelOpen.value = false
         requestList()
     })
 };
