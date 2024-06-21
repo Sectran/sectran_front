@@ -14,27 +14,29 @@
                 </div>
                 <a-form :model="formState" layout="vertical" name="basic" :label-col="{ span: 8 }" autocomplete="off"
                     @finish="onFinish" @finishFailed="onFinishFailed">
-                    <!-- :label="uselocals('login.account')" -->
                     <a-form-item :rules="[{ required: true, message: uselocals('login.accountMessage') }]"
                         name="account">
-                        <a-input autocomplete class="input-heigth" v-model:value="formState.account"
-                            placeholder="请输入账号">
+                        <a-input autocomplete class="input-heigth" v-model:value="formState.account" >
+                       <!-- :placeholder="uselocals('login.accountMessage')"  -->
                             <template #prefix>
                                 <UserOutlined class="site-form-item-icon" />
                             </template>
                         </a-input>
                     </a-form-item>
-                    <!-- :label="uselocals('login.password')" -->
                     <a-form-item :rules="[{ required: true, message: uselocals('login.passwordMessage') }]"
                         name="password">
                         <a-input-password autocomplete class="input-heigth" v-model:value="formState.password"
-                            placeholder="请输入密码">
+                         >
+                         <!-- :placeholder="uselocals('login.passwordMessage')" -->
                             <template #prefix>
                                 <LockOutlined class="site-form-item-icon" />
                             </template>
                         </a-input-password>
                     </a-form-item>
-                    <a-form-item>
+                    <a-form-item name="remember"  class='pop-button'>
+                        <a-checkbox v-model:checked="formState.remember">{{t('login.record') }}</a-checkbox>
+                    </a-form-item>
+                    <a-form-item >
                         <a-button style="width: 100%;height: 40px;" type="primary" html-type="submit">
                             {{ uselocals('login.login') }}
                         </a-button>
@@ -48,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive ,onMounted} from 'vue';
 import { useStore } from 'vuex'
 import { uselocals } from "@/hooks/uselocalsHooks"
 import { useRouter } from 'vue-router';
@@ -56,25 +58,43 @@ import { login } from "@/api/login"
 import { getMenu } from "@/api/admin"
 import { message } from 'ant-design-vue';
 import logo from '@/assets/img/logo.png'
+import { useI18n } from 'vue-i18n';
 const store = useStore()
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
+const { t } = useI18n()
 const router = useRouter();
 interface FormState {
     account: string
     password: string
+    remember: boolean
 }
 
 const formState = reactive<FormState>({
     account: '',
     password: '',
+    remember: true
 });
 
-const onFinish = (values: { account: string, password: string }) => {
+onMounted(()=>{
+    let account = localStorage.getItem("toaccountken") || ""
+    let password = localStorage.getItem("password")|| ""
+    if(account && password) {
+        formState.account = account
+        formState.password = password
+    }
+})
+
+const onFinish = ( { account: string, password: string,remember:boolean }) => {
     // console.log('Success:', values);
     // let fromData = JSON.stringify({ password: values.password, username: values.account })
     // router.replace('/admin/user')
-    // return
-    let fromData = { password: values.password, username: values.account }
+    console.log(remember)
+    if(remember) {
+        localStorage.setItem('account',account)
+        localStorage.setItem('password', password)
+    }
+    return
+    let fromData = { password: password, username:account }
     login(fromData).then((res: { token: string, user: { name: string, role_id: number } }) => {
         let { token, user } = res
         let { role_id } = user
@@ -171,4 +191,4 @@ const onFinishFailed = (errorInfo: any) => {
 
 
 }
-</style>@/hooks/uselocalsHooks
+</style>

@@ -26,17 +26,16 @@
                 <!-- v-show="searchModelItem?.key === 'name' || searchModelItem?.key === 'description'" -->
                 <a-input class="search-style-input" v-model:value="searchInputValue" :bordered="false"
                     @pressEnter="onInputTag">
-                    <template #suffix>
+                    <!-- <template #suffix>
                         <SearchOutlined @click="onInputTag" />
-                    </template>
+                    </template> -->
                 </a-input>
                 <!-- <a-cascader class="search-style-input" v-show="searchModelItem?.key === 'area'"
                     v-model:value="searchcascaderValue" :bordered="false"
                     :fieldNames="{ label: 'name', value: 'name', children: 'children' }" :options="TestJson"
                     :show-search="{ filter }" @change="changeCascader" /> -->
             </div>
-
-            <a-button :icon="h(SearchOutlined)" @click="onSearch()" type="primary">
+            <a-button :icon="h(SearchOutlined)" @click="onInputTag" type="primary">
                 {{ t('public.search') }}
             </a-button>
             <a-button class="search-" @click="searchTags = []; onSearch()" :icon="h(SyncOutlined)">

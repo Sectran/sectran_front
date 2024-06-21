@@ -38,12 +38,13 @@
                 <div class="input-text" v-if="searchModelItem">{{ t(searchModelItem.name) }} :</div>
                 <a-input class="search-style-input" v-model:value="searchInputValue" :bordered="false"
                     @pressEnter="onInputTag">
-                    <template #suffix>
+                    <!-- <template #suffix>
                         <SearchOutlined @click="onInputTag" />
-                    </template>
+                    </template> -->
                 </a-input>
             </div>
-            <a-button @click="on_search()" :icon="h(SearchOutlined)" type="primary">
+            <!-- @click="on_search()" -->
+            <a-button @click="onInputTag" :icon="h(SearchOutlined)" type="primary">
                 {{ t('public.search') }}
             </a-button>
 
