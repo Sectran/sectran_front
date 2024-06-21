@@ -16,8 +16,8 @@
                     @finish="onFinish" @finishFailed="onFinishFailed">
                     <a-form-item :rules="[{ required: true, message: uselocals('login.accountMessage') }]"
                         name="account">
-                        <a-input autocomplete class="input-heigth" v-model:value="formState.account" >
-                       <!-- :placeholder="uselocals('login.accountMessage')"  -->
+                        <a-input autocomplete class="input-heigth" v-model:value="formState.account"
+                            :placeholder="uselocals('login.accountMessage')">
                             <template #prefix>
                                 <UserOutlined class="site-form-item-icon" />
                             </template>
@@ -26,17 +26,16 @@
                     <a-form-item :rules="[{ required: true, message: uselocals('login.passwordMessage') }]"
                         name="password">
                         <a-input-password autocomplete class="input-heigth" v-model:value="formState.password"
-                         >
-                         <!-- :placeholder="uselocals('login.passwordMessage')" -->
+                            :placeholder="uselocals('login.passwordMessage')">
                             <template #prefix>
                                 <LockOutlined class="site-form-item-icon" />
                             </template>
                         </a-input-password>
                     </a-form-item>
-                    <a-form-item name="remember"  class='pop-button'>
-                        <a-checkbox v-model:checked="formState.remember">{{t('login.record') }}</a-checkbox>
+                    <a-form-item name="remember" class='pop-button'>
+                        <a-checkbox v-model:checked="formState.remember">{{ t('login.record') }}</a-checkbox>
                     </a-form-item>
-                    <a-form-item >
+                    <a-form-item>
                         <a-button style="width: 100%;height: 40px;" type="primary" html-type="submit">
                             {{ uselocals('login.login') }}
                         </a-button>
@@ -50,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive ,onMounted} from 'vue';
+import { reactive, onMounted } from 'vue';
 import { useStore } from 'vuex'
 import { uselocals } from "@/hooks/uselocalsHooks"
 import { useRouter } from 'vue-router';
@@ -59,8 +58,8 @@ import { getMenu } from "@/api/admin"
 import { message } from 'ant-design-vue';
 import logo from '@/assets/img/logo.png'
 import { useI18n } from 'vue-i18n';
-const store = useStore()
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
+const store = useStore()
 const { t } = useI18n()
 const router = useRouter();
 interface FormState {
@@ -75,26 +74,27 @@ const formState = reactive<FormState>({
     remember: true
 });
 
-onMounted(()=>{
-    let account = localStorage.getItem("toaccountken") || ""
-    let password = localStorage.getItem("password")|| ""
-    if(account && password) {
+onMounted(() => {
+    let account = localStorage.getItem("account") || ""
+    let password = localStorage.getItem("password") || ""
+    if (account && password) {
         formState.account = account
         formState.password = password
     }
 })
 
-const onFinish = ( { account: string, password: string,remember:boolean }) => {
+const onFinish = (valus: { account: string, password: string, remember: boolean }) => {
     // console.log('Success:', values);
     // let fromData = JSON.stringify({ password: values.password, username: values.account })
     // router.replace('/admin/user')
-    console.log(remember)
-    if(remember) {
-        localStorage.setItem('account',account)
-        localStorage.setItem('password', password)
+    console.log(valus.remember)
+    if (valus.remember) {
+        console.log(1321)
+        localStorage.setItem('account', valus.account)
+        localStorage.setItem('password', valus.password)
     }
-    return
-    let fromData = { password: password, username:account }
+
+    let fromData = { password: valus.password, username: valus.account }
     login(fromData).then((res: { token: string, user: { name: string, role_id: number } }) => {
         let { token, user } = res
         let { role_id } = user

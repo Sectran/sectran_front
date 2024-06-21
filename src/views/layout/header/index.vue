@@ -2,6 +2,7 @@
     <a-layout-header class="flex-space-between-center header-style">
         <div class="header-letf">
             <menu-unfold-outlined v-if="collapsed" class="nav-icon" @click="on_icon(false)" />
+
             <menu-fold-outlined v-else class="nav-icon" @click="on_icon(true)" />
             <!-- <Breadcrumb>
                 <Breadcrumb.Item>Home</Breadcrumb.Item>
@@ -28,7 +29,8 @@
             <a-dropdown>
                 <a class="nav-right-space" @click.prevent>
                     <div class="theme-color-div"
-                        :style="{ 'background-color': store.state.globalConfiguration.colorPrimary }"></div>
+                        :style="{ 'background-color': store.state.globalConfiguration.colorPrimary }">
+                    </div>
                 </a>
                 <template #overlay>
                     <a-menu>
@@ -44,14 +46,31 @@
                 </template>
             </a-dropdown>
 
-            <a-avatar shape="square" class="nav-right-space">
-                <template #icon>
-                    <UserOutlined class="nav-icon" />
+            <a-dropdown>
+                <a-avatar shape="square" class="nav-right-space">
+                    <template #icon>
+                        <UserOutlined class="nav-icon" />
+                    </template>
+                </a-avatar>
+                <template #overlay>
+                    <a-menu>
+                        <!-- :class="{ optCalss: langSrt === item.lang }"  -->
+                        <!--  -->
+                        <a-menu-item v-for="item in themeColors" :key="item.color" @click='on_color(item)'>
+                            <div class="theme-color">
+                                
+                            </div>
+                        </a-menu-item>
+                    </a-menu>
                 </template>
-            </a-avatar>
+            </a-dropdown>
+
+
+
+
         </div>
     </a-layout-header>
-</template> 
+</template>
 
 <script setup lang="ts">
 import {
@@ -121,6 +140,7 @@ let themeColors: themeColorsType[] = [
         color: "rgb(114, 46, 209)"
     }
 ]
+
 
 
 onMounted(() => {

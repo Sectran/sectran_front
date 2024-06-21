@@ -58,7 +58,7 @@
                             t('public.deleteInBatches') }}</a-button>
                 </a-space>
                 <a-space>
-                    <a-button :icon="h(PlusOutlined)" @click="modelOpen = true" type="primary">{{ t('public.add')
+                    <a-button :icon="h(PlusOutlined)" @click="onOperate()" type="primary">{{ t('public.add')
                         }}</a-button>
                     <a-dropdown-button trigger='click'>
                         {{ t('public.columnShow') }}
@@ -90,7 +90,7 @@
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'operation'">
                         <a-space :size="8">
-                            <a-button type="link" @click="on_redact(record)">{{ t('public.redact') }}</a-button>
+                            <a-button type="link" @click="onOperate(record)">{{ t('public.redact') }}</a-button>
                             <a-button type="link" danger @click="handleDelete([record.id])">{{ t('public.delete')
                                 }}</a-button>
                             <a-button type="link" @click="on_deviceAccount(record.id, record.name)">{{
@@ -116,6 +116,20 @@
                         :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceName')}` }]">
                         <a-input v-model:value="formState.name"
                             :placeholder='`${t("public.pleaseInput")}${t("device.deviceName")}`' />
+                    </a-form-item>
+                    <a-form-item :label="t('public.departmentName')" name="departmentId"
+                        :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('public.departmentName')}` }]">
+                        <a-select v-model:value="formState.departmentId"
+                            :placeholder='`${t("public.pleaseSelect")}${t("public.departmentName")}`'
+                            style="width: 100%" :filter-option="false"
+                            :not-found-content="departmentState.fetching ? undefined : null"
+                            :options="departmentState.data"
+                            @search="(value: string) => searchFun(value, departmentState, listDepartment, { deep: 0, id: user.department_id })"
+                            show-search :field-names="{ label: 'name', value: 'id' }">
+                            <template v-if="departmentState.fetching" #notFoundContent>
+                                <a-spin size="small" />
+                            </template>
+                        </a-select>
                     </a-form-item>
                     <a-form-item :label="t('device.deviceAddress')" name="host"
                         :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceAddress')}` }]">
@@ -143,7 +157,7 @@
                             t('public.cancel') }}</a-button>
                         <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
                     </div>
-          
+
                 </a-form>
             </a-watermark>
         </a-modal>
@@ -157,16 +171,17 @@
 
 <script setup lang="ts">
 import { useTableHooks } from "@/hooks/useTableHooks"
-import { ref, reactive, h, nextTick, onMounted } from 'vue';
+import { ref, reactive, h, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n'
 // import type { Dayjs } from 'dayjs';
 import deviceAccount from "./components/deviceAccount.vue"
-import { addDevice, deviceList, deleteDevice, updateDevice } from "@/api/admin"
+import { addDevice, deviceList, deleteDevice, updateDevice, listDepartment } from "@/api/admin"
 import { SearchOutlined, PlusOutlined, SyncOutlined, DownOutlined } from '@ant-design/icons-vue';
 import { permsJudge } from "@/common/method/utils"
 import { SearchFronModel, } from "@/common/type/type"
 import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
 import { useStore } from 'vuex'
+import { debounce } from 'lodash';
 const store = useStore()
 const { t } = useI18n()
 type SearchType = {
@@ -178,9 +193,11 @@ type formStateType = {
     id?: number
     department_id: Number | string
     type: string | undefined
+    departmentId: number | string | undefined
+    departmentName?: string
 } & SearchType
 
-
+let user = JSON.parse(localStorage.getItem('user') as string);
 let { paginationOpt, tableData, onInputTag, tableLoading, tableState, submitFormRef, onTableSelectChange, requestList, on_search, fromreset, handleDelete, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox } = useTableHooks({ listApi: deviceList, deleteApi: deleteDevice });
 const modelOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({
@@ -188,7 +205,8 @@ const formState = reactive<formStateType>({
     host: '',
     department_id: "",
     description: "",
-    type: undefined
+    type: undefined,
+    departmentId: undefined,
 });
 
 const columnsData = [{
@@ -196,6 +214,9 @@ const columnsData = [{
     dataIndex: 'name',
     noCancel: true
 
+}, {
+    title: 'public.departmentName',
+    dataIndex: 'deptName',
 }, {
     title: 'device.deviceAddress',
     dataIndex: 'host',
@@ -226,6 +247,11 @@ const searchFronModel: SearchFronModel[] = [
         name: "public.Description"
     }
 ]
+
+const departmentState = reactive({
+    data: [],
+    fetching: false,
+});
 onMounted(() => {
     initializeSearchTable(searchFronModel, columnsData, 'deviceColumnsStorage')
 })
@@ -239,15 +265,28 @@ const on_deviceAccount = (id: number, name: string) => {
     accountOpen.value = true
 }
 let deviceId: number | undefined = undefined
-const on_redact = (data: formStateType) => {
+const onOperate = (record?: formStateType) => {
     modelOpen.value = true
-    nextTick(() => {
+    let departmentName = ""
+    if (record) {
+        departmentName = record.departmentName || ""
         for (const key in formState) {
-            formState[key] = data[key]
+            formState[key] = record[key]
         }
-    })
-    deviceId = data.id
+        deviceId = record.id
+    }
+    searchFun(departmentName, departmentState, listDepartment, { deep: 0, id: user.department_id });
 }
+
+const searchFun = debounce((value: string, State: any, api: Function, obj: any) => {
+    State.data = [];
+    State.fetching = true;
+    api({ page: 1, pageSize: 10, name: value, ...obj }).then((res: any) => {
+        let { data } = res.data
+        State.data = data;
+        State.fetching = false;
+    })
+}, 300);
 const onFinish = () => {
     let paramFrom = { ...formState }
     let api = addDevice
