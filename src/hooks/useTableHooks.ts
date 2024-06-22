@@ -71,13 +71,13 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
         requestList()
     })
 
-    const on_search = () => {
+    const on_search = (extraModelSearch?: object) => {
         pageData.page = 1
         searchFrom = {}
         searchTags.value.forEach((item: SearchFronModel) => {
             if (item.value !== "" || item.value !== undefined) searchFrom[item.key] = item.value
         })
-
+        if (extraModelSearch) for (const key in extraModelSearch) searchFrom[key] = extraModelSearch[key]
         requestList()
     }
     //请求接口
@@ -139,7 +139,6 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
         columnsStorageKey = columnsStorage
         // searchFronModel = searchFronModelData
         searchModelItem.value = searchFronModelData[0]
-        console.log(columnsDataSource)
         columnsData = columnsDataSource
         let columnsStorageJson = localStorage.getItem(columnsStorageKey) as string | null;
         if (columnsStorageJson) {
@@ -177,7 +176,7 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
                 ...Item,
                 value,
             }
-            console.log(tags)
+       
             if (tagsIndex !== -1) {
                 searchTags.value.splice(tagsIndex, 1, tags);
             } else {
@@ -187,7 +186,6 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
     }
 
     const changeColumnsCheckbox = () => {
-        console.log(columnsData);
         tableColumns.value = columnsData.filter((item: Columns) => columnsCheckboxArray.value.some((el: string) => el == item.dataIndex))
         localStorage.setItem(columnsStorageKey, JSON.stringify(columnsCheckboxArray.value));
     }

@@ -22,7 +22,7 @@
                 </a-dropdown>
                 <div class="tags-style">
                     <a-tag v-for="(item, index) in searchTags" :key="index" closable
-                        @close="() => { searchTags.splice(index, 1); on_search() }">
+                        @close="() => { searchTags.splice(index, 1); on_search(extraSearchModel) }">
                         <a-tooltip v-if="item.name === 'public.open' || item.name === 'public.close'">
                             <template #title>{{ t('public.status') }}：{{ item.value ? '开启' : "关闭" }}</template>
                             <span class="tags-style-text"> {{ t('public.status') }}：{{ item.value ? '开启' : "关闭"
@@ -42,11 +42,26 @@
                     </template> -->
                 </a-input>
             </div>
+
+            <a-select v-model:value="extraSearchModel.departmentId"
+                :placeholder='`${t("public.pleaseSelect")}${t("public.departmentName")}`' style="width: 300px"
+                :filter-option="false" :not-found-content="searchDepartmentState.fetching ? undefined : null"
+                :options="searchDepartmentState.data"
+                @search="(value: string) => searchFun(value, searchDepartmentState, listDepartment, { deep: 0, id: user.department_id })"
+                show-search :field-names="{ label: 'name', value: 'id' }"
+                @change="on_search(extraSearchModel)"  :allowClear="true"
+                >
+                <template v-if="searchDepartmentState.fetching" #notFoundContent>
+                    <a-spin size="small" />
+                </template>
+            </a-select>
+
+
             <a-button @click="onInputTag" :icon="h(SearchOutlined)" type="primary">
                 {{ t('public.search') }}
             </a-button>
 
-            <a-button @click="searchTags = []; on_search()" :icon="h(SyncOutlined)">
+            <a-button @click="searchTags = []; extraSearchReset(); on_search(extraSearchModel)" :icon="h(SyncOutlined)">
                 {{ t('public.reset') }}
             </a-button>
         </div>
@@ -188,10 +203,10 @@ type SearchType = {
     name: string
     host: string
     description: string
+    department_id?: Number | string
 };
 type formStateType = {
     id?: number
-    department_id: Number | string
     type: string | undefined
     departmentId: number | string | undefined
     departmentName?: string
@@ -203,11 +218,12 @@ const modelOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({
     name: "",
     host: '',
-    department_id: "",
     description: "",
     type: undefined,
     departmentId: undefined,
 });
+
+
 
 const columnsData = [{
     title: 'device.deviceName',
@@ -252,8 +268,24 @@ const departmentState = reactive({
     data: [],
     fetching: false,
 });
+const searchDepartmentState = reactive({
+    data: [],
+    fetching: false,
+});
+
+let extraSearchModel = {
+    departmentId: undefined
+}
+const extraSearchReset = () => {
+    extraSearchModel.departmentId = undefined
+    searchFun("", searchDepartmentState, listDepartment, { deep: 0, id: user.department_id });
+}
+
+
+
 onMounted(() => {
     initializeSearchTable(searchFronModel, columnsData, 'deviceColumnsStorage')
+    searchFun("", searchDepartmentState, listDepartment, { deep: 0, id: user.department_id });
 })
 
 const accountOpen = ref<boolean>(false);
@@ -261,7 +293,6 @@ const deviceItem = reactive<{ deviceName: string, deviceId: number }>({ deviceNa
 const on_deviceAccount = (id: number, name: string) => {
     deviceItem.deviceId = id
     deviceItem.deviceName = name
-    console.log(deviceItem.deviceName);
     accountOpen.value = true
 }
 let deviceId: number | undefined = undefined
@@ -290,12 +321,10 @@ const searchFun = debounce((value: string, State: any, api: Function, obj: any) 
 const onFinish = () => {
     let paramFrom = { ...formState }
     let api = addDevice
-    let user = JSON.parse(localStorage.getItem("user") as string)
+    // let user = JSON.parse(localStorage.getItem("user") as string)
     if (deviceId) {
         api = updateDevice
         paramFrom.id = deviceId
-    } else {
-        paramFrom.department_id = user.department_id
     }
     api(paramFrom).then(() => {
         modelOpen.value = false

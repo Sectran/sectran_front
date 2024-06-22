@@ -266,7 +266,6 @@ const onAddSubordinateDepartment = (record?: { parentDepartments: string, id: st
     openState.value = true
 }
 const onDelete = (record: Tableitem, index: Number) => {
-
     Modal.confirm({
         title: '确定要删除当前部门吗？',
         onOk() {

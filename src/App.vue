@@ -26,6 +26,7 @@ import { useI18n } from 'vue-i18n'
 import dayjs from 'dayjs';
 import { useStore } from 'vuex'
 import { Router } from "@/common/type/type"
+import { cloneDeep } from 'lodash';
 const { locale } = useI18n()
 const { defaultAlgorithm, darkAlgorithm, compactAlgorithm } = theme;
 let localeValue = ref<string>(locale.value)
@@ -55,12 +56,12 @@ router.beforeEach((to: { path: string }, { }: {}, next: Function) => {
     return next({ path: "/" })
   }
   if (store.state.router.menuData.length === 0) {
-    let menu = recursionMenu(layout)
+    let layouts = cloneDeep(layout)
+    let menu = recursionMenu(layouts)
     // let menu = layout
     menu.forEach((item: Router) => {
       router.addRoute(item)
     })
-    console.log(menu)
     store.commit('router/amendMenuData', menu)
     return next({ ...to, replace: true })
   } else {
@@ -71,7 +72,6 @@ router.beforeEach((to: { path: string }, { }: {}, next: Function) => {
 //acquire menu
 const recursionMenu = (data: Router[]) => {
   const limitsData: string | null = JSON.parse(localStorage.getItem("limitsData") as string);
-  console.log(limitsData)
   let routerData: Router[] = []
   data.forEach((item: Router) => {
     if (item.children && item.children.length !== 0) {

@@ -54,12 +54,8 @@
                 </a-avatar>
                 <template #overlay>
                     <a-menu>
-                        <!-- :class="{ optCalss: langSrt === item.lang }"  -->
-                        <!--  -->
-                        <a-menu-item v-for="item in themeColors" :key="item.color" @click='on_color(item)'>
-                            <div class="theme-color">
-                                
-                            </div>
+                        <a-menu-item >
+                            退出登录
                         </a-menu-item>
                     </a-menu>
                 </template>
@@ -140,8 +136,6 @@ let themeColors: themeColorsType[] = [
         color: "rgb(114, 46, 209)"
     }
 ]
-
-
 
 onMounted(() => {
     console.log('3.-组件挂载到页面之后执行-------onMounted,header')
