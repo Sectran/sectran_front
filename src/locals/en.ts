@@ -20,7 +20,8 @@ export default {
         mame: 'name',
         userState:"user state",
         usereEmail:'email',
-        telephone:'telephone'
+        telephone:'telephone',
+        CorrectPassword:'correct password'
     },
     department: {
         departmentName: 'name',

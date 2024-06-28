@@ -17,7 +17,8 @@ export default {
         mame: '用户名称',
         userState:"用户状态",
         usereEmail:'电子邮箱',
-        telephone:'手机号'
+        telephone:'手机号', 
+        CorrectPassword:'正确的密码'
     },
     department: {
         departmentName: '部门名称',

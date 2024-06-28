@@ -101,8 +101,7 @@
                             content: record[column.dataIndex],
                         });">
                             {{ record[column.dataIndex].length > 34 ? record[column.dataIndex].slice(0, 34) :
-                            record[column.dataIndex]
-                            }}
+                            record[column.dataIndex] }}
                         </div>
                     </template>
                     <template v-if="column.dataIndex === 'operation'">
@@ -144,8 +143,9 @@
                             :placeholder='`${t("public.pleaseInput")}${t("user.mame")}`' />
                     </a-form-item>
 
-                    <a-form-item :label="t('user.password')" name="password"
-                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
+                    <a-form-item :label="t('user.password')" name="password" :rules="[
+                            { required: id ? false : true, message: `${t('public.pleaseInput')}${t('user.password')}` },
+                            { validator: validatePass }]">
                         <a-input-password v-model:value="formState.password" autocomplete
                             :placeholder='`${t("public.pleaseInput")}${t("user.password")}`' />
                     </a-form-item>
@@ -216,7 +216,7 @@ import { useI18n } from 'vue-i18n'
 import Dayjs from 'dayjs';
 import { addUser, listUser, deleteUser, updateUser, listDepartment, listRole } from "@/api/admin"
 import { SearchOutlined, PlusOutlined, SyncOutlined, DownOutlined } from '@ant-design/icons-vue';
-import { message, Modal } from 'ant-design-vue';
+import {  Modal } from 'ant-design-vue';
 import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
 import { debounce } from 'lodash';
 import { SearchFronModel, } from "@/common/type/type"
@@ -342,7 +342,7 @@ let user = JSON.parse(localStorage.getItem('user') as string);
 const searchFun = debounce((value: string, State: any, api: Function, obj: any) => {
     State.data = [];
     State.fetching = true;
-    api({ page: 1, pageSize: 10, name: value, ...obj }).then((res: any) => {
+    api({ page: 1, pageSize: 5, name: value, ...obj }).then((res: any) => {
         let { data } = res.data
         State.data = data;
         State.fetching = false;
@@ -381,10 +381,23 @@ const onFinish = () => {
     api(fromData).then(() => {
         addRedactOpen.value = false
         requestList()
-        message.success(t('message.success'));
+        // message.success(t('message.success'));
     })
 };
 
+const validatePass = (rule: { message: string }, value: string,) => {
+    console.log(rule)
+    console.log(value)
+    if (value) {
+        let reg = /(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W])(?=.*[\S])^[0-9A-Za-z\S]{6,12}$/g;
+
+        if (!reg.test(value)) {
+            console.log(reg.test(value))
+            return Promise.reject(`${t("public.pleaseInput")}${t("user.CorrectPassword")}`);
+        }
+    }
+    return Promise.resolve();
+}
 </script>
 
 <style lang="less" scoped></style>
