@@ -164,7 +164,6 @@ const on_theme = () => {
     store.commit('globalConfiguration/alterTheme')
 }
 const on_terminal = () => {
-
     const url = router.resolve({
         path: '/terminal',
     });

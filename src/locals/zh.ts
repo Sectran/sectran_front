@@ -51,6 +51,7 @@ export default {
         PrivateKey:"私钥",
         PrivateKeyPassword:"key密码",
         bindAccount:"绑定账号",
+        CorrectDeviceAddress:"正确的设备地址"
     },
     role:{
         roleName:"角色名",

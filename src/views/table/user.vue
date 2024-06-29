@@ -216,7 +216,7 @@ import { useI18n } from 'vue-i18n'
 import Dayjs from 'dayjs';
 import { addUser, listUser, deleteUser, updateUser, listDepartment, listRole } from "@/api/admin"
 import { SearchOutlined, PlusOutlined, SyncOutlined, DownOutlined } from '@ant-design/icons-vue';
-import {  Modal } from 'ant-design-vue';
+import { Modal } from 'ant-design-vue';
 import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
 import { debounce } from 'lodash';
 import { SearchFronModel, } from "@/common/type/type"
@@ -385,9 +385,7 @@ const onFinish = () => {
     })
 };
 
-const validatePass = (rule: { message: string }, value: string,) => {
-    console.log(rule)
-    console.log(value)
+const validatePass = ({ }, value: string) => {
     if (value) {
         let reg = /(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W])(?=.*[\S])^[0-9A-Za-z\S]{6,12}$/g;
 

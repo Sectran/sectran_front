@@ -48,9 +48,8 @@
                 :filter-option="false" :not-found-content="searchDepartmentState.fetching ? undefined : null"
                 :options="searchDepartmentState.data"
                 @search="(value: string) => searchFun(value, searchDepartmentState, listDepartment, { deep: 0, id: user.department_id })"
-                show-search :field-names="{ label: 'name', value: 'id' }"
-                @change="on_search(extraSearchModel)"  :allowClear="true"
-                >
+                show-search :field-names="{ label: 'name', value: 'id' }" @change="on_search(extraSearchModel)"
+                :allowClear="true">
                 <template v-if="searchDepartmentState.fetching" #notFoundContent>
                     <a-spin size="small" />
                 </template>
@@ -147,7 +146,7 @@
                         </a-select>
                     </a-form-item>
                     <a-form-item :label="t('device.deviceAddress')" name="host"
-                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceAddress')}` }]">
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceAddress')}` }, { validator: validateDeviceAddress }]">
                         <a-input v-model:value="formState.host"
                             :placeholder='`${t("public.pleaseInput")}${t("device.deviceAddress")}`' />
                     </a-form-item>
@@ -332,6 +331,19 @@ const onFinish = () => {
         requestList()
     })
 };
+
+const validateDeviceAddress = ({ }, value: string) => {
+
+    if (value) {
+        let ipReg =  /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+        let urlReg =  /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/  
+        if (!ipReg.test(value) &&  !urlReg.test(value)) {
+            return Promise.reject(`${t("public.pleaseInput")}${t("user.CorrectDeviceAddress")}`);
+        }
+    }
+    return Promise.resolve();
+
+}
 
 </script>
 

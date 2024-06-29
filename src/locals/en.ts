@@ -13,27 +13,27 @@ export default {
         passwordMessage: `${inputPublicEn} your password!`,
     },
     user: {
-        addUser:"add user",
+        addUser: "add user",
         account: 'account',
-        userName:"userName",
+        userName: "userName",
         password: 'password',
         mame: 'name',
-        userState:"user state",
-        usereEmail:'email',
-        telephone:'telephone',
-        CorrectPassword:'correct password'
+        userState: "user state",
+        usereEmail: 'email',
+        telephone: 'telephone',
+        CorrectPassword: 'correct password'
     },
     department: {
         departmentName: 'name',
         departmentNamePlaceholder: `${inputPublicEn} department name`,
-        departmentId:"id",
+        departmentId: "id",
         departmentIdPlaceholder: `${inputPublicEn} department id`,
-        departmentDescribe:"describe",
-        departmentLocation:'location',
+        departmentDescribe: "describe",
+        departmentLocation: 'location',
         departmentLocationPlaceholder: `${inputPublicEn} department location`,
-        superiorDepartment:'superior department',
-        subordinateDepartment:'subordinate department',
-        addSubordinateDepartment:'add subordinate',
+        superiorDepartment: 'superior department',
+        subordinateDepartment: 'subordinate department',
+        addSubordinateDepartment: 'add subordinate',
         description: 'description',
         add_user: 'add_user'
     },
@@ -41,27 +41,28 @@ export default {
 
     device: {
         deviceName: 'deviceName',
-        deviceAddress:'deviceAddress',
-        deviceOsKind:'deviceOsKind',
-        deviceEncoding:'deviceEncoding',
-        deviceAccount :'deviceAccount',
-        deviceUsername:"设备账号名称",
-        Password:"password",
-        IsAdministrator:"isAdministrator",
-        Port:"port",
-        Protocol:"protocol",
-        PrivateKey:"PrivateKey",
-        PrivateKeyPassword:"privateKeyPassword",
-        bindAccount:"Bind account",
+        deviceAddress: 'deviceAddress',
+        deviceOsKind: 'deviceOsKind',
+        deviceEncoding: 'deviceEncoding',
+        deviceAccount: 'deviceAccount',
+        deviceUsername: "设备账号名称",
+        Password: "password",
+        IsAdministrator: "isAdministrator",
+        Port: "port",
+        Protocol: "protocol",
+        PrivateKey: "PrivateKey",
+        PrivateKeyPassword: "privateKeyPassword",
+        bindAccount: "Bind account",
+        CorrectDeviceAddress: "correct deviceAddress"
     },
 
     asideMenu: {
         userinfo: 'userinfo'
     },
-    role:{
-        roleName:"roleName",
-        roleWeight:"roleWeight",
-        permissionlist:'permission list'
+    role: {
+        roleName: "roleName",
+        roleWeight: "roleWeight",
+        permissionlist: 'permission list'
 
 
     },
@@ -74,29 +75,29 @@ export default {
         operation: 'operation',
         reset: "redact",
         search: "search",
-        creationTime:"creation time",
-        departmentID:'departmentID',
-        departmentName:'departmentName',
-        roleId:"role",
-        roleName:"roleName",
+        creationTime: "creation time",
+        departmentID: 'departmentID',
+        departmentName: 'departmentName',
+        roleId: "role",
+        roleName: "roleName",
 
-  
 
-        Description:'description',
-        pleaseInput:'please input',
-        pleaseSelect:`please select`,
-        creationDate:"creation date",
-        UpdateDate:"update date",
-        nolimits:"Temporarily without authority",
-        status:"status",
-        columnShow:"columnShow",
-        open:"open",
-        close:"close",
-        cancel:"cancel"
-        
+
+        Description: 'description',
+        pleaseInput: 'please input',
+        pleaseSelect: `please select`,
+        creationDate: "creation date",
+        UpdateDate: "update date",
+        nolimits: "Temporarily without authority",
+        status: "status",
+        columnShow: "columnShow",
+        open: "open",
+        close: "close",
+        cancel: "cancel"
+
     },
-    message:{
-        success:"operate successfully"
+    message: {
+        success: "operate successfully"
     },
     menu: {
         configuration: 'configuration',
@@ -104,10 +105,10 @@ export default {
         departmentAdmin: 'department admin',
         roleAdmin: "role admin",
         uploadingAdmin: "uploading admin",
-        deviceAdmin:"device admin",
+        deviceAdmin: "device admin",
     },
-    socket:{
-        error:"connection close",
+    socket: {
+        error: "connection close",
     }
 
 
