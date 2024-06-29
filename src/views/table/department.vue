@@ -266,6 +266,11 @@ const onAddSubordinateDepartment = (record?: { parentDepartments: string, id: st
     openState.value = true
 }
 const onDelete = (record: Tableitem, index: Number) => {
+    console.log(record)
+    console.log(index)
+    console.log(tableList.value)
+    tableList.value.splice(index, 1)
+    return
     Modal.confirm({
         title: '确定要删除当前部门吗？',
         onOk() {
@@ -284,7 +289,7 @@ const onDelete = (record: Tableitem, index: Number) => {
                     if (presentDepartmentsObj.children.length === 0) presentDepartmentsObj.children = undefined
                     console.log(presentDepartmentsObj)
                 } else {
-                    tableList.value.splice(index, 1)
+                 
                 }
 
             })

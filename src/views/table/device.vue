@@ -258,10 +258,11 @@ const searchFronModel: SearchFronModel[] = [
     }, {
         key: 'host',
         name: "device.deviceAddress"
-    }, {
-        key: 'description',
-        name: "public.Description"
-    }
+    },
+    //  {
+    //     key: 'description',
+    //     name: "public.Description"
+    // }
 ]
 
 const departmentState = reactive({
