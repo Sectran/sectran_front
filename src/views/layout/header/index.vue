@@ -53,8 +53,8 @@
                     </template>
                 </a-avatar>
                 <template #overlay>
-                    <a-menu>
-                        <a-menu-item >
+                    <a-menu @click="onMenu">
+                        <a-menu-item key="0">
                             退出登录
                         </a-menu-item>
                     </a-menu>
@@ -84,6 +84,8 @@ import { useI18n } from 'vue-i18n'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
+import type { MenuProps } from 'ant-design-vue';
+
 const { locale } = useI18n()
 const store = useStore()
 const router = useRouter();
@@ -169,6 +171,15 @@ const on_terminal = () => {
     window.open(url.href);
     // router.replace('/admin/user',)
 }
+
+const onMenu: MenuProps['onClick'] = ({ key }) => {
+    switch (key) {
+        case '0':
+            localStorage.removeItem("token")
+            router.replace({ path: '/' });
+            break;
+    }
+};
 </script>
 
 <style scoped lang="less">
