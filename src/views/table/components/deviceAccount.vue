@@ -201,6 +201,7 @@ type tableType = {
 } & formStateType
 
 type formStateType = {
+    [key: string]: any
     deviceId: Number | undefined
     username: string
     protocol: Number
@@ -257,9 +258,8 @@ onMounted(() => {
 })
 
 const onRedact = (record: tableType) => {
-    for (const key in formState) {
-        if (record[key]) formState[key] = record[key]
-    }
+    for (const key in formState) formState[key] = record[key]
+
     id.value = record.id
     modelOpen.value = true
 }

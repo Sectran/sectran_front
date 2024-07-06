@@ -145,7 +145,7 @@
 
                     <a-form-item :label="t('user.password')" name="password" :rules="[
                             { required: id ? false : true, message: `${t('public.pleaseInput')}${t('user.password')}` },
-                            { validator: validatePass }]">
+                            { validator: validatePass }]" :extra='`${t("public.passwordAstrict")}`'>
                         <a-input-password v-model:value="formState.password" autocomplete
                             :placeholder='`${t("public.pleaseInput")}${t("user.password")}`' />
                     </a-form-item>
@@ -227,6 +227,7 @@ let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTable
 const { t } = useI18n()
 const id = ref<number | undefined>(undefined);
 type formStateType = {
+    [key: string]: any
     id?: number | undefined
     account: string
     password: string

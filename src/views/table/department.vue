@@ -97,7 +97,8 @@
             </a-table>
         </div>
         <a-modal v-model:open="openState" title="添加部门" :footer='null'
-            :after-close="() => { submitFormRef?.resetFields(); departmentId = undefined; editRecord = {} }" :forceRender="true">
+            :after-close="() => { submitFormRef?.resetFields(); departmentId = undefined; editRecord = {} }"
+            :forceRender="true">
             <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
                 <a-form :model="formState" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
                     ref="submitFormRef" autocomplete="off" @finish="onFinish">
@@ -144,6 +145,7 @@ import { SearchFronModel, Columns } from "@/common/type/type"
 import { useStore } from 'vuex'
 const store = useStore()
 type Tableitem = {
+    [key: string]: any
     id: number
     key: number
     area: string
@@ -153,6 +155,7 @@ type Tableitem = {
 }
 
 interface FormState {
+    [key: string]: any
     id?: number
     area: string[]
     description: string
@@ -175,7 +178,7 @@ const formState = reactive<FormState>({
     name: "",
     parentDepartmentId: 1,
 });
-let searchFrom = reactive({
+let searchFrom = reactive<{ [key: string]: any }>({
     name: "",
     description: "",
     area: ""
@@ -266,32 +269,31 @@ const onAddSubordinateDepartment = (record?: { parentDepartments: string, id: st
     openState.value = true
 }
 const onDelete = (record: Tableitem, index: Number) => {
-    console.log(record)
-    console.log(index)
-    console.log(tableList.value)
-    tableList.value.splice(index, 1)
-    return
+
     Modal.confirm({
         title: '确定要删除当前部门吗？',
         onOk() {
             deleteDepartment({ ids: [record.id] }).then(() => {
                 let parentDepartmentsArr = record.parentDepartments.split(",")
+                parentDepartmentsArr.splice(0, 1)
                 if (parentDepartmentsArr.length > 1) {
                     let presentDepartmentsObj: any = {
                         children: tableList.value
                     }
+
                     for (let index = 0; index < parentDepartmentsArr.length; index++) {
                         if (index !== 0) {
                             presentDepartmentsObj = presentDepartmentsObj.children.find((item: Tableitem) => item.id === Number(parentDepartmentsArr[index]))
+                            console.log(presentDepartmentsObj)
                         }
                     }
+
                     presentDepartmentsObj.children.splice(presentDepartmentsObj.children.findIndex((item: Tableitem) => item.id === record.id), 1)
                     if (presentDepartmentsObj.children.length === 0) presentDepartmentsObj.children = undefined
                     console.log(presentDepartmentsObj)
                 } else {
-                 
+                    tableList.value.splice(index, 1)
                 }
-
             })
         },
         onCancel() { },

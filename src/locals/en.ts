@@ -80,9 +80,6 @@ export default {
         departmentName: 'departmentName',
         roleId: "role",
         roleName: "roleName",
-
-
-
         Description: 'description',
         pleaseInput: 'please input',
         pleaseSelect: `please select`,
@@ -93,8 +90,9 @@ export default {
         columnShow: "columnShow",
         open: "open",
         close: "close",
-        cancel: "cancel"
-
+        cancel: "cancel",
+        passwordAstrict:'The password requires uppercase letters, lowercase letters, special symbols, numbers, and at least 8 characters and no more than 16 characters！',
+        deviceAddressAstrict:'The device address supports only IPv4'
     },
     message: {
         success: "operate successfully"

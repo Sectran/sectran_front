@@ -43,7 +43,7 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
     //当前表格数据
     const tableData = ref([]);
     //搜索字段
-    let searchFrom = reactive({})
+    let searchFrom = reactive<{ [key: string]: any }>({})
     //分页参数
     const paginationOpt = reactive({
         current: 1,
@@ -71,7 +71,7 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
         requestList()
     })
 
-    const on_search = (extraModelSearch?: object) => {
+    const on_search = (extraModelSearch?: { [key: string]: any }) => {
         pageData.page = 1
         searchFrom = {}
         searchTags.value.forEach((item: SearchFronModel) => {
@@ -176,7 +176,7 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
                 ...Item,
                 value,
             }
-       
+
             if (tagsIndex !== -1) {
                 searchTags.value.splice(tagsIndex, 1, tags);
             } else {

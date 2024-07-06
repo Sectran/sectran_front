@@ -146,7 +146,8 @@
                         </a-select>
                     </a-form-item>
                     <a-form-item :label="t('device.deviceAddress')" name="host"
-                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceAddress')}` }, { validator: validateDeviceAddress }]">
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.deviceAddress')}` }, { validator: validateDeviceAddress }]"
+                        :extra='`${t("public.deviceAddressAstrict")}`'>
                         <a-input v-model:value="formState.host"
                             :placeholder='`${t("public.pleaseInput")}${t("device.deviceAddress")}`' />
                     </a-form-item>
@@ -205,6 +206,7 @@ type SearchType = {
     department_id?: Number | string
 };
 type formStateType = {
+    [key: string]: any
     id?: number
     type: string | undefined
     departmentId: number | string | undefined
@@ -301,9 +303,8 @@ const onOperate = (record?: formStateType) => {
     let departmentName = ""
     if (record) {
         departmentName = record.departmentName || ""
-        for (const key in formState) {
-            formState[key] = record[key]
-        }
+        for (const key in formState)  formState[key] = record[key]
+        
         deviceId = record.id
     }
     searchFun(departmentName, departmentState, listDepartment, { deep: 0, id: user.department_id });
@@ -335,10 +336,10 @@ const onFinish = () => {
 const validateDeviceAddress = ({ }, value: string) => {
 
     if (value) {
-        let ipReg =  /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-        let urlReg =  /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/  
-        if (!ipReg.test(value) &&  !urlReg.test(value)) {
-            return Promise.reject(`${t("public.pleaseInput")}${t("user.CorrectDeviceAddress")}`);
+        let ipReg = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+        // let urlReg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
+        if (!ipReg.test(value)) {
+            return Promise.reject(`${t("public.pleaseInput")}${t("device.CorrectDeviceAddress")}`);
         }
     }
     return Promise.resolve();

@@ -20,15 +20,16 @@
                 </a-dropdown>
             </div>
             <div class="Content-style">
-                <div class="Content-left">
+                <div class="Content-left " :class="[isSpread ? 'Content-left-lessen' : '',]">
                     <div class="Content-left-search">
-                        <MenuUnfoldOutlined class="menu-icon" />
-                        <div class="search-sty">
+                        <MenuUnfoldOutlined class="menu-icon" @click="isSpread = !isSpread" />
+                        <div class="search-sty" v-if="!isSpread">
                             <a-input :bordered="false" placeholder="" />
                             <SearchOutlined class="search-icon" />
                         </div>
                     </div>
-                    <div class="Content-left-tree">
+                    
+                    <div class="Content-left-tree" v-if="!isSpread">
                         <a-directory-tree multiple default-expand-all @select="on_node">
                             <a-tree-node :title="item.name" v-for="item in nodeArr" :key="item.id">
                             </a-tree-node>
@@ -186,6 +187,7 @@ type TableType = {
 
 const store = useStore()
 const { t } = useI18n();
+let isSpread = ref<boolean>(false);
 let connectOpen = ref<Boolean>(false);
 const submitLoading = ref<boolean>(false);
 const multiActiveKey = ref(1);
@@ -339,6 +341,10 @@ const connectResult = (modalState: boolean) => {
         height: calc(100vh - 40px);
         display: flex;
 
+        .Content-left-lessen {
+            width: 60px !important;
+        }
+
         .Content-left {
             width: 300px;
             background: #2f2a2a;
@@ -347,7 +353,7 @@ const connectResult = (modalState: boolean) => {
             height: 100%;
             padding: 20px 10px;
             box-sizing: border-box;
-
+            transition: width 0.3s;
             ::v-deep(.ant-tree-list) {
                 background: #2f2a2a;
                 color: #ffffff;

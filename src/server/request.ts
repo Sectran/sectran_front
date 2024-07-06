@@ -145,7 +145,7 @@ function landing(data: { code: number, status: number | string; msg: string }) {
     let { code, msg } = data
     message.error(msg);
     if (code === 20004) {
-        router.push('/')
+        // router.push('/')
     }
 }
 
