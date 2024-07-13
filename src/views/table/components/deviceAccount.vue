@@ -180,7 +180,7 @@
 
 <script setup lang="ts">
 import { useTableHooks } from "@/hooks/useTableHooks"
-import { ref, reactive, h, onMounted } from 'vue';
+import { ref, reactive, h, onMounted ,onBeforeMount} from 'vue';
 import { useI18n } from 'vue-i18n'
 import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
 import { accountCreate, accountList, accountDelete, accountUpdate } from "@/api/admin"
@@ -193,7 +193,7 @@ import { useStore } from 'vuex'
 const store = useStore()
 const props = defineProps(['deviceId']);
 
-let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, on_search, fromreset, handleDelete, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox, onInputTag } = useTableHooks({ listApi: accountList, deleteApi: accountDelete });
+let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, on_search, fromreset, handleDelete, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox, onInputTag ,closePaging} = useTableHooks({ listApi: accountList, deleteApi: accountDelete });
 const { t } = useI18n()
 const id = ref<number | undefined>(undefined);
 type tableType = {
@@ -253,7 +253,13 @@ const searchFronModel: SearchFronModel[] = [
         name: "device.deviceUsername"
     }
 ]
+onBeforeMount(()=>{
+    console.log(1)
+    // closePaging()
+})
 onMounted(() => {
+   
+  
     initializeSearchTable(searchFronModel, columnsData, 'deviceUserColumnsStorage')
 })
 

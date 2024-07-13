@@ -28,12 +28,29 @@
                             <SearchOutlined class="search-icon" />
                         </div>
                     </div>
-                    
+
                     <div class="Content-left-tree" v-if="!isSpread">
-                        <a-directory-tree multiple default-expand-all @select="on_node">
-                            <a-tree-node :title="item.name" v-for="item in nodeArr" :key="item.id">
+
+                        <a-tree :tree-data="treeData" :show-line="true">
+                            <!-- <template #icon><carry-out-outlined /></template>
+                            <template #title="{ dataRef }">
+                                <template v-if="dataRef.key === '0-0-0-1'">
+                                    <div>multiple line title</div>
+                                    <div>multiple line title</div>
+                                </template>
+                                <template v-else>{{ dataRef.title }}</template>
+                            </template>
+                            <template #switcherIcon="{ dataRef, defaultIcon }">
+                                <SmileTwoTone v-if="dataRef.key === '0-0-2'" />
+                                <component :is="defaultIcon" v-else />
+                            </template> -->
+                        </a-tree>
+
+                        <!-- @select="onSelect" -->
+                        <!-- <a-directory-tree multiple default-expand-all @select="onNode">
+                            <a-tree-node :title="item.name" v-for="item in treeData" :key="item.id">
                             </a-tree-node>
-                        </a-directory-tree>
+                        </a-directory-tree> -->
                     </div>
 
                 </div>
@@ -171,6 +188,7 @@ import xterm from "./components/xterm.vue"
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
 import { resTable } from "@/common/type/type"
+import type { TreeProps } from 'ant-design-vue';
 import { MenuUnfoldOutlined } from '@ant-design/icons-vue';
 
 type MultiList = {
@@ -193,25 +211,78 @@ const submitLoading = ref<boolean>(false);
 const multiActiveKey = ref(1);
 const soleKey = ref<number>(0);
 let multiList = ref<MultiList[]>([])
-let nodeArr = ref<TableType[]>([])
 let nodeTotal = ref<number>(0)
+const treeData: TreeProps['treeData'] = [
+    {
+        title: 'parent 1',
+        key: '0-0',
+        children: [
+            {
+                title: 'parent 1-0',
+                key: '0-0-0',
+                children: [
+                    {
+                        title: 'leaf',
+                        key: '0-0-0-0',
+                    },
+                    {
+                        title: 'leaf',
+                        key: '0-0-0-1',
+                    },
+                    {
+                        title: 'leaf',
+                        key: '0-0-0-2',
+                    },
+                ],
+            },
+            {
+                title: 'parent 1-1',
+                key: '0-0-1',
+                children: [
+                    {
+                        title: 'leaf',
+                        key: '0-0-1-0',
+                    },
+                ],
+            },
+            {
+                title: 'parent 1-2',
+                key: '0-0-2',
+                children: [
+                    {
+                        title: 'leaf',
+                        key: '0-0-2-0',
+                    },
+                    {
+                        title: 'leaf',
+                        key: '0-0-2-1',
+                    },
+                ],
+            },
+        ],
+    },
+];
+
 
 
 onMounted(() => {
+
+    // treeData.value = []
+
     // window.addEventListener("beforeunload", (e: any) => {
     //     e.returnValue = "您确定要离开吗？请确认是否保存您的更改。";
     //     e.preventDefault();
     // });
 
-    deviceList({ page: 1, pageSize: 10 }).then((res: { data: resTable<TableType[]> }) => {
-        console.log(res)
-        let { data, total } = res.data
-        nodeArr.value = data
-        nodeTotal.value = total
-    })
+    // deviceList({ page: 1, pageSize: 10 }).then((res: { data: resTable<TableType[]> }) => {
+    //     console.log(res)
+    //     let { data, total } = res.data
+    //     treeData.value = data
+    //     nodeTotal.value = total
+    // })
 });
 
-const on_node = () => {
+const onNode = () => {
     let username = localStorage.getItem('username');
     let password = localStorage.getItem('password');
     if (username && password) {
@@ -354,6 +425,7 @@ const connectResult = (modalState: boolean) => {
             padding: 20px 10px;
             box-sizing: border-box;
             transition: width 0.3s;
+
             ::v-deep(.ant-tree-list) {
                 background: #2f2a2a;
                 color: #ffffff;
