@@ -20,7 +20,8 @@
                 </a-dropdown>
             </div>
             <div class="Content-style">
-                <div class="Content-left " :class="[isSpread ? 'Content-left-lessen' : '',]">
+                <div class="Content-left " :style="{ width: `${leftWidth}px` }"
+                    :class="[isSpread ? 'Content-left-lessen' : '',  transitionClass ? 'transition-style' :'']">
                     <div class="Content-left-search">
                         <MenuUnfoldOutlined class="menu-icon" @click="isSpread = !isSpread" />
                         <div class="search-sty" v-if="!isSpread">
@@ -54,6 +55,8 @@
                     </div>
 
                 </div>
+                <div class="resize-style" @mousedown="mouseDown"></div>
+
                 <div class="Content-right">
                     <div class="xterm-div" v-if="multiList.length !== 0">
                         <a-tabs v-model:activeKey="multiActiveKey" hide-add type="editable-card" :forceRender="false"
@@ -176,7 +179,8 @@ import {
     onMounted,
     ref,
     reactive,
-    createVNode
+    createVNode,
+    onUnmounted
 } from "vue";
 import { useI18n } from "vue-i18n";
 import { headMenu } from "./menu.ts"
@@ -190,7 +194,7 @@ import { Modal } from 'ant-design-vue';
 import { resTable } from "@/common/type/type"
 import type { TreeProps } from 'ant-design-vue';
 import { MenuUnfoldOutlined } from '@ant-design/icons-vue';
-
+import { throttle } from 'lodash';
 type MultiList = {
     name: string
     username: string
@@ -207,11 +211,12 @@ const store = useStore()
 const { t } = useI18n();
 let isSpread = ref<boolean>(false);
 let connectOpen = ref<Boolean>(false);
-const submitLoading = ref<boolean>(false);
+const submitLoading = ref<Boolean>(false);
 const multiActiveKey = ref(1);
 const soleKey = ref<number>(0);
 let multiList = ref<MultiList[]>([])
 let nodeTotal = ref<number>(0)
+let transitionClass = ref<Boolean>(true)
 const treeData: TreeProps['treeData'] = [
     {
         title: 'parent 1',
@@ -266,7 +271,7 @@ const treeData: TreeProps['treeData'] = [
 
 
 onMounted(() => {
-
+    document.addEventListener('mouseup', handleMoveThrottled)
     // treeData.value = []
 
     // window.addEventListener("beforeunload", (e: any) => {
@@ -281,6 +286,33 @@ onMounted(() => {
     //     nodeTotal.value = total
     // })
 });
+
+onUnmounted(() => {
+    document.removeEventListener('mouseup', handleMoveThrottled)
+})
+let leftWidth = ref<number>(300);
+//拖动改变宽度
+// 鼠标移动事件，将鼠标指针相对于屏幕的 X 轴坐标赋值给需要动态变化的元素宽度
+const mouseMove = (event: any) => {
+    if (event.screenX > 200 && event.screenX < 500) leftWidth.value = event.screenX
+
+}
+// 鼠标按下事件
+const mouseDown = (event: any) => {
+    document.addEventListener('mousemove', mouseMove)
+    transitionClass.value = false
+    leftWidth.value = event.screenX
+}
+// 鼠标释放事件
+const mouseUp = () => {
+    transitionClass.value = true
+    const moveX = leftWidth.value > 500 ? 500 : leftWidth.value < 200 ? 200 : leftWidth.value
+    leftWidth.value = moveX
+    document.removeEventListener('mousemove', mouseMove)
+}
+// 鼠标释放节流事件
+const handleMoveThrottled = throttle(mouseUp, 0)
+
 
 const onNode = () => {
     let username = localStorage.getItem('username');
@@ -414,17 +446,20 @@ const connectResult = (modalState: boolean) => {
 
         .Content-left-lessen {
             width: 60px !important;
+
+        }
+
+        .transition-style {
+            transition: width 0.3s;
         }
 
         .Content-left {
-            width: 300px;
             background: #2f2a2a;
             display: flex;
             flex-direction: column;
             height: 100%;
             padding: 20px 10px;
             box-sizing: border-box;
-            transition: width 0.3s;
 
             ::v-deep(.ant-tree-list) {
                 background: #2f2a2a;
@@ -559,5 +594,12 @@ const connectResult = (modalState: boolean) => {
     display: inline-block;
     width: 250px;
     padding-right: 50px
+}
+
+.resize-style {
+    width: 2px;
+    background-color: #ffffff;
+    height: 100%;
+    cursor: w-resize;
 }
 </style>
