@@ -7,6 +7,7 @@ option go_package = "sectran_chard/secterm/v1;sectermv1";
 import "./chard_h5_nego.proto";
 import "./chard_h5_terminal.proto";
 import "./chard_h5_sftp.proto";
+import "./chard_h5_file.proto";
 
 //need write length(uint32 little endian) before send proto message
 message SectermMessage {

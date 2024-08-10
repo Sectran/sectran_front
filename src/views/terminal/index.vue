@@ -21,7 +21,7 @@
             </div>
             <div class="Content-style">
                 <div class="Content-left " :style="{ width: `${leftWidth}px` }"
-                    :class="[isSpread ? 'Content-left-lessen' : '',  transitionClass ? 'transition-style' :'']">
+                    :class="[isSpread ? 'Content-left-lessen' : '', transitionClass ? 'transition-style' : '']">
                     <div class="Content-left-search">
                         <MenuUnfoldOutlined class="menu-icon" @click="isSpread = !isSpread" />
                         <div class="search-sty" v-if="!isSpread">
@@ -63,7 +63,7 @@
                             @edit="onTabsEdit">
                             <a-tab-pane v-for="item in multiList" :key="item.key" :tab="item.name" :closable="true"
                                 class="tab-pane">
-                                <xterm @connectResult="connectResult" :submitLoading="submitLoading"
+                                <xterm @connectResult="connectResult" :submitLoading="submitLoading.valueOf"
                                     :username="item.username" :password="item.password" />
                             </a-tab-pane>
                             <template #rightExtra>
@@ -192,7 +192,7 @@ import xterm from "./components/xterm.vue"
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
 import { resTable } from "@/common/type/type"
-import type { TreeProps } from 'ant-design-vue';
+// import type { TreeProps } from 'ant-design-vue';
 import { MenuUnfoldOutlined } from '@ant-design/icons-vue';
 import { throttle } from 'lodash';
 type MultiList = {
@@ -217,7 +217,8 @@ const soleKey = ref<number>(0);
 let multiList = ref<MultiList[]>([])
 let nodeTotal = ref<number>(0)
 let transitionClass = ref<Boolean>(true)
-const treeData: TreeProps['treeData'] = [
+// TreeProps['treeData']
+const treeData = ref<any>([
     {
         title: 'parent 1',
         key: '0-0',
@@ -266,9 +267,7 @@ const treeData: TreeProps['treeData'] = [
             },
         ],
     },
-];
-
-
+]);
 
 onMounted(() => {
     document.addEventListener('mouseup', handleMoveThrottled)
@@ -279,12 +278,12 @@ onMounted(() => {
     //     e.preventDefault();
     // });
 
-    // deviceList({ page: 1, pageSize: 10 }).then((res: { data: resTable<TableType[]> }) => {
-    //     console.log(res)
-    //     let { data, total } = res.data
-    //     treeData.value = data
-    //     nodeTotal.value = total
-    // })
+    deviceList({ page: 1, pageSize: 10 }).then((res: { data: resTable<TableType[]> }) => {
+        console.log(res)
+        let { data, total } = res.data
+        treeData.value = data
+        nodeTotal.value = total
+    })
 });
 
 onUnmounted(() => {
@@ -314,15 +313,15 @@ const mouseUp = () => {
 const handleMoveThrottled = throttle(mouseUp, 0)
 
 
-const onNode = () => {
-    let username = localStorage.getItem('username');
-    let password = localStorage.getItem('password');
-    if (username && password) {
-        connectFormState.username = username
-        connectFormState.password = password
-    }
-    connectOpen.value = true;
-};
+// const onNode = () => {
+//     let username = localStorage.getItem('username');
+//     let password = localStorage.getItem('password');
+//     if (username && password) {
+//         connectFormState.username = username
+//         connectFormState.password = password
+//     }
+//     connectOpen.value = true;
+// };
 
 interface ConnectFormState {
     username: string;
