@@ -69,7 +69,6 @@ const initXterm = () => {
         _term.write("\r\n\x1b[33m$\x1b[0m ");
         term.selectLines(0, 0);
     };
-    //TODO:
     _term.onKey((e: any) => {
         if (e.key == "\x16") {
             navigator.clipboard.readText().then((clipText) => {

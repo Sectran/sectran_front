@@ -6,8 +6,7 @@ option go_package = "sectran_chard/secterm/v1;sectermv1";
 
 import "./chard_h5_nego.proto";
 import "./chard_h5_terminal.proto";
-import "./chard_h5_sftp.proto";
-import "./chard_h5_file.proto";
+import "./chard_file.proto";
 
 //need write length(uint32 little endian) before send proto message
 message SectermMessage {
@@ -20,15 +19,21 @@ message SectermMessage {
         SectermTerminalResize resize = 5;
         // terminale message 终端消息
         SectranTeminalCharacters characters = 6;
-        // sftp dir query info request 文件夹信息
-        SectermSftpDirectoryInfoRequest sftpInfoReq = 7;
-        // sftp file list response 文件列表相应
-        SectermSftpListInfoResponse sftpInfoRsp = 8;
-        // sftp file create request 文件创建请求
-        SectermSftpCreate sftpCreateReq = 9;
-        // sftp file move request 文件move操作请求
-        SectermSftpMove sftpMoveReq = 10;
-        // sftp file delete 文件删除请求
-        SectermSftpDelete sftpDelete = 11;
+        //文件查询请求
+        SectermFileListRequest file_list_req = 7;
+        //文件查询响应
+        SectermFileListResponse file_list_res = 8;
+        //文件移动/重命名请求
+        SectermFileMove file_mv = 9;
+        //文件删除请求
+        SectermFileDelete file_del_req = 11;
+        //文件/文件夹创建请求
+        SectermFileCreate file_create = 12;
+        //文件下载请求
+        SectermFileDownloadReq file_download_req = 14;
+        //文件上传请求
+        SectermFileUploadReq file_upload_req = 15;
+        //文件内容数据
+        SectermFileDataRes file_data = 16;
     }
 }

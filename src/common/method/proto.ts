@@ -74,6 +74,14 @@ export const sectermTeminalCharacters = (data: any, websocket: WebSocket) => {
     // websocket.send(uintArr);
     // websocket.send(charactersData);
 }
+
+/**
+ * 文件传输
+ */
+export const fileTransmit = (data:any, websocket: WebSocket) =>{
+    
+}
+
 /**
  * 目录查询
  * @param path 目录路径
@@ -162,10 +170,6 @@ export const SectermTeminaFileDownloadReq = (file: sectran_chard.secterm.v1.ISec
     // websocket.send(uintArr);
     // websocket.send(filePathData);
 }
-
-
-
-
 /**
  * websocket传输
  * @param data 数据
