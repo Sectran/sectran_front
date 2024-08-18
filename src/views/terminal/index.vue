@@ -20,29 +20,50 @@
                 </a-dropdown>
             </div>
             <div class="Content-style">
-                <div class="Content-left">
+                <div class="Content-left " :style="{ width: `${leftWidth}px` }"
+                    :class="[isSpread ? 'Content-left-lessen' : '', transitionClass ? 'transition-style' : '']">
                     <div class="Content-left-search">
-                        <MenuUnfoldOutlined class="menu-icon" />
-                        <div class="search-sty">
+                        <MenuUnfoldOutlined class="menu-icon" @click="isSpread = !isSpread" />
+                        <div class="search-sty" v-if="!isSpread">
                             <a-input :bordered="false" placeholder="" />
                             <SearchOutlined class="search-icon" />
                         </div>
                     </div>
-                    <div class="Content-left-tree">
-                        <a-directory-tree multiple default-expand-all @select="on_node">
-                            <a-tree-node :title="item.name" v-for="item in nodeArr" :key="item.id">
+
+                    <div class="Content-left-tree" v-if="!isSpread">
+
+                        <a-tree :tree-data="treeData" :show-line="true">
+                            <!-- <template #icon><carry-out-outlined /></template>
+                            <template #title="{ dataRef }">
+                                <template v-if="dataRef.key === '0-0-0-1'">
+                                    <div>multiple line title</div>
+                                    <div>multiple line title</div>
+                                </template>
+                                <template v-else>{{ dataRef.title }}</template>
+                            </template>
+                            <template #switcherIcon="{ dataRef, defaultIcon }">
+                                <SmileTwoTone v-if="dataRef.key === '0-0-2'" />
+                                <component :is="defaultIcon" v-else />
+                            </template> -->
+                        </a-tree>
+
+                        <!-- @select="onSelect" -->
+                        <!-- <a-directory-tree multiple default-expand-all @select="onNode">
+                            <a-tree-node :title="item.name" v-for="item in treeData" :key="item.id">
                             </a-tree-node>
-                        </a-directory-tree>
+                        </a-directory-tree> -->
                     </div>
 
                 </div>
+                <div class="resize-style" @mousedown="mouseDown"></div>
+
                 <div class="Content-right">
                     <div class="xterm-div" v-if="multiList.length !== 0">
                         <a-tabs v-model:activeKey="multiActiveKey" hide-add type="editable-card" :forceRender="false"
                             @edit="onTabsEdit">
                             <a-tab-pane v-for="item in multiList" :key="item.key" :tab="item.name" :closable="true"
                                 class="tab-pane">
-                                <xterm @connectResult="connectResult" :submitLoading="submitLoading"
+                                <xterm @connectResult="connectResult" :submitLoading="submitLoading.valueOf"
                                     :username="item.username" :password="item.password" />
                             </a-tab-pane>
                             <template #rightExtra>
@@ -158,7 +179,8 @@ import {
     onMounted,
     ref,
     reactive,
-    createVNode
+    createVNode,
+    onUnmounted
 } from "vue";
 import { useI18n } from "vue-i18n";
 import { headMenu } from "./menu.ts"
@@ -170,8 +192,9 @@ import xterm from "./components/xterm.vue"
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
 import { resTable } from "@/common/type/type"
+// import type { TreeProps } from 'ant-design-vue';
 import { MenuUnfoldOutlined } from '@ant-design/icons-vue';
-
+import { throttle } from 'lodash';
 type MultiList = {
     name: string
     username: string
@@ -186,16 +209,70 @@ type TableType = {
 
 const store = useStore()
 const { t } = useI18n();
+let isSpread = ref<boolean>(false);
 let connectOpen = ref<Boolean>(false);
-const submitLoading = ref<boolean>(false);
+const submitLoading = ref<Boolean>(false);
 const multiActiveKey = ref(1);
 const soleKey = ref<number>(0);
 let multiList = ref<MultiList[]>([])
-let nodeArr = ref<TableType[]>([])
 let nodeTotal = ref<number>(0)
-
+let transitionClass = ref<Boolean>(true)
+// TreeProps['treeData']
+const treeData = ref<any>([
+    {
+        title: 'parent 1',
+        key: '0-0',
+        children: [
+            {
+                title: 'parent 1-0',
+                key: '0-0-0',
+                children: [
+                    {
+                        title: 'leaf',
+                        key: '0-0-0-0',
+                    },
+                    {
+                        title: 'leaf',
+                        key: '0-0-0-1',
+                    },
+                    {
+                        title: 'leaf',
+                        key: '0-0-0-2',
+                    },
+                ],
+            },
+            {
+                title: 'parent 1-1',
+                key: '0-0-1',
+                children: [
+                    {
+                        title: 'leaf',
+                        key: '0-0-1-0',
+                    },
+                ],
+            },
+            {
+                title: 'parent 1-2',
+                key: '0-0-2',
+                children: [
+                    {
+                        title: 'leaf',
+                        key: '0-0-2-0',
+                    },
+                    {
+                        title: 'leaf',
+                        key: '0-0-2-1',
+                    },
+                ],
+            },
+        ],
+    },
+]);
 
 onMounted(() => {
+    document.addEventListener('mouseup', handleMoveThrottled)
+    // treeData.value = []
+
     // window.addEventListener("beforeunload", (e: any) => {
     //     e.returnValue = "您确定要离开吗？请确认是否保存您的更改。";
     //     e.preventDefault();
@@ -204,20 +281,47 @@ onMounted(() => {
     deviceList({ page: 1, pageSize: 10 }).then((res: { data: resTable<TableType[]> }) => {
         console.log(res)
         let { data, total } = res.data
-        nodeArr.value = data
+        treeData.value = data
         nodeTotal.value = total
     })
 });
 
-const on_node = () => {
-    let username = localStorage.getItem('username');
-    let password = localStorage.getItem('password');
-    if (username && password) {
-        connectFormState.username = username
-        connectFormState.password = password
-    }
-    connectOpen.value = true;
-};
+onUnmounted(() => {
+    document.removeEventListener('mouseup', handleMoveThrottled)
+})
+let leftWidth = ref<number>(300);
+//拖动改变宽度
+// 鼠标移动事件，将鼠标指针相对于屏幕的 X 轴坐标赋值给需要动态变化的元素宽度
+const mouseMove = (event: any) => {
+    if (event.screenX > 200 && event.screenX < 500) leftWidth.value = event.screenX
+
+}
+// 鼠标按下事件
+const mouseDown = (event: any) => {
+    document.addEventListener('mousemove', mouseMove)
+    transitionClass.value = false
+    leftWidth.value = event.screenX
+}
+// 鼠标释放事件
+const mouseUp = () => {
+    transitionClass.value = true
+    const moveX = leftWidth.value > 500 ? 500 : leftWidth.value < 200 ? 200 : leftWidth.value
+    leftWidth.value = moveX
+    document.removeEventListener('mousemove', mouseMove)
+}
+// 鼠标释放节流事件
+const handleMoveThrottled = throttle(mouseUp, 0)
+
+
+// const onNode = () => {
+//     let username = localStorage.getItem('username');
+//     let password = localStorage.getItem('password');
+//     if (username && password) {
+//         connectFormState.username = username
+//         connectFormState.password = password
+//     }
+//     connectOpen.value = true;
+// };
 
 interface ConnectFormState {
     username: string;
@@ -339,8 +443,16 @@ const connectResult = (modalState: boolean) => {
         height: calc(100vh - 40px);
         display: flex;
 
+        .Content-left-lessen {
+            width: 60px !important;
+
+        }
+
+        .transition-style {
+            transition: width 0.3s;
+        }
+
         .Content-left {
-            width: 300px;
             background: #2f2a2a;
             display: flex;
             flex-direction: column;
@@ -481,5 +593,12 @@ const connectResult = (modalState: boolean) => {
     display: inline-block;
     width: 250px;
     padding-right: 50px
+}
+
+.resize-style {
+    width: 2px;
+    background-color: #ffffff;
+    height: 100%;
+    cursor: w-resize;
 }
 </style>

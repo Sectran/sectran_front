@@ -43,6 +43,10 @@ declare module 'vue' {
     ATag: typeof import('ant-design-vue/es')['Tag']
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
+<<<<<<< HEAD
+=======
+    ATree: typeof import('ant-design-vue/es')['Tree']
+>>>>>>> 16e32f43a16af642c6775056160e8027d5ab1185
     ATreeNode: typeof import('ant-design-vue/es')['TreeNode']
     AUpload: typeof import('ant-design-vue/es')['Upload']
     AWatermark: typeof import('ant-design-vue/es')['Watermark']

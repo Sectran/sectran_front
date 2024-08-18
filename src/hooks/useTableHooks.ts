@@ -37,13 +37,15 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
     })
 
     //表格是否正在加载
-    const tableLoading = ref(false)
+    const tableLoading = ref<boolean>(false)
     const searchFormRef = ref<FormInstance>();
     const submitFormRef = ref<FormInstance>();
+    let isPaging = ref<boolean>(true)
+
     //当前表格数据
     const tableData = ref([]);
     //搜索字段
-    let searchFrom = reactive({})
+    let searchFrom = reactive<{ [key: string]: any }>({})
     //分页参数
     const paginationOpt = reactive({
         current: 1,
@@ -63,6 +65,7 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
     //表单重置
     const fromreset = (FormRef: any) => FormRef?.resetFields()
     onMounted(() => {
+        console.log(2)
         let tableDom = document.querySelector('.table-style')
         if (tableDom) {
             let Height = tableDom.getBoundingClientRect().height
@@ -71,7 +74,7 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
         requestList()
     })
 
-    const on_search = (extraModelSearch?: object) => {
+    const on_search = (extraModelSearch?: { [key: string]: any }) => {
         pageData.page = 1
         searchFrom = {}
         searchTags.value.forEach((item: SearchFronModel) => {
@@ -83,10 +86,11 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
     //请求接口
     const requestList = () => {
         tableLoading.value = true
-        let fromData = { ...pageData, ...searchFrom }
+        let fromData = { ...searchFrom }
+        console.log(isPaging.value)
+        if (isPaging.value) fromData = { ...pageData, ...fromData }
         requestApi.listApi(fromData).then((res: resTable<any>) => {
             let { data, total } = res.data
-
             tableLoading.value = false
             tableData.value = tableDataHandle(data)
             paginationOpt.total = total
@@ -161,8 +165,8 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
             on_search()
         }
     }
-
-
+    //关闭当前分页
+    const closePaging = () => isPaging.value = false
 
     /**
      * 操作tags
@@ -176,7 +180,7 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
                 ...Item,
                 value,
             }
-       
+
             if (tagsIndex !== -1) {
                 searchTags.value.splice(tagsIndex, 1, tags);
             } else {
@@ -204,6 +208,7 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
         on_search,
         requestList,
         handleDelete,
+        closePaging,
         //查询
         onInputTag,
         operateTags,

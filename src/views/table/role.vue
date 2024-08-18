@@ -180,6 +180,7 @@ import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
 import { useStore } from 'vuex'
 const store = useStore()
 type FormState = {
+    [key: string]: any
     name: string
     weight: number
 }
