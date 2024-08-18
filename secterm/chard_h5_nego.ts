@@ -20,7 +20,8 @@ export namespace sectran_chard {
             /** SectermProtocols enum. */
             enum SectermProtocols {
                 SECTERM_SSH = 0,
-                SECTERM_TELNET = 1
+                SECTERM_TELNET = 1,
+                SECTERM_SFTP = 2
             }
 
             /** Properties of a SectermCredentialPrivateKey. */

@@ -58,11 +58,13 @@ export const sectran_chard = $root.sectran_chard = (() => {
              * @enum {number}
              * @property {number} SECTERM_SSH=0 SECTERM_SSH value
              * @property {number} SECTERM_TELNET=1 SECTERM_TELNET value
+             * @property {number} SECTERM_SFTP=2 SECTERM_SFTP value
              */
             v1.SectermProtocols = (function() {
                 const valuesById = {}, values = Object.create(valuesById);
                 values[valuesById[0] = "SECTERM_SSH"] = 0;
                 values[valuesById[1] = "SECTERM_TELNET"] = 1;
+                values[valuesById[2] = "SECTERM_SFTP"] = 2;
                 return values;
             })();
 
@@ -874,6 +876,7 @@ export const sectran_chard = $root.sectran_chard = (() => {
                             return "protocol: enum value expected";
                         case 0:
                         case 1:
+                        case 2:
                             break;
                         }
                     return null;
@@ -953,6 +956,10 @@ export const sectran_chard = $root.sectran_chard = (() => {
                     case "SECTERM_TELNET":
                     case 1:
                         message.protocol = 1;
+                        break;
+                    case "SECTERM_SFTP":
+                    case 2:
+                        message.protocol = 2;
                         break;
                     }
                     return message;
