@@ -1,5 +1,6 @@
 <template>
     <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
+      
         <div class="configuration-style">
             <div class="configuration-nav">
                 <a-dropdown v-for="(item, itemIndex) in headMenu">
@@ -32,8 +33,8 @@
 
                     <div class="Content-left-tree" v-if="!isSpread">
 
-                        <a-tree :tree-data="treeData" :show-line="true">
-                            <!-- <template #icon><carry-out-outlined /></template>
+                        <!-- <a-tree :tree-data="treeData" :show-line="true">
+                            <template #icon><carry-out-outlined /></template>
                             <template #title="{ dataRef }">
                                 <template v-if="dataRef.key === '0-0-0-1'">
                                     <div>multiple line title</div>
@@ -44,8 +45,8 @@
                             <template #switcherIcon="{ dataRef, defaultIcon }">
                                 <SmileTwoTone v-if="dataRef.key === '0-0-2'" />
                                 <component :is="defaultIcon" v-else />
-                            </template> -->
-                        </a-tree>
+                            </template>
+                        </a-tree> -->
 
                         <!-- @select="onSelect" -->
                         <!-- <a-directory-tree multiple default-expand-all @select="onNode">
@@ -270,13 +271,15 @@ const treeData = ref<any>([
 ]);
 
 onMounted(() => {
-    document.addEventListener('mouseup', handleMoveThrottled)
-    // treeData.value = []
 
-    // window.addEventListener("beforeunload", (e: any) => {
-    //     e.returnValue = "您确定要离开吗？请确认是否保存您的更改。";
-    //     e.preventDefault();
-    // });
+
+    document.addEventListener('mouseup', handleMoveThrottled)
+    treeData.value = []
+
+    window.addEventListener("beforeunload", (e: any) => {
+        e.returnValue = "您确定要离开吗？请确认是否保存您的更改。";
+        e.preventDefault();
+    });
 
     deviceList({ page: 1, pageSize: 10 }).then((res: { data: resTable<TableType[]> }) => {
         console.log(res)
@@ -285,6 +288,12 @@ onMounted(() => {
         nodeTotal.value = total
     })
 });
+
+
+
+
+
+
 
 onUnmounted(() => {
     document.removeEventListener('mouseup', handleMoveThrottled)

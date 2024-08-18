@@ -78,7 +78,13 @@ export const sectermTeminalCharacters = (data: any, websocket: WebSocket) => {
 /**
  * 文件传输
  */
-export const fileTransmit = (data:any, websocket: WebSocket) =>{
+export const sectermFileuploading = (data:any, websocket: WebSocket) =>{
+    let sectermMessage = new v1.SectermMessage();
+    let fileData = new v1.SectermFileDataRes()
+    fileData = data
+    sectermMessage.fileData = fileData;
+    let fileUploadingData = v1.SectermMessage.encode(sectermMessage).finish();
+    transmitWebSocket(fileUploadingData, websocket)
     
 }
 
@@ -170,6 +176,10 @@ export const SectermTeminaFileDownloadReq = (file: sectran_chard.secterm.v1.ISec
     // websocket.send(uintArr);
     // websocket.send(filePathData);
 }
+
+
+
+
 /**
  * websocket传输
  * @param data 数据
@@ -177,6 +187,8 @@ export const SectermTeminaFileDownloadReq = (file: sectran_chard.secterm.v1.ISec
  */
 const transmitWebSocket = (data: any, websocket: WebSocket) => {
     const uintArr = Uint32Array.from([data.length]);
+    console.log(uintArr)
+    console.log(data)
     websocket.send(uintArr);
     websocket.send(data);
 }
