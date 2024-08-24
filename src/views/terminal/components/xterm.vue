@@ -26,7 +26,8 @@ import {
     sectermConnectRequest,
     sectermTeminalResize,
     sectermTeminalCharacters,
-    sectermFileuploading
+    sectermFileuploading,
+    sectermFileUploadReq
 } from "@/common/method/proto";
 import { initSocket } from "@/common/method/socket"
 import { blobToUint8Array } from "@/common/method/utils"
@@ -144,7 +145,9 @@ const onData = (msg: any) => {
             },
         });
     }
-
+    if (sm?.fileData) {
+        if (filesuploadingIndex.value <= filesList.value.length) uploadFile(filesList.value[filesuploadingIndex.value])
+    }
 };
 
 let filesList = ref<File[]>([])
@@ -152,15 +155,23 @@ let filesuploadingIndex = ref<number>(0)
 const startUploads = (event: any) => {
     let files = event.target.files;
     filesList.value = files
-    uploadFile(filesList.value[0])
-    filesuploadingIndex.value = 0
+    let FileInfo: { Name: string, Size: number }[] = []
+    filesList.value = files
+    files.forEach((item: File) => {
+        FileInfo.push({
+            Name: item.name,
+            Size: item.size,
+        })
+    });
+
+    sectermFileUploadReq({ FileInfo }, websocket)
 }
 
 const uploadFile = (file: File) => {
     console.log(file, 'file');
     // 1 * 1024
-    const chunkSize = 8 * 1024; // 每个分段的大小，这里设置为1MB
-    const totalChunks = Math.ceil(file.size / chunkSize); // 总分段数
+    const chunkSize = 8 * 1024;
+    const totalChunks = Math.ceil(file.size / chunkSize);
     let currentChunk = 0; // 当前分段
     async function sendNextChunk() {
         const start = currentChunk * chunkSize;
@@ -196,14 +207,17 @@ const uploadFile = (file: File) => {
         } else {
             console.log(currentChunk)
             console.log(`发送完成: ${file.name}`);
-            sectermFileuploading({ endData: true }, websocket)
-            filesuploadingIndex.value++
-            if (filesuploadingIndex.value === filesList.value.length) {
-
-            } else {
-                uploadFile(filesList.value[filesuploadingIndex.value])
+            let fileItem = filesList.value[filesuploadingIndex.value]
+            let fileData = {
+                file: {
+                    Name: fileItem.name,
+                    Size: 0,
+                },
+                data: [],
+                endData: true,
             }
-
+            sectermFileuploading(fileData, websocket)
+            filesuploadingIndex.value++
         }
     }
     sendNextChunk();

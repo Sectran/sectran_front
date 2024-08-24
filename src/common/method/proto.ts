@@ -75,6 +75,23 @@ export const sectermTeminalCharacters = (data: any, websocket: WebSocket) => {
     // websocket.send(charactersData);
 }
 
+
+
+
+/**
+ * 文件上传响应
+ */
+
+export const sectermFileUploadReq = (data:any, websocket: WebSocket) =>{
+    let sectermMessage = new v1.SectermMessage();
+    let FileReq = new v1.SectermFileUploadReq()
+    FileReq.FileInfo = data
+    sectermMessage.fileUploadReq = FileReq;
+    let fileUploadingData = v1.SectermMessage.encode(sectermMessage).finish();
+    transmitWebSocket(fileUploadingData, websocket)
+    
+}
+
 /**
  * 文件传输
  */
