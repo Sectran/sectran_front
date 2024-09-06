@@ -1,5 +1,6 @@
-import { sectran_chard } from "../../../secterm/secterm";
-const v1 = sectran_chard.secterm.v1
+import { secterm } from "../../../secterm/secterm";
+let intNume = 0
+const v1 = secterm.v1
 type SectermTerminalResize = {
     Colums: number
     Rows: number
@@ -14,11 +15,11 @@ type SectermConnectRequest = {
 } & SectermTerminalResize
 
 export const sectermConnectRequest = (connectParams: SectermConnectRequest, websocket: WebSocket) => {
-    const credentialPassword: sectran_chard.secterm.v1.ISectermCredentialPassword = {
+    const credentialPassword: secterm.v1.ISectermCredentialPassword = {
         password: stringToUint8Array(connectParams.password)
     };
 
-    const connectRequest: sectran_chard.secterm.v1.ISectermConnectRequest = {
+    const connectRequest: secterm.v1.ISectermConnectRequest = {
         token: connectParams.token,
         Colums: connectParams.Colums,
         Rows: connectParams.Rows,
@@ -33,7 +34,7 @@ export const sectermConnectRequest = (connectParams: SectermConnectRequest, webs
     console.log(connectRequest)
 
     let sectermMessage = new v1.SectermMessage();
-    sectermMessage.request = connectRequest;
+    sectermMessage.connectReq = connectRequest;
 
     let connectData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(connectData, websocket)
@@ -82,27 +83,36 @@ export const sectermTeminalCharacters = (data: any, websocket: WebSocket) => {
  * 文件上传响应
  */
 
-export const sectermFileUploadReq = (data:any, websocket: WebSocket) =>{
+export const sectermFileUploadReq = (data: any, websocket: WebSocket) => {
+    console.log("传送文件信息")
     let sectermMessage = new v1.SectermMessage();
     let FileReq = new v1.SectermFileUploadReq()
-    FileReq.FileInfo = data
+    FileReq.FileInfo = data.FileInfo
     sectermMessage.fileUploadReq = FileReq;
-    let fileUploadingData = v1.SectermMessage.encode(sectermMessage).finish();
-    transmitWebSocket(fileUploadingData, websocket)
-    
+    let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
+    transmitWebSocket(FileUploadReqData, websocket)
+
 }
 
 /**
  * 文件传输
  */
-export const sectermFileuploading = (data:any, websocket: WebSocket) =>{
-    let sectermMessage = new v1.SectermMessage();
-    let fileData = new v1.SectermFileDataRes()
-    fileData = data
-    sectermMessage.fileData = fileData;
-    let fileUploadingData = v1.SectermMessage.encode(sectermMessage).finish();
-    transmitWebSocket(fileUploadingData, websocket)
-    
+export const sectermFileuploading = (data: any, websocket: WebSocket) => {
+    return new Promise(async (resolve, reject) => {
+        console.log(data, 'sectermFileuploading')
+        let sectermMessage = new v1.SectermMessage();
+        let fileData = new v1.SectermFileDataRes()
+        data.seriNumber = intNume
+        intNume++
+        fileData = data
+        sectermMessage.fileData = fileData;
+        let fileUploadingData = v1.SectermMessage.encode(sectermMessage).finish();
+        let a = await transmitWebSocket(fileUploadingData, websocket)
+        console.log(a,`${intNume}同步发送结束`)
+        resolve(a)
+    });
+
+
 }
 
 /**
@@ -130,12 +140,10 @@ export const sectermTeminalCatalog = (path: string, websocket: WebSocket) => {
  */
 export const SectermTeminaFileMove = (path: string, DstPath: string, force: boolean, websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
-
     let fileMove = new v1.SectermFileMove()
     fileMove.Path = path
     fileMove.DstPath = DstPath
     fileMove.force = force
-
     let fileMoveData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(fileMoveData, websocket)
     // const uintArr = Uint32Array.from([filePathData.length]);
@@ -165,7 +173,7 @@ export const SectermTeminaFileDelete = (path: string[], websocket: WebSocket) =>
  * @param file ⽂件信息
  * @param websocket 
  */
-export const SectermTeminaFileCreate = (file: sectran_chard.secterm.v1.ISectermFileInfo | null, websocket: WebSocket) => {
+export const SectermTeminaFileCreate = (file: secterm.v1.ISectermFileInfo | null, websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
     let fileCreate = new v1.SectermFileCreate()
     fileCreate.file = file
@@ -182,7 +190,7 @@ export const SectermTeminaFileCreate = (file: sectran_chard.secterm.v1.ISectermF
  * @param FileInfo ⽂件信息
  * @param websocket 
  */
-export const SectermTeminaFileDownloadReq = (file: sectran_chard.secterm.v1.ISectermFileInfo[], websocket: WebSocket) => {
+export const SectermTeminaFileDownloadReq = (file: secterm.v1.ISectermFileInfo[], websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
     let fileDownloadReq = new v1.SectermFileDownloadReq()
     fileDownloadReq.FileInfo = file
@@ -203,12 +211,18 @@ export const SectermTeminaFileDownloadReq = (file: sectran_chard.secterm.v1.ISec
  * @param websocket 
  */
 const transmitWebSocket = (data: any, websocket: WebSocket) => {
-    const uintArr = Uint32Array.from([data.length]);
-    console.log(uintArr)
-    console.log(data)
-    websocket.send(uintArr);
-    websocket.send(data);
+    return new Promise((resolve, reject) => {
+        const uintArr = Uint32Array.from([data.length]);
+        console.log(intNume)
+        console.log(uintArr)
+        console.log(data)
+        websocket.send(uintArr);
+        websocket.send(data);
+        resolve(data)
+    })
 }
+
+
 
 //字符串转Uint8Array
 const stringToUint8Array = (str: string) => {

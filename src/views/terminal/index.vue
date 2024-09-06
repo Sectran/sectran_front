@@ -49,10 +49,10 @@
                         </a-tree> -->
 
                         <!-- @select="onSelect" -->
-                        <!-- <a-directory-tree multiple default-expand-all @select="onNode">
+                        <a-directory-tree multiple default-expand-all>
                             <a-tree-node :title="item.name" v-for="item in treeData" :key="item.id">
                             </a-tree-node>
-                        </a-directory-tree> -->
+                        </a-directory-tree>
                     </div>
 
                 </div>
