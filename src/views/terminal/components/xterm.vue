@@ -55,6 +55,7 @@ onMounted(() => {
 });
 
 const initXterm = () => {
+    let copy = "";
     let _term: any = new Terminal({
         convertEol: true,
         disableStdin: false,
@@ -98,10 +99,27 @@ const initXterm = () => {
     window.addEventListener("resize", () => {
         resizeScreen();
     });
+
+
+    _term.onSelectionChange(() => {
+        if (_term.hasSelection()) {
+            copy = _term.getSelection();
+            console.log("onselectchange", copy);
+        }
+    });
     if (!_term._initialized) {
         _term._initialized = true;
         _term.onData((raw: string) => {
-            sendCharacters(raw)
+            if (raw == '\x03') {
+                navigator.clipboard.writeText(copy);
+                console.log("^C", copy);
+            } else if (raw == '\x16') {
+                _term.write(copy);
+                console.log("1");
+            }else {
+                sendCharacters(raw)
+            }
+            
         });
     }
     term = _term;

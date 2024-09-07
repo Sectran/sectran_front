@@ -1,6 +1,6 @@
 <template>
     <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
-      
+
         <div class="configuration-style">
             <div class="configuration-nav">
                 <a-dropdown v-for="(item, itemIndex) in headMenu">
@@ -33,26 +33,19 @@
 
                     <div class="Content-left-tree" v-if="!isSpread">
 
-                        <!-- <a-tree :tree-data="treeData" :show-line="true">
-                            <template #icon><carry-out-outlined /></template>
-                            <template #title="{ dataRef }">
-                                <template v-if="dataRef.key === '0-0-0-1'">
-                                    <div>multiple line title</div>
-                                    <div>multiple line title</div>
-                                </template>
-                                <template v-else>{{ dataRef.title }}</template>
-                            </template>
-                            <template #switcherIcon="{ dataRef, defaultIcon }">
-                                <SmileTwoTone v-if="dataRef.key === '0-0-2'" />
-                                <component :is="defaultIcon" v-else />
-                            </template>
-                        </a-tree> -->
+                        <a-tree :tree-data="treeData">
 
-                        <!-- @select="onSelect" -->
-                        <!-- <a-directory-tree multiple default-expand-all @select="onNode">
-                            <a-tree-node :title="item.name" v-for="item in treeData" :key="item.id">
-                            </a-tree-node>
-                        </a-directory-tree> -->
+                            <template #title="{ dataRef }">
+                                <div style="font-size: 18px;" class="items-center tree-node">
+                                    <img v-if="dataRef.icon === 'linux'" src='@/assets/img/linux.png' alt="">
+                                    <img v-if="dataRef.icon === 'windows'" src='@/assets/img/windows.png' alt="">
+
+                                    {{ dataRef.title }}
+                                </div>
+
+                            </template>
+                        </a-tree>
+
                     </div>
 
                 </div>
@@ -193,8 +186,7 @@ import xterm from "./components/xterm.vue"
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
 import { resTable } from "@/common/type/type"
-// import type { TreeProps } from 'ant-design-vue';
-import { MenuUnfoldOutlined } from '@ant-design/icons-vue';
+import { MenuUnfoldOutlined, } from '@ant-design/icons-vue';
 import { throttle } from 'lodash';
 type MultiList = {
     name: string
@@ -211,71 +203,201 @@ type TableType = {
 const store = useStore()
 const { t } = useI18n();
 let isSpread = ref<boolean>(false);
-let connectOpen = ref<Boolean>(true);
+let connectOpen = ref<Boolean>(false);
 const submitLoading = ref<Boolean>(false);
 const multiActiveKey = ref(1);
 const soleKey = ref<number>(0);
 let multiList = ref<MultiList[]>([])
 let nodeTotal = ref<number>(0)
 let transitionClass = ref<Boolean>(true)
-// TreeProps['treeData']
 const treeData = ref<any>([
     {
-        title: 'parent 1',
+        title: 'Linux',
         key: '0-0',
+        icon: "linux",
         children: [
             {
                 title: 'parent 1-0',
-                key: '0-0-0',
-                children: [
-                    {
-                        title: 'leaf',
-                        key: '0-0-0-0',
-                    },
-                    {
-                        title: 'leaf',
-                        key: '0-0-0-1',
-                    },
-                    {
-                        title: 'leaf',
-                        key: '0-0-0-2',
-                    },
-                ],
+                key: '1',
             },
             {
                 title: 'parent 1-1',
-                key: '0-0-1',
-                children: [
-                    {
-                        title: 'leaf',
-                        key: '0-0-1-0',
-                    },
-                ],
+                key: '2',
             },
             {
                 title: 'parent 1-2',
-                key: '0-0-2',
-                children: [
-                    {
-                        title: 'leaf',
-                        key: '0-0-2-0',
-                    },
-                    {
-                        title: 'leaf',
-                        key: '0-0-2-1',
-                    },
-                ],
+                key: '3',
+            }, {
+                title: 'parent 1-0',
+                key: '1',
+            },
+            {
+                title: 'parent 1-1',
+                key: '2',
+            },
+            {
+                title: 'parent 1-2',
+                key: '3',
+            }, {
+                title: 'parent 1-0',
+                key: '1',
+            },
+            {
+                title: 'parent 1-1',
+                key: '2',
+            },
+            {
+                title: 'parent 1-2',
+                key: '3',
+            }, {
+                title: 'parent 1-0',
+                key: '1',
+            },
+            {
+                title: 'parent 1-1',
+                key: '2',
+            },
+            {
+                title: 'parent 1-2',
+                key: '3',
+            }, {
+                title: 'parent 1-0',
+                key: '1',
+            },
+            {
+                title: 'parent 1-1',
+                key: '2',
+            },
+            {
+                title: 'parent 1-2',
+                key: '3',
+            }, {
+                title: 'parent 1-0',
+                key: '1',
+            },
+            {
+                title: 'parent 1-1',
+                key: '2',
+            },
+            {
+                title: 'parent 1-2',
+                key: '3',
+            }, {
+                title: 'parent 1-0',
+                key: '1',
+            },
+            {
+                title: 'parent 1-1',
+                key: '2',
+            },
+            {
+                title: 'parent 1-2',
+                key: '3',
+            }, {
+                title: 'parent 1-0',
+                key: '1',
+            },
+            {
+                title: 'parent 1-1',
+                key: '2',
+            },
+            {
+                title: 'parent 1-2',
+                key: '3',
+            }, {
+                title: 'parent 1-0',
+                key: '1',
+            },
+            {
+                title: 'parent 1-1',
+                key: '2',
+            },
+            {
+                title: 'parent 1-2',
+                key: '3',
+            }, {
+                title: 'parent 1-0',
+                key: '1',
+            },
+            {
+                title: 'parent 1-1',
+                key: '2',
+            },
+            {
+                title: 'parent 1-2',
+                key: '3',
+            }, {
+                title: 'parent 1-0',
+                key: '1',
+            },
+            {
+                title: 'parent 1-1',
+                key: '2',
+            },
+            {
+                title: 'parent 1-2',
+                key: '3',
+            }, {
+                title: 'parent 1-0',
+                key: '1',
+            },
+            {
+                title: 'parent 1-1',
+                key: '2',
+            },
+            {
+                title: 'parent 1-2',
+                key: '3',
+            }, {
+                title: 'parent 1-0',
+                key: '1',
+            },
+            {
+                title: 'parent 1-1',
+                key: '2',
+            },
+            {
+                title: 'parent 1-2',
+                key: '3',
+            }, {
+                title: 'parent 1-0',
+                key: '1',
+            },
+            {
+                title: 'parent 1-1',
+                key: '2',
+            },
+            {
+                title: 'parent 1-2',
+                key: '3',
+            },
+        ],
+    }, {
+        title: 'windows',
+        key: '0-1',
+        icon: "windows",
+        children: [
+            {
+                title: 'parent 1-0',
+                key: '4',
+            },
+            {
+                title: 'parent 1-1',
+                key: '5',
+            },
+            {
+                title: 'parent 1-2',
+                key: '6',
             },
         ],
     },
+
+
+
 ]);
 
 onMounted(() => {
-
-
     document.addEventListener('mouseup', handleMoveThrottled)
-    treeData.value = []
-
     window.addEventListener("beforeunload", (e: any) => {
         e.returnValue = "您确定要离开吗？请确认是否保存您的更改。";
         e.preventDefault();
@@ -462,7 +584,7 @@ const connectResult = (modalState: boolean) => {
         }
 
         .Content-left {
-            background: #2f2a2a;
+            background: #181818;
             display: flex;
             flex-direction: column;
             height: 100%;
@@ -470,8 +592,19 @@ const connectResult = (modalState: boolean) => {
             box-sizing: border-box;
 
             ::v-deep(.ant-tree-list) {
-                background: #2f2a2a;
+                background: #181818;
                 color: #ffffff;
+            }
+
+            ::v-deep(.ant-tree-node-selected) {
+
+
+                background-color: #37373D;
+            }
+
+            ::v-deep(.ant-tree-treenode-selected) {
+                width: 100%;
+                background-color: #37373D;
             }
 
             .Content-left-search {
@@ -487,7 +620,8 @@ const connectResult = (modalState: boolean) => {
 
             .Content-left-tree {
                 flex: 1;
-                overflow: auto
+                overflow-y: auto;
+                scrollbar-color: #434343 #181818;
             }
 
             .Content-left-icon {
@@ -548,6 +682,15 @@ const connectResult = (modalState: boolean) => {
 
 .tab-right {
     padding-right: 20px;
+
+}
+
+.tree-node {
+    img {
+        width: 20px;
+        height: auto;
+        margin-right: 10px;
+    }
 
 }
 
