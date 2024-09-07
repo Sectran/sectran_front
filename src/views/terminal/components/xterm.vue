@@ -11,7 +11,6 @@
     </template>
 
     <a-modal v-model:open="uploadingOpen" :closable="false" :footer="null" :maskClosable="false" title="文件上传中">
-
         <a-progress type="circle" :percent="percentComputed" />
     </a-modal>
 
@@ -121,7 +120,7 @@ const initXterm = () => {
                 navigator.clipboard.writeText(copy);
                 console.log("^C", copy);
             } else if (raw == '\x16') {
-                _term.write(copy);
+                // _term.write(copy);
                 console.log("1");
             } else {
                 sendCharacters(raw)
@@ -176,13 +175,14 @@ const onData = (msg: any) => {
             },
         });
     }
-    if (sm?.fileCmd) {
-        console.log(sm.fileCmd, 'fileCmd');
-        console.log(filesuploadingIndex.value, 'filesuploadingIndex');
+    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.UPLOAD_START) {
+        console.log(filesuploadingIndex.value, 'filesuploadingIndex上传新的文件');
         if (filesuploadingIndex.value < filesList.value.length) uploadFile(filesList.value[filesuploadingIndex.value])
+        
     }
-    if (sm?.fileCmd?.opt1) {
-        if (endData) sendNextChunk()
+    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.UPLOAD_CONTINUE) {
+        console.log("开始上传",endData)
+        if (!endData) sendNextChunk()
     }
 };
 //文件上传列表
@@ -196,8 +196,7 @@ const percentComputed = computed(() => {
 const startUploads = (event: any) => {
 
     if (event.target.files.length !== 0) {
-        
-        let files = event.target.inFileSelect
+        let files = event.target.files
         let FileInfo: { Name: string, Size: number }[] = []
         filesList.value = files
         filesuploadingIndex.value = 0
@@ -208,7 +207,7 @@ const startUploads = (event: any) => {
             })
         }
         uploadingOpen.value = true 
-        // console.log(FileInfo, 'FileInfo')
+        console.log(FileInfo, 'FileInfo')
         sectermFileUploadReq({ FileInfo }, websocket)
     } else {
         console.log("未选择文件");
@@ -217,7 +216,8 @@ const startUploads = (event: any) => {
 
 }
 //文件上传
-const chunkSize = 8 * 1024; //每次上传文件大小
+const chunkSize =  8 * 1024; //每次上传文件大小
+
 let totalChunks = 0 //总分段
 let currentChunk = 0; //当前分段
 let uploadFileItem: File //当前处理的file文件
@@ -242,7 +242,7 @@ const sendNextChunk = async () => {
     const end = Math.min(start + chunkSize, uploadFileItem.size);
     const blob = uploadFileItem.slice(start, end);
     if (currentChunk === totalChunks - 1) endData = true;
-    console.log(start, end)
+    // console.log(start, end)
     console.log(blob, 'blob')
     await blobToUint8Array(blob)
         .then(async (uint8Array: Uint8Array) => {

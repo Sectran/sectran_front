@@ -103,12 +103,13 @@ export const sectermFileuploading = (data: any, websocket: WebSocket) => {
         let sectermMessage = new v1.SectermMessage();
         let fileData = new v1.SectermFileDataRes()
         data.seriNumber = intNume
-        intNume++
+        
         fileData = data
         sectermMessage.fileData = fileData;
         let fileUploadingData = v1.SectermMessage.encode(sectermMessage).finish();
         await transmitWebSocket(fileUploadingData, websocket)
         console.log(`${intNume}同步发送结束`)
+        intNume++
         resolve('成功')
     });
 
@@ -213,12 +214,12 @@ export const SectermTeminaFileDownloadReq = (file: secterm.v1.ISectermFileInfo[]
 const transmitWebSocket = (data: any, websocket: WebSocket) => {
     return new Promise((resolve) => {
         const uintArr = Uint32Array.from([data.length]);
-        console.log(intNume)
-        console.log(uintArr)
+        // console.log(intNume)
+        // console.log(uintArr)
         console.log(data)
         websocket.send(uintArr);
         websocket.send(data);
-        console.log(`${intNume}已经发送结束`)
+       
         resolve('成功')
     })
 }

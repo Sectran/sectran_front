@@ -992,7 +992,9 @@ export namespace secterm {
         /** SectermFileCmd enum. */
         enum SectermFileCmd {
             UPLOAD_START = 0,
-            DOWNLOAD_START = 1
+            UPLOAD_CONTINUE = 1,
+            DOWNLOAD_START = 2,
+            DOWNLOAD_ACK = 3
         }
 
         /** Properties of a SectermFileCmdMessage. */

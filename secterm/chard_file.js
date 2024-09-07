@@ -2515,12 +2515,16 @@ export const secterm = $root.secterm = (() => {
          * @name secterm.v1.SectermFileCmd
          * @enum {number}
          * @property {number} UPLOAD_START=0 UPLOAD_START value
-         * @property {number} DOWNLOAD_START=1 DOWNLOAD_START value
+         * @property {number} UPLOAD_CONTINUE=1 UPLOAD_CONTINUE value
+         * @property {number} DOWNLOAD_START=2 DOWNLOAD_START value
+         * @property {number} DOWNLOAD_ACK=3 DOWNLOAD_ACK value
          */
         v1.SectermFileCmd = (function() {
             const valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "UPLOAD_START"] = 0;
-            values[valuesById[1] = "DOWNLOAD_START"] = 1;
+            values[valuesById[1] = "UPLOAD_CONTINUE"] = 1;
+            values[valuesById[2] = "DOWNLOAD_START"] = 2;
+            values[valuesById[3] = "DOWNLOAD_ACK"] = 3;
             return values;
         })();
 
@@ -2691,6 +2695,8 @@ export const secterm = $root.secterm = (() => {
                         return "cmd: enum value expected";
                     case 0:
                     case 1:
+                    case 2:
+                    case 3:
                         break;
                     }
                 if (message.opt1 != null && message.hasOwnProperty("opt1"))
@@ -2725,9 +2731,17 @@ export const secterm = $root.secterm = (() => {
                 case 0:
                     message.cmd = 0;
                     break;
-                case "DOWNLOAD_START":
+                case "UPLOAD_CONTINUE":
                 case 1:
                     message.cmd = 1;
+                    break;
+                case "DOWNLOAD_START":
+                case 2:
+                    message.cmd = 2;
+                    break;
+                case "DOWNLOAD_ACK":
+                case 3:
+                    message.cmd = 3;
                     break;
                 }
                 if (object.opt1 != null)

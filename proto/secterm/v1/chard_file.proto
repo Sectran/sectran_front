@@ -80,9 +80,10 @@ message  SectermFileDataRes{    //文件内容消息
 }
 
 enum SectermFileCmd {
-    UPLOAD_START =0;
-    DOWNLOAD_START =1;
-    DOWNLOAD_ACK=2;
+    UPLOAD_START = 0;
+    UPLOAD_CONTINUE = 1;
+    DOWNLOAD_START = 2;
+    DOWNLOAD_ACK= 3;
 }
 
 message SectermFileCmdMessage {

@@ -203,7 +203,7 @@ type TableType = {
 const store = useStore()
 const { t } = useI18n();
 let isSpread = ref<boolean>(false);
-let connectOpen = ref<Boolean>(false);
+let connectOpen = ref<Boolean>(true);
 const submitLoading = ref<Boolean>(false);
 const multiActiveKey = ref(1);
 const soleKey = ref<number>(0);
@@ -401,12 +401,12 @@ onMounted(() => {
         e.preventDefault();
     });
 
-    deviceList({ page: 1, pageSize: 10 }).then((res: { data: resTable<TableType[]> }) => {
-        console.log(res)
-        let { data, total } = res.data
-        treeData.value = data
-        nodeTotal.value = total
-    })
+    // deviceList({ page: 1, pageSize: 10 }).then((res: { data: resTable<TableType[]> }) => {
+    //     console.log(res)
+    //     let { data, total } = res.data
+    //     treeData.value = data
+    //     nodeTotal.value = total
+    // })
 });
 
 
