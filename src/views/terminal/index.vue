@@ -392,8 +392,6 @@ const treeData = ref<any>([
         ],
     },
 
-
-
 ]);
 
 onMounted(() => {
@@ -410,11 +408,6 @@ onMounted(() => {
         nodeTotal.value = total
     })
 });
-
-
-
-
-
 
 
 onUnmounted(() => {

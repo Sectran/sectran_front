@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package sectran_chard.secterm.v1;
+package secterm.v1;
 
-option go_package = "sectran_chard/secterm/v1;sectermv1";
+option go_package = "secterm/v1;sectermv1";
 
 enum AuthMethod {
     INTERACTIVE_AUTH = 0;

@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package sectran_chard.secterm.v1;
+package secterm.v1;
 
-option go_package = "sectran_chard/secterm/v1;sectermv1";
+option go_package = "secterm/v1;sectermv1";
 
 import "./chard_h5_nego.proto";
 import "./chard_h5_terminal.proto";
@@ -12,9 +12,9 @@ import "./chard_file.proto";
 message SectermMessage {
     oneof data{
         // connect request message 连接请求消息
-        SectermConnectRequest request = 3;
+        SectermConnectRequest connect_req = 3;
         // connect response message 连接回应消息
-        SectermConnectResponse response = 4;
+        SectermConnectResponse connect_res = 4;
         // window size change message 窗口大小变动
         SectermTerminalResize resize = 5;
         // terminale message 终端消息
@@ -35,5 +35,8 @@ message SectermMessage {
         SectermFileUploadReq file_upload_req = 15;
         //文件内容数据
         SectermFileDataRes file_data = 16;
+        //文件上传指令
+        SectermFileCmdMessage file_cmd = 17;
+        
     }
 }

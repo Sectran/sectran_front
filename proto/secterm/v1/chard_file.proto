@@ -1,22 +1,23 @@
 syntax = "proto3";
 
-package sectran_chard.secterm.v1;
+package secterm.v1;
 
-option go_package = "sectran_chard/secterm/v1;sectermv1";
+option go_package = "secterm/v1;sectermv1";
 
 message SectermFileInfo {
     //文件名称
     string Name = 1;
     //文件路径
-    string Path = 2;
+    string Path = 2;    
     //修改时间
-    uint64 ModTime = 3;
+    uint64 ModTime = 3; 
     //文件大小
-    uint64 Size = 4;
+    uint64 Size = 4; //字节
     //文件权限
     uint32 Mode = 5;
     //是否为目录
-    bool IsDir = 6;
+    bool IsDir = 6; //文件上传不可以上传目录
+   
 }
 
 //目录查询响应
@@ -63,15 +64,30 @@ message SectermFileDownloadReq {
     ActionMode mode = 3;
 }
 
-message SectermFileUploadReq {
+message SectermFileUploadReq {              //文件上传请求
     string DstPath = 1;                     //上传目的路径
     repeated SectermFileInfo FileInfo = 2;  //上传文件列表
     ActionMode mode = 3;
+    TransProtocol proto= 4;
 }
 
-message  SectermFileDataRes{
+message  SectermFileDataRes{    //文件内容消息
     SectermFileInfo file =1;    //当前传输的文件(不考虑重传、过度设计)
     bytes data = 2;             //文件数据
     bool endData = 3;           //最后一个文件数据
+    TransProtocol proto= 4;
+     int32 seri_number = 5;
+}
+
+enum SectermFileCmd {
+    UPLOAD_START =0;
+    DOWNLOAD_START =1;
+    DOWNLOAD_ACK=2;
+}
+
+message SectermFileCmdMessage {
+    SectermFileCmd cmd = 1;
+    uint32 opt1 = 2;//填充类型1
+    uint32 opt2 = 3;//填充类型2
 }
 
