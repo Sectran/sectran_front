@@ -23,9 +23,10 @@
                 <div class="tags-style">
                     <a-tag v-for="(item, index) in searchTags" :key="index" closable
                         @close="() => { searchTags.splice(index, 1); on_search(extraSearchModel) }">
-                        <a-tooltip v-if="item.name === 'public.open' || item.name === 'public.close'">
-                            <template #title>{{ t('public.status') }}：{{ item.value ? '开启' : "关闭" }}</template>
-                            <span class="tags-style-text"> {{ t('public.status') }}：{{ item.value ? '开启' : "关闭"
+
+                        <a-tooltip v-if="item.name === 'Linux' || item.name === 'Windows'">
+                            <template #title>系统类型：{{ item.value ? '开启' : "关闭" }}</template>
+                            <span class="tags-style-text"> 系统类型：{{ item.value ? '开启' : "关闭"
                                 }}</span>
                         </a-tooltip>
                         <a-tooltip v-else>
@@ -54,8 +55,6 @@
                     <a-spin size="small" />
                 </template>
             </a-select>
-
-
             <a-button @click="onInputTag" :icon="h(SearchOutlined)" type="primary">
                 {{ t('public.search') }}
             </a-button>
@@ -108,8 +107,8 @@
                             <a-button type="link" danger @click="handleDelete([record.id])">{{ t('public.delete')
                                 }}</a-button>
                             <a-button type="link" @click="on_deviceAccount(record.id, record.name)">{{
-                            t('device.deviceAccount')
-                        }}</a-button>
+                                t('device.deviceAccount')
+                            }}</a-button>
                         </a-space>
                     </template>
                     <template v-else-if="column.dataIndex === 'OsKind'">{{ record.OsKind === 1 ? 'Linux' : 'Windows'
@@ -156,7 +155,7 @@
                         :rules="[{ required: true, message: `${t('public.pleaseSelect')}${t('device.deviceOsKind')}` }]">
                         <a-select v-model:value="formState.type" class="input-width100"
                             :placeholder='`${t("public.pleaseSelect")}${t("device.deviceOsKind")}`'>
-                            <a-select-option v-for="item in  ['Linux', 'Windows']" :key="item" :value="item">{{ item
+                            <a-select-option v-for="item in ['Linux', 'Windows']" :key="item" :value="item">{{ item
                                 }}</a-select-option>
                         </a-select>
                     </a-form-item>
@@ -214,7 +213,7 @@ type formStateType = {
 } & SearchType
 
 let user = JSON.parse(localStorage.getItem('user') as string);
-let { paginationOpt, tableData, onInputTag, tableLoading, tableState, submitFormRef, onTableSelectChange, requestList, on_search, fromreset, handleDelete, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox } = useTableHooks({ listApi: deviceList, deleteApi: deleteDevice });
+let { paginationOpt, tableData, onInputTag, tableLoading, tableState, submitFormRef, onTableSelectChange, requestList, on_search, fromreset, handleDelete, searchInputValue, handleMenuClick, operateTags, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox } = useTableHooks({ listApi: deviceList, deleteApi: deleteDevice });
 const modelOpen = ref<boolean>(false);
 const formState = reactive<formStateType>({
     name: "",
@@ -260,10 +259,27 @@ const searchFronModel: SearchFronModel[] = [
         key: 'host',
         name: "device.deviceAddress"
     },
-    //  {
-    //     key: 'description',
-    //     name: "public.Description"
-    // }
+    {
+        key: 'type',
+        name: "public.type",
+        children: [
+            {
+                name: "Linux",
+                key: "type",
+                disposefun: (value: any) => {
+                    operateTags('Linux', value.key)
+                    on_search()
+                }
+            }, {
+                name: "Windows",
+                key: "type",
+                disposefun: (value: any) => {
+                    operateTags('Windows', value.key)
+                    on_search()
+                }
+            }
+        ]
+    }
 ]
 
 const departmentState = reactive({
@@ -303,8 +319,8 @@ const onOperate = (record?: formStateType) => {
     let departmentName = ""
     if (record) {
         departmentName = record.departmentName || ""
-        for (const key in formState)  formState[key] = record[key]
-        
+        for (const key in formState) formState[key] = record[key]
+
         deviceId = record.id
     }
     searchFun(departmentName, departmentState, listDepartment, { deep: 0, id: user.department_id });

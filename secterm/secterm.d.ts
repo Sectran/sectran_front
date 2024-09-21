@@ -1846,7 +1846,10 @@ export namespace secterm {
             UPLOAD_START = 0,
             UPLOAD_CONTINUE = 1,
             DOWNLOAD_START = 2,
-            DOWNLOAD_ACK = 3
+            DOWNLOAD_CONTINUE = 3,
+            TRANS_ERROR = 5,
+            TRANS_FILE_EXISTED = 6,
+            TRANS_CANCLE = 7
         }
 
         /** Properties of a SectermFileCmdMessage. */

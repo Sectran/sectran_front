@@ -242,7 +242,7 @@ onMounted(() => {
     });
 
     for (let index = 0; index < treeData.value.length; index++) {
-        deviceList({ page: 1, pageSize: 100, deviceOsKind: treeData.value[index].title }).then((res: { data: resTable<TableType[]> }) => {
+        deviceList({ page: 1, pageSize: 100, type: treeData.value[index].title }).then((res: { data: resTable<TableType[]> }) => {
             console.log(res)
             let { data } = res.data
             treeData.value[index].children = data

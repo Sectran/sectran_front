@@ -12,7 +12,11 @@
 
     <a-modal v-model:open="uploadingOpen" :closable="false" :footer="null" :maskClosable="false" title="文件上传中">
         <div class="items-center" v-for="(item, index) in filesList" :key="index">
-            <div class="file-name">{{ item.file.name }}</div>
+            <a-tooltip>
+                <template #title>{{ item.file.name }}</template>
+                <div class="file-name">{{ item.file.name }}</div>
+            </a-tooltip>
+
             <div style="flex: 1;margin-left: 20px;">
                 <a-progress :percent="calculatePercent(item.currentChunk, item.totalChunks)" />
             </div>
@@ -76,7 +80,7 @@ const initXterm = () => {
         fontWeight: "500",
         rightClickSelectsWord: true,
         theme: {
-            foreground: "red",
+            // foreground: "red",
             background: "#FFFFFF",
             cursor: "#6376C2",
         },
@@ -140,7 +144,7 @@ const sendCharacters = (data: any) => { sectermTeminalCharacters(data, websocket
 
 const onData = (msg: any) => {
     let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
-    // console.log(msg, "msg")
+    console.log(msg, "msg")
     // console.log(sm, 'sm')
     if (sm?.connectRes) {
         if (sm.connectRes.code != v1.SectermCode.LOGON_SUCCESS) {
@@ -172,7 +176,7 @@ const onData = (msg: any) => {
                 if (fileInput) {
                     fileInput.addEventListener('change', startUploads, false);
                     document.getElementById('fileInput')?.click()
-
+                    isStopUploading = false
                     inFileSelect.value = true
                 }
             },
@@ -183,13 +187,16 @@ const onData = (msg: any) => {
     }
     if (sm?.fileCmd?.cmd === v1.SectermFileCmd.UPLOAD_START) {
         console.log(filesuploadingIndex.value, 'filesuploadingIndex上传新的文件');
+        if (isStopUploading) return
         if (filesuploadingIndex.value < filesList.value.length) uploadFile(filesList.value[filesuploadingIndex.value])
-
     }
     if (sm?.fileCmd?.cmd === v1.SectermFileCmd.UPLOAD_CONTINUE) {
         console.log("开始上传", endData)
+        if (isStopUploading) return
         if (!endData) sendNextChunk()
     }
+    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_ERROR) message.error('文件上传失败'); isStopUploading = true; uploadingOpen.value = false
+    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_FILE_EXISTED) message.error('文件上传重复'); isStopUploading = true; uploadingOpen.value = false
 };
 
 type FileList = {
@@ -203,9 +210,9 @@ let filesList = ref<FileList[]>([])
 let filesuploadingIndex = ref<number>(0)
 const startUploads = (event: any) => {
     if (event.target.files.length !== 0) {
+        filesList.value = []
         let files = event.target.files
         let FileInfo: { Name: string, Size: number }[] = []
-
         filesuploadingIndex.value = 0
         for (let file of files) {
             FileInfo.push({
@@ -213,9 +220,7 @@ const startUploads = (event: any) => {
                 Size: file.size,
             })
             filesList.value.push({ file, totalChunks: Math.ceil(file.size / chunkSize), currentChunk: 0 })
-
         }
-        12313
         uploadingOpen.value = true
         console.log(FileInfo, 'FileInfo')
         sectermFileUploadReq({ FileInfo }, websocket)
@@ -223,8 +228,8 @@ const startUploads = (event: any) => {
         console.log("未选择文件");
     }
     inFileSelect.value = false
-
 }
+
 /**
  * 计算传输进度
  * @param currentChunk 当前分段
@@ -244,11 +249,11 @@ const calculatePercent = (currentChunk: number, totalChunks: number) => {
 
 //文件上传
 const chunkSize = 8 * 1024; //每次上传文件大小
-
 let totalChunks = 0 //总分段
 let currentChunk = 0; //当前分段
 let uploadFileItem: File //当前处理的file文件
 let endData: boolean = false //当前文件是否是最后一次上传
+let isStopUploading: boolean = false //停止上传
 /**
  * 上传文件分段
  * @param file 文件
@@ -303,8 +308,9 @@ const sendNextChunk = async () => {
 
 const onOpen = () => {
     let { cols, rows } = term;
+    const token: string | null = localStorage.getItem("token");
     let connectParams = {
-        token: "",
+        token: token,
         Colums: cols,
         Rows: rows,
         unmanaged: true,

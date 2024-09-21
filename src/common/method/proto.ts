@@ -6,7 +6,7 @@ type SectermTerminalResize = {
     Rows: number
 }
 type SectermConnectRequest = {
-    token: string
+    token: string | null
     unmanaged: boolean
     username: string
     hostname: string
@@ -91,8 +91,23 @@ export const sectermFileUploadReq = (data: any, websocket: WebSocket) => {
     sectermMessage.fileUploadReq = FileReq;
     let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(FileUploadReqData, websocket)
-
 }
+
+/**
+ * 文件上传取消
+ */
+export const sectermFileCancelUploadReq = (data: any, websocket: WebSocket) => {
+    // console.log("文件取消上传")
+    // let sectermMessage = new v1.SectermMessage();
+    // let FileReq = new v1.SectermFileCreate
+    // FileReq.FileInfo = data.FileInfo
+    // sectermMessage.fileUploadReq = FileReq;
+    // let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
+    // transmitWebSocket(FileUploadReqData, websocket)
+}
+
+
+
 
 /**
  * 文件传输
@@ -112,8 +127,6 @@ export const sectermFileuploading = (data: any, websocket: WebSocket) => {
         intNume++
         resolve('成功')
     });
-
-
 }
 
 /**

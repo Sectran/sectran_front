@@ -2517,14 +2517,20 @@ export const secterm = $root.secterm = (() => {
          * @property {number} UPLOAD_START=0 UPLOAD_START value
          * @property {number} UPLOAD_CONTINUE=1 UPLOAD_CONTINUE value
          * @property {number} DOWNLOAD_START=2 DOWNLOAD_START value
-         * @property {number} DOWNLOAD_ACK=3 DOWNLOAD_ACK value
+         * @property {number} DOWNLOAD_CONTINUE=3 DOWNLOAD_CONTINUE value
+         * @property {number} TRANS_ERROR=5 TRANS_ERROR value
+         * @property {number} TRANS_FILE_EXISTED=6 TRANS_FILE_EXISTED value
+         * @property {number} TRANS_CANCLE=7 TRANS_CANCLE value
          */
         v1.SectermFileCmd = (function() {
             const valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "UPLOAD_START"] = 0;
             values[valuesById[1] = "UPLOAD_CONTINUE"] = 1;
             values[valuesById[2] = "DOWNLOAD_START"] = 2;
-            values[valuesById[3] = "DOWNLOAD_ACK"] = 3;
+            values[valuesById[3] = "DOWNLOAD_CONTINUE"] = 3;
+            values[valuesById[5] = "TRANS_ERROR"] = 5;
+            values[valuesById[6] = "TRANS_FILE_EXISTED"] = 6;
+            values[valuesById[7] = "TRANS_CANCLE"] = 7;
             return values;
         })();
 
@@ -2697,6 +2703,9 @@ export const secterm = $root.secterm = (() => {
                     case 1:
                     case 2:
                     case 3:
+                    case 5:
+                    case 6:
+                    case 7:
                         break;
                     }
                 if (message.opt1 != null && message.hasOwnProperty("opt1"))
@@ -2739,9 +2748,21 @@ export const secterm = $root.secterm = (() => {
                 case 2:
                     message.cmd = 2;
                     break;
-                case "DOWNLOAD_ACK":
+                case "DOWNLOAD_CONTINUE":
                 case 3:
                     message.cmd = 3;
+                    break;
+                case "TRANS_ERROR":
+                case 5:
+                    message.cmd = 5;
+                    break;
+                case "TRANS_FILE_EXISTED":
+                case 6:
+                    message.cmd = 6;
+                    break;
+                case "TRANS_CANCLE":
+                case 7:
+                    message.cmd = 7;
                     break;
                 }
                 if (object.opt1 != null)

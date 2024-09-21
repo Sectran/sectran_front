@@ -62,6 +62,7 @@ export default {
     public: {
         Submit: '提 交',
         delete: '删 除',
+        type:"类 型",
         deleteInBatches: '删除',
         add: '新 增',
         redact: '编 辑',
