@@ -11,13 +11,18 @@
     </template>
 
     <a-modal v-model:open="uploadingOpen" :closable="false" :footer="null" :maskClosable="false" title="文件上传中">
-        <a-progress type="circle" :percent="percentComputed" />
+        <div class="items-center" v-for="(item, index) in filesList" :key="index">
+            <div class="file-name">{{ item.file.name }}</div>
+            <div style="flex: 1;margin-left: 20px;">
+                <a-progress :percent="calculatePercent(item.currentChunk, item.totalChunks)" />
+            </div>
+        </div>
     </a-modal>
 
 </template>
 
 <script setup lang='ts'>
-import { onMounted, ref, reactive, onUnmounted, computed } from "vue";
+import { onMounted, ref, reactive, onUnmounted } from "vue";
 import { message } from "ant-design-vue";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
@@ -45,7 +50,8 @@ const v1 = secterm.v1;
 let terminal = ref(null);
 // let path = ref<string>("ws://101.133.229.239:19529");
 // let path = ref<string>("ws://127.0.0.1:19529");
-let path = ref<string>("ws://192.168.10.2:19529");
+// let path = ref<string>("ws://192.168.10.2:19529");
+let path = ref<string>("ws://192.168.10.2:19528");
 let websocket = <any>(null);
 let term = reactive<any>({});
 let fitAddon = reactive<any>({});
@@ -178,35 +184,39 @@ const onData = (msg: any) => {
     if (sm?.fileCmd?.cmd === v1.SectermFileCmd.UPLOAD_START) {
         console.log(filesuploadingIndex.value, 'filesuploadingIndex上传新的文件');
         if (filesuploadingIndex.value < filesList.value.length) uploadFile(filesList.value[filesuploadingIndex.value])
-        
+
     }
     if (sm?.fileCmd?.cmd === v1.SectermFileCmd.UPLOAD_CONTINUE) {
-        console.log("开始上传",endData)
+        console.log("开始上传", endData)
         if (!endData) sendNextChunk()
     }
 };
+
+type FileList = {
+    file: File
+    totalChunks: number
+    currentChunk: number
+}
 //文件上传列表
 let uploadingOpen = ref<boolean>(false)
-let filesList = ref<File[]>([])
+let filesList = ref<FileList[]>([])
 let filesuploadingIndex = ref<number>(0)
-
-const percentComputed = computed(() => {
-    return (filesuploadingIndex.value / filesList.value.length) * 100;
-});
 const startUploads = (event: any) => {
-
     if (event.target.files.length !== 0) {
         let files = event.target.files
         let FileInfo: { Name: string, Size: number }[] = []
-        filesList.value = files
+
         filesuploadingIndex.value = 0
         for (let file of files) {
             FileInfo.push({
                 Name: file.name,
                 Size: file.size,
             })
+            filesList.value.push({ file, totalChunks: Math.ceil(file.size / chunkSize), currentChunk: 0 })
+
         }
-        uploadingOpen.value = true 
+        12313
+        uploadingOpen.value = true
         console.log(FileInfo, 'FileInfo')
         sectermFileUploadReq({ FileInfo }, websocket)
     } else {
@@ -215,8 +225,25 @@ const startUploads = (event: any) => {
     inFileSelect.value = false
 
 }
+/**
+ * 计算传输进度
+ * @param currentChunk 当前分段
+ * @param totalChunks 总分段
+ */
+const calculatePercent = (currentChunk: number, totalChunks: number) => {
+    switch (currentChunk) {
+        case 0:
+            return 0
+        case totalChunks:
+            return 100
+        default:
+            return Math.round((currentChunk / totalChunks) * 100)
+    }
+}
+
+
 //文件上传
-const chunkSize =  1 * 1024; //每次上传文件大小
+const chunkSize = 8 * 1024; //每次上传文件大小
 
 let totalChunks = 0 //总分段
 let currentChunk = 0; //当前分段
@@ -226,11 +253,11 @@ let endData: boolean = false //当前文件是否是最后一次上传
  * 上传文件分段
  * @param file 文件
  */
-const uploadFile = (file: File) => {
-    console.log(file, 'file');
-    totalChunks = Math.ceil(file.size / chunkSize);
+const uploadFile = (fileItem: FileList) => {
+    console.log(fileItem, 'file');
+    totalChunks = fileItem.totalChunks
     currentChunk = 0
-    uploadFileItem = file
+    uploadFileItem = fileItem.file
     endData = false
     sendNextChunk();
 }
@@ -255,6 +282,8 @@ const sendNextChunk = async () => {
                 endData,
             }
             await sectermFileuploading(fileData, websocket)
+            filesList.value[filesuploadingIndex.value].currentChunk = currentChunk + 1
+
             if (endData) {
                 console.log('文件上传完成', uploadFileItem.name);
                 if (filesuploadingIndex.value >= filesList.value.length - 1) {
@@ -309,6 +338,14 @@ onUnmounted(() => {
     width: calc(100% - 30px);
     height: calc(100% - 30px);
     position: relative;
+}
+
+.file-name {
+    width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 16px;
 }
 
 #terminal {

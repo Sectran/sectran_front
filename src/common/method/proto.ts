@@ -213,11 +213,11 @@ export const SectermTeminaFileDownloadReq = (file: secterm.v1.ISectermFileInfo[]
  */
 const transmitWebSocket = (data: any, websocket: WebSocket) => {
     return new Promise((resolve) => {
-        const uintArr = Uint32Array.from([data.length]);
+        // const uintArr = Uint32Array.from([data.length]);
         // console.log(intNume)
         // console.log(uintArr)
         console.log(data)
-        websocket.send(uintArr);
+        // websocket.send(uintArr);
         websocket.send(data);
        
         resolve('成功')
