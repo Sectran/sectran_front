@@ -30,21 +30,24 @@
                             <SearchOutlined class="search-icon" />
                         </div>
                     </div>
-
-                    <div class="Content-left-tree" v-if="!isSpread">
-
-                        <a-tree :tree-data="treeData">
-
-                            <template #title="{ dataRef }">
-                                <div style="font-size: 18px;" class="items-center tree-node">
-                                    <img v-if="dataRef.icon === 'linux'" src='@/assets/img/linux.png' alt="">
-                                    <img v-if="dataRef.icon === 'windows'" src='@/assets/img/windows.png' alt="">
-
-                                    {{ dataRef.title }}
+                    <div class="Content-left-tree" v-if="!isSpread" @scroll="handleScroll">
+                        <div v-for="(item, index) in treeData" :key="index" class="tree-node" :ref="treeRefArr[index]">
+                            <div class="items-center tree-parent-node">
+                                <DownOutlined @click="item.isUnfold = !item.isUnfold" v-if="item.isUnfold"
+                                    class="unfold-icon" />
+                                <RightOutlined @click="item.isUnfold = !item.isUnfold" v-else class="unfold-icon" />
+                                <img v-if="item.icon === 'linux'" src='@/assets/img/linux.png' alt="">
+                                <img v-if="item.icon === 'windows'" src='@/assets/img/windows.png' alt="">
+                                <div>
+                                    {{ item.title }}
                                 </div>
-
+                            </div>
+                            <template v-if="item.isUnfold">
+                                <div v-for="(child, ins) in item.children" :key="ins" class="tree-child-node">
+                                    {{ child.title }}
+                                </div>
                             </template>
-                        </a-tree>
+                        </div>
 
                     </div>
 
@@ -52,6 +55,8 @@
                 <div class="resize-style" @mousedown="mouseDown"></div>
 
                 <div class="Content-right">
+
+                    <!-- <xterm @connectResult="connectResult" :submitLoading="submitLoading.valueOf"/> -->
                     <div class="xterm-div" v-if="multiList.length !== 0">
                         <a-tabs v-model:activeKey="multiActiveKey" hide-add type="editable-card" :forceRender="false"
                             @edit="onTabsEdit">
@@ -82,7 +87,7 @@
             </div>
         </div>
 
-        <a-modal v-model:open="connectOpen" title="链接 Linux" :footer="null" :width="800">
+        <a-modal v-model:open="connectOpen" :title='`连接${connectName}`' :footer="null" :width="800">
             <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
                 <a-form :model="connectFormState" name="basic" @finish="on_connectFinish" :label-col="{ span: 3 }"
                     :wrapper-col="{ span: 21 }" autocomplete="off">
@@ -181,7 +186,7 @@ import { headMenu } from "./menu.ts"
 import { useStore } from 'vuex'
 // PlusSquareOutlined
 import { deviceList } from "@/api/admin"
-import { UploadOutlined, LockOutlined, SearchOutlined } from '@ant-design/icons-vue';
+import { UploadOutlined, LockOutlined, SearchOutlined, RightOutlined, DownOutlined } from '@ant-design/icons-vue';
 import xterm from "./components/xterm.vue"
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
@@ -203,18 +208,20 @@ type TableType = {
 const store = useStore()
 const { t } = useI18n();
 let isSpread = ref<boolean>(false);
-let connectOpen = ref<Boolean>(true);
+let connectOpen = ref<Boolean>(false);
+let connectName = ref<string>('')
 const submitLoading = ref<Boolean>(false);
 const multiActiveKey = ref(1);
 const soleKey = ref<number>(0);
 let multiList = ref<MultiList[]>([])
-let nodeTotal = ref<number>(0)
+
 let transitionClass = ref<Boolean>(true)
 const treeData = ref<any>([
     {
         title: 'Linux',
         key: '0-0',
         icon: "linux",
+        isUnfold: false,
         children: [
             {
                 title: 'parent 1-0',
@@ -373,11 +380,170 @@ const treeData = ref<any>([
             },
         ],
     }, {
-        title: 'windows',
+        title: 'Windows',
         key: '0-1',
         icon: "windows",
+        isUnfold: false,
         children: [
             {
+                title: 'parent 1-0',
+                key: '4',
+            },
+            {
+                title: 'parent 1-1',
+                key: '5',
+            },
+            {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-0',
+                key: '4',
+            },
+            {
+                title: 'parent 1-1',
+                key: '5',
+            },
+            {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-0',
+                key: '4',
+            },
+            {
+                title: 'parent 1-1',
+                key: '5',
+            },
+            {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-0',
+                key: '4',
+            },
+            {
+                title: 'parent 1-1',
+                key: '5',
+            },
+            {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-0',
+                key: '4',
+            },
+            {
+                title: 'parent 1-1',
+                key: '5',
+            },
+            {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-0',
+                key: '4',
+            },
+            {
+                title: 'parent 1-1',
+                key: '5',
+            },
+            {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-0',
+                key: '4',
+            },
+            {
+                title: 'parent 1-1',
+                key: '5',
+            },
+            {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-0',
+                key: '4',
+            },
+            {
+                title: 'parent 1-1',
+                key: '5',
+            },
+            {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-0',
+                key: '4',
+            },
+            {
+                title: 'parent 1-1',
+                key: '5',
+            },
+            {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-0',
+                key: '4',
+            },
+            {
+                title: 'parent 1-1',
+                key: '5',
+            },
+            {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-0',
+                key: '4',
+            },
+            {
+                title: 'parent 1-1',
+                key: '5',
+            },
+            {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-0',
+                key: '4',
+            },
+            {
+                title: 'parent 1-1',
+                key: '5',
+            },
+            {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-0',
+                key: '4',
+            },
+            {
+                title: 'parent 1-1',
+                key: '5',
+            },
+            {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
+                title: 'parent 1-2',
+                key: '6',
+            }, {
                 title: 'parent 1-0',
                 key: '4',
             },
@@ -401,18 +567,30 @@ onMounted(() => {
         e.preventDefault();
     });
 
-    // deviceList({ page: 1, pageSize: 10 }).then((res: { data: resTable<TableType[]> }) => {
-    //     console.log(res)
-    //     let { data, total } = res.data
-    //     treeData.value = data
-    //     nodeTotal.value = total
-    // })
+    for (let index = 0; index < treeData.value.length; index++) {
+        deviceList({ page: 1, pageSize: 100, deviceOsKind: treeData.value[index].title }).then((res: { data: resTable<TableType[]> }) => {
+            console.log(res)
+            let { data } = res.data
+            treeData.value[index].children = data
+        })
+    }
 });
 
 
 onUnmounted(() => {
     document.removeEventListener('mouseup', handleMoveThrottled)
 })
+let treeRefArr = ref([ref(null), ref(null)])
+
+const handleScroll = (event: any) => {
+    console.log(event)
+    // const target = event.target;
+    // console.log(target.scrollTop)
+    // let treeRef = document.querySelector(`Linux`)
+    // console.log(treeRefArr.value[1].value[0].scrollTop)
+};
+
+
 let leftWidth = ref<number>(300);
 //拖动改变宽度
 // 鼠标移动事件，将鼠标指针相对于屏幕的 X 轴坐标赋值给需要动态变化的元素宽度
@@ -584,22 +762,6 @@ const connectResult = (modalState: boolean) => {
             padding: 20px 10px;
             box-sizing: border-box;
 
-            ::v-deep(.ant-tree-list) {
-                background: #181818;
-                color: #ffffff;
-            }
-
-            ::v-deep(.ant-tree-node-selected) {
-
-
-                background-color: #37373D;
-            }
-
-            ::v-deep(.ant-tree-treenode-selected) {
-                width: 100%;
-                background-color: #37373D;
-            }
-
             .Content-left-search {
                 display: flex;
                 justify-content: space-between;
@@ -675,14 +837,30 @@ const connectResult = (modalState: boolean) => {
 
 .tab-right {
     padding-right: 20px;
+}
 
+.unfold-icon {
+    font-size: 16px;
+    color: #ffffff;
 }
 
 .tree-node {
+    color: #ffffff;
+    margin-bottom: 10px;
+
     img {
         width: 20px;
         height: auto;
-        margin-right: 10px;
+        margin: 0 5px;
+    }
+
+    .tree-parent-node {
+        font-size: 16px !important;
+        background-color: #181818;
+    }
+
+    .tree-child-node {
+        margin: 5px 0 5px 40px;
     }
 
 }
