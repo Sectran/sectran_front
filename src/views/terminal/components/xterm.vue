@@ -216,7 +216,7 @@ const startUploads = (event: any) => {
 
 }
 //文件上传
-const chunkSize =  8 * 1024; //每次上传文件大小
+const chunkSize =  1 * 1024; //每次上传文件大小
 
 let totalChunks = 0 //总分段
 let currentChunk = 0; //当前分段
