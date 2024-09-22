@@ -80,7 +80,7 @@ const initXterm = () => {
         fontWeight: "500",
         rightClickSelectsWord: true,
         theme: {
-            // foreground: "red",
+            foreground: "red",
             background: "#FFFFFF",
             cursor: "#6376C2",
         },
