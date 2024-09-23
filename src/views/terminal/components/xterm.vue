@@ -56,6 +56,10 @@ let terminal = ref(null);
 // let path = ref<string>("ws://127.0.0.1:19529");
 // let path = ref<string>("ws://192.168.10.2:19529");
 let path = ref<string>("ws://192.168.10.2:19528");
+// let path = ref<string>("ws://192.168.10.1:19528");
+
+
+
 let websocket = <any>(null);
 let term = reactive<any>({});
 let fitAddon = reactive<any>({});
@@ -195,8 +199,8 @@ const onData = (msg: any) => {
         if (isStopUploading) return
         if (!endData) sendNextChunk()
     }
-    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_ERROR) message.error('文件上传失败'); isStopUploading = true; uploadingOpen.value = false
-    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_FILE_EXISTED) message.error('文件上传重复'); isStopUploading = true; uploadingOpen.value = false
+    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_ERROR) message.error('文件上传失败'), isStopUploading = true, uploadingOpen.value = false
+    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_FILE_EXISTED) message.error('文件上传重复'), isStopUploading = true, uploadingOpen.value = false
 };
 
 type FileList = {
