@@ -84,9 +84,11 @@ const initXterm = () => {
         fontWeight: "500",
         rightClickSelectsWord: true,
         theme: {
-            foreground: "red",
+            foreground: "#333333",
             background: "#FFFFFF",
             cursor: "#6376C2",
+            selectionBackground: '#cccccc' 
+            
         },
     });
     _term.open(terminal.value);
@@ -133,9 +135,11 @@ const initXterm = () => {
             if (raw == '\x03') {
                 navigator.clipboard.writeText(copy);
                 console.log("^C", copy);
+                message.success("复制成功");
             } else if (raw == '\x16') {
                 // _term.write(copy);
                 console.log("1");
+                message.success("粘贴成功");
             } else {
                 sendCharacters(raw)
             }
