@@ -1,5 +1,5 @@
 <template>
-    <input type="file" id="fileInput" multiple style="display: none;" />
+    <input type="file" ref="fileInputRef" multiple style="display: none;" @change="startUploads" />
     <template v-if="connectionStatus">
 
         <div class="terminal-div">
@@ -11,16 +11,19 @@
     </template>
 
     <a-modal v-model:open="uploadingOpen" :closable="false" :footer="null" :maskClosable="false" title="文件上传中">
-        <div class="items-center" v-for="(item, index) in filesList" :key="index">
-            <a-tooltip>
-                <template #title>{{ item.file.name }}</template>
-                <div class="file-name">{{ item.file.name }}</div>
-            </a-tooltip>
+        <div class="uploading-div">
+            <div class="items-center" v-for="(item, index) in filesList" :key="index">
+                <a-tooltip>
+                    <template #title>{{ item.file.name }}</template>
+                    <div class="file-name">{{ item.file.name }}</div>
+                </a-tooltip>
 
-            <div style="flex: 1;margin-left: 20px;">
-                <a-progress :percent="calculatePercent(item.currentChunk, item.totalChunks)" />
+                <div style="flex: 1;margin-left: 20px;">
+                    <a-progress :percent="calculatePercent(item.currentChunk, item.totalChunks)" />
+                </div>
             </div>
         </div>
+
     </a-modal>
 
 </template>
@@ -68,11 +71,17 @@ const { t } = useI18n();
 const emit = defineEmits(["connectResult"]);
 let connectionStatus = ref<boolean>(true);
 let inFileSelect = ref<boolean>(false)
+let fileInputRef = ref<HTMLInputElement>();
 onMounted(() => {
     initXterm();
     let socket = initSocket(path.value, 5000, 'arraybuffer', onOpen, onData, onError, onClose);
     websocket = socket
-});
+
+
+})
+
+
+
 
 const initXterm = () => {
     let copy = "";
@@ -87,8 +96,8 @@ const initXterm = () => {
             foreground: "#333333",
             background: "#FFFFFF",
             cursor: "#6376C2",
-            selectionBackground: '#cccccc' 
-            
+            selectionBackground: '#cccccc'
+
         },
     });
     _term.open(terminal.value);
@@ -97,7 +106,7 @@ const initXterm = () => {
         term.selectLines(0, 0);
     };
     _term.onKey((e: any) => {
-        if (e.key == "\x16") {
+        if (e.key == "\x16" || (e.domEvent.metaKey && e.key === 'c')) {
             navigator.clipboard.readText().then((clipText) => {
                 sendCharacters(clipText);
             });
@@ -133,13 +142,12 @@ const initXterm = () => {
         _term._initialized = true;
         _term.onData((raw: string) => {
             if (raw == '\x03') {
-                navigator.clipboard.writeText(copy);
+                // navigator.clipboard.writeText(copy);
                 console.log("^C", copy);
                 message.success("复制成功");
             } else if (raw == '\x16') {
                 // _term.write(copy);
                 console.log("1");
-                message.success("粘贴成功");
             } else {
                 sendCharacters(raw)
             }
@@ -180,10 +188,8 @@ const onData = (msg: any) => {
             okType: 'danger',
             cancelText: 'No',
             onOk() {
-                let fileInput = document.getElementById('fileInput');
-                if (fileInput) {
-                    fileInput.addEventListener('change', startUploads, false);
-                    document.getElementById('fileInput')?.click()
+                if (fileInputRef.value) {
+                    fileInputRef.value.click()
                     isStopUploading = false
                     inFileSelect.value = true
                 }
@@ -217,6 +223,7 @@ let uploadingOpen = ref<boolean>(false)
 let filesList = ref<FileList[]>([])
 let filesuploadingIndex = ref<number>(0)
 const startUploads = (event: any) => {
+    console.log(event.target.files, 'event.target.files');
     if (event.target.files.length !== 0) {
         filesList.value = []
         let files = event.target.files
@@ -232,6 +239,11 @@ const startUploads = (event: any) => {
         uploadingOpen.value = true
         console.log(FileInfo, 'FileInfo')
         sectermFileUploadReq({ FileInfo }, websocket)
+
+        // 确保 fileInputRef.value 存在后再进行赋值操作
+        if (fileInputRef.value) {
+            (fileInputRef.value as HTMLInputElement).value = '';
+        }
     } else {
         console.log("未选择文件");
     }
@@ -348,6 +360,12 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang='less'>
+.uploading-div {
+    height: 60vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .terminal-div {
     width: calc(100% - 30px);
     height: calc(100% - 30px);
