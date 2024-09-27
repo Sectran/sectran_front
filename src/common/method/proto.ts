@@ -106,9 +106,6 @@ export const sectermFileCancelUploadReq = (data: any, websocket: WebSocket) => {
     // transmitWebSocket(FileUploadReqData, websocket)
 }
 
-
-
-
 /**
  * 文件传输
  */
@@ -118,7 +115,6 @@ export const sectermFileuploading = (data: any, websocket: WebSocket) => {
         let sectermMessage = new v1.SectermMessage();
         let fileData = new v1.SectermFileDataRes()
         data.seriNumber = intNume
-        
         fileData = data
         sectermMessage.fileData = fileData;
         let fileUploadingData = v1.SectermMessage.encode(sectermMessage).finish();
