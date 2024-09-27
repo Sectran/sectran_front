@@ -1,7 +1,7 @@
 <template>
-    <input type="file" id="fileInput" multiple style="display: none;" />
+    <input type="file" ref="fileInputRef" multiple style="display: none;" @change="startUploads" />
+    <a ref="downloadRef" style="display:none;"></a>
     <template v-if="connectionStatus">
-
         <div class="terminal-div">
             <div id="terminal" ref="terminal"></div>
         </div>
@@ -9,23 +9,51 @@
     <template v-else>
         <div class="break-style">已断开，请重新连接</div>
     </template>
+    <!-- 文件上传弹窗 -->
+    <a-modal v-model:open="transmissionProgressOpen" :closable="false" :footer="null" :maskClosable="false"
+        :title="`文件${['下载', '上传'][transmissionProgressType as number]}中`">
+        <div class="uploading-div">
 
-    <a-modal v-model:open="uploadingOpen" :closable="false" :footer="null" :maskClosable="false" title="文件上传中">
-        <div class="items-center" v-for="(item, index) in filesList" :key="index">
-            <a-tooltip>
-                <template #title>{{ item.file.name }}</template>
-                <div class="file-name">{{ item.file.name }}</div>
-            </a-tooltip>
+            <template v-if="transmissionProgressType === 0">
 
-            <div style="flex: 1;margin-left: 20px;">
-                <a-progress :percent="calculatePercent(item.currentChunk, item.totalChunks)" />
-            </div>
+                <a-input-group compact >
+                    <a-input v-model:value="fileName" style="width: calc(100% - 70px)" />
+                    <a-button type="primary" :disabled="!isDownloadAcComplish">下载</a-button>
+                </a-input-group>
+                <div class="items-center">
+                    <a-tooltip>
+                        <template #title>文件1231</template>
+                        <div class="file-name">文件1231</div>
+                    </a-tooltip>
+                    <div style="flex: 1;margin-left: 20px;">
+                        <a-progress :percent="calculatePercent(4, 100)" />
+                    </div>
+                    <a-button v-if="isSupportShowSaveFilePicker" @click="downloadFile" :disabled="!isDownloadAcComplish" type="primary">下载</a-button>
+                </div>
+
+            </template>
+
+            <template v-else-if="transmissionProgressType === 1">
+                <div class="items-center" v-for="(item, index) in filesList" :key="index">
+                    <a-tooltip>
+                        <template #title>{{ item.file.name }}</template>
+                        <div class="file-name">{{ item.file.name }}</div>
+                    </a-tooltip>
+                    <div style="flex: 1;margin-left: 20px;">
+                        <a-progress :percent="calculatePercent(item.currentChunk, item.totalChunks)" />
+                    </div>
+
+                </div>
+            </template>
+
         </div>
     </a-modal>
 
 </template>
 
 <script setup lang='ts'>
+
+
 import { onMounted, ref, reactive, onUnmounted } from "vue";
 import { message } from "ant-design-vue";
 import { Terminal } from "xterm";
@@ -56,6 +84,10 @@ let terminal = ref(null);
 // let path = ref<string>("ws://127.0.0.1:19529");
 // let path = ref<string>("ws://192.168.10.2:19529");
 let path = ref<string>("ws://192.168.10.2:19528");
+// let path = ref<string>("ws://192.168.10.1:19528");
+
+
+
 let websocket = <any>(null);
 let term = reactive<any>({});
 let fitAddon = reactive<any>({});
@@ -64,11 +96,18 @@ const { t } = useI18n();
 const emit = defineEmits(["connectResult"]);
 let connectionStatus = ref<boolean>(true);
 let inFileSelect = ref<boolean>(false)
+let fileInputRef = ref<HTMLInputElement>();
+let isSupportShowSaveFilePicker = ref<boolean>(false); //浏览器是否支持showSaveFilePicker
 onMounted(() => {
     initXterm();
     let socket = initSocket(path.value, 5000, 'arraybuffer', onOpen, onData, onError, onClose);
     websocket = socket
-});
+
+    if ('showSaveFilePicker' in window) isSupportShowSaveFilePicker.value = true
+})
+
+
+
 
 const initXterm = () => {
     let copy = "";
@@ -80,9 +119,11 @@ const initXterm = () => {
         fontWeight: "500",
         rightClickSelectsWord: true,
         theme: {
-            foreground: "red",
+            foreground: "#333333",
             background: "#FFFFFF",
             cursor: "#6376C2",
+            selectionBackground: '#cccccc'
+
         },
     });
     _term.open(terminal.value);
@@ -91,7 +132,7 @@ const initXterm = () => {
         term.selectLines(0, 0);
     };
     _term.onKey((e: any) => {
-        if (e.key == "\x16") {
+        if (e.key == "\x16" || (e.domEvent.metaKey && e.key === 'c')) {
             navigator.clipboard.readText().then((clipText) => {
                 sendCharacters(clipText);
             });
@@ -127,8 +168,9 @@ const initXterm = () => {
         _term._initialized = true;
         _term.onData((raw: string) => {
             if (raw == '\x03') {
-                navigator.clipboard.writeText(copy);
+                // navigator.clipboard.writeText(copy);
                 console.log("^C", copy);
+                message.success("复制成功");
             } else if (raw == '\x16') {
                 // _term.write(copy);
                 console.log("1");
@@ -172,10 +214,8 @@ const onData = (msg: any) => {
             okType: 'danger',
             cancelText: 'No',
             onOk() {
-                let fileInput = document.getElementById('fileInput');
-                if (fileInput) {
-                    fileInput.addEventListener('change', startUploads, false);
-                    document.getElementById('fileInput')?.click()
+                if (fileInputRef.value) {
+                    fileInputRef.value.click()
                     isStopUploading = false
                     inFileSelect.value = true
                 }
@@ -195,8 +235,8 @@ const onData = (msg: any) => {
         if (isStopUploading) return
         if (!endData) sendNextChunk()
     }
-    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_ERROR) message.error('文件上传失败'); isStopUploading = true; uploadingOpen.value = false
-    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_FILE_EXISTED) message.error('文件上传重复'); isStopUploading = true; uploadingOpen.value = false
+    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_ERROR) message.error('文件上传失败'), isStopUploading = true, transmissionProgressOpen.value = false
+    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_FILE_EXISTED) message.error('文件上传重复'), isStopUploading = true, transmissionProgressOpen.value = false
 };
 
 type FileList = {
@@ -204,11 +244,16 @@ type FileList = {
     totalChunks: number
     currentChunk: number
 }
-//文件上传列表
-let uploadingOpen = ref<boolean>(false)
+//上传展示弹窗
+let transmissionProgressOpen = ref<boolean>(false)
+//上传类型 0下载  1上传
+let transmissionProgressType = ref<Number>(0)
+
+//文件列表
 let filesList = ref<FileList[]>([])
 let filesuploadingIndex = ref<number>(0)
 const startUploads = (event: any) => {
+    console.log(event.target.files, 'event.target.files');
     if (event.target.files.length !== 0) {
         filesList.value = []
         let files = event.target.files
@@ -221,9 +266,15 @@ const startUploads = (event: any) => {
             })
             filesList.value.push({ file, totalChunks: Math.ceil(file.size / chunkSize), currentChunk: 0 })
         }
-        uploadingOpen.value = true
+        transmissionProgressType.value = 1
+        transmissionProgressOpen.value = true
         console.log(FileInfo, 'FileInfo')
         sectermFileUploadReq({ FileInfo }, websocket)
+
+        // 确保 fileInputRef.value 存在后再进行赋值操作
+        if (fileInputRef.value) {
+            (fileInputRef.value as HTMLInputElement).value = '';
+        }
     } else {
         console.log("未选择文件");
     }
@@ -292,7 +343,7 @@ const sendNextChunk = async () => {
             if (endData) {
                 console.log('文件上传完成', uploadFileItem.name);
                 if (filesuploadingIndex.value >= filesList.value.length - 1) {
-                    uploadingOpen.value = false
+                    transmissionProgressOpen.value = false
                 } else {
                     filesuploadingIndex.value++
                 }
@@ -305,6 +356,75 @@ const sendNextChunk = async () => {
         });
     // handleLoad()
 }
+
+//每次文件下载大小
+let downloadRef = ref<HTMLAnchorElement>();
+const downloadChunkSize = 8 * 1024; //每次下载文件大小
+let isStopDownload: boolean = false //停止下载
+let grossBytes = 0;//总字节
+let downloadedBytes = 0; // 已经下载的字节数
+let downloadChunks = []; // 存储所有分段的数组 
+let isDownloadAcComplish = ref<boolean>(false) //是否下载完成
+let fileName = ref<string>('')
+/**
+ * 保存分段的Blob
+ */
+const downloadFileItem = async (blob: Blob) => {
+    downloadedBytes += blob.size;
+    downloadChunks.push(blob);
+    if (downloadedBytes === grossBytes) {
+        isDownloadAcComplish.value = true
+    }
+
+}
+
+declare global {
+    interface Window {
+        showSaveFilePicker: (options?: any) => Promise<any>;
+    }
+}
+/**
+ * 下载文件
+ * @param file 文件
+ */
+const downloadFile = async (fileBlob: Blob, fileName: string) => {
+    //判断是否可以用 showSaveFilePicker 文件存入选择器
+    if (isSupportShowSaveFilePicker) {
+        try {
+            const opts = {
+                suggestedName: fileName,
+                types: [
+                    {
+                        description: 'Text files',
+                        accept: {
+                            'text/plain': ['.txt']
+                        }
+                    },
+                ],
+                excludeAcceptAllOption: true
+            };
+            const handle = await window.showSaveFilePicker(opts); // 打开保存文件对话框
+            const writable = await handle.createWritable(); // 创建可写入的文件对象
+            // 在这里写入文件内容
+            await writable.write(fileBlob);
+            await writable.close();
+            message.success('文件保存成功')
+
+        } catch (error) {
+            console.error('文件保存失败:', error);
+        }
+    } else {
+        const fileUrl = URL.createObjectURL(fileBlob);
+        if (downloadRef.value) {
+            (downloadRef.value as HTMLAnchorElement).href = fileUrl;
+            (downloadRef.value as HTMLAnchorElement).download = fileName;
+            // 触发点击事件
+            downloadRef.value.click();
+        }
+
+    }
+}
+
 
 const onOpen = () => {
     let { cols, rows } = term;
@@ -340,6 +460,12 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang='less'>
+.uploading-div {
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .terminal-div {
     width: calc(100% - 30px);
     height: calc(100% - 30px);

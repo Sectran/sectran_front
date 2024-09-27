@@ -85,6 +85,7 @@ export const sectermTeminalCharacters = (data: any, websocket: WebSocket) => {
 
 export const sectermFileUploadReq = (data: any, websocket: WebSocket) => {
     console.log("传送文件信息")
+    intNume = 0
     let sectermMessage = new v1.SectermMessage();
     let FileReq = new v1.SectermFileUploadReq()
     FileReq.FileInfo = data.FileInfo

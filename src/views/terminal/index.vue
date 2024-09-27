@@ -43,8 +43,8 @@
                                 </div>
                             </div>
                             <template v-if="item.isUnfold">
-                                <div v-for="(child, ins) in item.children" :key="ins" class="tree-child-node" 
-                                @click="connectName = child.name; connectOpen = true">
+                                <div v-for="(child, ins) in item.children" :key="ins" class="tree-child-node"
+                                    @click="connectName = child.name; connectOpen = true">
                                     {{ child.name }}
                                 </div>
                             </template>
@@ -57,7 +57,7 @@
 
                 <div class="Content-right">
 
-                    <!-- <xterm @connectResult="connectResult" :submitLoading="submitLoading.valueOf"/> -->
+                    <!-- <xterm @connectResult="connectResult" :submitLoading="submitLoading.valueOf" /> -->
                     <div class="xterm-div" v-if="multiList.length !== 0">
                         <a-tabs v-model:activeKey="multiActiveKey" hide-add type="editable-card" :forceRender="false"
                             @edit="onTabsEdit">
