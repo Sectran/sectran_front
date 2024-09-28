@@ -28,8 +28,7 @@
                     <div style="flex: 1;margin-left: 20px;">
                         <a-progress :percent="calculatePercent(downloadedBytes, grossBytes)" />
                     </div>
-                    <a-button v-if="isSupportShowSaveFilePicker" @click="selectionPath"
-                        type="primary">下载</a-button>
+                    <a-button v-if="isSupportShowSaveFilePicker" @click="selectionPath" type="primary">下载</a-button>
                 </div>
 
             </template>
@@ -185,7 +184,7 @@ const initXterm = () => {
     term = _term;
 };
 const sendCharacters = (data: any) => { sectermTeminalCharacters(data, websocket) };
-
+let downloadedFileInfo:any = []
 const onData = (msg: any) => {
     console.log(msg, "msg")
     let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
@@ -243,10 +242,11 @@ const onData = (msg: any) => {
     if (sm.fileDownloadReq) {
         console.log(sm.fileDownloadReq, 'fileDownloadReq');
         fileName.value = sm.fileDownloadReq.FileInfo?.[0].Name || "无名称"
-        grossBytes =  sm.fileDownloadReq.FileInfo?.[0].Size || 0
+        grossBytes = sm.fileDownloadReq.FileInfo?.[0].Size || 0
+        downloadedFileInfo = sm.fileDownloadReq.FileInfo
         transmissionProgressOpen.value = true
     }
-   
+
 
 };
 
@@ -372,8 +372,8 @@ const sendNextChunk = async () => {
 let downloadRef = ref<HTMLAnchorElement>();
 // const downloadChunkSize = 8 * 1024; //每次下载文件大小
 // let isStopDownload: boolean = false //停止下载
-let grossBytes:number = 0;//总字节
-let downloadedBytes:number = 0; // 已经下载的字节数
+let grossBytes: number = 0;//总字节
+let downloadedBytes: number = 0; // 已经下载的字节数
 let fileName = ref<string>('')
 
 let fileHandle: any;
@@ -385,16 +385,19 @@ declare global {
 /**
  * 保存分段的Blob
  */
-const selectionPath = async (blob: Blob) => {
-    downloadedBytes += blob.size;
+//  blob: Blob
+const selectionPath = async () => {
+    sectermFileDownloadReq([], websocket)
+    // downloadedBytes += blob.size;
+    return
     try {
         if (!fileHandle) {
             // 选择一个文件
             fileHandle = await window.showSaveFilePicker({
                 suggestedName: fileName.value
             });
-            sectermFileDownloadReq([],websocket)
-        } 
+          
+        }
     } catch (error) {
         console.error('追加数据时发生错误:', error);
     }

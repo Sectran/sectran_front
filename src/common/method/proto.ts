@@ -85,6 +85,7 @@ export const sectermFileUploadReq = (data: any, websocket: WebSocket) => {
     intNume = 0
     let sectermMessage = new v1.SectermMessage();
     let FileReq = new v1.SectermFileUploadReq()
+    
     FileReq.FileInfo = data.FileInfo
     sectermMessage.fileUploadReq = FileReq;
     let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
@@ -97,13 +98,38 @@ export const sectermFileUploadReq = (data: any, websocket: WebSocket) => {
  * @param file 
  * @param websocket 
  */
-export const sectermFileDownloadReq = (file: secterm.v1.ISectermFileInfo[], websocket: WebSocket) => {
-    console.log('发送下载文件的请求')
+export const sectermFileDownloadReq = (file: any, websocket: WebSocket) => {
+    console.log("传送文件信息")
+    intNume = 0
     let sectermMessage = new v1.SectermMessage();
-    let fileDownloadReq = new v1.SectermFileDownloadReq()
-    fileDownloadReq.FileInfo = file
-    let fileDownloadReqData = v1.SectermMessage.encode(sectermMessage).finish();
-    transmitWebSocket(fileDownloadReqData, websocket)
+    let FileReq = new v1.SectermFileDownloadReq()
+    
+    // FileReq.FileInfo = file
+    sectermMessage.fileDownloadReq = FileReq
+    console.log(sectermMessage)
+    let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
+    // websocket.send(FileUploadReqData);
+    const uintArr = Uint32Array.from([FileUploadReqData.length]);
+    try {
+        // websocket.send(uintArr);
+        websocket.send(FileUploadReqData);
+    
+        // 监听 bufferedAmount 变化
+        const checkBufferedAmount = () => {
+          if (websocket.bufferedAmount > 0) {
+            console.log(`Buffered amount: ${websocket.bufferedAmount}`);
+            setTimeout(checkBufferedAmount, 100); // 每隔 100ms 检查一次
+          } else {
+            console.log('Data sent successfully');
+          }
+        };
+    
+        checkBufferedAmount();
+      } catch (error) {
+        console.error('Error sending data:', error);
+      }
+    console.log(13213)
+    // transmitWebSocket(FileUploadReqData, websocket)
     // const uintArr = Uint32Array.from([filePathData.length]);
     // websocket.send(uintArr);
     // websocket.send(filePathData);
@@ -242,9 +268,14 @@ const transmitWebSocket = (data: any, websocket: WebSocket) => {
         // console.log(intNume)
         // console.log(uintArr)
         console.log(data)
+        try {
+            websocket.send(data);
+          } catch (error) {
+            console.error('Error sending data:', error);
+          }
         // websocket.send(uintArr);
-        websocket.send(data);
-       
+        // websocket.send(data);
+
         resolve('成功')
     })
 }
