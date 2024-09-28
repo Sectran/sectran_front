@@ -43,6 +43,9 @@ export const sectermConnectRequest = (connectParams: SectermConnectRequest, webs
     // websocket.send(connectData);
 }
 
+
+
+
 //浏览器大小改变传内容到socket
 export const sectermTeminalResize = (resizeParams: SectermTerminalResize, websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
@@ -91,66 +94,8 @@ export const sectermFileUploadReq = (data: any, websocket: WebSocket) => {
     let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(FileUploadReqData, websocket)
 }
-
-
 /**
- * 
- * @param file 
- * @param websocket 
- */
-export const sectermFileDownloadReq = (file: any, websocket: WebSocket) => {
-    console.log("传送文件信息")
-    intNume = 0
-    let sectermMessage = new v1.SectermMessage();
-    let FileReq = new v1.SectermFileDownloadReq()
-    
-    // FileReq.FileInfo = file
-    sectermMessage.fileDownloadReq = FileReq
-    console.log(sectermMessage)
-    let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
-    // websocket.send(FileUploadReqData);
-    const uintArr = Uint32Array.from([FileUploadReqData.length]);
-    try {
-        // websocket.send(uintArr);
-        websocket.send(FileUploadReqData);
-    
-        // 监听 bufferedAmount 变化
-        const checkBufferedAmount = () => {
-          if (websocket.bufferedAmount > 0) {
-            console.log(`Buffered amount: ${websocket.bufferedAmount}`);
-            setTimeout(checkBufferedAmount, 100); // 每隔 100ms 检查一次
-          } else {
-            console.log('Data sent successfully');
-          }
-        };
-    
-        checkBufferedAmount();
-      } catch (error) {
-        console.error('Error sending data:', error);
-      }
-    console.log(13213)
-    // transmitWebSocket(FileUploadReqData, websocket)
-    // const uintArr = Uint32Array.from([filePathData.length]);
-    // websocket.send(uintArr);
-    // websocket.send(filePathData);
-}
-
-
-/**
- * 文件上传取消
- */
-export const sectermFileCancelUploadReq = (data: any, websocket: WebSocket) => {
-    // console.log("文件取消上传")
-    // let sectermMessage = new v1.SectermMessage();
-    // let FileReq = new v1.SectermFileCreate
-    // FileReq.FileInfo = data.FileInfo
-    // sectermMessage.fileUploadReq = FileReq;
-    // let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
-    // transmitWebSocket(FileUploadReqData, websocket)
-}
-
-/**
- * 文件传输
+ * 文件上传传输
  */
 export const sectermFileuploading = (data: any, websocket: WebSocket) => {
     return new Promise(async (resolve) => {
@@ -166,6 +111,51 @@ export const sectermFileuploading = (data: any, websocket: WebSocket) => {
         intNume++
         resolve('成功')
     });
+}
+
+
+
+/**
+ * 文件下载响应
+ */
+export const sectermFileDownloadReq = ([]: any, websocket: WebSocket) => {
+    console.log("文件下载响应")
+    let sectermMessage = new v1.SectermMessage();
+    // let FileReq = new v1.SectermFileDownloadReq()
+    let FileReq = new v1.SectermFileDownloadReq()
+    
+    sectermMessage.fileDownloadReq = FileReq
+    console.log(sectermMessage)
+    let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
+    transmitWebSocket(FileUploadReqData, websocket)
+}
+
+
+
+
+/**
+ * 文件持续下载相应
+ */
+export const sectermFileDownloadContinue = ( websocket: WebSocket) => {
+    console.log("持续文件下载")
+    let sectermMessage = new v1.SectermMessage();
+    sectermMessage.fileCmd!.cmd = v1.SectermFileCmd.DOWNLOAD_CONTINUE
+
+    let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
+    transmitWebSocket(FileUploadReqData, websocket)
+}
+
+/**
+ * 文件上传取消
+ */
+export const sectermFileCancelUploadReq = (data: any, websocket: WebSocket) => {
+    // console.log("文件取消上传")
+    // let sectermMessage = new v1.SectermMessage();
+    // let FileReq = new v1.SectermFileCreate
+    // FileReq.FileInfo = data.FileInfo
+    // sectermMessage.fileUploadReq = FileReq;
+    // let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
+    // transmitWebSocket(FileUploadReqData, websocket)
 }
 
 /**

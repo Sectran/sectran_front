@@ -69,7 +69,8 @@ import {
     sectermTeminalCharacters,
     sectermFileuploading,
     sectermFileUploadReq,
-    sectermFileDownloadReq
+    sectermFileDownloadReq,
+    sectermFileDownloadContinue
 } from "@/common/method/proto";
 import { initSocket } from "@/common/method/socket"
 import { blobToUint8Array } from "@/common/method/utils"
@@ -184,7 +185,7 @@ const initXterm = () => {
     term = _term;
 };
 const sendCharacters = (data: any) => { sectermTeminalCharacters(data, websocket) };
-let downloadedFileInfo:any = []
+let downloadedFileInfo: any = []
 const onData = (msg: any) => {
     console.log(msg, "msg")
     let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
@@ -202,7 +203,6 @@ const onData = (msg: any) => {
             localStorage.setItem("username", props.username);
             localStorage.setItem("password", props.password);
         }
-
         // const uint8Array = new Uint8Array([sm.characters.Data]);
         // const string = Array.from(uint8Array).map(code => String.fromCharCode(code)).join('');
         // console.log(string);
@@ -237,15 +237,24 @@ const onData = (msg: any) => {
         if (isStopUploading) return
         if (!endData) sendNextChunk()
     }
-    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_ERROR) message.error('文件上传失败'), isStopUploading = true, transmissionProgressOpen.value = false
-    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_FILE_EXISTED) message.error('文件上传重复'), isStopUploading = true, transmissionProgressOpen.value = false
-    if (sm.fileDownloadReq) {
-        console.log(sm.fileDownloadReq, 'fileDownloadReq');
+    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.DOWNLOAD_START && sm.fileDownloadReq) {
+        console.log('准备下载');
         fileName.value = sm.fileDownloadReq.FileInfo?.[0].Name || "无名称"
         grossBytes = sm.fileDownloadReq.FileInfo?.[0].Size || 0
         downloadedFileInfo = sm.fileDownloadReq.FileInfo
         transmissionProgressOpen.value = true
     }
+    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.DOWNLOAD_CONTINUE) {
+        console.log('继续下载');
+        // const uint8Array = new Uint8Array([72, 108, 111, 32, 87, 111, 114, 108, 100, 33]);
+        // const blob = new Blob([uint8Array], { type: 'text/plain' });
+        // writeFile(blob)
+    }
+
+
+    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_ERROR) message.error('文件上传失败'), isStopUploading = true, transmissionProgressOpen.value = false
+    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_FILE_EXISTED) message.error('文件重复上传'), isStopUploading = true, transmissionProgressOpen.value = false
+
 
 
 };
@@ -386,17 +395,16 @@ declare global {
  * 保存分段的Blob
  */
 //  blob: Blob
-const selectionPath = async () => {
+const selectionPath = async (blob:Blob) => {
     sectermFileDownloadReq([], websocket)
-    // downloadedBytes += blob.size;
-    return
+    downloadedBytes += blob.size;
     try {
         if (!fileHandle) {
             // 选择一个文件
             fileHandle = await window.showSaveFilePicker({
                 suggestedName: fileName.value
             });
-          
+
         }
     } catch (error) {
         console.error('追加数据时发生错误:', error);
@@ -414,6 +422,7 @@ const writeFile = async (blob: Blob) => {
     if (downloadedBytes === grossBytes) {
         transmissionProgressOpen.value = false
     }
+    sectermFileDownloadContinue(websocket)
 }
 
 
