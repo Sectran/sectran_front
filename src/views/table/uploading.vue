@@ -74,7 +74,6 @@ let rechristenIndex = ref<undefined | number>(undefined)
 let rechristenValue = ref<undefined | string>(undefined)
 let rechristenFer = ref<any>(undefined)
 
-
 const on_connect = async () => {
     console.log(fileArray)
     try {

@@ -108,7 +108,7 @@ export const sectermFileCancelUploadReq = (data: any, websocket: WebSocket) => {
 }
 
 /**
- * 文件传输
+ * 文件上传传输
  */
 export const sectermFileuploading = (data: any, websocket: WebSocket) => {
     return new Promise(async (resolve) => {
@@ -127,9 +127,23 @@ export const sectermFileuploading = (data: any, websocket: WebSocket) => {
 }
 
 /**
+ * 文件请求下载
+ */
+export const sectermFileDownload = (data: any, websocket: WebSocket) => {
+    console.log(data, 'SectermFileDownloadReq')
+    let sectermMessage = new v1.SectermMessage();
+    let fileData = new v1.SectermFileDownloadReq()
+    fileData.FileInfo
+    sectermMessage.fileData = fileData;
+    let fileUploadingData = v1.SectermMessage.encode(sectermMessage).finish();
+    transmitWebSocket(fileUploadingData, websocket)
+}
+
+/**
  * 目录查询
  * @param path 目录路径
  * @param websocket 
+ * 
  */
 export const sectermTeminalCatalog = (path: string, websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
@@ -229,7 +243,7 @@ const transmitWebSocket = (data: any, websocket: WebSocket) => {
         console.log(data)
         // websocket.send(uintArr);
         websocket.send(data);
-       
+
         resolve('成功')
     })
 }
