@@ -76,9 +76,6 @@ export const sectermTeminalCharacters = (data: any, websocket: WebSocket) => {
     // websocket.send(charactersData);
 }
 
-
-
-
 /**
  * 文件上传响应
  */
@@ -93,6 +90,25 @@ export const sectermFileUploadReq = (data: any, websocket: WebSocket) => {
     let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(FileUploadReqData, websocket)
 }
+
+
+/**
+ * 
+ * @param file 
+ * @param websocket 
+ */
+export const sectermFileDownloadReq = (file: secterm.v1.ISectermFileInfo[], websocket: WebSocket) => {
+    console.log('发送下载文件的请求')
+    let sectermMessage = new v1.SectermMessage();
+    let fileDownloadReq = new v1.SectermFileDownloadReq()
+    fileDownloadReq.FileInfo = file
+    let fileDownloadReqData = v1.SectermMessage.encode(sectermMessage).finish();
+    transmitWebSocket(fileDownloadReqData, websocket)
+    // const uintArr = Uint32Array.from([filePathData.length]);
+    // websocket.send(uintArr);
+    // websocket.send(filePathData);
+}
+
 
 /**
  * 文件上传取消
@@ -205,7 +221,6 @@ export const SectermTeminaFileDownloadReq = (file: secterm.v1.ISectermFileInfo[]
     let sectermMessage = new v1.SectermMessage();
     let fileDownloadReq = new v1.SectermFileDownloadReq()
     fileDownloadReq.FileInfo = file
-
     let fileDownloadReqData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(fileDownloadReqData, websocket)
     // const uintArr = Uint32Array.from([filePathData.length]);
