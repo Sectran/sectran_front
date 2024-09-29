@@ -16,20 +16,19 @@
 
             <template v-if="transmissionProgressType === 0">
 
-                <a-input-group compact>
+                <!-- <a-input-group compact>
                     <a-input v-model:value="fileName" style="width: calc(100% - 70px)" />
                     <a-button type="primary" :disabled="!isDownloadAcComplish">下载</a-button>
-                </a-input-group>
+                </a-input-group> -->
                 <div class="items-center">
                     <a-tooltip>
                         <template #title>{{ fileName }}</template>
                         <div class="file-name">{{ fileName }}</div>
                     </a-tooltip>
                     <div style="flex: 1;margin-left: 20px;">
-                        <a-progress :percent="calculatePercent(4, 100)" />
+                        <a-progress :percent="calculatePercent(downloadedBytes, grossBytes)" />
                     </div>
-                    <a-button v-if="isSupportShowSaveFilePicker" @click="downloadFile" :disabled="!isDownloadAcComplish"
-                        type="primary">下载</a-button>
+                    <a-button v-if="isSupportShowSaveFilePicker" @click="selectionPath" type="primary">下载</a-button>
                 </div>
 
             </template>
@@ -69,7 +68,11 @@ import {
     sectermTeminalResize,
     sectermTeminalCharacters,
     sectermFileuploading,
-    sectermFileUploadReq
+    sectermFileUploadReq,
+    sectermFileDownloadReq,
+
+    sectermFileDownloadStart,
+    sectermFileDownloadContinue,
 } from "@/common/method/proto";
 import { initSocket } from "@/common/method/socket"
 import { blobToUint8Array } from "@/common/method/utils"
@@ -106,8 +109,6 @@ onMounted(() => {
 
     if ('showSaveFilePicker' in window) isSupportShowSaveFilePicker.value = true
 })
-
-
 
 
 const initXterm = () => {
@@ -184,10 +185,11 @@ const initXterm = () => {
     term = _term;
 };
 const sendCharacters = (data: any) => { sectermTeminalCharacters(data, websocket) };
-
+let downloadedFileInfo: any = []
 const onData = (msg: any) => {
-    let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
     console.log(msg, "msg")
+    let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
+
     console.log(sm, 'sm')
     if (sm?.connectRes) {
         if (sm.connectRes.code != v1.SectermCode.LOGON_SUCCESS) {
@@ -201,7 +203,6 @@ const onData = (msg: any) => {
             localStorage.setItem("username", props.username);
             localStorage.setItem("password", props.password);
         }
-
         // const uint8Array = new Uint8Array([sm.characters.Data]);
         // const string = Array.from(uint8Array).map(code => String.fromCharCode(code)).join('');
         // console.log(string);
@@ -226,6 +227,8 @@ const onData = (msg: any) => {
             },
         });
     }
+
+
     if (sm?.fileCmd?.cmd === v1.SectermFileCmd.UPLOAD_START) {
         console.log(filesuploadingIndex.value, 'filesuploadingIndex上传新的文件');
         if (isStopUploading) return
@@ -236,16 +239,36 @@ const onData = (msg: any) => {
         if (isStopUploading) return
         if (!endData) sendNextChunk()
     }
-    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_ERROR) message.error('文件上传失败'), isStopUploading = true, transmissionProgressOpen.value = false
 
-    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_FILE_EXISTED) message.error('文件上传重复'), isStopUploading = true, transmissionProgressOpen.value = false
 
-    if (sm?.fileDownloadReq ) {
-        console.log(sm.fileDownloadReq.FileInfo, 'fileDownloadReq')
-        fileName.value = sm.fileDownloadReq?.FileInfo?.[0]?.Name as string;
-        
-
+    if (sm?.fileDownloadReq) {
+        fileName.value = sm.fileDownloadReq.FileInfo?.[0].Name || "无名称"
+        grossBytes = sm.fileDownloadReq.FileInfo?.[0].Size || 0
+        downloadedFileInfo = sm.fileDownloadReq.FileInfo
+        transmissionProgressOpen.value = true
+        transmissionProgressType.value = 0
     }
+    if (sm.fileData && sm!.fileData.data) {
+        const uint8Array = new Uint8Array(sm!.fileData.data);
+        const blob = new Blob([uint8Array], { type: 'text/plain' });
+        writeFile(blob, sm!.fileData.endData as boolean)
+    }
+    // if (sm?.fileCmd?.cmd === v1.SectermFileCmd.DOWNLOAD_START && sm.fileDownloadReq) {
+    //     console.log('准备下载');
+    //     fileName.value = sm.fileDownloadReq.FileInfo?.[0].Name || "无名称"
+    //     grossBytes = sm.fileDownloadReq.FileInfo?.[0].Size || 0
+    //     downloadedFileInfo = sm.fileDownloadReq.FileInfo
+    //     transmissionProgressOpen.value = true
+    // }
+    // if (sm?.fileCmd?.cmd === v1.SectermFileCmd.DOWNLOAD_CONTINUE) {
+    //     console.log('继续下载');
+    //     // const uint8Array = new Uint8Array([72, 108, 111, 32, 87, 111, 114, 108, 100, 33]);
+    //     // const blob = new Blob([uint8Array], { type: 'text/plain' });
+    //     // writeFile(blob)
+    // }
+
+    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_ERROR) message.error('文件上传失败'), isStopUploading = true, transmissionProgressOpen.value = false
+    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_FILE_EXISTED) message.error('文件重复上传'), isStopUploading = true, transmissionProgressOpen.value = false
 
 
 
@@ -372,80 +395,103 @@ const sendNextChunk = async () => {
 
 //每次文件下载大小
 let downloadRef = ref<HTMLAnchorElement>();
-const downloadChunkSize = 8 * 1024; //每次下载文件大小
-let isStopDownload: boolean = false //停止下载
-let grossBytes = 0;//总字节
-let downloadedBytes = 0; // 已经下载的字节数
-let downloadChunks: Blob[] = []; // 存储所有分段的数组 
-let isDownloadAcComplish = ref<boolean>(false) //是否下载完成
+// const downloadChunkSize = 8 * 1024; //每次下载文件大小
+// let isStopDownload: boolean = false //停止下载
+let grossBytes: number = 0;//总字节
+let downloadedBytes = ref<number>(0); // 已经下载的字节数
 let fileName = ref<string>('')
-/**
- * 保存分段的Blob
- */
-const downloadFileItem = async (uint8ArrayData: Uint8Array) => {
-    console.log(uint8ArrayData, 'uint8ArrayData');
-    const uint8Array = new Uint8Array(uint8ArrayData);
-    // 将 Uint8Array 转换为 Blob
-    const blob = new Blob([uint8Array], { type: 'application/octet-stream' });
-    downloadedBytes += blob.size;
-    downloadChunks.push(blob);
-    if (downloadedBytes === grossBytes) {
-        isDownloadAcComplish.value = true
-        console.log("下载完成");
-    }
 
-}
-
+let fileHandle: any;
 declare global {
     interface Window {
         showSaveFilePicker: (options?: any) => Promise<any>;
     }
 }
 /**
- * 下载文件
- * @param file 文件
+ * 保存分段的Blob
  */
-const downloadFile = async () => {
-    const firstType = downloadChunks[0]?.type || 'application/octet-stream';
-    const mergedBlob = new Blob(downloadChunks, { type: firstType });
-    console.log(mergedBlob, 'mergedBlob');
-    //判断是否可以用 showSaveFilePicker 文件存入选择器
-    if (isSupportShowSaveFilePicker) {
-        try {
-            const opts = {
-                suggestedName: fileName.value,
-                types: [
-                    {
-                        description: 'Text files',
-                        accept: {
-                            'text/plain': ['.txt']
-                        }
-                    },
-                ],
-                excludeAcceptAllOption: true
-            };
-            const handle = await window.showSaveFilePicker(opts); // 打开保存文件对话框
-            const writable = await handle.createWritable(); // 创建可写入的文件对象
-            // 在这里写入文件内容
-            await writable.write(mergedBlob);
-            await writable.close();
-            message.success('文件保存成功')
+//  blob: Blob
+const selectionPath = async (blob: Blob) => {
+    sectermFileDownloadReq([], websocket)
 
-        } catch (error) {
-            console.error('文件保存失败:', error);
+    try {
+        if (!fileHandle) {
+            // 选择一个文件
+            fileHandle = await window.showSaveFilePicker({
+                suggestedName: fileName.value
+            });
+            console.log(fileHandle, 'fileHandle');
+            sectermFileDownloadStart(websocket)
         }
-    } else {
-
-        const fileUrl = URL.createObjectURL(mergedBlob);
-        if (downloadRef.value) {
-            (downloadRef.value as HTMLAnchorElement).href = fileUrl;
-            (downloadRef.value as HTMLAnchorElement).download = fileName.value;
-            // 触发点击事件
-            downloadRef.value.click();
-        }
-
+    } catch (error) {
+        console.error('追加数据时发生错误:', error);
     }
+
 }
+
+const writeFile = async (blob: Blob, isEndData: boolean) => {
+    downloadedBytes.value = blob.size + downloadedBytes.value;
+    const writable = await fileHandle.createWritable({ keepExistingData: true });
+    const file = await fileHandle.getFile();
+    const fileSize = file.size;
+    writable.seek(fileSize);
+    await writable.write(blob);
+    await writable.close();
+
+    if (isEndData) {
+        transmissionProgressOpen.value = false
+    } else {
+        sectermFileDownloadContinue(websocket)
+    }
+
+
+
+}
+
+
+
+
+// /**
+//  * 下载文件
+//  * @param file 文件
+//  */
+// const downloadFile = async (fileBlob: Blob, fileName: string) => {
+//     //判断是否可以用 showSaveFilePicker 文件存入选择器
+//     if (isSupportShowSaveFilePicker) {
+//         try {
+//             const opts = {
+//                 suggestedName: fileName,
+//                 types: [
+//                     {
+//                         description: 'Text files',
+//                         accept: {
+//                             'text/plain': ['.txt']
+//                         }
+//                     },
+//                 ],
+//                 excludeAcceptAllOption: true
+//             };
+//             const handle = await window.showSaveFilePicker(opts); // 打开保存文件对话框
+//             const writable = await handle.createWritable(); // 创建可写入的文件对象
+//             // 在这里写入文件内容
+//             await writable.write(fileBlob);
+//             await writable.close();
+//             message.success('文件保存成功')
+
+//         } catch (error) {
+//             console.error('文件保存失败:', error);
+//         }
+//     } else {
+//         const fileUrl = URL.createObjectURL(fileBlob);
+//         if (downloadRef.value) {
+//             (downloadRef.value as HTMLAnchorElement).href = fileUrl;
+//             (downloadRef.value as HTMLAnchorElement).download = fileName;
+//             // 触发点击事件
+//             downloadRef.value.click();
+//         }
+
+//     }
+// }
 
 
 const onOpen = () => {

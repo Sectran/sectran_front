@@ -32,10 +32,10 @@
                     </div>
                     <div class="Content-left-tree" v-if="!isSpread" @scroll="handleScroll">
                         <div v-for="(item, index) in treeData" :key="index" class="tree-node" :ref="treeRefArr[index]">
-                            <div class="items-center tree-parent-node">
-                                <DownOutlined @click="item.isUnfold = !item.isUnfold" v-if="item.isUnfold"
+                            <div class="items-center tree-parent-node" @click="item.isUnfold = !item.isUnfold">
+                                <DownOutlined  v-if="item.isUnfold"
                                     class="unfold-icon" />
-                                <RightOutlined @click="item.isUnfold = !item.isUnfold" v-else class="unfold-icon" />
+                                <RightOutlined  v-else class="unfold-icon" />
                                 <img v-if="item.icon === 'linux'" src='@/assets/img/linux.png' alt="">
                                 <img v-if="item.icon === 'windows'" src='@/assets/img/windows.png' alt="">
                                 <div>

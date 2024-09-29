@@ -43,6 +43,9 @@ export const sectermConnectRequest = (connectParams: SectermConnectRequest, webs
     // websocket.send(connectData);
 }
 
+
+
+
 //浏览器大小改变传内容到socket
 export const sectermTeminalResize = (resizeParams: SectermTerminalResize, websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
@@ -76,9 +79,6 @@ export const sectermTeminalCharacters = (data: any, websocket: WebSocket) => {
     // websocket.send(charactersData);
 }
 
-
-
-
 /**
  * 文件上传响应
  */
@@ -88,25 +88,12 @@ export const sectermFileUploadReq = (data: any, websocket: WebSocket) => {
     intNume = 0
     let sectermMessage = new v1.SectermMessage();
     let FileReq = new v1.SectermFileUploadReq()
+
     FileReq.FileInfo = data.FileInfo
     sectermMessage.fileUploadReq = FileReq;
     let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(FileUploadReqData, websocket)
 }
-
-/**
- * 文件上传取消
- */
-export const sectermFileCancelUploadReq = (data: any, websocket: WebSocket) => {
-    // console.log("文件取消上传")
-    // let sectermMessage = new v1.SectermMessage();
-    // let FileReq = new v1.SectermFileCreate
-    // FileReq.FileInfo = data.FileInfo
-    // sectermMessage.fileUploadReq = FileReq;
-    // let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
-    // transmitWebSocket(FileUploadReqData, websocket)
-}
-
 /**
  * 文件上传传输
  */
@@ -124,6 +111,71 @@ export const sectermFileuploading = (data: any, websocket: WebSocket) => {
         intNume++
         resolve('成功')
     });
+}
+
+/**
+ * 文件下载响应
+ */
+export const sectermFileDownloadReq = ([]: any, websocket: WebSocket) => {
+    console.log("文件下载响应")
+    let sectermMessage = new v1.SectermMessage();
+    // let FileReq = new v1.SectermFileDownloadReq()
+    let FileReq = new v1.SectermFileDownloadReq()
+
+    sectermMessage.fileDownloadReq = FileReq
+    console.log(sectermMessage)
+    let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
+    transmitWebSocket(FileUploadReqData, websocket)
+}
+
+/**
+ * 文件开始下载
+ */
+
+export const sectermFileDownloadStart = (websocket: WebSocket) => {
+    console.log("文件开始下载")
+    let sectermMessage = new v1.SectermMessage();
+    console.log(sectermMessage)
+    console.log(sectermMessage.fileCmd)
+    let data = {
+        cmd: v1.SectermFileCmd.DOWNLOAD_START
+    }
+    sectermMessage.fileCmd = data
+    console.log(sectermMessage)
+    let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
+    transmitWebSocket(FileUploadReqData, websocket)
+}
+
+
+
+/**
+ * 文件持续下载相应
+ */
+export const sectermFileDownloadContinue = (websocket: WebSocket) => {
+    console.log("文件持续下载相应")
+    let sectermMessage = new v1.SectermMessage()
+
+    let data = {
+        cmd: v1.SectermFileCmd.DOWNLOAD_CONTINUE
+    }
+
+    sectermMessage.fileCmd = data
+    console.log(sectermMessage)
+    let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
+    transmitWebSocket(FileUploadReqData, websocket)
+}
+
+/**
+ * 文件上传取消
+ */
+export const sectermFileCancelUploadReq = (data: any, websocket: WebSocket) => {
+    // console.log("文件取消上传")
+    // let sectermMessage = new v1.SectermMessage();
+    // let FileReq = new v1.SectermFileCreate
+    // FileReq.FileInfo = data.FileInfo
+    // sectermMessage.fileUploadReq = FileReq;
+    // let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
+    // transmitWebSocket(FileUploadReqData, websocket)
 }
 
 /**
@@ -219,7 +271,6 @@ export const SectermTeminaFileDownloadReq = (file: secterm.v1.ISectermFileInfo[]
     let sectermMessage = new v1.SectermMessage();
     let fileDownloadReq = new v1.SectermFileDownloadReq()
     fileDownloadReq.FileInfo = file
-
     let fileDownloadReqData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(fileDownloadReqData, websocket)
     // const uintArr = Uint32Array.from([filePathData.length]);
@@ -241,8 +292,13 @@ const transmitWebSocket = (data: any, websocket: WebSocket) => {
         // console.log(intNume)
         // console.log(uintArr)
         console.log(data)
+        try {
+            websocket.send(data);
+        } catch (error) {
+            console.error('Error sending data:', error);
+        }
         // websocket.send(uintArr);
-        websocket.send(data);
+        // websocket.send(data);
 
         resolve('成功')
     })
