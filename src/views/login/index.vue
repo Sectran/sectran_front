@@ -103,6 +103,10 @@ const onFinish = (valus: { account: string, password: string, remember: boolean 
         localStorage.setItem('name', user.name)
         getMenu<{ id: number, type: 2 }>({ id: role_id, type: 2 }).then((res: { data: string[] }) => {
             let { data } = res
+            if(data.length === 0) {{
+                message.info("没有导航")
+                return
+            }}
             localStorage.setItem('limitsData', JSON.stringify(data))
             let routerUrl = data.find((item: string) => item.indexOf(":") !== -1)
             store.commit('router/amendMenuData', [])

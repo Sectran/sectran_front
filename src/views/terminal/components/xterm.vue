@@ -13,9 +13,7 @@
     <a-modal v-model:open="transmissionProgressOpen" :closable="false" :footer="null" :maskClosable="false"
         :title="`文件${['下载', '上传'][transmissionProgressType as number]}中`">
         <div class="uploading-div">
-
             <template v-if="transmissionProgressType === 0">
-
                 <!-- <a-input-group compact>
                     <a-input v-model:value="fileName" style="width: calc(100% - 70px)" />
                     <a-button type="primary" :disabled="!isDownloadAcComplish">下载</a-button>
@@ -30,7 +28,6 @@
                     </div>
                     <a-button v-if="isSupportShowSaveFilePicker" @click="selectionPath" type="primary">下载</a-button>
                 </div>
-
             </template>
 
             <template v-else-if="transmissionProgressType === 1">
@@ -70,7 +67,6 @@ import {
     sectermFileuploading,
     sectermFileUploadReq,
     sectermFileDownloadReq,
-
     sectermFileDownloadStart,
     sectermFileDownloadContinue,
 } from "@/common/method/proto";
@@ -104,11 +100,14 @@ let fileInputRef = ref<HTMLInputElement>();
 let isSupportShowSaveFilePicker = ref<boolean>(false); //浏览器是否支持showSaveFilePicker
 onMounted(() => {
     initXterm();
-    let socket = initSocket(path.value, 5000, 'arraybuffer', onOpen, onData, onError, onClose);
-    websocket = socket
-
+    socketConnect()
     if ('showSaveFilePicker' in window) isSupportShowSaveFilePicker.value = true
 })
+
+const socketConnect = () => {
+    let socket = initSocket(path.value, 5000, 'arraybuffer', onOpen, onData, onError, onClose);
+    websocket = socket
+}
 
 
 const initXterm = () => {
@@ -194,15 +193,19 @@ const onData = (msg: any) => {
     if (sm?.connectRes) {
         if (sm.connectRes.code != v1.SectermCode.LOGON_SUCCESS) {
             console.log("connect error deu to " + sm.connectRes.code);
+        } else {
+            if (props.submitLoading) {
+                emit("connectResult", false);
+                localStorage.setItem("username", props.username);
+                localStorage.setItem("password", props.password);
+            }
         }
+
         console.log("connect success!");
     }
+
     if (sm?.characters) {
-        if (props.submitLoading) {
-            emit("connectResult", false);
-            localStorage.setItem("username", props.username);
-            localStorage.setItem("password", props.password);
-        }
+        console.log(sm.characters, 'characters');
         // const uint8Array = new Uint8Array([sm.characters.Data]);
         // const string = Array.from(uint8Array).map(code => String.fromCharCode(code)).join('');
         // console.log(string);
@@ -240,17 +243,21 @@ const onData = (msg: any) => {
         if (!endData) sendNextChunk()
     }
 
-
     if (sm?.fileDownloadReq) {
+        console.log('下载文件');
         fileName.value = sm.fileDownloadReq.FileInfo?.[0].Name || "无名称"
         grossBytes = sm.fileDownloadReq.FileInfo?.[0].Size || 0
         downloadedFileInfo = sm.fileDownloadReq.FileInfo
+
+
         transmissionProgressOpen.value = true
+
         transmissionProgressType.value = 0
     }
     if (sm.fileData && sm!.fileData.data) {
         const uint8Array = new Uint8Array(sm!.fileData.data);
         const blob = new Blob([uint8Array], { type: 'text/plain' });
+        console.log("blob", sm.fileData.seriNumber)
         writeFile(blob, sm!.fileData.endData as boolean)
     }
     // if (sm?.fileCmd?.cmd === v1.SectermFileCmd.DOWNLOAD_START && sm.fileDownloadReq) {
@@ -397,7 +404,7 @@ const sendNextChunk = async () => {
 let downloadRef = ref<HTMLAnchorElement>();
 // const downloadChunkSize = 8 * 1024; //每次下载文件大小
 // let isStopDownload: boolean = false //停止下载
-let grossBytes: number = 0;//总字节
+let grossBytes: any = 0;//总字节
 let downloadedBytes = ref<number>(0); // 已经下载的字节数
 let fileName = ref<string>('')
 
@@ -411,9 +418,9 @@ declare global {
  * 保存分段的Blob
  */
 //  blob: Blob
-const selectionPath = async (blob: Blob) => {
+const selectionPath = async () => {
+    console.log('文件下载响应')
     sectermFileDownloadReq([], websocket)
-
     try {
         if (!fileHandle) {
             // 选择一个文件
@@ -426,7 +433,6 @@ const selectionPath = async (blob: Blob) => {
     } catch (error) {
         console.error('追加数据时发生错误:', error);
     }
-
 }
 
 const writeFile = async (blob: Blob, isEndData: boolean) => {
@@ -439,59 +445,40 @@ const writeFile = async (blob: Blob, isEndData: boolean) => {
     await writable.close();
 
     if (isEndData) {
-        transmissionProgressOpen.value = false
+        // transmissionProgressOpen.value = false
+        console.log(downloadedBytes.value)
+        downloadedBytes.value = 0
+        fileHandle = null
+
     } else {
         sectermFileDownloadContinue(websocket)
     }
-
-
-
 }
 
 
+const downloadFile = (url: string, filename: string) => {
+    console.log(url, filename);
+    // 创建一个隐藏的 <a> 元素
+    const a: any = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = filename || url.split('/').pop();
+    a.setAttribute('target', '_self')
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
 
 
-// /**
-//  * 下载文件
-//  * @param file 文件
-//  */
-// const downloadFile = async (fileBlob: Blob, fileName: string) => {
-//     //判断是否可以用 showSaveFilePicker 文件存入选择器
-//     if (isSupportShowSaveFilePicker) {
-//         try {
-//             const opts = {
-//                 suggestedName: fileName,
-//                 types: [
-//                     {
-//                         description: 'Text files',
-//                         accept: {
-//                             'text/plain': ['.txt']
-//                         }
-//                     },
-//                 ],
-//                 excludeAcceptAllOption: true
-//             };
-//             const handle = await window.showSaveFilePicker(opts); // 打开保存文件对话框
-//             const writable = await handle.createWritable(); // 创建可写入的文件对象
-//             // 在这里写入文件内容
-//             await writable.write(fileBlob);
-//             await writable.close();
-//             message.success('文件保存成功')
-
-//         } catch (error) {
-//             console.error('文件保存失败:', error);
-//         }
-//     } else {
-//         const fileUrl = URL.createObjectURL(fileBlob);
-//         if (downloadRef.value) {
-//             (downloadRef.value as HTMLAnchorElement).href = fileUrl;
-//             (downloadRef.value as HTMLAnchorElement).download = fileName;
-//             // 触发点击事件
-//             downloadRef.value.click();
-//         }
-
-//     }
-// }
+const loopWithDelay = (index: number, max: number) => {
+    if (index < max) {
+        // 递归调用 setTimeout，1秒后执行下一次循环
+        setTimeout(() => {
+            loopWithDelay(index + 1, max);
+            downloadFile('https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7BFAC08664-6B6F-245C-C87D-163733ECA16F%7D%26lang%3Dzh-CN%26browser%3D3%26usagestats%3D1%26appname%3DGoogle%2520Chrome%26needsadmin%3Dprefers%26ap%3Dx64-statsdef_1%26installdataindex%3Dempty/update2/installers/ChromeSetup.exe', 'ChromeSetup.exe');
+        }, 1000);
+    }
+}
 
 
 const onOpen = () => {
@@ -517,8 +504,10 @@ const onError = () => {
     message.error(t("socket.error"));
 };
 const onClose = () => {
-    console.log(websocket)
-    connectionStatus.value = false
+    // console.log(websocket)
+
+    term.write('session closed');
+    // connectionStatus.value = false
     console.log("socket已经关闭");
 };
 

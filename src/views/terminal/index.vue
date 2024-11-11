@@ -33,9 +33,8 @@
                     <div class="Content-left-tree" v-if="!isSpread" @scroll="handleScroll">
                         <div v-for="(item, index) in treeData" :key="index" class="tree-node" :ref="treeRefArr[index]">
                             <div class="items-center tree-parent-node" @click="item.isUnfold = !item.isUnfold">
-                                <DownOutlined  v-if="item.isUnfold"
-                                    class="unfold-icon" />
-                                <RightOutlined  v-else class="unfold-icon" />
+                                <DownOutlined v-if="item.isUnfold" class="unfold-icon" />
+                                <RightOutlined v-else class="unfold-icon" />
                                 <img v-if="item.icon === 'linux'" src='@/assets/img/linux.png' alt="">
                                 <img v-if="item.icon === 'windows'" src='@/assets/img/windows.png' alt="">
                                 <div>
@@ -66,6 +65,23 @@
                                 <xterm @connectResult="connectResult" :submitLoading="submitLoading.valueOf"
                                     :username="item.username" :password="item.password" />
                             </a-tab-pane>
+
+
+                            <template #renderTabBar="{ DefaultTabBar, ...props }">
+                                <a-dropdown :trigger="['contextmenu']">
+                                    <component :is="DefaultTabBar" v-bind="props" />
+                                    <template #overlay>
+                                        <a-menu>
+                                            <a-menu-item key="1">1st menu item</a-menu-item>
+                                            <a-menu-item key="2">2nd menu item</a-menu-item>
+                                            <a-menu-item key="3">3rd menu item</a-menu-item>
+                                        </a-menu>
+                                    </template>
+                                </a-dropdown>
+
+
+                            </template>
+
                             <template #rightExtra>
                                 <div class="tab-right">
                                     <!-- <PlusSquareOutlined class="nav-icon" /> -->
@@ -88,14 +104,21 @@
             </div>
         </div>
 
+        <input type="file" ref="fileInputRef" multiple @change="beforeUpload" />
+
+        <!-- <div @click="xz">
+            132131123
+        </div> -->
+
+
         <a-modal v-model:open="connectOpen" :title='`连接${connectName}`' :footer="null" :width="800">
             <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
                 <a-form :model="connectFormState" name="basic" @finish="on_connectFinish" :label-col="{ span: 3 }"
                     :wrapper-col="{ span: 21 }" autocomplete="off">
                     <a-form-item label="登录方式" name="network">
                         <a-radio-group v-model:value="connectFormState.network">
-                            <a-radio :value="1">手动登录</a-radio>
-                            <a-radio :value="2">自动登录</a-radio>
+                            <a-radio :value="1">自动登录</a-radio>
+                            <a-radio :value="2">手动登录</a-radio>
                         </a-radio-group>
                     </a-form-item>
                     <template v-if="connectFormState.network === 1">
@@ -134,8 +157,9 @@
                                         </a-textarea>
                                         <a-form-item-rest>
 
-                                            <a-upload name="file"
-                                                action="https://www.mocky.io/v2/5cc8019d300000980a055e76">
+                                            <a-upload name="file" :file-list="[]"
+                                                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                                                :before-upload="beforeUpload">
                                                 <a-button>
                                                     <upload-outlined></upload-outlined>
                                                 </a-button>
@@ -194,6 +218,9 @@ import { Modal } from 'ant-design-vue';
 import { resTable } from "@/common/type/type"
 import { MenuUnfoldOutlined, } from '@ant-design/icons-vue';
 import { throttle } from 'lodash';
+import type { UploadProps } from 'ant-design-vue';
+import { fileUpload, fileDownload } from "@/api/admin.ts"
+import { message } from "ant-design-vue";
 type MultiList = {
     name: string
     username: string
@@ -214,7 +241,7 @@ let connectName = ref<string>('')
 const submitLoading = ref<Boolean>(false);
 const multiActiveKey = ref(1);
 const soleKey = ref<number>(0);
-let multiList = ref<MultiList[]>([])
+let multiList = ref<MultiList[]>([{ name: '1111' }, { name: '2222' }, { name: '333' },])
 
 let transitionClass = ref<Boolean>(true)
 const treeData = ref<any>([
@@ -342,6 +369,56 @@ const onTabsEdit = (targetKey: number) => {
         onCancel() { },
     });
 }
+
+const xz = () => {
+    // , nodeId: 0 
+    fileDownload({}).then((res: any) => {
+        console.log(res)
+        const blob = new Blob([res.data], { type: 'text/plain' });
+        // 创建一个URL对象
+        const url = window.URL.createObjectURL(blob);
+
+        // 创建一个<a>标签
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'file.pdf';  // 设置下载的文件名
+
+        // 触发点击事件
+        document.body.appendChild(a);
+        a.click();
+
+        // 清理
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    })
+}
+
+
+const beforeUpload = (event: any) => {
+
+    let file = event.target.files
+    console.log(file);
+    if (file && file?.length === 0) {
+        alert('请选择至少一个文件');
+        return;
+    }
+
+    // 创建FormData对象
+    const formData = new FormData();
+    for (let i = 0; i < file!.length; i++) {
+        formData.append('files', file[i]);
+    }
+    let headers = {
+        'serviceName': 'sectran_front'
+    }
+    console.log(formData);
+    fileUpload(formData, headers).then((res: any) => {
+        message.success("上传成功")
+    })
+};
+
+
+
 
 const connectResult = (modalState: boolean) => {
     submitLoading.value = false

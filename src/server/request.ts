@@ -14,13 +14,17 @@ axios.defaults.baseURL = BASE_URL;
 
 axios.interceptors.request.use(
     (config: any) => {
+        console.log("请求地址：", config);
         const token: string | null = localStorage.getItem("token");
         let headers: any = {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            ...config.headers,
+            rPath: 'sectran_front/upload/admin/file.pdf'
         }
         if (token) {
             headers['authorization'] = `${token}`
         }
+        console.log("请求头：", headers);
         config.headers = headers
         return config;
     },
@@ -49,11 +53,19 @@ axios.interceptors.response.use(
  */
 
 //统一接口处理，返回数据
-const requests: Function = (url: string, param: AxiosRequestConfig<string>, fecth = "post", ismessage = true): Promise<any> => {
+const requests: Function = (url: string, param: AxiosRequestConfig<string>, fecth = "post", ismessage = true, headers: any = {}): Promise<any> => {
+   
+   console.log("请求地址：", url);
+   console.log("请求地址：", headers);
     return new Promise((resolve, reject) => {
         switch (fecth) {
             case "get":
-                axios.get(url, { params: param }).then((response: any) => {
+                axios.get(url, {params:param}).then((response: any) => {
+                    console.log("请求数据：", response);
+                    if(url = '/file/download') {
+                        resolve(response);
+                    }
+                    
                     if (response.data.code === 0) {
                         let { data } = response;
                         data.msg && message.success(data.msg);
@@ -65,7 +77,7 @@ const requests: Function = (url: string, param: AxiosRequestConfig<string>, fect
                 });
                 break;
             case "post":
-                axios.post(url, param).then(
+                axios.post(url, param, {headers:headers}).then(
                     (response: any) => {
                         if (response.data.code === 0 || response.data.base?.code === 0) {
                             let { data } = response;

@@ -21,8 +21,6 @@
             <li v-show="rightClickIndex !== store.state.tabsStore.tabsArr.length - 1" @click.stop="close('right')">关闭右侧标签
             </li>
             <li @click.stop="close('all')">全部关闭</li>
-      
-
         </ul>
     </div>
 

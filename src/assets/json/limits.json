@@ -80,6 +80,16 @@
                 "name": "获取角色",
                 "path": "/get_menu_authority_list",
                 "method": "POST"
+            },
+            {
+                "name": "上传",
+                "path": "/file/upload",
+                "method": "POST"
+            },
+            {
+                "name": "下载",
+                "path": "/file/download",
+                "method": "POST"
             }
         ]
     },
