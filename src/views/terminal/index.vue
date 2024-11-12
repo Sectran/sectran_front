@@ -24,11 +24,12 @@
                 <div class="Content-left " :style="{ width: `${leftWidth}px` }"
                     :class="[isSpread ? 'Content-left-lessen' : '', transitionClass ? 'transition-style' : '']">
                     <div class="Content-left-search">
-                        <MenuUnfoldOutlined class="menu-icon" @click="isSpread = !isSpread" />
                         <div class="search-sty" v-if="!isSpread">
                             <a-input :bordered="false" placeholder="" />
                             <SearchOutlined class="search-icon" />
                         </div>
+                        <MenuUnfoldOutlined class="menu-icon" @click="isSpread = !isSpread" />
+
                     </div>
                     <div class="Content-left-tree" v-if="!isSpread" @scroll="handleScroll">
                         <div v-for="(item, index) in treeData" :key="index" class="tree-node" :ref="treeRefArr[index]">
@@ -60,27 +61,29 @@
                     <div class="xterm-div" v-if="multiList.length !== 0">
                         <a-tabs v-model:activeKey="multiActiveKey" hide-add type="editable-card" :forceRender="false"
                             @edit="onTabsEdit">
-                            <a-tab-pane v-for="item in multiList" :key="item.key" :tab="item.name" :closable="true"
+                            <a-tab-pane v-for="(item, index) in multiList" :key="item.key" :closable="true"
                                 class="tab-pane">
+                                <template #tab>
+                                    <a-dropdown :trigger="['contextmenu']">
+                                        <div style="height: 100%;width: 100%;">
+                                            1321
+                                        </div>
+                                        <template #overlay>
+                                            <a-menu>
+                                                <a-menu-item v-if="index !== 0" key="1"
+                                                    @click="onTabsEdit(multiList[index - 1].key)">关闭左边</a-menu-item>
+                                                <a-menu-item v-if="index !== multiList.length - 1" key="2"
+                                                    @click="onTabsEdit(multiList[index + 1].key)">关闭右边</a-menu-item>
+                                            </a-menu>
+                                        </template>
+                                    </a-dropdown>
+                                </template>
                                 <xterm @connectResult="connectResult" :submitLoading="submitLoading.valueOf"
                                     :username="item.username" :password="item.password" />
                             </a-tab-pane>
 
 
-                            <template #renderTabBar="{ DefaultTabBar, ...props }">
-                                <a-dropdown :trigger="['contextmenu']">
-                                    <component :is="DefaultTabBar" v-bind="props" />
-                                    <template #overlay>
-                                        <a-menu>
-                                            <a-menu-item key="1">1st menu item</a-menu-item>
-                                            <a-menu-item key="2">2nd menu item</a-menu-item>
-                                            <a-menu-item key="3">3rd menu item</a-menu-item>
-                                        </a-menu>
-                                    </template>
-                                </a-dropdown>
 
-
-                            </template>
 
                             <template #rightExtra>
                                 <div class="tab-right">
@@ -351,6 +354,7 @@ const on_connectFinish = () => {
 };
 
 const onTabsEdit = (targetKey: number) => {
+
     Modal.confirm({
         title: '再次确认?',
         icon: createVNode(ExclamationCircleOutlined),
