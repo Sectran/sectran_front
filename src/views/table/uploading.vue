@@ -47,9 +47,9 @@
         </a-row>
 
 
-        <a-modal v-model:open="open" title="选择文件" @ok="open = false" :maskClosable="false" width="50%" :footer="null">
+        <!-- <a-modal v-model:open="open" title="选择文件" @ok="open = false" :maskClosable="false" width="50%" :footer="null">
 
-        </a-modal>
+        </a-modal> -->
     </div>
 </template>
 

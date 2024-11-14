@@ -66,7 +66,7 @@
                                 <template #tab>
                                     <a-dropdown :trigger="['contextmenu']">
                                         <div style="height: 100%;width: 100%;">
-                                            1321
+                                            {{ item.name }}
                                         </div>
                                         <template #overlay>
                                             <a-menu>
@@ -78,6 +78,9 @@
                                         </template>
                                     </a-dropdown>
                                 </template>
+                                <!-- <div>
+                                    123213
+                                </div> -->
                                 <xterm @connectResult="connectResult" :submitLoading="submitLoading.valueOf"
                                     :username="item.username" :password="item.password" />
                             </a-tab-pane>
@@ -107,7 +110,7 @@
             </div>
         </div>
 
-        <input type="file" ref="fileInputRef" multiple @change="beforeUpload" />
+        <!-- <input type="file" ref="fileInputRef" multiple @change="beforeUpload" /> -->
 
         <!-- <div @click="xz">
             132131123
@@ -244,7 +247,7 @@ let connectName = ref<string>('')
 const submitLoading = ref<Boolean>(false);
 const multiActiveKey = ref(1);
 const soleKey = ref<number>(0);
-let multiList = ref<MultiList[]>([{ name: '1111' }, { name: '2222' }, { name: '333' },])
+let multiList = ref<MultiList[]>([{ name: '1111' ,key:1}, { name: '2222' ,key:2}, { name: '333' ,key:3},])
 
 let transitionClass = ref<Boolean>(true)
 const treeData = ref<any>([
