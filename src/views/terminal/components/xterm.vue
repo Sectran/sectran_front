@@ -1,6 +1,11 @@
 <template>
     <input type="file" ref="fileInputRef" multiple style="display: none;" @change="startUploads" />
     <a ref="downloadRef" style="display:none;"></a>
+
+    <div class="terminal-header">
+        <div>{{props.name}}</div>
+        <LinkOutlined style="font-size: 22px;" @click="socketConnect" />
+    </div>
     <template v-if="connectionStatus">
         <div class="terminal-div">
             <div id="terminal" ref="terminal"></div>
@@ -9,6 +14,8 @@
     <template v-else>
         <div class="break-style">已断开，请重新连接</div>
     </template>
+
+
     <!-- 文件上传弹窗 -->
     <a-modal v-model:open="transmissionProgressOpen" :closable="false" :footer="null" :maskClosable="false"
         :title="`文件${['下载', '上传'][transmissionProgressType as number]}中`">
@@ -42,7 +49,6 @@
 
                 </div>
             </template>
-
         </div>
     </a-modal>
 
@@ -52,6 +58,7 @@
 
 
 import { onMounted, ref, reactive, onUnmounted } from "vue";
+import { LinkOutlined } from '@ant-design/icons-vue';
 import { message } from "ant-design-vue";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
@@ -73,9 +80,10 @@ import {
 import { initSocket } from "@/common/method/socket"
 import { blobToUint8Array } from "@/common/method/utils"
 const props = defineProps<{
-    username: string;
-    password: string;
-    submitLoading: boolean;
+    username: string
+    password: string
+    submitLoading: boolean
+    name:string
 }>();
 // const v1 = sectran_chard.secterm.v1;
 const v1 = secterm.v1;
@@ -108,7 +116,6 @@ const socketConnect = () => {
     let socket = initSocket(path.value, 5000, 'arraybuffer', onOpen, onData, onError, onClose);
     websocket = socket
 }
-
 
 const initXterm = () => {
     let copy = "";
@@ -499,7 +506,7 @@ const onOpen = () => {
 };
 const onError = () => {
     if (props.submitLoading) {
-        emit("connectResult", true);
+        // emit("connectResult", true);
     }
     message.error(t("socket.error"));
 };
@@ -525,7 +532,7 @@ onUnmounted(() => {
 
 .terminal-div {
     width: calc(100% - 30px);
-    height: calc(100% - 30px);
+    height: calc(100% - 30px - 40px);
     position: relative;
 }
 
@@ -570,5 +577,15 @@ onUnmounted(() => {
     justify-content: center;
     align-items: center;
 
+}
+
+
+.terminal-header {
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    background-color: #EFEFEF;
 }
 </style>

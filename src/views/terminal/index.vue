@@ -43,9 +43,22 @@
                                 </div>
                             </div>
                             <template v-if="item.isUnfold">
+
                                 <div v-for="(child, ins) in item.children" :key="ins" class="tree-child-node"
-                                    @click="connectName = child.name; connectOpen = true">
-                                    {{ child.name }}
+                                    @click="onOperatingSystem(item)">
+                                    <!-- child.isUnfold = !child.isUnfold -->
+                                    <div>
+                                        <DownOutlined v-if="child.isUnfold" class="unfold-icon" />
+                                        <RightOutlined v-else class="unfold-icon" />
+                                        {{ child.name }}
+                                    </div>
+                                    <template v-if="child.isUnfold">
+                                        <div v-for="(childs, inss) in child.children" :key="inss"
+                                            class="tree-child-node"
+                                            @click="connectName = child.name; connectOpen = true">
+                                            {{ childs.name }}
+                                        </div>
+                                    </template>
                                 </div>
                             </template>
                         </div>
@@ -60,7 +73,7 @@
                     <!-- <xterm @connectResult="connectResult" :submitLoading="submitLoading.valueOf" /> -->
                     <div class="xterm-div" v-if="multiList.length !== 0">
                         <a-tabs v-model:activeKey="multiActiveKey" hide-add type="editable-card" :forceRender="false"
-                            @edit="onTabsEdit">
+                            @edit="onTabsEdit" style="width:100%">
                             <a-tab-pane v-for="(item, index) in multiList" :key="item.key" :closable="true"
                                 class="tab-pane">
                                 <template #tab>
@@ -78,16 +91,10 @@
                                         </template>
                                     </a-dropdown>
                                 </template>
-                                <!-- <div>
-                                    123213
-                                </div> -->
                                 <xterm @connectResult="connectResult" :submitLoading="submitLoading.valueOf"
-                                    :username="item.username" :password="item.password" />
+                                    :username="item.username" :name="item.name" :password="item.password" />
+
                             </a-tab-pane>
-
-
-
-
                             <template #rightExtra>
                                 <div class="tab-right">
                                     <!-- <PlusSquareOutlined class="nav-icon" /> -->
@@ -216,10 +223,10 @@ import { useI18n } from "vue-i18n";
 import { headMenu } from "./menu.ts"
 import { useStore } from 'vuex'
 // PlusSquareOutlined
-import { deviceList } from "@/api/admin"
+import { deviceList, accountList } from "@/api/admin"
 import { UploadOutlined, LockOutlined, SearchOutlined, RightOutlined, DownOutlined } from '@ant-design/icons-vue';
 import xterm from "./components/xterm.vue"
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { ExclamationCircleOutlined, } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
 import { resTable } from "@/common/type/type"
 import { MenuUnfoldOutlined, } from '@ant-design/icons-vue';
@@ -247,7 +254,7 @@ let connectName = ref<string>('')
 const submitLoading = ref<Boolean>(false);
 const multiActiveKey = ref(1);
 const soleKey = ref<number>(0);
-let multiList = ref<MultiList[]>([{ name: '1111' ,key:1}, { name: '2222' ,key:2}, { name: '333' ,key:3},])
+let multiList = ref<MultiList[]>([])
 
 let transitionClass = ref<Boolean>(true)
 const treeData = ref<any>([
@@ -264,8 +271,19 @@ const treeData = ref<any>([
         isUnfold: false,
         children: [],
     },
-
 ]);
+
+const onOperatingSystem = async (item: any) => {
+    console.log(item.id)
+    if (!item.isUnfold && !item.children) {
+        await accountList({ page: 1, pageSize: 100, deviceId: item.id }).then((res: { data: resTable<{ username: string, password: string }[]> }) => {
+            let { data } = res.data
+            item.children = data
+        })
+    }
+
+    item.isUnfold = !item.isUnfold
+}
 
 onMounted(() => {
     document.addEventListener('mouseup', handleMoveThrottled)
@@ -419,7 +437,7 @@ const beforeUpload = (event: any) => {
         'serviceName': 'sectran_front'
     }
     console.log(formData);
-    fileUpload(formData, headers).then((res: any) => {
+    fileUpload(formData, headers).then(() => {
         message.success("上传成功")
     })
 };
@@ -435,6 +453,7 @@ const connectResult = (modalState: boolean) => {
 </script>
 <style scoped lang='less'>
 .xterm-div {
+    width: 100%;
     height: 100%;
 }
 
@@ -544,6 +563,7 @@ const connectResult = (modalState: boolean) => {
 
         .Content-right {
             flex: 1;
+            overflow: hidden;
 
             ::v-deep(.ant-tabs-nav) {
                 margin: 0;
@@ -590,7 +610,7 @@ const connectResult = (modalState: boolean) => {
 .tab-pane {
     display: flex;
     flex-direction: column;
-
+    width: 100%;
 }
 
 .tab-right {
