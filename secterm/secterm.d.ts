@@ -42,8 +42,8 @@ export namespace secterm {
             /** SectermMessage fileUploadReq */
             fileUploadReq?: (secterm.v1.ISectermFileUploadReq|null);
 
-            /** SectermMessage fileData */
-            fileData?: (secterm.v1.ISectermFileDataRes|null);
+            /** SectermMessage fileAck */
+            fileAck?: (secterm.v1.ISectermFileTransAck|null);
 
             /** SectermMessage fileCmd */
             fileCmd?: (secterm.v1.ISectermFileCmdMessage|null);
@@ -91,14 +91,14 @@ export namespace secterm {
             /** SectermMessage fileUploadReq. */
             public fileUploadReq?: (secterm.v1.ISectermFileUploadReq|null);
 
-            /** SectermMessage fileData. */
-            public fileData?: (secterm.v1.ISectermFileDataRes|null);
+            /** SectermMessage fileAck. */
+            public fileAck?: (secterm.v1.ISectermFileTransAck|null);
 
             /** SectermMessage fileCmd. */
             public fileCmd?: (secterm.v1.ISectermFileCmdMessage|null);
 
             /** SectermMessage data. */
-            public data?: ("connectReq"|"connectRes"|"resize"|"characters"|"fileListReq"|"fileListRes"|"fileMv"|"fileDelReq"|"fileCreate"|"fileDownloadReq"|"fileUploadReq"|"fileData"|"fileCmd");
+            public data?: ("connectReq"|"connectRes"|"resize"|"characters"|"fileListReq"|"fileListRes"|"fileMv"|"fileDelReq"|"fileCreate"|"fileDownloadReq"|"fileUploadReq"|"fileAck"|"fileCmd");
 
             /**
              * Creates a new SectermMessage instance using the specified properties.
@@ -1720,121 +1720,103 @@ export namespace secterm {
             public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
-        /** Properties of a SectermFileDataRes. */
-        interface ISectermFileDataRes {
+        /** Properties of a SectermFileTransAck. */
+        interface ISectermFileTransAck {
 
-            /** SectermFileDataRes file */
-            file?: (secterm.v1.ISectermFileInfo|null);
+            /** SectermFileTransAck uuid */
+            uuid?: (string|null);
 
-            /** SectermFileDataRes data */
-            data?: (Uint8Array|null);
-
-            /** SectermFileDataRes endData */
-            endData?: (boolean|null);
-
-            /** SectermFileDataRes proto */
-            proto?: (secterm.v1.TransProtocol|null);
-
-            /** SectermFileDataRes seriNumber */
-            seriNumber?: (number|null);
+            /** SectermFileTransAck srvName */
+            srvName?: (string|null);
         }
 
-        /** Represents a SectermFileDataRes. */
-        class SectermFileDataRes implements ISectermFileDataRes {
+        /** Represents a SectermFileTransAck. */
+        class SectermFileTransAck implements ISectermFileTransAck {
 
             /**
-             * Constructs a new SectermFileDataRes.
+             * Constructs a new SectermFileTransAck.
              * @param [properties] Properties to set
              */
-            constructor(properties?: secterm.v1.ISectermFileDataRes);
+            constructor(properties?: secterm.v1.ISectermFileTransAck);
 
-            /** SectermFileDataRes file. */
-            public file?: (secterm.v1.ISectermFileInfo|null);
+            /** SectermFileTransAck uuid. */
+            public uuid: string;
 
-            /** SectermFileDataRes data. */
-            public data: Uint8Array;
-
-            /** SectermFileDataRes endData. */
-            public endData: boolean;
-
-            /** SectermFileDataRes proto. */
-            public proto: secterm.v1.TransProtocol;
-
-            /** SectermFileDataRes seriNumber. */
-            public seriNumber: number;
+            /** SectermFileTransAck srvName. */
+            public srvName: string;
 
             /**
-             * Creates a new SectermFileDataRes instance using the specified properties.
+             * Creates a new SectermFileTransAck instance using the specified properties.
              * @param [properties] Properties to set
-             * @returns SectermFileDataRes instance
+             * @returns SectermFileTransAck instance
              */
-            public static create(properties?: secterm.v1.ISectermFileDataRes): secterm.v1.SectermFileDataRes;
+            public static create(properties?: secterm.v1.ISectermFileTransAck): secterm.v1.SectermFileTransAck;
 
             /**
-             * Encodes the specified SectermFileDataRes message. Does not implicitly {@link secterm.v1.SectermFileDataRes.verify|verify} messages.
-             * @param message SectermFileDataRes message or plain object to encode
+             * Encodes the specified SectermFileTransAck message. Does not implicitly {@link secterm.v1.SectermFileTransAck.verify|verify} messages.
+             * @param message SectermFileTransAck message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encode(message: secterm.v1.ISectermFileDataRes, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encode(message: secterm.v1.ISectermFileTransAck, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
-             * Encodes the specified SectermFileDataRes message, length delimited. Does not implicitly {@link secterm.v1.SectermFileDataRes.verify|verify} messages.
-             * @param message SectermFileDataRes message or plain object to encode
+             * Encodes the specified SectermFileTransAck message, length delimited. Does not implicitly {@link secterm.v1.SectermFileTransAck.verify|verify} messages.
+             * @param message SectermFileTransAck message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encodeDelimited(message: secterm.v1.ISectermFileDataRes, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encodeDelimited(message: secterm.v1.ISectermFileTransAck, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
-             * Decodes a SectermFileDataRes message from the specified reader or buffer.
+             * Decodes a SectermFileTransAck message from the specified reader or buffer.
              * @param reader Reader or buffer to decode from
              * @param [length] Message length if known beforehand
-             * @returns SectermFileDataRes
+             * @returns SectermFileTransAck
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): secterm.v1.SectermFileDataRes;
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): secterm.v1.SectermFileTransAck;
 
             /**
-             * Decodes a SectermFileDataRes message from the specified reader or buffer, length delimited.
+             * Decodes a SectermFileTransAck message from the specified reader or buffer, length delimited.
              * @param reader Reader or buffer to decode from
-             * @returns SectermFileDataRes
+             * @returns SectermFileTransAck
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): secterm.v1.SectermFileDataRes;
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): secterm.v1.SectermFileTransAck;
 
             /**
-             * Verifies a SectermFileDataRes message.
+             * Verifies a SectermFileTransAck message.
              * @param message Plain object to verify
              * @returns `null` if valid, otherwise the reason why it is not
              */
             public static verify(message: { [k: string]: any }): (string|null);
 
             /**
-             * Creates a SectermFileDataRes message from a plain object. Also converts values to their respective internal types.
+             * Creates a SectermFileTransAck message from a plain object. Also converts values to their respective internal types.
              * @param object Plain object
-             * @returns SectermFileDataRes
+             * @returns SectermFileTransAck
              */
-            public static fromObject(object: { [k: string]: any }): secterm.v1.SectermFileDataRes;
+            public static fromObject(object: { [k: string]: any }): secterm.v1.SectermFileTransAck;
 
             /**
-             * Creates a plain object from a SectermFileDataRes message. Also converts values to other types if specified.
-             * @param message SectermFileDataRes
+             * Creates a plain object from a SectermFileTransAck message. Also converts values to other types if specified.
+             * @param message SectermFileTransAck
              * @param [options] Conversion options
              * @returns Plain object
              */
-            public static toObject(message: secterm.v1.SectermFileDataRes, options?: $protobuf.IConversionOptions): { [k: string]: any };
+            public static toObject(message: secterm.v1.SectermFileTransAck, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
             /**
-             * Converts this SectermFileDataRes to JSON.
+             * Converts this SectermFileTransAck to JSON.
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
 
             /**
-             * Gets the default type url for SectermFileDataRes
+             * Gets the default type url for SectermFileTransAck
              * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
              * @returns The default type url
              */
@@ -1843,13 +1825,10 @@ export namespace secterm {
 
         /** SectermFileCmd enum. */
         enum SectermFileCmd {
-            UPLOAD_START = 0,
-            UPLOAD_CONTINUE = 1,
-            DOWNLOAD_START = 2,
-            DOWNLOAD_CONTINUE = 3,
-            TRANS_ERROR = 5,
-            TRANS_FILE_EXISTED = 6,
-            TRANS_CANCLE = 7
+            TRANS_ERROR = 0,
+            TRANS_FILE_EXISTED = 1,
+            TRANS_CANCLE = 2,
+            TRANS_SUCCESS = 3
         }
 
         /** Properties of a SectermFileCmdMessage. */
@@ -1857,12 +1836,6 @@ export namespace secterm {
 
             /** SectermFileCmdMessage cmd */
             cmd?: (secterm.v1.SectermFileCmd|null);
-
-            /** SectermFileCmdMessage opt1 */
-            opt1?: (number|null);
-
-            /** SectermFileCmdMessage opt2 */
-            opt2?: (number|null);
         }
 
         /** Represents a SectermFileCmdMessage. */
@@ -1876,12 +1849,6 @@ export namespace secterm {
 
             /** SectermFileCmdMessage cmd. */
             public cmd: secterm.v1.SectermFileCmd;
-
-            /** SectermFileCmdMessage opt1. */
-            public opt1: number;
-
-            /** SectermFileCmdMessage opt2. */
-            public opt2: number;
 
             /**
              * Creates a new SectermFileCmdMessage instance using the specified properties.

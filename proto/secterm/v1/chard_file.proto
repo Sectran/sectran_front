@@ -17,7 +17,6 @@ message SectermFileInfo {
     uint32 Mode = 5;
     //是否为目录
     bool IsDir = 6; //文件上传不可以上传目录
-   
 }
 
 //目录查询响应
@@ -71,27 +70,24 @@ message SectermFileUploadReq {              //文件上传请求
     TransProtocol proto= 4;
 }
 
-message  SectermFileDataRes{    //文件内容消息
-    SectermFileInfo file =1;    //当前传输的文件(不考虑重传、过度设计)
-    bytes data = 2;             //文件数据
-    bool endData = 3;           //最后一个文件数据
-    TransProtocol proto= 4;
-     int32 seri_number = 5;
+//传输成功确认
+message SectermFileTransAck {
+    string uuid = 1;
+    string srvName = 2;
 }
 
 enum SectermFileCmd {
-    UPLOAD_START = 0;
-    UPLOAD_CONTINUE = 1;
-    DOWNLOAD_START = 2;
-    DOWNLOAD_CONTINUE = 3;
-    TRANS_ERROR = 5;
-    TRANS_FILE_EXISTED = 6;
-    TRANS_CANCLE =7;
+    //文件上传失败
+    TRANS_ERROR = 0;
+    //文件已存在
+    TRANS_FILE_EXISTED = 1;
+    //文件传输取消
+    TRANS_CANCLE = 2;
+    //文件传输完成
+    TRANS_SUCCESS = 3;
 }
 
 message SectermFileCmdMessage {
     SectermFileCmd cmd = 1;
-    uint32 opt1 = 2;//填充类型1
-    uint32 opt2 = 3;//填充类型2
 }
 

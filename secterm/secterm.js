@@ -42,7 +42,7 @@ export const secterm = $root.secterm = (() => {
              * @property {secterm.v1.ISectermFileCreate|null} [fileCreate] SectermMessage fileCreate
              * @property {secterm.v1.ISectermFileDownloadReq|null} [fileDownloadReq] SectermMessage fileDownloadReq
              * @property {secterm.v1.ISectermFileUploadReq|null} [fileUploadReq] SectermMessage fileUploadReq
-             * @property {secterm.v1.ISectermFileDataRes|null} [fileData] SectermMessage fileData
+             * @property {secterm.v1.ISectermFileTransAck|null} [fileAck] SectermMessage fileAck
              * @property {secterm.v1.ISectermFileCmdMessage|null} [fileCmd] SectermMessage fileCmd
              */
 
@@ -150,12 +150,12 @@ export const secterm = $root.secterm = (() => {
             SectermMessage.prototype.fileUploadReq = null;
 
             /**
-             * SectermMessage fileData.
-             * @member {secterm.v1.ISectermFileDataRes|null|undefined} fileData
+             * SectermMessage fileAck.
+             * @member {secterm.v1.ISectermFileTransAck|null|undefined} fileAck
              * @memberof secterm.v1.SectermMessage
              * @instance
              */
-            SectermMessage.prototype.fileData = null;
+            SectermMessage.prototype.fileAck = null;
 
             /**
              * SectermMessage fileCmd.
@@ -170,12 +170,12 @@ export const secterm = $root.secterm = (() => {
 
             /**
              * SectermMessage data.
-             * @member {"connectReq"|"connectRes"|"resize"|"characters"|"fileListReq"|"fileListRes"|"fileMv"|"fileDelReq"|"fileCreate"|"fileDownloadReq"|"fileUploadReq"|"fileData"|"fileCmd"|undefined} data
+             * @member {"connectReq"|"connectRes"|"resize"|"characters"|"fileListReq"|"fileListRes"|"fileMv"|"fileDelReq"|"fileCreate"|"fileDownloadReq"|"fileUploadReq"|"fileAck"|"fileCmd"|undefined} data
              * @memberof secterm.v1.SectermMessage
              * @instance
              */
             Object.defineProperty(SectermMessage.prototype, "data", {
-                get: $util.oneOfGetter($oneOfFields = ["connectReq", "connectRes", "resize", "characters", "fileListReq", "fileListRes", "fileMv", "fileDelReq", "fileCreate", "fileDownloadReq", "fileUploadReq", "fileData", "fileCmd"]),
+                get: $util.oneOfGetter($oneOfFields = ["connectReq", "connectRes", "resize", "characters", "fileListReq", "fileListRes", "fileMv", "fileDelReq", "fileCreate", "fileDownloadReq", "fileUploadReq", "fileAck", "fileCmd"]),
                 set: $util.oneOfSetter($oneOfFields)
             });
 
@@ -225,8 +225,8 @@ export const secterm = $root.secterm = (() => {
                     $root.secterm.v1.SectermFileDownloadReq.encode(message.fileDownloadReq, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
                 if (message.fileUploadReq != null && Object.hasOwnProperty.call(message, "fileUploadReq"))
                     $root.secterm.v1.SectermFileUploadReq.encode(message.fileUploadReq, writer.uint32(/* id 15, wireType 2 =*/122).fork()).ldelim();
-                if (message.fileData != null && Object.hasOwnProperty.call(message, "fileData"))
-                    $root.secterm.v1.SectermFileDataRes.encode(message.fileData, writer.uint32(/* id 16, wireType 2 =*/130).fork()).ldelim();
+                if (message.fileAck != null && Object.hasOwnProperty.call(message, "fileAck"))
+                    $root.secterm.v1.SectermFileTransAck.encode(message.fileAck, writer.uint32(/* id 16, wireType 2 =*/130).fork()).ldelim();
                 if (message.fileCmd != null && Object.hasOwnProperty.call(message, "fileCmd"))
                     $root.secterm.v1.SectermFileCmdMessage.encode(message.fileCmd, writer.uint32(/* id 17, wireType 2 =*/138).fork()).ldelim();
                 return writer;
@@ -308,7 +308,7 @@ export const secterm = $root.secterm = (() => {
                             break;
                         }
                     case 16: {
-                            message.fileData = $root.secterm.v1.SectermFileDataRes.decode(reader, reader.uint32());
+                            message.fileAck = $root.secterm.v1.SectermFileTransAck.decode(reader, reader.uint32());
                             break;
                         }
                     case 17: {
@@ -459,14 +459,14 @@ export const secterm = $root.secterm = (() => {
                             return "fileUploadReq." + error;
                     }
                 }
-                if (message.fileData != null && message.hasOwnProperty("fileData")) {
+                if (message.fileAck != null && message.hasOwnProperty("fileAck")) {
                     if (properties.data === 1)
                         return "data: multiple values";
                     properties.data = 1;
                     {
-                        let error = $root.secterm.v1.SectermFileDataRes.verify(message.fileData);
+                        let error = $root.secterm.v1.SectermFileTransAck.verify(message.fileAck);
                         if (error)
-                            return "fileData." + error;
+                            return "fileAck." + error;
                     }
                 }
                 if (message.fileCmd != null && message.hasOwnProperty("fileCmd")) {
@@ -549,10 +549,10 @@ export const secterm = $root.secterm = (() => {
                         throw TypeError(".secterm.v1.SectermMessage.fileUploadReq: object expected");
                     message.fileUploadReq = $root.secterm.v1.SectermFileUploadReq.fromObject(object.fileUploadReq);
                 }
-                if (object.fileData != null) {
-                    if (typeof object.fileData !== "object")
-                        throw TypeError(".secterm.v1.SectermMessage.fileData: object expected");
-                    message.fileData = $root.secterm.v1.SectermFileDataRes.fromObject(object.fileData);
+                if (object.fileAck != null) {
+                    if (typeof object.fileAck !== "object")
+                        throw TypeError(".secterm.v1.SectermMessage.fileAck: object expected");
+                    message.fileAck = $root.secterm.v1.SectermFileTransAck.fromObject(object.fileAck);
                 }
                 if (object.fileCmd != null) {
                     if (typeof object.fileCmd !== "object")
@@ -630,10 +630,10 @@ export const secterm = $root.secterm = (() => {
                     if (options.oneofs)
                         object.data = "fileUploadReq";
                 }
-                if (message.fileData != null && message.hasOwnProperty("fileData")) {
-                    object.fileData = $root.secterm.v1.SectermFileDataRes.toObject(message.fileData, options);
+                if (message.fileAck != null && message.hasOwnProperty("fileAck")) {
+                    object.fileAck = $root.secterm.v1.SectermFileTransAck.toObject(message.fileAck, options);
                     if (options.oneofs)
-                        object.data = "fileData";
+                        object.data = "fileAck";
                 }
                 if (message.fileCmd != null && message.hasOwnProperty("fileCmd")) {
                     object.fileCmd = $root.secterm.v1.SectermFileCmdMessage.toObject(message.fileCmd, options);
@@ -4522,28 +4522,25 @@ export const secterm = $root.secterm = (() => {
             return SectermFileUploadReq;
         })();
 
-        v1.SectermFileDataRes = (function() {
+        v1.SectermFileTransAck = (function() {
 
             /**
-             * Properties of a SectermFileDataRes.
+             * Properties of a SectermFileTransAck.
              * @memberof secterm.v1
-             * @interface ISectermFileDataRes
-             * @property {secterm.v1.ISectermFileInfo|null} [file] SectermFileDataRes file
-             * @property {Uint8Array|null} [data] SectermFileDataRes data
-             * @property {boolean|null} [endData] SectermFileDataRes endData
-             * @property {secterm.v1.TransProtocol|null} [proto] SectermFileDataRes proto
-             * @property {number|null} [seriNumber] SectermFileDataRes seriNumber
+             * @interface ISectermFileTransAck
+             * @property {string|null} [uuid] SectermFileTransAck uuid
+             * @property {string|null} [srvName] SectermFileTransAck srvName
              */
 
             /**
-             * Constructs a new SectermFileDataRes.
+             * Constructs a new SectermFileTransAck.
              * @memberof secterm.v1
-             * @classdesc Represents a SectermFileDataRes.
-             * @implements ISectermFileDataRes
+             * @classdesc Represents a SectermFileTransAck.
+             * @implements ISectermFileTransAck
              * @constructor
-             * @param {secterm.v1.ISectermFileDataRes=} [properties] Properties to set
+             * @param {secterm.v1.ISectermFileTransAck=} [properties] Properties to set
              */
-            function SectermFileDataRes(properties) {
+            function SectermFileTransAck(properties) {
                 if (properties)
                     for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                         if (properties[keys[i]] != null)
@@ -4551,131 +4548,89 @@ export const secterm = $root.secterm = (() => {
             }
 
             /**
-             * SectermFileDataRes file.
-             * @member {secterm.v1.ISectermFileInfo|null|undefined} file
-             * @memberof secterm.v1.SectermFileDataRes
+             * SectermFileTransAck uuid.
+             * @member {string} uuid
+             * @memberof secterm.v1.SectermFileTransAck
              * @instance
              */
-            SectermFileDataRes.prototype.file = null;
+            SectermFileTransAck.prototype.uuid = "";
 
             /**
-             * SectermFileDataRes data.
-             * @member {Uint8Array} data
-             * @memberof secterm.v1.SectermFileDataRes
+             * SectermFileTransAck srvName.
+             * @member {string} srvName
+             * @memberof secterm.v1.SectermFileTransAck
              * @instance
              */
-            SectermFileDataRes.prototype.data = $util.newBuffer([]);
+            SectermFileTransAck.prototype.srvName = "";
 
             /**
-             * SectermFileDataRes endData.
-             * @member {boolean} endData
-             * @memberof secterm.v1.SectermFileDataRes
-             * @instance
-             */
-            SectermFileDataRes.prototype.endData = false;
-
-            /**
-             * SectermFileDataRes proto.
-             * @member {secterm.v1.TransProtocol} proto
-             * @memberof secterm.v1.SectermFileDataRes
-             * @instance
-             */
-            SectermFileDataRes.prototype.proto = 0;
-
-            /**
-             * SectermFileDataRes seriNumber.
-             * @member {number} seriNumber
-             * @memberof secterm.v1.SectermFileDataRes
-             * @instance
-             */
-            SectermFileDataRes.prototype.seriNumber = 0;
-
-            /**
-             * Creates a new SectermFileDataRes instance using the specified properties.
+             * Creates a new SectermFileTransAck instance using the specified properties.
              * @function create
-             * @memberof secterm.v1.SectermFileDataRes
+             * @memberof secterm.v1.SectermFileTransAck
              * @static
-             * @param {secterm.v1.ISectermFileDataRes=} [properties] Properties to set
-             * @returns {secterm.v1.SectermFileDataRes} SectermFileDataRes instance
+             * @param {secterm.v1.ISectermFileTransAck=} [properties] Properties to set
+             * @returns {secterm.v1.SectermFileTransAck} SectermFileTransAck instance
              */
-            SectermFileDataRes.create = function create(properties) {
-                return new SectermFileDataRes(properties);
+            SectermFileTransAck.create = function create(properties) {
+                return new SectermFileTransAck(properties);
             };
 
             /**
-             * Encodes the specified SectermFileDataRes message. Does not implicitly {@link secterm.v1.SectermFileDataRes.verify|verify} messages.
+             * Encodes the specified SectermFileTransAck message. Does not implicitly {@link secterm.v1.SectermFileTransAck.verify|verify} messages.
              * @function encode
-             * @memberof secterm.v1.SectermFileDataRes
+             * @memberof secterm.v1.SectermFileTransAck
              * @static
-             * @param {secterm.v1.ISectermFileDataRes} message SectermFileDataRes message or plain object to encode
+             * @param {secterm.v1.ISectermFileTransAck} message SectermFileTransAck message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
-            SectermFileDataRes.encode = function encode(message, writer) {
+            SectermFileTransAck.encode = function encode(message, writer) {
                 if (!writer)
                     writer = $Writer.create();
-                if (message.file != null && Object.hasOwnProperty.call(message, "file"))
-                    $root.secterm.v1.SectermFileInfo.encode(message.file, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-                if (message.data != null && Object.hasOwnProperty.call(message, "data"))
-                    writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.data);
-                if (message.endData != null && Object.hasOwnProperty.call(message, "endData"))
-                    writer.uint32(/* id 3, wireType 0 =*/24).bool(message.endData);
-                if (message.proto != null && Object.hasOwnProperty.call(message, "proto"))
-                    writer.uint32(/* id 4, wireType 0 =*/32).int32(message.proto);
-                if (message.seriNumber != null && Object.hasOwnProperty.call(message, "seriNumber"))
-                    writer.uint32(/* id 5, wireType 0 =*/40).int32(message.seriNumber);
+                if (message.uuid != null && Object.hasOwnProperty.call(message, "uuid"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.uuid);
+                if (message.srvName != null && Object.hasOwnProperty.call(message, "srvName"))
+                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.srvName);
                 return writer;
             };
 
             /**
-             * Encodes the specified SectermFileDataRes message, length delimited. Does not implicitly {@link secterm.v1.SectermFileDataRes.verify|verify} messages.
+             * Encodes the specified SectermFileTransAck message, length delimited. Does not implicitly {@link secterm.v1.SectermFileTransAck.verify|verify} messages.
              * @function encodeDelimited
-             * @memberof secterm.v1.SectermFileDataRes
+             * @memberof secterm.v1.SectermFileTransAck
              * @static
-             * @param {secterm.v1.ISectermFileDataRes} message SectermFileDataRes message or plain object to encode
+             * @param {secterm.v1.ISectermFileTransAck} message SectermFileTransAck message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
-            SectermFileDataRes.encodeDelimited = function encodeDelimited(message, writer) {
+            SectermFileTransAck.encodeDelimited = function encodeDelimited(message, writer) {
                 return this.encode(message, writer).ldelim();
             };
 
             /**
-             * Decodes a SectermFileDataRes message from the specified reader or buffer.
+             * Decodes a SectermFileTransAck message from the specified reader or buffer.
              * @function decode
-             * @memberof secterm.v1.SectermFileDataRes
+             * @memberof secterm.v1.SectermFileTransAck
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
              * @param {number} [length] Message length if known beforehand
-             * @returns {secterm.v1.SectermFileDataRes} SectermFileDataRes
+             * @returns {secterm.v1.SectermFileTransAck} SectermFileTransAck
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            SectermFileDataRes.decode = function decode(reader, length) {
+            SectermFileTransAck.decode = function decode(reader, length) {
                 if (!(reader instanceof $Reader))
                     reader = $Reader.create(reader);
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.secterm.v1.SectermFileDataRes();
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.secterm.v1.SectermFileTransAck();
                 while (reader.pos < end) {
                     let tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1: {
-                            message.file = $root.secterm.v1.SectermFileInfo.decode(reader, reader.uint32());
+                            message.uuid = reader.string();
                             break;
                         }
                     case 2: {
-                            message.data = reader.bytes();
-                            break;
-                        }
-                    case 3: {
-                            message.endData = reader.bool();
-                            break;
-                        }
-                    case 4: {
-                            message.proto = reader.int32();
-                            break;
-                        }
-                    case 5: {
-                            message.seriNumber = reader.int32();
+                            message.srvName = reader.string();
                             break;
                         }
                     default:
@@ -4687,201 +4642,128 @@ export const secterm = $root.secterm = (() => {
             };
 
             /**
-             * Decodes a SectermFileDataRes message from the specified reader or buffer, length delimited.
+             * Decodes a SectermFileTransAck message from the specified reader or buffer, length delimited.
              * @function decodeDelimited
-             * @memberof secterm.v1.SectermFileDataRes
+             * @memberof secterm.v1.SectermFileTransAck
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @returns {secterm.v1.SectermFileDataRes} SectermFileDataRes
+             * @returns {secterm.v1.SectermFileTransAck} SectermFileTransAck
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            SectermFileDataRes.decodeDelimited = function decodeDelimited(reader) {
+            SectermFileTransAck.decodeDelimited = function decodeDelimited(reader) {
                 if (!(reader instanceof $Reader))
                     reader = new $Reader(reader);
                 return this.decode(reader, reader.uint32());
             };
 
             /**
-             * Verifies a SectermFileDataRes message.
+             * Verifies a SectermFileTransAck message.
              * @function verify
-             * @memberof secterm.v1.SectermFileDataRes
+             * @memberof secterm.v1.SectermFileTransAck
              * @static
              * @param {Object.<string,*>} message Plain object to verify
              * @returns {string|null} `null` if valid, otherwise the reason why it is not
              */
-            SectermFileDataRes.verify = function verify(message) {
+            SectermFileTransAck.verify = function verify(message) {
                 if (typeof message !== "object" || message === null)
                     return "object expected";
-                if (message.file != null && message.hasOwnProperty("file")) {
-                    let error = $root.secterm.v1.SectermFileInfo.verify(message.file);
-                    if (error)
-                        return "file." + error;
-                }
-                if (message.data != null && message.hasOwnProperty("data"))
-                    if (!(message.data && typeof message.data.length === "number" || $util.isString(message.data)))
-                        return "data: buffer expected";
-                if (message.endData != null && message.hasOwnProperty("endData"))
-                    if (typeof message.endData !== "boolean")
-                        return "endData: boolean expected";
-                if (message.proto != null && message.hasOwnProperty("proto"))
-                    switch (message.proto) {
-                    default:
-                        return "proto: enum value expected";
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                        break;
-                    }
-                if (message.seriNumber != null && message.hasOwnProperty("seriNumber"))
-                    if (!$util.isInteger(message.seriNumber))
-                        return "seriNumber: integer expected";
+                if (message.uuid != null && message.hasOwnProperty("uuid"))
+                    if (!$util.isString(message.uuid))
+                        return "uuid: string expected";
+                if (message.srvName != null && message.hasOwnProperty("srvName"))
+                    if (!$util.isString(message.srvName))
+                        return "srvName: string expected";
                 return null;
             };
 
             /**
-             * Creates a SectermFileDataRes message from a plain object. Also converts values to their respective internal types.
+             * Creates a SectermFileTransAck message from a plain object. Also converts values to their respective internal types.
              * @function fromObject
-             * @memberof secterm.v1.SectermFileDataRes
+             * @memberof secterm.v1.SectermFileTransAck
              * @static
              * @param {Object.<string,*>} object Plain object
-             * @returns {secterm.v1.SectermFileDataRes} SectermFileDataRes
+             * @returns {secterm.v1.SectermFileTransAck} SectermFileTransAck
              */
-            SectermFileDataRes.fromObject = function fromObject(object) {
-                if (object instanceof $root.secterm.v1.SectermFileDataRes)
+            SectermFileTransAck.fromObject = function fromObject(object) {
+                if (object instanceof $root.secterm.v1.SectermFileTransAck)
                     return object;
-                let message = new $root.secterm.v1.SectermFileDataRes();
-                if (object.file != null) {
-                    if (typeof object.file !== "object")
-                        throw TypeError(".secterm.v1.SectermFileDataRes.file: object expected");
-                    message.file = $root.secterm.v1.SectermFileInfo.fromObject(object.file);
-                }
-                if (object.data != null)
-                    if (typeof object.data === "string")
-                        $util.base64.decode(object.data, message.data = $util.newBuffer($util.base64.length(object.data)), 0);
-                    else if (object.data.length >= 0)
-                        message.data = object.data;
-                if (object.endData != null)
-                    message.endData = Boolean(object.endData);
-                switch (object.proto) {
-                default:
-                    if (typeof object.proto === "number") {
-                        message.proto = object.proto;
-                        break;
-                    }
-                    break;
-                case "ZMODEM":
-                case 0:
-                    message.proto = 0;
-                    break;
-                case "SFTP":
-                case 1:
-                    message.proto = 1;
-                    break;
-                case "SCP":
-                case 2:
-                    message.proto = 2;
-                    break;
-                case "FTP":
-                case 3:
-                    message.proto = 3;
-                    break;
-                }
-                if (object.seriNumber != null)
-                    message.seriNumber = object.seriNumber | 0;
+                let message = new $root.secterm.v1.SectermFileTransAck();
+                if (object.uuid != null)
+                    message.uuid = String(object.uuid);
+                if (object.srvName != null)
+                    message.srvName = String(object.srvName);
                 return message;
             };
 
             /**
-             * Creates a plain object from a SectermFileDataRes message. Also converts values to other types if specified.
+             * Creates a plain object from a SectermFileTransAck message. Also converts values to other types if specified.
              * @function toObject
-             * @memberof secterm.v1.SectermFileDataRes
+             * @memberof secterm.v1.SectermFileTransAck
              * @static
-             * @param {secterm.v1.SectermFileDataRes} message SectermFileDataRes
+             * @param {secterm.v1.SectermFileTransAck} message SectermFileTransAck
              * @param {$protobuf.IConversionOptions} [options] Conversion options
              * @returns {Object.<string,*>} Plain object
              */
-            SectermFileDataRes.toObject = function toObject(message, options) {
+            SectermFileTransAck.toObject = function toObject(message, options) {
                 if (!options)
                     options = {};
                 let object = {};
                 if (options.defaults) {
-                    object.file = null;
-                    if (options.bytes === String)
-                        object.data = "";
-                    else {
-                        object.data = [];
-                        if (options.bytes !== Array)
-                            object.data = $util.newBuffer(object.data);
-                    }
-                    object.endData = false;
-                    object.proto = options.enums === String ? "ZMODEM" : 0;
-                    object.seriNumber = 0;
+                    object.uuid = "";
+                    object.srvName = "";
                 }
-                if (message.file != null && message.hasOwnProperty("file"))
-                    object.file = $root.secterm.v1.SectermFileInfo.toObject(message.file, options);
-                if (message.data != null && message.hasOwnProperty("data"))
-                    object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
-                if (message.endData != null && message.hasOwnProperty("endData"))
-                    object.endData = message.endData;
-                if (message.proto != null && message.hasOwnProperty("proto"))
-                    object.proto = options.enums === String ? $root.secterm.v1.TransProtocol[message.proto] === undefined ? message.proto : $root.secterm.v1.TransProtocol[message.proto] : message.proto;
-                if (message.seriNumber != null && message.hasOwnProperty("seriNumber"))
-                    object.seriNumber = message.seriNumber;
+                if (message.uuid != null && message.hasOwnProperty("uuid"))
+                    object.uuid = message.uuid;
+                if (message.srvName != null && message.hasOwnProperty("srvName"))
+                    object.srvName = message.srvName;
                 return object;
             };
 
             /**
-             * Converts this SectermFileDataRes to JSON.
+             * Converts this SectermFileTransAck to JSON.
              * @function toJSON
-             * @memberof secterm.v1.SectermFileDataRes
+             * @memberof secterm.v1.SectermFileTransAck
              * @instance
              * @returns {Object.<string,*>} JSON object
              */
-            SectermFileDataRes.prototype.toJSON = function toJSON() {
+            SectermFileTransAck.prototype.toJSON = function toJSON() {
                 return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
             };
 
             /**
-             * Gets the default type url for SectermFileDataRes
+             * Gets the default type url for SectermFileTransAck
              * @function getTypeUrl
-             * @memberof secterm.v1.SectermFileDataRes
+             * @memberof secterm.v1.SectermFileTransAck
              * @static
              * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
              * @returns {string} The default type url
              */
-            SectermFileDataRes.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            SectermFileTransAck.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
                 if (typeUrlPrefix === undefined) {
                     typeUrlPrefix = "type.googleapis.com";
                 }
-                return typeUrlPrefix + "/secterm.v1.SectermFileDataRes";
+                return typeUrlPrefix + "/secterm.v1.SectermFileTransAck";
             };
 
-            return SectermFileDataRes;
+            return SectermFileTransAck;
         })();
 
         /**
          * SectermFileCmd enum.
          * @name secterm.v1.SectermFileCmd
          * @enum {number}
-         * @property {number} UPLOAD_START=0 UPLOAD_START value
-         * @property {number} UPLOAD_CONTINUE=1 UPLOAD_CONTINUE value
-         * @property {number} DOWNLOAD_START=2 DOWNLOAD_START value
-         * @property {number} DOWNLOAD_CONTINUE=3 DOWNLOAD_CONTINUE value
-         * @property {number} TRANS_ERROR=5 TRANS_ERROR value
-         * @property {number} TRANS_FILE_EXISTED=6 TRANS_FILE_EXISTED value
-         * @property {number} TRANS_CANCLE=7 TRANS_CANCLE value
+         * @property {number} TRANS_ERROR=0 TRANS_ERROR value
+         * @property {number} TRANS_FILE_EXISTED=1 TRANS_FILE_EXISTED value
+         * @property {number} TRANS_CANCLE=2 TRANS_CANCLE value
+         * @property {number} TRANS_SUCCESS=3 TRANS_SUCCESS value
          */
         v1.SectermFileCmd = (function() {
             const valuesById = {}, values = Object.create(valuesById);
-            values[valuesById[0] = "UPLOAD_START"] = 0;
-            values[valuesById[1] = "UPLOAD_CONTINUE"] = 1;
-            values[valuesById[2] = "DOWNLOAD_START"] = 2;
-            values[valuesById[3] = "DOWNLOAD_CONTINUE"] = 3;
-            values[valuesById[5] = "TRANS_ERROR"] = 5;
-            values[valuesById[6] = "TRANS_FILE_EXISTED"] = 6;
-            values[valuesById[7] = "TRANS_CANCLE"] = 7;
+            values[valuesById[0] = "TRANS_ERROR"] = 0;
+            values[valuesById[1] = "TRANS_FILE_EXISTED"] = 1;
+            values[valuesById[2] = "TRANS_CANCLE"] = 2;
+            values[valuesById[3] = "TRANS_SUCCESS"] = 3;
             return values;
         })();
 
@@ -4892,8 +4774,6 @@ export const secterm = $root.secterm = (() => {
              * @memberof secterm.v1
              * @interface ISectermFileCmdMessage
              * @property {secterm.v1.SectermFileCmd|null} [cmd] SectermFileCmdMessage cmd
-             * @property {number|null} [opt1] SectermFileCmdMessage opt1
-             * @property {number|null} [opt2] SectermFileCmdMessage opt2
              */
 
             /**
@@ -4918,22 +4798,6 @@ export const secterm = $root.secterm = (() => {
              * @instance
              */
             SectermFileCmdMessage.prototype.cmd = 0;
-
-            /**
-             * SectermFileCmdMessage opt1.
-             * @member {number} opt1
-             * @memberof secterm.v1.SectermFileCmdMessage
-             * @instance
-             */
-            SectermFileCmdMessage.prototype.opt1 = 0;
-
-            /**
-             * SectermFileCmdMessage opt2.
-             * @member {number} opt2
-             * @memberof secterm.v1.SectermFileCmdMessage
-             * @instance
-             */
-            SectermFileCmdMessage.prototype.opt2 = 0;
 
             /**
              * Creates a new SectermFileCmdMessage instance using the specified properties.
@@ -4961,10 +4825,6 @@ export const secterm = $root.secterm = (() => {
                     writer = $Writer.create();
                 if (message.cmd != null && Object.hasOwnProperty.call(message, "cmd"))
                     writer.uint32(/* id 1, wireType 0 =*/8).int32(message.cmd);
-                if (message.opt1 != null && Object.hasOwnProperty.call(message, "opt1"))
-                    writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.opt1);
-                if (message.opt2 != null && Object.hasOwnProperty.call(message, "opt2"))
-                    writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.opt2);
                 return writer;
             };
 
@@ -5001,14 +4861,6 @@ export const secterm = $root.secterm = (() => {
                     switch (tag >>> 3) {
                     case 1: {
                             message.cmd = reader.int32();
-                            break;
-                        }
-                    case 2: {
-                            message.opt1 = reader.uint32();
-                            break;
-                        }
-                    case 3: {
-                            message.opt2 = reader.uint32();
                             break;
                         }
                     default:
@@ -5054,17 +4906,8 @@ export const secterm = $root.secterm = (() => {
                     case 1:
                     case 2:
                     case 3:
-                    case 5:
-                    case 6:
-                    case 7:
                         break;
                     }
-                if (message.opt1 != null && message.hasOwnProperty("opt1"))
-                    if (!$util.isInteger(message.opt1))
-                        return "opt1: integer expected";
-                if (message.opt2 != null && message.hasOwnProperty("opt2"))
-                    if (!$util.isInteger(message.opt2))
-                        return "opt2: integer expected";
                 return null;
             };
 
@@ -5087,39 +4930,23 @@ export const secterm = $root.secterm = (() => {
                         break;
                     }
                     break;
-                case "UPLOAD_START":
+                case "TRANS_ERROR":
                 case 0:
                     message.cmd = 0;
                     break;
-                case "UPLOAD_CONTINUE":
+                case "TRANS_FILE_EXISTED":
                 case 1:
                     message.cmd = 1;
                     break;
-                case "DOWNLOAD_START":
+                case "TRANS_CANCLE":
                 case 2:
                     message.cmd = 2;
                     break;
-                case "DOWNLOAD_CONTINUE":
+                case "TRANS_SUCCESS":
                 case 3:
                     message.cmd = 3;
                     break;
-                case "TRANS_ERROR":
-                case 5:
-                    message.cmd = 5;
-                    break;
-                case "TRANS_FILE_EXISTED":
-                case 6:
-                    message.cmd = 6;
-                    break;
-                case "TRANS_CANCLE":
-                case 7:
-                    message.cmd = 7;
-                    break;
                 }
-                if (object.opt1 != null)
-                    message.opt1 = object.opt1 >>> 0;
-                if (object.opt2 != null)
-                    message.opt2 = object.opt2 >>> 0;
                 return message;
             };
 
@@ -5136,17 +4963,10 @@ export const secterm = $root.secterm = (() => {
                 if (!options)
                     options = {};
                 let object = {};
-                if (options.defaults) {
-                    object.cmd = options.enums === String ? "UPLOAD_START" : 0;
-                    object.opt1 = 0;
-                    object.opt2 = 0;
-                }
+                if (options.defaults)
+                    object.cmd = options.enums === String ? "TRANS_ERROR" : 0;
                 if (message.cmd != null && message.hasOwnProperty("cmd"))
                     object.cmd = options.enums === String ? $root.secterm.v1.SectermFileCmd[message.cmd] === undefined ? message.cmd : $root.secterm.v1.SectermFileCmd[message.cmd] : message.cmd;
-                if (message.opt1 != null && message.hasOwnProperty("opt1"))
-                    object.opt1 = message.opt1;
-                if (message.opt2 != null && message.hasOwnProperty("opt2"))
-                    object.opt2 = message.opt2;
                 return object;
             };
 

@@ -29,7 +29,15 @@ export default defineConfig({
 				// 192.168.10.2
 				changeOrigin: true,
 				rewrite: (path) => path.replace(/^\/api/, ''),
-			}
+			},
+			// '/file': {
+			// 	target: 'http://192.168.10.2:8099',
+			// 	// 192.168.10.2
+			// 	changeOrigin: true,
+			// 	rewrite: (path) => path.replace(/^\/file/, '/file'),
+			// }
+
+			
 		}
 	},
 

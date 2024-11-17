@@ -4,6 +4,7 @@ package secterm.v1;
 
 option go_package = "secterm/v1;sectermv1";
 
+
 import "./chard_h5_nego.proto";
 import "./chard_h5_terminal.proto";
 import "./chard_file.proto";
@@ -33,10 +34,9 @@ message SectermMessage {
         SectermFileDownloadReq file_download_req = 14;
         //文件上传请求
         SectermFileUploadReq file_upload_req = 15;
-        //文件内容数据
-        SectermFileDataRes file_data = 16;
+        //传输完成通知
+        SectermFileTransAck file_ack = 16;
         //文件上传指令
         SectermFileCmdMessage file_cmd = 17;
-        
     }
 }

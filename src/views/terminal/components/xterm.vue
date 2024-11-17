@@ -3,7 +3,7 @@
     <a ref="downloadRef" style="display:none;"></a>
 
     <div class="terminal-header">
-        <div>{{props.name}}</div>
+        <div>{{ props.username }}@{{ props.host }}</div>
         <LinkOutlined style="font-size: 22px;" @click="socketConnect" />
     </div>
     <template v-if="connectionStatus">
@@ -14,7 +14,6 @@
     <template v-else>
         <div class="break-style">已断开，请重新连接</div>
     </template>
-
 
     <!-- 文件上传弹窗 -->
     <a-modal v-model:open="transmissionProgressOpen" :closable="false" :footer="null" :maskClosable="false"
@@ -79,11 +78,14 @@ import {
 } from "@/common/method/proto";
 import { initSocket } from "@/common/method/socket"
 import { blobToUint8Array } from "@/common/method/utils"
+import axios from "axios";
 const props = defineProps<{
     username: string
     password: string
     submitLoading: boolean
-    name:string
+    host: string
+    index: number
+
 }>();
 // const v1 = sectran_chard.secterm.v1;
 const v1 = secterm.v1;
@@ -101,7 +103,7 @@ let term = reactive<any>({});
 let fitAddon = reactive<any>({});
 let resizeScreen: any;
 const { t } = useI18n();
-const emit = defineEmits(["connectResult"]);
+const emit = defineEmits(["connectResult", 'tabName']);
 let connectionStatus = ref<boolean>(true);
 let inFileSelect = ref<boolean>(false)
 let fileInputRef = ref<HTMLInputElement>();
@@ -134,6 +136,9 @@ const initXterm = () => {
 
         },
     });
+
+
+
     _term.open(terminal.value);
     _term.prompt = (_: any) => {
         _term.write("\r\n\x1b[33m$\x1b[0m ");
@@ -164,6 +169,10 @@ const initXterm = () => {
     window.addEventListener("resize", () => {
         resizeScreen();
     });
+    _term.onTitleChange((e: any) => {
+        console.log(e);
+        emit('tabName', props.index, e)
+    });
 
 
     _term.onSelectionChange(() => {
@@ -192,11 +201,14 @@ const initXterm = () => {
 };
 const sendCharacters = (data: any) => { sectermTeminalCharacters(data, websocket) };
 let downloadedFileInfo: any = []
-const onData = (msg: any) => {
-    console.log(msg, "msg")
-    let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
 
-    console.log(sm, 'sm')
+let downloadedFileList: { srvName: string | null | undefined, uuid: string | null | undefined }[] = []
+let isdbeDownloading: boolean = false
+
+const onData = async (msg: any) => {
+    // console.log(msg, "msg")
+    let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
+    // console.log(sm, 'sm')
     if (sm?.connectRes) {
         if (sm.connectRes.code != v1.SectermCode.LOGON_SUCCESS) {
             console.log("connect error deu to " + sm.connectRes.code);
@@ -212,7 +224,7 @@ const onData = (msg: any) => {
     }
 
     if (sm?.characters) {
-        console.log(sm.characters, 'characters');
+        // console.log(sm.characters, 'characters');
         // const uint8Array = new Uint8Array([sm.characters.Data]);
         // const string = Array.from(uint8Array).map(code => String.fromCharCode(code)).join('');
         // console.log(string);
@@ -237,36 +249,36 @@ const onData = (msg: any) => {
             },
         });
     }
-
-
-    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.UPLOAD_START) {
-        console.log(filesuploadingIndex.value, 'filesuploadingIndex上传新的文件');
-        if (isStopUploading) return
-        if (filesuploadingIndex.value < filesList.value.length) uploadFile(filesList.value[filesuploadingIndex.value])
+    if (sm.fileAck) {
+        downloadedFileList.push({ srvName: sm.fileAck.srvName, uuid: sm.fileAck.uuid })
+        console.log(isdbeDownloading);
+        if (!isdbeDownloading) downloadFile()
     }
-    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.UPLOAD_CONTINUE) {
-        console.log("开始上传", endData)
-        if (isStopUploading) return
-        if (!endData) sendNextChunk()
-    }
+    // if (sm?.fileCmd?.cmd === v1.SectermFileCmd.UPLOAD_START) {
+    //     console.log(filesuploadingIndex.value, 'filesuploadingIndex上传新的文件');
+    //     if (isStopUploading) return
+    //     if (filesuploadingIndex.value < filesList.value.length) uploadFile(filesList.value[filesuploadingIndex.value])
+    // }
+    // if (sm?.fileCmd?.cmd === v1.SectermFileCmd.UPLOAD_CONTINUE) {
+    //     console.log("开始上传", endData)
+    //     if (isStopUploading) return
+    //     if (!endData) sendNextChunk()
+    // }
 
     if (sm?.fileDownloadReq) {
         console.log('下载文件');
         fileName.value = sm.fileDownloadReq.FileInfo?.[0].Name || "无名称"
         grossBytes = sm.fileDownloadReq.FileInfo?.[0].Size || 0
         downloadedFileInfo = sm.fileDownloadReq.FileInfo
-
-
         transmissionProgressOpen.value = true
-
         transmissionProgressType.value = 0
     }
-    if (sm.fileData && sm!.fileData.data) {
-        const uint8Array = new Uint8Array(sm!.fileData.data);
-        const blob = new Blob([uint8Array], { type: 'text/plain' });
-        console.log("blob", sm.fileData.seriNumber)
-        writeFile(blob, sm!.fileData.endData as boolean)
-    }
+    // if (sm.fileData && sm!.fileData.data) {
+    //     const uint8Array = new Uint8Array(sm!.fileData.data);
+    //     const blob = new Blob([uint8Array], { type: 'text/plain' });
+    //     console.log("blob", sm.fileData.seriNumber)
+    //     writeFile(blob, sm!.fileData.endData as boolean)
+    // }
     // if (sm?.fileCmd?.cmd === v1.SectermFileCmd.DOWNLOAD_START && sm.fileDownloadReq) {
     //     console.log('准备下载');
     //     fileName.value = sm.fileDownloadReq.FileInfo?.[0].Name || "无名称"
@@ -345,7 +357,6 @@ const calculatePercent = (currentChunk: number, totalChunks: number) => {
             return Math.round((currentChunk / totalChunks) * 100)
     }
 }
-
 
 //文件上传
 const chunkSize = 8 * 1024; //每次上传文件大小
@@ -461,31 +472,69 @@ const writeFile = async (blob: Blob, isEndData: boolean) => {
         sectermFileDownloadContinue(websocket)
     }
 }
+const sleep = (ms: number) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 
-const downloadFile = (url: string, filename: string) => {
-    console.log(url, filename);
-    // 创建一个隐藏的 <a> 元素
+
+
+// url: string
+const downloadFile = async () => {
+    if (downloadedFileList.length === 0 || isdbeDownloading) return
+    console.log('开始下载')
+    isdbeDownloading = true
+    const downloadedIitem = downloadedFileList.shift();
     const a: any = document.createElement('a');
     a.style.display = 'none';
-    a.href = url;
-    a.download = filename || url.split('/').pop();
+    
+    // const response = await fetch(`http://192.168.10.2:8099/file/download?srvName=${downloadedIitem!.srvName}&uuid=${downloadedIitem!.uuid}`);
+    // if (!response.ok) {
+    //     throw new Error(`Failed to fetch file: ${response.statusText}`);
+    // }
+
+    // const blob = await response.blob();
+    // const blobUrl = URL.createObjectURL(blob);
+    // console.log(response)
+    // console.log(blobUrl)
+
+
+    // await axios.get(`/file/download?srvName=${downloadedIitem!.srvName}&uuid=${downloadedIitem!.uuid}`, {
+    //     responseType: 'blob',
+    // }).then((res: any) => {
+    //     console.log(res)
+    //     const blob = new Blob([res.data], { type: 'text/plain' });
+    //     // 创建一个URL对象
+    //     const blobUrl = window.URL.createObjectURL(blob);
+
+    //     // const blob = await response.blob();
+    //     // const blobUrl = URL.createObjectURL(blob);
+
+    //     // 创建并触发下载链接
+    //     const link = document.createElement("a");
+    //     link.href = blobUrl;
+    //     // link.download = fileName;
+    //     document.body.appendChild(link);
+    //     link.click();
+
+    //     // 清理资源
+    //     document.body.removeChild(link);
+    //     URL.revokeObjectURL(blobUrl);
+    //     console.log('下载完成')
+    // })
+    // console.log('下载开始11')
+    console.log(`http://192.168.10.2:8099/file/download?srvName=${downloadedIitem!.srvName}&uuid=${downloadedIitem!.uuid}`)
+    a.href = `http://192.168.10.2:8099/file/download?srvName=${downloadedIitem!.srvName}&uuid=${downloadedIitem!.uuid}`;
+    // a.download = filename || url.split('/').pop();
     a.setAttribute('target', '_self')
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    await sleep(1000);
+    isdbeDownloading = false
+    downloadFile()
 }
 
-
-const loopWithDelay = (index: number, max: number) => {
-    if (index < max) {
-        // 递归调用 setTimeout，1秒后执行下一次循环
-        setTimeout(() => {
-            loopWithDelay(index + 1, max);
-            downloadFile('https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7BFAC08664-6B6F-245C-C87D-163733ECA16F%7D%26lang%3Dzh-CN%26browser%3D3%26usagestats%3D1%26appname%3DGoogle%2520Chrome%26needsadmin%3Dprefers%26ap%3Dx64-statsdef_1%26installdataindex%3Dempty/update2/installers/ChromeSetup.exe', 'ChromeSetup.exe');
-        }, 1000);
-    }
-}
 
 
 const onOpen = () => {

@@ -291,7 +291,7 @@ const transmitWebSocket = (data: any, websocket: WebSocket) => {
         // const uintArr = Uint32Array.from([data.length]);
         // console.log(intNume)
         // console.log(uintArr)
-        console.log(data)
+        // console.log(data)
         try {
             websocket.send(data);
         } catch (error) {

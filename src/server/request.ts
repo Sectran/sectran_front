@@ -11,7 +11,6 @@ axios.defaults.baseURL = BASE_URL;
  * http request 拦截器
  */
 
-
 axios.interceptors.request.use(
     (config: any) => {
         console.log("请求地址：", config);
