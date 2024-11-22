@@ -327,15 +327,34 @@ const startUploads = (event: any) => {
             })
             filesList.value.push({ file, totalChunks: Math.ceil(file.size / chunkSize), currentChunk: 0 })
         }
-        transmissionProgressType.value = 1
-        transmissionProgressOpen.value = true
-        console.log(FileInfo, 'FileInfo')
-        sectermFileUploadReq({ FileInfo }, websocket)
 
-        // 确保 fileInputRef.value 存在后再进行赋值操作
+        // const controller = new AbortController();
+        // const signal = controller.signal;
+        // let promise1 = new Promise((resolve, reject) => {
+        //     setTimeout(() => resolve("成功1"), 1000);
+        // });
+
+        // let promise2 = new Promise((resolve, reject) => {
+        //     setTimeout(() => reject("失败2"), 1500);
+        // });
+
+        // Promise.all([promise1, promise2]).then((values) => {
+        //     console.log(values); // [ "成功1" ]
+        // }).catch((error) => {
+        //     console.log(error); // "失败2"
+        // });
+
+        
         if (fileInputRef.value) {
             (fileInputRef.value as HTMLInputElement).value = '';
         }
+        // transmissionProgressType.value = 1
+        // transmissionProgressOpen.value = true
+        // console.log(FileInfo, 'FileInfo')
+        // sectermFileUploadReq({ FileInfo }, websocket)
+
+        // 确保 fileInputRef.value 存在后再进行赋值操作
+    
     } else {
         console.log("未选择文件");
     }
@@ -487,43 +506,7 @@ const downloadFile = async () => {
     const downloadedIitem = downloadedFileList.shift();
     const a: any = document.createElement('a');
     a.style.display = 'none';
-    
-    // const response = await fetch(`http://192.168.10.2:8099/file/download?srvName=${downloadedIitem!.srvName}&uuid=${downloadedIitem!.uuid}`);
-    // if (!response.ok) {
-    //     throw new Error(`Failed to fetch file: ${response.statusText}`);
-    // }
 
-    // const blob = await response.blob();
-    // const blobUrl = URL.createObjectURL(blob);
-    // console.log(response)
-    // console.log(blobUrl)
-
-
-    // await axios.get(`/file/download?srvName=${downloadedIitem!.srvName}&uuid=${downloadedIitem!.uuid}`, {
-    //     responseType: 'blob',
-    // }).then((res: any) => {
-    //     console.log(res)
-    //     const blob = new Blob([res.data], { type: 'text/plain' });
-    //     // 创建一个URL对象
-    //     const blobUrl = window.URL.createObjectURL(blob);
-
-    //     // const blob = await response.blob();
-    //     // const blobUrl = URL.createObjectURL(blob);
-
-    //     // 创建并触发下载链接
-    //     const link = document.createElement("a");
-    //     link.href = blobUrl;
-    //     // link.download = fileName;
-    //     document.body.appendChild(link);
-    //     link.click();
-
-    //     // 清理资源
-    //     document.body.removeChild(link);
-    //     URL.revokeObjectURL(blobUrl);
-    //     console.log('下载完成')
-    // })
-    // console.log('下载开始11')
-    console.log(`http://192.168.10.2:8099/file/download?srvName=${downloadedIitem!.srvName}&uuid=${downloadedIitem!.uuid}`)
     a.href = `http://192.168.10.2:8099/file/download?srvName=${downloadedIitem!.srvName}&uuid=${downloadedIitem!.uuid}`;
     // a.download = filename || url.split('/').pop();
     a.setAttribute('target', '_self')

@@ -232,8 +232,7 @@ import { Modal } from 'ant-design-vue';
 import { resTable } from "@/common/type/type"
 import { MenuUnfoldOutlined, } from '@ant-design/icons-vue';
 import { throttle } from 'lodash';
-import type { UploadProps } from 'ant-design-vue';
-import { fileUpload, fileDownload } from "@/api/admin.ts"
+import { fileUpload } from "@/api/admin.ts"
 import { message } from "ant-design-vue";
 type MultiList = {
     name: string
@@ -434,28 +433,6 @@ const onTabsEdit = (targetKey: number, type?: string) => {
     });
 }
 
-const xz = () => {
-    // , nodeId: 0 
-    fileDownload({}).then((res: any) => {
-        console.log(res)
-        const blob = new Blob([res.data], { type: 'text/plain' });
-        // 创建一个URL对象
-        const url = window.URL.createObjectURL(blob);
-
-        // 创建一个<a>标签
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'file.pdf';  // 设置下载的文件名
-
-        // 触发点击事件
-        document.body.appendChild(a);
-        a.click();
-
-        // 清理
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-    })
-}
 
 
 const beforeUpload = (event: any) => {
