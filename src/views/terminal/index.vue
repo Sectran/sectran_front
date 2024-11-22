@@ -447,13 +447,11 @@ const beforeUpload = (event: any) => {
     // 创建FormData对象
     const formData = new FormData();
     for (let i = 0; i < file!.length; i++) {
-        formData.append('files', file[i]);
+        formData.append('file', file[i]);
     }
-    let headers = {
-        'serviceName': 'sectran_front'
-    }
+
     console.log(formData);
-    fileUpload(formData, headers).then(() => {
+    fileUpload(formData).then(() => {
         message.success("上传成功")
     })
 };

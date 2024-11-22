@@ -4,39 +4,18 @@ package secterm.v1;
 
 option go_package = "secterm/v1;sectermv1";
 
-
-import "./chard_h5_nego.proto";
+import "./chard_h5_connect.proto";
 import "./chard_h5_terminal.proto";
-import "./chard_file.proto";
+import "./chard_h5_file.proto";
 
 //need write length(uint32 little endian) before send proto message
 message SectermMessage {
     oneof data{
-        // connect request message 连接请求消息
-        SectermConnectRequest connect_req = 3;
-        // connect response message 连接回应消息
-        SectermConnectResponse connect_res = 4;
-        // window size change message 窗口大小变动
-        SectermTerminalResize resize = 5;
-        // terminale message 终端消息
-        SectranTeminalCharacters characters = 6;
-        //文件查询请求
-        SectermFileListRequest file_list_req = 7;
-        //文件查询响应
-        SectermFileListResponse file_list_res = 8;
-        //文件移动/重命名请求
-        SectermFileMove file_mv = 9;
-        //文件删除请求
-        SectermFileDelete file_del_req = 11;
-        //文件/文件夹创建请求
-        SectermFileCreate file_create = 12;
-        //文件下载请求
-        SectermFileDownloadReq file_download_req = 14;
-        //文件上传请求
-        SectermFileUploadReq file_upload_req = 15;
-        //传输完成通知
-        SectermFileTransAck file_ack = 16;
-        //文件上传指令
-        SectermFileCmdMessage file_cmd = 17;
+        //文件操作
+        SectermFileMessage sec_file = 1;
+        //终端操作
+        SectermTerminalMessage sec_terminal = 2;
+        //连接操作
+        SectermConnectMessage sec_connect = 3;
     }
 }

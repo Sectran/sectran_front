@@ -55,7 +55,6 @@
 
 <script setup lang='ts'>
 
-
 import { onMounted, ref, reactive, onUnmounted } from "vue";
 import { LinkOutlined } from '@ant-design/icons-vue';
 import { message } from "ant-design-vue";
@@ -65,20 +64,19 @@ import { useI18n } from "vue-i18n";
 import { debounce } from "lodash";
 import "xterm/css/xterm.css";
 import { Modal } from 'ant-design-vue';
-import { secterm } from "@/../secterm/secterm";
+import { secterm, } from "@/../secterm/secterm";
+import { fileUpload } from "@/api/admin.ts"
 import {
     sectermConnectRequest,
     sectermTeminalResize,
     sectermTeminalCharacters,
-    sectermFileuploading,
-    sectermFileUploadReq,
     sectermFileDownloadReq,
     sectermFileDownloadStart,
-    sectermFileDownloadContinue,
+    sectermFileUploadReq,
+    sectermFileUploadFulfilleTheAllReq
 } from "@/common/method/proto";
 import { initSocket } from "@/common/method/socket"
-import { blobToUint8Array } from "@/common/method/utils"
-import axios from "axios";
+
 const props = defineProps<{
     username: string
     password: string
@@ -200,38 +198,42 @@ const initXterm = () => {
     term = _term;
 };
 const sendCharacters = (data: any) => { sectermTeminalCharacters(data, websocket) };
-let downloadedFileInfo: any = []
 
-let downloadedFileList: { srvName: string | null | undefined, uuid: string | null | undefined }[] = []
+let downloadedFileList: { uuid: string | null | undefined }[] = []
 let isdbeDownloading: boolean = false
 
 const onData = async (msg: any) => {
-    // console.log(msg, "msg")
     let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
-    // console.log(sm, 'sm')
-    if (sm?.connectRes) {
-        if (sm.connectRes.code != v1.SectermCode.LOGON_SUCCESS) {
-            console.log("connect error deu to " + sm.connectRes.code);
-        } else {
-            if (props.submitLoading) {
-                emit("connectResult", false);
-                localStorage.setItem("username", props.username);
-                localStorage.setItem("password", props.password);
-            }
+
+    if (sm.secConnect) return connectManage(sm?.secConnect);
+    if (sm?.secTerminal) return terminalManage(sm?.secTerminal)
+    if (sm?.secFile) return fileManage(sm?.secFile)
+    console.log(sm, "未知的消息类型")
+
+};
+
+const connectManage = (sm: secterm.v1.ISectermConnectMessage) => {
+    if (sm.connectRes?.code != v1.SectermCode.LOGON_SUCCESS) {
+        console.log("connect error deu to " + sm.connectRes?.code);
+    } else {
+        if (props.submitLoading) {
+            emit("connectResult", false);
+            localStorage.setItem("username", props.username);
+            localStorage.setItem("password", props.password);
         }
-
-        console.log("connect success!");
     }
 
-    if (sm?.characters) {
-        // console.log(sm.characters, 'characters');
-        // const uint8Array = new Uint8Array([sm.characters.Data]);
-        // const string = Array.from(uint8Array).map(code => String.fromCharCode(code)).join('');
-        // console.log(string);
-        term.write(sm.characters.Data);
+    console.log("connect success!");
+}
+
+const terminalManage = (sm: secterm.v1.ISectermTerminalMessage) => {
+    if (sm?.characters?.Data) {
+        term.write(sm?.characters?.Data);
     }
-    if (sm?.fileUploadReq && !inFileSelect.value) {
-        console.log(sm.fileUploadReq, 'fileUploadReq');
+}
+const fileManage = (sm: secterm.v1.ISectermFileMessage) => {
+    if (sm?.fileTransReq?.flag == true) {
+        // 上传请求
         Modal.confirm({
             title: '是否确定上传文件?',
             okText: '上传文件',
@@ -248,57 +250,18 @@ const onData = async (msg: any) => {
                 console.log('Cancel');
             },
         });
-    }
-    if (sm.fileAck) {
-        downloadedFileList.push({ srvName: sm.fileAck.srvName, uuid: sm.fileAck.uuid })
-        console.log(isdbeDownloading);
+    } else if (sm.fileTransRes) {
+        //下载响应
+        downloadedFileList.push({ uuid: sm.fileTransRes?.uuid })
         if (!isdbeDownloading) downloadFile()
+    } else {
+        console.log('file文件处理错误类型', sm?.fileTransReq?.flag)
     }
-    // if (sm?.fileCmd?.cmd === v1.SectermFileCmd.UPLOAD_START) {
-    //     console.log(filesuploadingIndex.value, 'filesuploadingIndex上传新的文件');
-    //     if (isStopUploading) return
-    //     if (filesuploadingIndex.value < filesList.value.length) uploadFile(filesList.value[filesuploadingIndex.value])
-    // }
-    // if (sm?.fileCmd?.cmd === v1.SectermFileCmd.UPLOAD_CONTINUE) {
-    //     console.log("开始上传", endData)
-    //     if (isStopUploading) return
-    //     if (!endData) sendNextChunk()
-    // }
+}
 
-    if (sm?.fileDownloadReq) {
-        console.log('下载文件');
-        fileName.value = sm.fileDownloadReq.FileInfo?.[0].Name || "无名称"
-        grossBytes = sm.fileDownloadReq.FileInfo?.[0].Size || 0
-        downloadedFileInfo = sm.fileDownloadReq.FileInfo
-        transmissionProgressOpen.value = true
-        transmissionProgressType.value = 0
-    }
-    // if (sm.fileData && sm!.fileData.data) {
-    //     const uint8Array = new Uint8Array(sm!.fileData.data);
-    //     const blob = new Blob([uint8Array], { type: 'text/plain' });
-    //     console.log("blob", sm.fileData.seriNumber)
-    //     writeFile(blob, sm!.fileData.endData as boolean)
-    // }
-    // if (sm?.fileCmd?.cmd === v1.SectermFileCmd.DOWNLOAD_START && sm.fileDownloadReq) {
-    //     console.log('准备下载');
-    //     fileName.value = sm.fileDownloadReq.FileInfo?.[0].Name || "无名称"
-    //     grossBytes = sm.fileDownloadReq.FileInfo?.[0].Size || 0
-    //     downloadedFileInfo = sm.fileDownloadReq.FileInfo
-    //     transmissionProgressOpen.value = true
-    // }
-    // if (sm?.fileCmd?.cmd === v1.SectermFileCmd.DOWNLOAD_CONTINUE) {
-    //     console.log('继续下载');
-    //     // const uint8Array = new Uint8Array([72, 108, 111, 32, 87, 111, 114, 108, 100, 33]);
-    //     // const blob = new Blob([uint8Array], { type: 'text/plain' });
-    //     // writeFile(blob)
-    // }
-
-    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_ERROR) message.error('文件上传失败'), isStopUploading = true, transmissionProgressOpen.value = false
-    if (sm?.fileCmd?.cmd === v1.SectermFileCmd.TRANS_FILE_EXISTED) message.error('文件重复上传'), isStopUploading = true, transmissionProgressOpen.value = false
-
-
-
-};
+//     downloadedFileList.push({ srvName: sm.fileAck.srvName, uuid: sm.fileAck.uuid })
+//     console.log(isdbeDownloading);
+//     if (!isdbeDownloading) downloadFile()
 
 type FileList = {
     file: File
@@ -312,53 +275,46 @@ let transmissionProgressType = ref<Number>(0)
 
 //文件列表
 let filesList = ref<FileList[]>([])
-let filesuploadingIndex = ref<number>(0)
-const startUploads = (event: any) => {
+const startUploads = async (event: any) => {
     console.log(event.target.files, 'event.target.files');
     if (event.target.files.length !== 0) {
         filesList.value = []
         let files = event.target.files
-        let FileInfo: { Name: string, Size: number }[] = []
-        filesuploadingIndex.value = 0
-        for (let file of files) {
-            FileInfo.push({
-                Name: file.name,
-                Size: file.size,
-            })
-            filesList.value.push({ file, totalChunks: Math.ceil(file.size / chunkSize), currentChunk: 0 })
+        console.log(files, 'files');
+        let requestList = []
+        for (let i = 0; i < files.length; i++) {
+            const formData = new FormData();
+            let file = files[i];
+            formData.append('file', file);
+            requestList.push(makeRequest(formData))
         }
+        await Promise.all(requestList)
+        sectermFileUploadFulfilleTheAllReq(websocket)
 
-        // const controller = new AbortController();
-        // const signal = controller.signal;
-        // let promise1 = new Promise((resolve, reject) => {
-        //     setTimeout(() => resolve("成功1"), 1000);
-        // });
-
-        // let promise2 = new Promise((resolve, reject) => {
-        //     setTimeout(() => reject("失败2"), 1500);
-        // });
-
-        // Promise.all([promise1, promise2]).then((values) => {
-        //     console.log(values); // [ "成功1" ]
-        // }).catch((error) => {
-        //     console.log(error); // "失败2"
-        // });
-
-        
         if (fileInputRef.value) {
             (fileInputRef.value as HTMLInputElement).value = '';
         }
-        // transmissionProgressType.value = 1
-        // transmissionProgressOpen.value = true
-        // console.log(FileInfo, 'FileInfo')
-        // sectermFileUploadReq({ FileInfo }, websocket)
 
-        // 确保 fileInputRef.value 存在后再进行赋值操作
-    
     } else {
+
         console.log("未选择文件");
     }
     inFileSelect.value = false
+}
+
+const makeRequest = async (formData: FormData) => {
+    await fileUpload(formData).then(async (res: { data: string }) => {
+        let FileUploadReqData: secterm.v1.SectermFileTransReq = {
+            uuid: res.data,
+            flag: true,
+            proto: secterm.v1.TransProtocol.ZMODEM,
+            mode: secterm.v1.ActionMode.ACTIVE,
+            toJSON: function (): { [k: string]: any; } {
+                throw new Error("Function not implemented.");
+            }
+        }
+        return sectermFileUploadReq(FileUploadReqData, websocket)
+    })
 }
 
 /**
@@ -377,70 +333,13 @@ const calculatePercent = (currentChunk: number, totalChunks: number) => {
     }
 }
 
-//文件上传
-const chunkSize = 8 * 1024; //每次上传文件大小
-let totalChunks = 0 //总分段
-let currentChunk = 0; //当前分段
-let uploadFileItem: File //当前处理的file文件
-let endData: boolean = false //当前文件是否是最后一次上传
+
 let isStopUploading: boolean = false //停止上传
 
-/**
- * 上传文件分段
- * @param file 文件
- */
-const uploadFile = (fileItem: FileList) => {
-    console.log(fileItem, 'file');
-    totalChunks = fileItem.totalChunks
-    currentChunk = 0
-    uploadFileItem = fileItem.file
-    endData = false
-    sendNextChunk();
-}
-/**
- * 文件上传
- */
-const sendNextChunk = async () => {
-    const start = currentChunk * chunkSize;
-    const end = Math.min(start + chunkSize, uploadFileItem.size);
-    const blob = uploadFileItem.slice(start, end);
-    if (currentChunk === totalChunks - 1) endData = true;
-    // console.log(start, end)
-    console.log(blob, 'blob')
-    await blobToUint8Array(blob)
-        .then(async (uint8Array: Uint8Array) => {
-            let fileData = {
-                file: {
-                    Name: uploadFileItem.name,
-                    Size: blob.size,
-                },
-                data: uint8Array,
-                endData,
-            }
-            await sectermFileuploading(fileData, websocket)
-            filesList.value[filesuploadingIndex.value].currentChunk = currentChunk + 1
-
-            if (endData) {
-                console.log('文件上传完成', uploadFileItem.name);
-                if (filesuploadingIndex.value >= filesList.value.length - 1) {
-                    transmissionProgressOpen.value = false
-                } else {
-                    filesuploadingIndex.value++
-                }
-            } else {
-                currentChunk++
-            }
-        })
-        .catch((error: any) => {
-            console.error('Error converting Blob to Uint8Array:', error);
-        });
-    // handleLoad()
-}
 
 //每次文件下载大小
 let downloadRef = ref<HTMLAnchorElement>();
-// const downloadChunkSize = 8 * 1024; //每次下载文件大小
-// let isStopDownload: boolean = false //停止下载
+
 let grossBytes: any = 0;//总字节
 let downloadedBytes = ref<number>(0); // 已经下载的字节数
 let fileName = ref<string>('')
@@ -472,31 +371,10 @@ const selectionPath = async () => {
     }
 }
 
-const writeFile = async (blob: Blob, isEndData: boolean) => {
-    downloadedBytes.value = blob.size + downloadedBytes.value;
-    const writable = await fileHandle.createWritable({ keepExistingData: true });
-    const file = await fileHandle.getFile();
-    const fileSize = file.size;
-    writable.seek(fileSize);
-    await writable.write(blob);
-    await writable.close();
 
-    if (isEndData) {
-        // transmissionProgressOpen.value = false
-        console.log(downloadedBytes.value)
-        downloadedBytes.value = 0
-        fileHandle = null
-
-    } else {
-        sectermFileDownloadContinue(websocket)
-    }
-}
 const sleep = (ms: number) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-
-
-
 
 // url: string
 const downloadFile = async () => {
@@ -506,9 +384,7 @@ const downloadFile = async () => {
     const downloadedIitem = downloadedFileList.shift();
     const a: any = document.createElement('a');
     a.style.display = 'none';
-
-    a.href = `http://192.168.10.2:8099/file/download?srvName=${downloadedIitem!.srvName}&uuid=${downloadedIitem!.uuid}`;
-    // a.download = filename || url.split('/').pop();
+    a.href = `http://192.168.10.2:8099/file/download?uuid=${downloadedIitem!.uuid}`;
     a.setAttribute('target', '_self')
     document.body.appendChild(a);
     a.click();

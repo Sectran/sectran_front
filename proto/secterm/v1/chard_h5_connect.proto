@@ -63,3 +63,12 @@ enum SectermCode {
 message SectermConnectResponse {
     SectermCode code = 1;
 }
+
+message SectermConnectMessage {
+    oneof data{
+        // connect request message 连接请求消息
+        SectermConnectRequest connect_req = 1;
+        // connect response message 连接回应消息
+        SectermConnectResponse connect_res = 2;
+    }
+}

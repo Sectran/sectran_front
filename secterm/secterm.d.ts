@@ -9,44 +9,14 @@ export namespace secterm {
         /** Properties of a SectermMessage. */
         interface ISectermMessage {
 
-            /** SectermMessage connectReq */
-            connectReq?: (secterm.v1.ISectermConnectRequest|null);
+            /** SectermMessage secFile */
+            secFile?: (secterm.v1.ISectermFileMessage|null);
 
-            /** SectermMessage connectRes */
-            connectRes?: (secterm.v1.ISectermConnectResponse|null);
+            /** SectermMessage secTerminal */
+            secTerminal?: (secterm.v1.ISectermTerminalMessage|null);
 
-            /** SectermMessage resize */
-            resize?: (secterm.v1.ISectermTerminalResize|null);
-
-            /** SectermMessage characters */
-            characters?: (secterm.v1.ISectranTeminalCharacters|null);
-
-            /** SectermMessage fileListReq */
-            fileListReq?: (secterm.v1.ISectermFileListRequest|null);
-
-            /** SectermMessage fileListRes */
-            fileListRes?: (secterm.v1.ISectermFileListResponse|null);
-
-            /** SectermMessage fileMv */
-            fileMv?: (secterm.v1.ISectermFileMove|null);
-
-            /** SectermMessage fileDelReq */
-            fileDelReq?: (secterm.v1.ISectermFileDelete|null);
-
-            /** SectermMessage fileCreate */
-            fileCreate?: (secterm.v1.ISectermFileCreate|null);
-
-            /** SectermMessage fileDownloadReq */
-            fileDownloadReq?: (secterm.v1.ISectermFileDownloadReq|null);
-
-            /** SectermMessage fileUploadReq */
-            fileUploadReq?: (secterm.v1.ISectermFileUploadReq|null);
-
-            /** SectermMessage fileAck */
-            fileAck?: (secterm.v1.ISectermFileTransAck|null);
-
-            /** SectermMessage fileCmd */
-            fileCmd?: (secterm.v1.ISectermFileCmdMessage|null);
+            /** SectermMessage secConnect */
+            secConnect?: (secterm.v1.ISectermConnectMessage|null);
         }
 
         /** Represents a SectermMessage. */
@@ -58,47 +28,17 @@ export namespace secterm {
              */
             constructor(properties?: secterm.v1.ISectermMessage);
 
-            /** SectermMessage connectReq. */
-            public connectReq?: (secterm.v1.ISectermConnectRequest|null);
+            /** SectermMessage secFile. */
+            public secFile?: (secterm.v1.ISectermFileMessage|null);
 
-            /** SectermMessage connectRes. */
-            public connectRes?: (secterm.v1.ISectermConnectResponse|null);
+            /** SectermMessage secTerminal. */
+            public secTerminal?: (secterm.v1.ISectermTerminalMessage|null);
 
-            /** SectermMessage resize. */
-            public resize?: (secterm.v1.ISectermTerminalResize|null);
-
-            /** SectermMessage characters. */
-            public characters?: (secterm.v1.ISectranTeminalCharacters|null);
-
-            /** SectermMessage fileListReq. */
-            public fileListReq?: (secterm.v1.ISectermFileListRequest|null);
-
-            /** SectermMessage fileListRes. */
-            public fileListRes?: (secterm.v1.ISectermFileListResponse|null);
-
-            /** SectermMessage fileMv. */
-            public fileMv?: (secterm.v1.ISectermFileMove|null);
-
-            /** SectermMessage fileDelReq. */
-            public fileDelReq?: (secterm.v1.ISectermFileDelete|null);
-
-            /** SectermMessage fileCreate. */
-            public fileCreate?: (secterm.v1.ISectermFileCreate|null);
-
-            /** SectermMessage fileDownloadReq. */
-            public fileDownloadReq?: (secterm.v1.ISectermFileDownloadReq|null);
-
-            /** SectermMessage fileUploadReq. */
-            public fileUploadReq?: (secterm.v1.ISectermFileUploadReq|null);
-
-            /** SectermMessage fileAck. */
-            public fileAck?: (secterm.v1.ISectermFileTransAck|null);
-
-            /** SectermMessage fileCmd. */
-            public fileCmd?: (secterm.v1.ISectermFileCmdMessage|null);
+            /** SectermMessage secConnect. */
+            public secConnect?: (secterm.v1.ISectermConnectMessage|null);
 
             /** SectermMessage data. */
-            public data?: ("connectReq"|"connectRes"|"resize"|"characters"|"fileListReq"|"fileListRes"|"fileMv"|"fileDelReq"|"fileCreate"|"fileDownloadReq"|"fileUploadReq"|"fileAck"|"fileCmd");
+            public data?: ("secFile"|"secTerminal"|"secConnect");
 
             /**
              * Creates a new SectermMessage instance using the specified properties.
@@ -658,6 +598,112 @@ export namespace secterm {
             public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
+        /** Properties of a SectermConnectMessage. */
+        interface ISectermConnectMessage {
+
+            /** SectermConnectMessage connectReq */
+            connectReq?: (secterm.v1.ISectermConnectRequest|null);
+
+            /** SectermConnectMessage connectRes */
+            connectRes?: (secterm.v1.ISectermConnectResponse|null);
+        }
+
+        /** Represents a SectermConnectMessage. */
+        class SectermConnectMessage implements ISectermConnectMessage {
+
+            /**
+             * Constructs a new SectermConnectMessage.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: secterm.v1.ISectermConnectMessage);
+
+            /** SectermConnectMessage connectReq. */
+            public connectReq?: (secterm.v1.ISectermConnectRequest|null);
+
+            /** SectermConnectMessage connectRes. */
+            public connectRes?: (secterm.v1.ISectermConnectResponse|null);
+
+            /** SectermConnectMessage data. */
+            public data?: ("connectReq"|"connectRes");
+
+            /**
+             * Creates a new SectermConnectMessage instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns SectermConnectMessage instance
+             */
+            public static create(properties?: secterm.v1.ISectermConnectMessage): secterm.v1.SectermConnectMessage;
+
+            /**
+             * Encodes the specified SectermConnectMessage message. Does not implicitly {@link secterm.v1.SectermConnectMessage.verify|verify} messages.
+             * @param message SectermConnectMessage message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: secterm.v1.ISectermConnectMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified SectermConnectMessage message, length delimited. Does not implicitly {@link secterm.v1.SectermConnectMessage.verify|verify} messages.
+             * @param message SectermConnectMessage message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: secterm.v1.ISectermConnectMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a SectermConnectMessage message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns SectermConnectMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): secterm.v1.SectermConnectMessage;
+
+            /**
+             * Decodes a SectermConnectMessage message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns SectermConnectMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): secterm.v1.SectermConnectMessage;
+
+            /**
+             * Verifies a SectermConnectMessage message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a SectermConnectMessage message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns SectermConnectMessage
+             */
+            public static fromObject(object: { [k: string]: any }): secterm.v1.SectermConnectMessage;
+
+            /**
+             * Creates a plain object from a SectermConnectMessage message. Also converts values to other types if specified.
+             * @param message SectermConnectMessage
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: secterm.v1.SectermConnectMessage, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this SectermConnectMessage to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for SectermConnectMessage
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
         /** Properties of a SectermTerminalResize. */
         interface ISectermTerminalResize {
 
@@ -858,6 +904,134 @@ export namespace secterm {
             public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
+        /** Properties of a SectermTerminalMessage. */
+        interface ISectermTerminalMessage {
+
+            /** SectermTerminalMessage resize */
+            resize?: (secterm.v1.ISectermTerminalResize|null);
+
+            /** SectermTerminalMessage characters */
+            characters?: (secterm.v1.ISectranTeminalCharacters|null);
+        }
+
+        /** Represents a SectermTerminalMessage. */
+        class SectermTerminalMessage implements ISectermTerminalMessage {
+
+            /**
+             * Constructs a new SectermTerminalMessage.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: secterm.v1.ISectermTerminalMessage);
+
+            /** SectermTerminalMessage resize. */
+            public resize?: (secterm.v1.ISectermTerminalResize|null);
+
+            /** SectermTerminalMessage characters. */
+            public characters?: (secterm.v1.ISectranTeminalCharacters|null);
+
+            /** SectermTerminalMessage data. */
+            public data?: ("resize"|"characters");
+
+            /**
+             * Creates a new SectermTerminalMessage instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns SectermTerminalMessage instance
+             */
+            public static create(properties?: secterm.v1.ISectermTerminalMessage): secterm.v1.SectermTerminalMessage;
+
+            /**
+             * Encodes the specified SectermTerminalMessage message. Does not implicitly {@link secterm.v1.SectermTerminalMessage.verify|verify} messages.
+             * @param message SectermTerminalMessage message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: secterm.v1.ISectermTerminalMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified SectermTerminalMessage message, length delimited. Does not implicitly {@link secterm.v1.SectermTerminalMessage.verify|verify} messages.
+             * @param message SectermTerminalMessage message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: secterm.v1.ISectermTerminalMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a SectermTerminalMessage message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns SectermTerminalMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): secterm.v1.SectermTerminalMessage;
+
+            /**
+             * Decodes a SectermTerminalMessage message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns SectermTerminalMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): secterm.v1.SectermTerminalMessage;
+
+            /**
+             * Verifies a SectermTerminalMessage message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a SectermTerminalMessage message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns SectermTerminalMessage
+             */
+            public static fromObject(object: { [k: string]: any }): secterm.v1.SectermTerminalMessage;
+
+            /**
+             * Creates a plain object from a SectermTerminalMessage message. Also converts values to other types if specified.
+             * @param message SectermTerminalMessage
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: secterm.v1.SectermTerminalMessage, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this SectermTerminalMessage to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for SectermTerminalMessage
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** SectermFileCmd enum. */
+        enum SectermFileCmd {
+            TRANS_ERROR = 0,
+            TRANS_FILE_EXISTED = 1,
+            TRANS_CANCLE = 2,
+            TRANS_SUCCESS = 3
+        }
+
+        /** ActionMode enum. */
+        enum ActionMode {
+            ACTIVE = 0,
+            PASSIVE = 1
+        }
+
+        /** TransProtocol enum. */
+        enum TransProtocol {
+            ZMODEM = 0,
+            SFTP = 1,
+            SCP = 2,
+            FTP = 3
+        }
+
         /** Properties of a SectermFileInfo. */
         interface ISectermFileInfo {
 
@@ -988,8 +1162,8 @@ export namespace secterm {
         /** Properties of a SectermFileListRequest. */
         interface ISectermFileListRequest {
 
-            /** SectermFileListRequest Path */
-            Path?: (string|null);
+            /** SectermFileListRequest dirPath */
+            dirPath?: (string|null);
         }
 
         /** Represents a SectermFileListRequest. */
@@ -1001,8 +1175,8 @@ export namespace secterm {
              */
             constructor(properties?: secterm.v1.ISectermFileListRequest);
 
-            /** SectermFileListRequest Path. */
-            public Path: string;
+            /** SectermFileListRequest dirPath. */
+            public dirPath: string;
 
             /**
              * Creates a new SectermFileListRequest instance using the specified properties.
@@ -1080,20 +1254,6 @@ export namespace secterm {
              * @returns The default type url
              */
             public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** ActionMode enum. */
-        enum ActionMode {
-            ACTIVE = 0,
-            PASSIVE = 1
-        }
-
-        /** TransProtocol enum. */
-        enum TransProtocol {
-            ZMODEM = 0,
-            SFTP = 1,
-            SCP = 2,
-            FTP = 3
         }
 
         /** Properties of a SectermFileListResponse. */
@@ -1196,14 +1356,17 @@ export namespace secterm {
         /** Properties of a SectermFileMove. */
         interface ISectermFileMove {
 
-            /** SectermFileMove Path */
-            Path?: (string|null);
+            /** SectermFileMove filePath */
+            filePath?: (string|null);
 
             /** SectermFileMove DstPath */
             DstPath?: (string|null);
 
             /** SectermFileMove force */
             force?: (boolean|null);
+
+            /** SectermFileMove recursion */
+            recursion?: (boolean|null);
         }
 
         /** Represents a SectermFileMove. */
@@ -1215,14 +1378,17 @@ export namespace secterm {
              */
             constructor(properties?: secterm.v1.ISectermFileMove);
 
-            /** SectermFileMove Path. */
-            public Path: string;
+            /** SectermFileMove filePath. */
+            public filePath: string;
 
             /** SectermFileMove DstPath. */
             public DstPath: string;
 
             /** SectermFileMove force. */
             public force: boolean;
+
+            /** SectermFileMove recursion. */
+            public recursion: boolean;
 
             /**
              * Creates a new SectermFileMove instance using the specified properties.
@@ -1496,339 +1662,216 @@ export namespace secterm {
             public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
-        /** Properties of a SectermFileDownloadReq. */
-        interface ISectermFileDownloadReq {
+        /** Properties of a SectermFileTransReq. */
+        interface ISectermFileTransReq {
 
-            /** SectermFileDownloadReq FileInfo */
-            FileInfo?: (secterm.v1.ISectermFileInfo[]|null);
+            /** SectermFileTransReq flag */
+            flag?: (boolean|null);
 
-            /** SectermFileDownloadReq proto */
-            proto?: (secterm.v1.TransProtocol|null);
-
-            /** SectermFileDownloadReq mode */
-            mode?: (secterm.v1.ActionMode|null);
-        }
-
-        /** Represents a SectermFileDownloadReq. */
-        class SectermFileDownloadReq implements ISectermFileDownloadReq {
-
-            /**
-             * Constructs a new SectermFileDownloadReq.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: secterm.v1.ISectermFileDownloadReq);
-
-            /** SectermFileDownloadReq FileInfo. */
-            public FileInfo: secterm.v1.ISectermFileInfo[];
-
-            /** SectermFileDownloadReq proto. */
-            public proto: secterm.v1.TransProtocol;
-
-            /** SectermFileDownloadReq mode. */
-            public mode: secterm.v1.ActionMode;
-
-            /**
-             * Creates a new SectermFileDownloadReq instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns SectermFileDownloadReq instance
-             */
-            public static create(properties?: secterm.v1.ISectermFileDownloadReq): secterm.v1.SectermFileDownloadReq;
-
-            /**
-             * Encodes the specified SectermFileDownloadReq message. Does not implicitly {@link secterm.v1.SectermFileDownloadReq.verify|verify} messages.
-             * @param message SectermFileDownloadReq message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: secterm.v1.ISectermFileDownloadReq, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified SectermFileDownloadReq message, length delimited. Does not implicitly {@link secterm.v1.SectermFileDownloadReq.verify|verify} messages.
-             * @param message SectermFileDownloadReq message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: secterm.v1.ISectermFileDownloadReq, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a SectermFileDownloadReq message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns SectermFileDownloadReq
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): secterm.v1.SectermFileDownloadReq;
-
-            /**
-             * Decodes a SectermFileDownloadReq message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns SectermFileDownloadReq
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): secterm.v1.SectermFileDownloadReq;
-
-            /**
-             * Verifies a SectermFileDownloadReq message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates a SectermFileDownloadReq message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns SectermFileDownloadReq
-             */
-            public static fromObject(object: { [k: string]: any }): secterm.v1.SectermFileDownloadReq;
-
-            /**
-             * Creates a plain object from a SectermFileDownloadReq message. Also converts values to other types if specified.
-             * @param message SectermFileDownloadReq
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: secterm.v1.SectermFileDownloadReq, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this SectermFileDownloadReq to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for SectermFileDownloadReq
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of a SectermFileUploadReq. */
-        interface ISectermFileUploadReq {
-
-            /** SectermFileUploadReq DstPath */
-            DstPath?: (string|null);
-
-            /** SectermFileUploadReq FileInfo */
-            FileInfo?: (secterm.v1.ISectermFileInfo[]|null);
-
-            /** SectermFileUploadReq mode */
-            mode?: (secterm.v1.ActionMode|null);
-
-            /** SectermFileUploadReq proto */
-            proto?: (secterm.v1.TransProtocol|null);
-        }
-
-        /** Represents a SectermFileUploadReq. */
-        class SectermFileUploadReq implements ISectermFileUploadReq {
-
-            /**
-             * Constructs a new SectermFileUploadReq.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: secterm.v1.ISectermFileUploadReq);
-
-            /** SectermFileUploadReq DstPath. */
-            public DstPath: string;
-
-            /** SectermFileUploadReq FileInfo. */
-            public FileInfo: secterm.v1.ISectermFileInfo[];
-
-            /** SectermFileUploadReq mode. */
-            public mode: secterm.v1.ActionMode;
-
-            /** SectermFileUploadReq proto. */
-            public proto: secterm.v1.TransProtocol;
-
-            /**
-             * Creates a new SectermFileUploadReq instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns SectermFileUploadReq instance
-             */
-            public static create(properties?: secterm.v1.ISectermFileUploadReq): secterm.v1.SectermFileUploadReq;
-
-            /**
-             * Encodes the specified SectermFileUploadReq message. Does not implicitly {@link secterm.v1.SectermFileUploadReq.verify|verify} messages.
-             * @param message SectermFileUploadReq message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: secterm.v1.ISectermFileUploadReq, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified SectermFileUploadReq message, length delimited. Does not implicitly {@link secterm.v1.SectermFileUploadReq.verify|verify} messages.
-             * @param message SectermFileUploadReq message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: secterm.v1.ISectermFileUploadReq, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a SectermFileUploadReq message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns SectermFileUploadReq
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): secterm.v1.SectermFileUploadReq;
-
-            /**
-             * Decodes a SectermFileUploadReq message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns SectermFileUploadReq
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): secterm.v1.SectermFileUploadReq;
-
-            /**
-             * Verifies a SectermFileUploadReq message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates a SectermFileUploadReq message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns SectermFileUploadReq
-             */
-            public static fromObject(object: { [k: string]: any }): secterm.v1.SectermFileUploadReq;
-
-            /**
-             * Creates a plain object from a SectermFileUploadReq message. Also converts values to other types if specified.
-             * @param message SectermFileUploadReq
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: secterm.v1.SectermFileUploadReq, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this SectermFileUploadReq to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for SectermFileUploadReq
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of a SectermFileTransAck. */
-        interface ISectermFileTransAck {
-
-            /** SectermFileTransAck uuid */
+            /** SectermFileTransReq uuid */
             uuid?: (string|null);
 
-            /** SectermFileTransAck srvName */
-            srvName?: (string|null);
+            /** SectermFileTransReq proto */
+            proto?: (secterm.v1.TransProtocol|null);
+
+            /** SectermFileTransReq mode */
+            mode?: (secterm.v1.ActionMode|null);
         }
 
-        /** Represents a SectermFileTransAck. */
-        class SectermFileTransAck implements ISectermFileTransAck {
+        /** Represents a SectermFileTransReq. */
+        class SectermFileTransReq implements ISectermFileTransReq {
 
             /**
-             * Constructs a new SectermFileTransAck.
+             * Constructs a new SectermFileTransReq.
              * @param [properties] Properties to set
              */
-            constructor(properties?: secterm.v1.ISectermFileTransAck);
+            constructor(properties?: secterm.v1.ISectermFileTransReq);
 
-            /** SectermFileTransAck uuid. */
+            /** SectermFileTransReq flag. */
+            public flag: boolean;
+
+            /** SectermFileTransReq uuid. */
             public uuid: string;
 
-            /** SectermFileTransAck srvName. */
-            public srvName: string;
+            /** SectermFileTransReq proto. */
+            public proto: secterm.v1.TransProtocol;
+
+            /** SectermFileTransReq mode. */
+            public mode: secterm.v1.ActionMode;
 
             /**
-             * Creates a new SectermFileTransAck instance using the specified properties.
+             * Creates a new SectermFileTransReq instance using the specified properties.
              * @param [properties] Properties to set
-             * @returns SectermFileTransAck instance
+             * @returns SectermFileTransReq instance
              */
-            public static create(properties?: secterm.v1.ISectermFileTransAck): secterm.v1.SectermFileTransAck;
+            public static create(properties?: secterm.v1.ISectermFileTransReq): secterm.v1.SectermFileTransReq;
 
             /**
-             * Encodes the specified SectermFileTransAck message. Does not implicitly {@link secterm.v1.SectermFileTransAck.verify|verify} messages.
-             * @param message SectermFileTransAck message or plain object to encode
+             * Encodes the specified SectermFileTransReq message. Does not implicitly {@link secterm.v1.SectermFileTransReq.verify|verify} messages.
+             * @param message SectermFileTransReq message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encode(message: secterm.v1.ISectermFileTransAck, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encode(message: secterm.v1.ISectermFileTransReq, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
-             * Encodes the specified SectermFileTransAck message, length delimited. Does not implicitly {@link secterm.v1.SectermFileTransAck.verify|verify} messages.
-             * @param message SectermFileTransAck message or plain object to encode
+             * Encodes the specified SectermFileTransReq message, length delimited. Does not implicitly {@link secterm.v1.SectermFileTransReq.verify|verify} messages.
+             * @param message SectermFileTransReq message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encodeDelimited(message: secterm.v1.ISectermFileTransAck, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encodeDelimited(message: secterm.v1.ISectermFileTransReq, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
-             * Decodes a SectermFileTransAck message from the specified reader or buffer.
+             * Decodes a SectermFileTransReq message from the specified reader or buffer.
              * @param reader Reader or buffer to decode from
              * @param [length] Message length if known beforehand
-             * @returns SectermFileTransAck
+             * @returns SectermFileTransReq
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): secterm.v1.SectermFileTransAck;
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): secterm.v1.SectermFileTransReq;
 
             /**
-             * Decodes a SectermFileTransAck message from the specified reader or buffer, length delimited.
+             * Decodes a SectermFileTransReq message from the specified reader or buffer, length delimited.
              * @param reader Reader or buffer to decode from
-             * @returns SectermFileTransAck
+             * @returns SectermFileTransReq
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): secterm.v1.SectermFileTransAck;
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): secterm.v1.SectermFileTransReq;
 
             /**
-             * Verifies a SectermFileTransAck message.
+             * Verifies a SectermFileTransReq message.
              * @param message Plain object to verify
              * @returns `null` if valid, otherwise the reason why it is not
              */
             public static verify(message: { [k: string]: any }): (string|null);
 
             /**
-             * Creates a SectermFileTransAck message from a plain object. Also converts values to their respective internal types.
+             * Creates a SectermFileTransReq message from a plain object. Also converts values to their respective internal types.
              * @param object Plain object
-             * @returns SectermFileTransAck
+             * @returns SectermFileTransReq
              */
-            public static fromObject(object: { [k: string]: any }): secterm.v1.SectermFileTransAck;
+            public static fromObject(object: { [k: string]: any }): secterm.v1.SectermFileTransReq;
 
             /**
-             * Creates a plain object from a SectermFileTransAck message. Also converts values to other types if specified.
-             * @param message SectermFileTransAck
+             * Creates a plain object from a SectermFileTransReq message. Also converts values to other types if specified.
+             * @param message SectermFileTransReq
              * @param [options] Conversion options
              * @returns Plain object
              */
-            public static toObject(message: secterm.v1.SectermFileTransAck, options?: $protobuf.IConversionOptions): { [k: string]: any };
+            public static toObject(message: secterm.v1.SectermFileTransReq, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
             /**
-             * Converts this SectermFileTransAck to JSON.
+             * Converts this SectermFileTransReq to JSON.
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
 
             /**
-             * Gets the default type url for SectermFileTransAck
+             * Gets the default type url for SectermFileTransReq
              * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
              * @returns The default type url
              */
             public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
-        /** SectermFileCmd enum. */
-        enum SectermFileCmd {
-            TRANS_ERROR = 0,
-            TRANS_FILE_EXISTED = 1,
-            TRANS_CANCLE = 2,
-            TRANS_SUCCESS = 3
+        /** Properties of a SectermFileTransRes. */
+        interface ISectermFileTransRes {
+
+            /** SectermFileTransRes uuid */
+            uuid?: (string|null);
+        }
+
+        /** Represents a SectermFileTransRes. */
+        class SectermFileTransRes implements ISectermFileTransRes {
+
+            /**
+             * Constructs a new SectermFileTransRes.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: secterm.v1.ISectermFileTransRes);
+
+            /** SectermFileTransRes uuid. */
+            public uuid: string;
+
+            /**
+             * Creates a new SectermFileTransRes instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns SectermFileTransRes instance
+             */
+            public static create(properties?: secterm.v1.ISectermFileTransRes): secterm.v1.SectermFileTransRes;
+
+            /**
+             * Encodes the specified SectermFileTransRes message. Does not implicitly {@link secterm.v1.SectermFileTransRes.verify|verify} messages.
+             * @param message SectermFileTransRes message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: secterm.v1.ISectermFileTransRes, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified SectermFileTransRes message, length delimited. Does not implicitly {@link secterm.v1.SectermFileTransRes.verify|verify} messages.
+             * @param message SectermFileTransRes message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: secterm.v1.ISectermFileTransRes, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a SectermFileTransRes message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns SectermFileTransRes
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): secterm.v1.SectermFileTransRes;
+
+            /**
+             * Decodes a SectermFileTransRes message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns SectermFileTransRes
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): secterm.v1.SectermFileTransRes;
+
+            /**
+             * Verifies a SectermFileTransRes message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a SectermFileTransRes message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns SectermFileTransRes
+             */
+            public static fromObject(object: { [k: string]: any }): secterm.v1.SectermFileTransRes;
+
+            /**
+             * Creates a plain object from a SectermFileTransRes message. Also converts values to other types if specified.
+             * @param message SectermFileTransRes
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: secterm.v1.SectermFileTransRes, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this SectermFileTransRes to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for SectermFileTransRes
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
         /** Properties of a SectermFileCmdMessage. */
@@ -1922,6 +1965,148 @@ export namespace secterm {
 
             /**
              * Gets the default type url for SectermFileCmdMessage
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a SectermFileMessage. */
+        interface ISectermFileMessage {
+
+            /** SectermFileMessage fileListReq */
+            fileListReq?: (secterm.v1.ISectermFileListRequest|null);
+
+            /** SectermFileMessage fileListRes */
+            fileListRes?: (secterm.v1.ISectermFileListResponse|null);
+
+            /** SectermFileMessage fileMv */
+            fileMv?: (secterm.v1.ISectermFileMove|null);
+
+            /** SectermFileMessage fileDel */
+            fileDel?: (secterm.v1.ISectermFileDelete|null);
+
+            /** SectermFileMessage fileCreate */
+            fileCreate?: (secterm.v1.ISectermFileCreate|null);
+
+            /** SectermFileMessage fileCmd */
+            fileCmd?: (secterm.v1.ISectermFileCmdMessage|null);
+
+            /** SectermFileMessage fileTransReq */
+            fileTransReq?: (secterm.v1.ISectermFileTransReq|null);
+
+            /** SectermFileMessage fileTransRes */
+            fileTransRes?: (secterm.v1.ISectermFileTransRes|null);
+        }
+
+        /** Represents a SectermFileMessage. */
+        class SectermFileMessage implements ISectermFileMessage {
+
+            /**
+             * Constructs a new SectermFileMessage.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: secterm.v1.ISectermFileMessage);
+
+            /** SectermFileMessage fileListReq. */
+            public fileListReq?: (secterm.v1.ISectermFileListRequest|null);
+
+            /** SectermFileMessage fileListRes. */
+            public fileListRes?: (secterm.v1.ISectermFileListResponse|null);
+
+            /** SectermFileMessage fileMv. */
+            public fileMv?: (secterm.v1.ISectermFileMove|null);
+
+            /** SectermFileMessage fileDel. */
+            public fileDel?: (secterm.v1.ISectermFileDelete|null);
+
+            /** SectermFileMessage fileCreate. */
+            public fileCreate?: (secterm.v1.ISectermFileCreate|null);
+
+            /** SectermFileMessage fileCmd. */
+            public fileCmd?: (secterm.v1.ISectermFileCmdMessage|null);
+
+            /** SectermFileMessage fileTransReq. */
+            public fileTransReq?: (secterm.v1.ISectermFileTransReq|null);
+
+            /** SectermFileMessage fileTransRes. */
+            public fileTransRes?: (secterm.v1.ISectermFileTransRes|null);
+
+            /** SectermFileMessage data. */
+            public data?: ("fileListReq"|"fileListRes"|"fileMv"|"fileDel"|"fileCreate"|"fileCmd"|"fileTransReq"|"fileTransRes");
+
+            /**
+             * Creates a new SectermFileMessage instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns SectermFileMessage instance
+             */
+            public static create(properties?: secterm.v1.ISectermFileMessage): secterm.v1.SectermFileMessage;
+
+            /**
+             * Encodes the specified SectermFileMessage message. Does not implicitly {@link secterm.v1.SectermFileMessage.verify|verify} messages.
+             * @param message SectermFileMessage message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: secterm.v1.ISectermFileMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified SectermFileMessage message, length delimited. Does not implicitly {@link secterm.v1.SectermFileMessage.verify|verify} messages.
+             * @param message SectermFileMessage message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: secterm.v1.ISectermFileMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a SectermFileMessage message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns SectermFileMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): secterm.v1.SectermFileMessage;
+
+            /**
+             * Decodes a SectermFileMessage message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns SectermFileMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): secterm.v1.SectermFileMessage;
+
+            /**
+             * Verifies a SectermFileMessage message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a SectermFileMessage message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns SectermFileMessage
+             */
+            public static fromObject(object: { [k: string]: any }): secterm.v1.SectermFileMessage;
+
+            /**
+             * Creates a plain object from a SectermFileMessage message. Also converts values to other types if specified.
+             * @param message SectermFileMessage
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: secterm.v1.SectermFileMessage, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this SectermFileMessage to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for SectermFileMessage
              * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
              * @returns The default type url
              */

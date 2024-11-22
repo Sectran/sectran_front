@@ -464,6 +464,268 @@ export const secterm = $root.secterm = (() => {
             return SectranTeminalCharacters;
         })();
 
+        v1.SectermTerminalMessage = (function() {
+
+            /**
+             * Properties of a SectermTerminalMessage.
+             * @memberof secterm.v1
+             * @interface ISectermTerminalMessage
+             * @property {secterm.v1.ISectermTerminalResize|null} [resize] SectermTerminalMessage resize
+             * @property {secterm.v1.ISectranTeminalCharacters|null} [characters] SectermTerminalMessage characters
+             */
+
+            /**
+             * Constructs a new SectermTerminalMessage.
+             * @memberof secterm.v1
+             * @classdesc Represents a SectermTerminalMessage.
+             * @implements ISectermTerminalMessage
+             * @constructor
+             * @param {secterm.v1.ISectermTerminalMessage=} [properties] Properties to set
+             */
+            function SectermTerminalMessage(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * SectermTerminalMessage resize.
+             * @member {secterm.v1.ISectermTerminalResize|null|undefined} resize
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @instance
+             */
+            SectermTerminalMessage.prototype.resize = null;
+
+            /**
+             * SectermTerminalMessage characters.
+             * @member {secterm.v1.ISectranTeminalCharacters|null|undefined} characters
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @instance
+             */
+            SectermTerminalMessage.prototype.characters = null;
+
+            // OneOf field names bound to virtual getters and setters
+            let $oneOfFields;
+
+            /**
+             * SectermTerminalMessage data.
+             * @member {"resize"|"characters"|undefined} data
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @instance
+             */
+            Object.defineProperty(SectermTerminalMessage.prototype, "data", {
+                get: $util.oneOfGetter($oneOfFields = ["resize", "characters"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
+            /**
+             * Creates a new SectermTerminalMessage instance using the specified properties.
+             * @function create
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {secterm.v1.ISectermTerminalMessage=} [properties] Properties to set
+             * @returns {secterm.v1.SectermTerminalMessage} SectermTerminalMessage instance
+             */
+            SectermTerminalMessage.create = function create(properties) {
+                return new SectermTerminalMessage(properties);
+            };
+
+            /**
+             * Encodes the specified SectermTerminalMessage message. Does not implicitly {@link secterm.v1.SectermTerminalMessage.verify|verify} messages.
+             * @function encode
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {secterm.v1.ISectermTerminalMessage} message SectermTerminalMessage message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SectermTerminalMessage.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.resize != null && Object.hasOwnProperty.call(message, "resize"))
+                    $root.secterm.v1.SectermTerminalResize.encode(message.resize, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                if (message.characters != null && Object.hasOwnProperty.call(message, "characters"))
+                    $root.secterm.v1.SectranTeminalCharacters.encode(message.characters, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified SectermTerminalMessage message, length delimited. Does not implicitly {@link secterm.v1.SectermTerminalMessage.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {secterm.v1.ISectermTerminalMessage} message SectermTerminalMessage message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SectermTerminalMessage.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a SectermTerminalMessage message from the specified reader or buffer.
+             * @function decode
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {secterm.v1.SectermTerminalMessage} SectermTerminalMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SectermTerminalMessage.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.secterm.v1.SectermTerminalMessage();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.resize = $root.secterm.v1.SectermTerminalResize.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 2: {
+                            message.characters = $root.secterm.v1.SectranTeminalCharacters.decode(reader, reader.uint32());
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a SectermTerminalMessage message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {secterm.v1.SectermTerminalMessage} SectermTerminalMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SectermTerminalMessage.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a SectermTerminalMessage message.
+             * @function verify
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            SectermTerminalMessage.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                let properties = {};
+                if (message.resize != null && message.hasOwnProperty("resize")) {
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermTerminalResize.verify(message.resize);
+                        if (error)
+                            return "resize." + error;
+                    }
+                }
+                if (message.characters != null && message.hasOwnProperty("characters")) {
+                    if (properties.data === 1)
+                        return "data: multiple values";
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectranTeminalCharacters.verify(message.characters);
+                        if (error)
+                            return "characters." + error;
+                    }
+                }
+                return null;
+            };
+
+            /**
+             * Creates a SectermTerminalMessage message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {secterm.v1.SectermTerminalMessage} SectermTerminalMessage
+             */
+            SectermTerminalMessage.fromObject = function fromObject(object) {
+                if (object instanceof $root.secterm.v1.SectermTerminalMessage)
+                    return object;
+                let message = new $root.secterm.v1.SectermTerminalMessage();
+                if (object.resize != null) {
+                    if (typeof object.resize !== "object")
+                        throw TypeError(".secterm.v1.SectermTerminalMessage.resize: object expected");
+                    message.resize = $root.secterm.v1.SectermTerminalResize.fromObject(object.resize);
+                }
+                if (object.characters != null) {
+                    if (typeof object.characters !== "object")
+                        throw TypeError(".secterm.v1.SectermTerminalMessage.characters: object expected");
+                    message.characters = $root.secterm.v1.SectranTeminalCharacters.fromObject(object.characters);
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a SectermTerminalMessage message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {secterm.v1.SectermTerminalMessage} message SectermTerminalMessage
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            SectermTerminalMessage.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                let object = {};
+                if (message.resize != null && message.hasOwnProperty("resize")) {
+                    object.resize = $root.secterm.v1.SectermTerminalResize.toObject(message.resize, options);
+                    if (options.oneofs)
+                        object.data = "resize";
+                }
+                if (message.characters != null && message.hasOwnProperty("characters")) {
+                    object.characters = $root.secterm.v1.SectranTeminalCharacters.toObject(message.characters, options);
+                    if (options.oneofs)
+                        object.data = "characters";
+                }
+                return object;
+            };
+
+            /**
+             * Converts this SectermTerminalMessage to JSON.
+             * @function toJSON
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            SectermTerminalMessage.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for SectermTerminalMessage
+             * @function getTypeUrl
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            SectermTerminalMessage.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/secterm.v1.SectermTerminalMessage";
+            };
+
+            return SectermTerminalMessage;
+        })();
+
         return v1;
     })();
 

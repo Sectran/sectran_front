@@ -13,7 +13,7 @@ type SectermConnectRequest = {
     port: number
     password: string
 } & SectermTerminalResize
-
+//连接socket
 export const sectermConnectRequest = (connectParams: SectermConnectRequest, websocket: WebSocket) => {
     const credentialPassword: secterm.v1.ISectermCredentialPassword = {
         password: stringToUint8Array(connectParams.password)
@@ -34,33 +34,25 @@ export const sectermConnectRequest = (connectParams: SectermConnectRequest, webs
     console.log(connectRequest)
 
     let sectermMessage = new v1.SectermMessage();
-    sectermMessage.connectReq = connectRequest;
+    if (sectermMessage.secConnect) { sectermMessage.secConnect.connectReq = connectRequest; }
+    else { sectermMessage.secConnect = { connectReq: connectRequest }; }
 
     let connectData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(connectData, websocket)
-    // const uintArr = Uint32Array.from([connectData.length]);
-    // websocket.send(uintArr);
-    // websocket.send(connectData);
 }
-
-
-
 
 //浏览器大小改变传内容到socket
 export const sectermTeminalResize = (resizeParams: SectermTerminalResize, websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
-
     let resize = new v1.SectermTerminalResize()
     resize.colums = resizeParams.Colums
     resize.rows = resizeParams.Rows
-    sectermMessage.resize = resize
-    console.log(resize)
-
+    if (sectermMessage.secTerminal) sectermMessage.secTerminal.resize = resize
+    else sectermMessage.secTerminal = { resize: resize }
+    resize = resize
     let resizeData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(resizeData, websocket)
-    // const uintArr = Uint32Array.from([resizeData.length]);
-    // websocket.send(uintArr);
-    // websocket.send(resizeData);
+
 
 }
 
@@ -69,31 +61,51 @@ export const sectermTeminalCharacters = (data: any, websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
     let chars = new v1.SectranTeminalCharacters();
     chars.Data = stringToUint8Array(data);
-
-    sectermMessage.characters = chars;
+    if (sectermMessage.secTerminal) sectermMessage.secTerminal.characters = chars
+    else sectermMessage.secTerminal = { characters: chars }
     let charactersData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(charactersData, websocket)
-    // let len: number = charactersData.length;
-    // const uintArr = Uint32Array.from([len]);
-    // websocket.send(uintArr);
-    // websocket.send(charactersData);
 }
 
 /**
- * 文件上传响应
+ * 单文件上传成功
  */
 
-export const sectermFileUploadReq = (data: any, websocket: WebSocket) => {
-    console.log("传送文件信息")
+export const sectermFileUploadReq = (data: secterm.v1.SectermFileTransReq, websocket: WebSocket) => {
+    console.log("单文件上传成功")
     intNume = 0
     let sectermMessage = new v1.SectermMessage();
-    let FileReq = new v1.SectermFileUploadReq()
-
-    FileReq.FileInfo = data.FileInfo
-    sectermMessage.fileUploadReq = FileReq;
+    if (sectermMessage.secFile) sectermMessage.secFile.fileTransReq = data
+    else sectermMessage.secFile = { fileTransReq: data }
     let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(FileUploadReqData, websocket)
 }
+
+/**
+ * 所有文件上传完成
+ */
+
+export const sectermFileUploadFulfilleTheAllReq = (websocket: WebSocket) => {
+    console.log("全部上传完成")
+    let sectermMessage = new v1.SectermMessage();
+    let data = {
+        cmd: v1.SectermFileCmd.TRANS_SUCCESS
+    }
+    if (sectermMessage.secFile) sectermMessage.secFile.fileCmd = data
+    else sectermMessage.secFile = { fileCmd: data }
+
+    let FileUploadReqFulfilleTheAllData = v1.SectermMessage.encode(sectermMessage).finish();
+    transmitWebSocket(FileUploadReqFulfilleTheAllData, websocket)
+}
+
+/**
+ * 取消文件上传
+ */
+
+// export const sectermFileUploadReq = (data: any, websocket: WebSocket) => {
+
+
+// }
 /**
  * 文件上传传输
  */
@@ -145,8 +157,6 @@ export const sectermFileDownloadStart = (websocket: WebSocket) => {
     let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(FileUploadReqData, websocket)
 }
-
-
 
 /**
  * 文件持续下载相应

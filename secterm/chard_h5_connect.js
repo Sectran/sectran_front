@@ -1290,6 +1290,268 @@ export const secterm = $root.secterm = (() => {
             return SectermConnectResponse;
         })();
 
+        v1.SectermConnectMessage = (function() {
+
+            /**
+             * Properties of a SectermConnectMessage.
+             * @memberof secterm.v1
+             * @interface ISectermConnectMessage
+             * @property {secterm.v1.ISectermConnectRequest|null} [connectReq] SectermConnectMessage connectReq
+             * @property {secterm.v1.ISectermConnectResponse|null} [connectRes] SectermConnectMessage connectRes
+             */
+
+            /**
+             * Constructs a new SectermConnectMessage.
+             * @memberof secterm.v1
+             * @classdesc Represents a SectermConnectMessage.
+             * @implements ISectermConnectMessage
+             * @constructor
+             * @param {secterm.v1.ISectermConnectMessage=} [properties] Properties to set
+             */
+            function SectermConnectMessage(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * SectermConnectMessage connectReq.
+             * @member {secterm.v1.ISectermConnectRequest|null|undefined} connectReq
+             * @memberof secterm.v1.SectermConnectMessage
+             * @instance
+             */
+            SectermConnectMessage.prototype.connectReq = null;
+
+            /**
+             * SectermConnectMessage connectRes.
+             * @member {secterm.v1.ISectermConnectResponse|null|undefined} connectRes
+             * @memberof secterm.v1.SectermConnectMessage
+             * @instance
+             */
+            SectermConnectMessage.prototype.connectRes = null;
+
+            // OneOf field names bound to virtual getters and setters
+            let $oneOfFields;
+
+            /**
+             * SectermConnectMessage data.
+             * @member {"connectReq"|"connectRes"|undefined} data
+             * @memberof secterm.v1.SectermConnectMessage
+             * @instance
+             */
+            Object.defineProperty(SectermConnectMessage.prototype, "data", {
+                get: $util.oneOfGetter($oneOfFields = ["connectReq", "connectRes"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
+            /**
+             * Creates a new SectermConnectMessage instance using the specified properties.
+             * @function create
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {secterm.v1.ISectermConnectMessage=} [properties] Properties to set
+             * @returns {secterm.v1.SectermConnectMessage} SectermConnectMessage instance
+             */
+            SectermConnectMessage.create = function create(properties) {
+                return new SectermConnectMessage(properties);
+            };
+
+            /**
+             * Encodes the specified SectermConnectMessage message. Does not implicitly {@link secterm.v1.SectermConnectMessage.verify|verify} messages.
+             * @function encode
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {secterm.v1.ISectermConnectMessage} message SectermConnectMessage message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SectermConnectMessage.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.connectReq != null && Object.hasOwnProperty.call(message, "connectReq"))
+                    $root.secterm.v1.SectermConnectRequest.encode(message.connectReq, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                if (message.connectRes != null && Object.hasOwnProperty.call(message, "connectRes"))
+                    $root.secterm.v1.SectermConnectResponse.encode(message.connectRes, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified SectermConnectMessage message, length delimited. Does not implicitly {@link secterm.v1.SectermConnectMessage.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {secterm.v1.ISectermConnectMessage} message SectermConnectMessage message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SectermConnectMessage.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a SectermConnectMessage message from the specified reader or buffer.
+             * @function decode
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {secterm.v1.SectermConnectMessage} SectermConnectMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SectermConnectMessage.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.secterm.v1.SectermConnectMessage();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.connectReq = $root.secterm.v1.SectermConnectRequest.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 2: {
+                            message.connectRes = $root.secterm.v1.SectermConnectResponse.decode(reader, reader.uint32());
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a SectermConnectMessage message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {secterm.v1.SectermConnectMessage} SectermConnectMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SectermConnectMessage.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a SectermConnectMessage message.
+             * @function verify
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            SectermConnectMessage.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                let properties = {};
+                if (message.connectReq != null && message.hasOwnProperty("connectReq")) {
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermConnectRequest.verify(message.connectReq);
+                        if (error)
+                            return "connectReq." + error;
+                    }
+                }
+                if (message.connectRes != null && message.hasOwnProperty("connectRes")) {
+                    if (properties.data === 1)
+                        return "data: multiple values";
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermConnectResponse.verify(message.connectRes);
+                        if (error)
+                            return "connectRes." + error;
+                    }
+                }
+                return null;
+            };
+
+            /**
+             * Creates a SectermConnectMessage message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {secterm.v1.SectermConnectMessage} SectermConnectMessage
+             */
+            SectermConnectMessage.fromObject = function fromObject(object) {
+                if (object instanceof $root.secterm.v1.SectermConnectMessage)
+                    return object;
+                let message = new $root.secterm.v1.SectermConnectMessage();
+                if (object.connectReq != null) {
+                    if (typeof object.connectReq !== "object")
+                        throw TypeError(".secterm.v1.SectermConnectMessage.connectReq: object expected");
+                    message.connectReq = $root.secterm.v1.SectermConnectRequest.fromObject(object.connectReq);
+                }
+                if (object.connectRes != null) {
+                    if (typeof object.connectRes !== "object")
+                        throw TypeError(".secterm.v1.SectermConnectMessage.connectRes: object expected");
+                    message.connectRes = $root.secterm.v1.SectermConnectResponse.fromObject(object.connectRes);
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a SectermConnectMessage message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {secterm.v1.SectermConnectMessage} message SectermConnectMessage
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            SectermConnectMessage.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                let object = {};
+                if (message.connectReq != null && message.hasOwnProperty("connectReq")) {
+                    object.connectReq = $root.secterm.v1.SectermConnectRequest.toObject(message.connectReq, options);
+                    if (options.oneofs)
+                        object.data = "connectReq";
+                }
+                if (message.connectRes != null && message.hasOwnProperty("connectRes")) {
+                    object.connectRes = $root.secterm.v1.SectermConnectResponse.toObject(message.connectRes, options);
+                    if (options.oneofs)
+                        object.data = "connectRes";
+                }
+                return object;
+            };
+
+            /**
+             * Converts this SectermConnectMessage to JSON.
+             * @function toJSON
+             * @memberof secterm.v1.SectermConnectMessage
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            SectermConnectMessage.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for SectermConnectMessage
+             * @function getTypeUrl
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            SectermConnectMessage.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/secterm.v1.SectermConnectMessage";
+            };
+
+            return SectermConnectMessage;
+        })();
+
         return v1;
     })();
 

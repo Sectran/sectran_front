@@ -5,7 +5,7 @@ import { TIMEOUT, BASE_URL } from "./config";
 
 import { message } from 'ant-design-vue';
 axios.defaults.timeout = TIMEOUT;
-axios.defaults.baseURL = BASE_URL;
+// axios.defaults.baseURL = BASE_URL;
 
 /**
  * http request 拦截器

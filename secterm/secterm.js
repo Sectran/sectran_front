@@ -31,19 +31,9 @@ export const secterm = $root.secterm = (() => {
              * Properties of a SectermMessage.
              * @memberof secterm.v1
              * @interface ISectermMessage
-             * @property {secterm.v1.ISectermConnectRequest|null} [connectReq] SectermMessage connectReq
-             * @property {secterm.v1.ISectermConnectResponse|null} [connectRes] SectermMessage connectRes
-             * @property {secterm.v1.ISectermTerminalResize|null} [resize] SectermMessage resize
-             * @property {secterm.v1.ISectranTeminalCharacters|null} [characters] SectermMessage characters
-             * @property {secterm.v1.ISectermFileListRequest|null} [fileListReq] SectermMessage fileListReq
-             * @property {secterm.v1.ISectermFileListResponse|null} [fileListRes] SectermMessage fileListRes
-             * @property {secterm.v1.ISectermFileMove|null} [fileMv] SectermMessage fileMv
-             * @property {secterm.v1.ISectermFileDelete|null} [fileDelReq] SectermMessage fileDelReq
-             * @property {secterm.v1.ISectermFileCreate|null} [fileCreate] SectermMessage fileCreate
-             * @property {secterm.v1.ISectermFileDownloadReq|null} [fileDownloadReq] SectermMessage fileDownloadReq
-             * @property {secterm.v1.ISectermFileUploadReq|null} [fileUploadReq] SectermMessage fileUploadReq
-             * @property {secterm.v1.ISectermFileTransAck|null} [fileAck] SectermMessage fileAck
-             * @property {secterm.v1.ISectermFileCmdMessage|null} [fileCmd] SectermMessage fileCmd
+             * @property {secterm.v1.ISectermFileMessage|null} [secFile] SectermMessage secFile
+             * @property {secterm.v1.ISectermTerminalMessage|null} [secTerminal] SectermMessage secTerminal
+             * @property {secterm.v1.ISectermConnectMessage|null} [secConnect] SectermMessage secConnect
              */
 
             /**
@@ -62,120 +52,40 @@ export const secterm = $root.secterm = (() => {
             }
 
             /**
-             * SectermMessage connectReq.
-             * @member {secterm.v1.ISectermConnectRequest|null|undefined} connectReq
+             * SectermMessage secFile.
+             * @member {secterm.v1.ISectermFileMessage|null|undefined} secFile
              * @memberof secterm.v1.SectermMessage
              * @instance
              */
-            SectermMessage.prototype.connectReq = null;
+            SectermMessage.prototype.secFile = null;
 
             /**
-             * SectermMessage connectRes.
-             * @member {secterm.v1.ISectermConnectResponse|null|undefined} connectRes
+             * SectermMessage secTerminal.
+             * @member {secterm.v1.ISectermTerminalMessage|null|undefined} secTerminal
              * @memberof secterm.v1.SectermMessage
              * @instance
              */
-            SectermMessage.prototype.connectRes = null;
+            SectermMessage.prototype.secTerminal = null;
 
             /**
-             * SectermMessage resize.
-             * @member {secterm.v1.ISectermTerminalResize|null|undefined} resize
+             * SectermMessage secConnect.
+             * @member {secterm.v1.ISectermConnectMessage|null|undefined} secConnect
              * @memberof secterm.v1.SectermMessage
              * @instance
              */
-            SectermMessage.prototype.resize = null;
-
-            /**
-             * SectermMessage characters.
-             * @member {secterm.v1.ISectranTeminalCharacters|null|undefined} characters
-             * @memberof secterm.v1.SectermMessage
-             * @instance
-             */
-            SectermMessage.prototype.characters = null;
-
-            /**
-             * SectermMessage fileListReq.
-             * @member {secterm.v1.ISectermFileListRequest|null|undefined} fileListReq
-             * @memberof secterm.v1.SectermMessage
-             * @instance
-             */
-            SectermMessage.prototype.fileListReq = null;
-
-            /**
-             * SectermMessage fileListRes.
-             * @member {secterm.v1.ISectermFileListResponse|null|undefined} fileListRes
-             * @memberof secterm.v1.SectermMessage
-             * @instance
-             */
-            SectermMessage.prototype.fileListRes = null;
-
-            /**
-             * SectermMessage fileMv.
-             * @member {secterm.v1.ISectermFileMove|null|undefined} fileMv
-             * @memberof secterm.v1.SectermMessage
-             * @instance
-             */
-            SectermMessage.prototype.fileMv = null;
-
-            /**
-             * SectermMessage fileDelReq.
-             * @member {secterm.v1.ISectermFileDelete|null|undefined} fileDelReq
-             * @memberof secterm.v1.SectermMessage
-             * @instance
-             */
-            SectermMessage.prototype.fileDelReq = null;
-
-            /**
-             * SectermMessage fileCreate.
-             * @member {secterm.v1.ISectermFileCreate|null|undefined} fileCreate
-             * @memberof secterm.v1.SectermMessage
-             * @instance
-             */
-            SectermMessage.prototype.fileCreate = null;
-
-            /**
-             * SectermMessage fileDownloadReq.
-             * @member {secterm.v1.ISectermFileDownloadReq|null|undefined} fileDownloadReq
-             * @memberof secterm.v1.SectermMessage
-             * @instance
-             */
-            SectermMessage.prototype.fileDownloadReq = null;
-
-            /**
-             * SectermMessage fileUploadReq.
-             * @member {secterm.v1.ISectermFileUploadReq|null|undefined} fileUploadReq
-             * @memberof secterm.v1.SectermMessage
-             * @instance
-             */
-            SectermMessage.prototype.fileUploadReq = null;
-
-            /**
-             * SectermMessage fileAck.
-             * @member {secterm.v1.ISectermFileTransAck|null|undefined} fileAck
-             * @memberof secterm.v1.SectermMessage
-             * @instance
-             */
-            SectermMessage.prototype.fileAck = null;
-
-            /**
-             * SectermMessage fileCmd.
-             * @member {secterm.v1.ISectermFileCmdMessage|null|undefined} fileCmd
-             * @memberof secterm.v1.SectermMessage
-             * @instance
-             */
-            SectermMessage.prototype.fileCmd = null;
+            SectermMessage.prototype.secConnect = null;
 
             // OneOf field names bound to virtual getters and setters
             let $oneOfFields;
 
             /**
              * SectermMessage data.
-             * @member {"connectReq"|"connectRes"|"resize"|"characters"|"fileListReq"|"fileListRes"|"fileMv"|"fileDelReq"|"fileCreate"|"fileDownloadReq"|"fileUploadReq"|"fileAck"|"fileCmd"|undefined} data
+             * @member {"secFile"|"secTerminal"|"secConnect"|undefined} data
              * @memberof secterm.v1.SectermMessage
              * @instance
              */
             Object.defineProperty(SectermMessage.prototype, "data", {
-                get: $util.oneOfGetter($oneOfFields = ["connectReq", "connectRes", "resize", "characters", "fileListReq", "fileListRes", "fileMv", "fileDelReq", "fileCreate", "fileDownloadReq", "fileUploadReq", "fileAck", "fileCmd"]),
+                get: $util.oneOfGetter($oneOfFields = ["secFile", "secTerminal", "secConnect"]),
                 set: $util.oneOfSetter($oneOfFields)
             });
 
@@ -203,32 +113,12 @@ export const secterm = $root.secterm = (() => {
             SectermMessage.encode = function encode(message, writer) {
                 if (!writer)
                     writer = $Writer.create();
-                if (message.connectReq != null && Object.hasOwnProperty.call(message, "connectReq"))
-                    $root.secterm.v1.SectermConnectRequest.encode(message.connectReq, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
-                if (message.connectRes != null && Object.hasOwnProperty.call(message, "connectRes"))
-                    $root.secterm.v1.SectermConnectResponse.encode(message.connectRes, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
-                if (message.resize != null && Object.hasOwnProperty.call(message, "resize"))
-                    $root.secterm.v1.SectermTerminalResize.encode(message.resize, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
-                if (message.characters != null && Object.hasOwnProperty.call(message, "characters"))
-                    $root.secterm.v1.SectranTeminalCharacters.encode(message.characters, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
-                if (message.fileListReq != null && Object.hasOwnProperty.call(message, "fileListReq"))
-                    $root.secterm.v1.SectermFileListRequest.encode(message.fileListReq, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
-                if (message.fileListRes != null && Object.hasOwnProperty.call(message, "fileListRes"))
-                    $root.secterm.v1.SectermFileListResponse.encode(message.fileListRes, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
-                if (message.fileMv != null && Object.hasOwnProperty.call(message, "fileMv"))
-                    $root.secterm.v1.SectermFileMove.encode(message.fileMv, writer.uint32(/* id 9, wireType 2 =*/74).fork()).ldelim();
-                if (message.fileDelReq != null && Object.hasOwnProperty.call(message, "fileDelReq"))
-                    $root.secterm.v1.SectermFileDelete.encode(message.fileDelReq, writer.uint32(/* id 11, wireType 2 =*/90).fork()).ldelim();
-                if (message.fileCreate != null && Object.hasOwnProperty.call(message, "fileCreate"))
-                    $root.secterm.v1.SectermFileCreate.encode(message.fileCreate, writer.uint32(/* id 12, wireType 2 =*/98).fork()).ldelim();
-                if (message.fileDownloadReq != null && Object.hasOwnProperty.call(message, "fileDownloadReq"))
-                    $root.secterm.v1.SectermFileDownloadReq.encode(message.fileDownloadReq, writer.uint32(/* id 14, wireType 2 =*/114).fork()).ldelim();
-                if (message.fileUploadReq != null && Object.hasOwnProperty.call(message, "fileUploadReq"))
-                    $root.secterm.v1.SectermFileUploadReq.encode(message.fileUploadReq, writer.uint32(/* id 15, wireType 2 =*/122).fork()).ldelim();
-                if (message.fileAck != null && Object.hasOwnProperty.call(message, "fileAck"))
-                    $root.secterm.v1.SectermFileTransAck.encode(message.fileAck, writer.uint32(/* id 16, wireType 2 =*/130).fork()).ldelim();
-                if (message.fileCmd != null && Object.hasOwnProperty.call(message, "fileCmd"))
-                    $root.secterm.v1.SectermFileCmdMessage.encode(message.fileCmd, writer.uint32(/* id 17, wireType 2 =*/138).fork()).ldelim();
+                if (message.secFile != null && Object.hasOwnProperty.call(message, "secFile"))
+                    $root.secterm.v1.SectermFileMessage.encode(message.secFile, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                if (message.secTerminal != null && Object.hasOwnProperty.call(message, "secTerminal"))
+                    $root.secterm.v1.SectermTerminalMessage.encode(message.secTerminal, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                if (message.secConnect != null && Object.hasOwnProperty.call(message, "secConnect"))
+                    $root.secterm.v1.SectermConnectMessage.encode(message.secConnect, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
                 return writer;
             };
 
@@ -263,56 +153,16 @@ export const secterm = $root.secterm = (() => {
                 while (reader.pos < end) {
                     let tag = reader.uint32();
                     switch (tag >>> 3) {
+                    case 1: {
+                            message.secFile = $root.secterm.v1.SectermFileMessage.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 2: {
+                            message.secTerminal = $root.secterm.v1.SectermTerminalMessage.decode(reader, reader.uint32());
+                            break;
+                        }
                     case 3: {
-                            message.connectReq = $root.secterm.v1.SectermConnectRequest.decode(reader, reader.uint32());
-                            break;
-                        }
-                    case 4: {
-                            message.connectRes = $root.secterm.v1.SectermConnectResponse.decode(reader, reader.uint32());
-                            break;
-                        }
-                    case 5: {
-                            message.resize = $root.secterm.v1.SectermTerminalResize.decode(reader, reader.uint32());
-                            break;
-                        }
-                    case 6: {
-                            message.characters = $root.secterm.v1.SectranTeminalCharacters.decode(reader, reader.uint32());
-                            break;
-                        }
-                    case 7: {
-                            message.fileListReq = $root.secterm.v1.SectermFileListRequest.decode(reader, reader.uint32());
-                            break;
-                        }
-                    case 8: {
-                            message.fileListRes = $root.secterm.v1.SectermFileListResponse.decode(reader, reader.uint32());
-                            break;
-                        }
-                    case 9: {
-                            message.fileMv = $root.secterm.v1.SectermFileMove.decode(reader, reader.uint32());
-                            break;
-                        }
-                    case 11: {
-                            message.fileDelReq = $root.secterm.v1.SectermFileDelete.decode(reader, reader.uint32());
-                            break;
-                        }
-                    case 12: {
-                            message.fileCreate = $root.secterm.v1.SectermFileCreate.decode(reader, reader.uint32());
-                            break;
-                        }
-                    case 14: {
-                            message.fileDownloadReq = $root.secterm.v1.SectermFileDownloadReq.decode(reader, reader.uint32());
-                            break;
-                        }
-                    case 15: {
-                            message.fileUploadReq = $root.secterm.v1.SectermFileUploadReq.decode(reader, reader.uint32());
-                            break;
-                        }
-                    case 16: {
-                            message.fileAck = $root.secterm.v1.SectermFileTransAck.decode(reader, reader.uint32());
-                            break;
-                        }
-                    case 17: {
-                            message.fileCmd = $root.secterm.v1.SectermFileCmdMessage.decode(reader, reader.uint32());
+                            message.secConnect = $root.secterm.v1.SectermConnectMessage.decode(reader, reader.uint32());
                             break;
                         }
                     default:
@@ -351,132 +201,32 @@ export const secterm = $root.secterm = (() => {
                 if (typeof message !== "object" || message === null)
                     return "object expected";
                 let properties = {};
-                if (message.connectReq != null && message.hasOwnProperty("connectReq")) {
+                if (message.secFile != null && message.hasOwnProperty("secFile")) {
                     properties.data = 1;
                     {
-                        let error = $root.secterm.v1.SectermConnectRequest.verify(message.connectReq);
+                        let error = $root.secterm.v1.SectermFileMessage.verify(message.secFile);
                         if (error)
-                            return "connectReq." + error;
+                            return "secFile." + error;
                     }
                 }
-                if (message.connectRes != null && message.hasOwnProperty("connectRes")) {
+                if (message.secTerminal != null && message.hasOwnProperty("secTerminal")) {
                     if (properties.data === 1)
                         return "data: multiple values";
                     properties.data = 1;
                     {
-                        let error = $root.secterm.v1.SectermConnectResponse.verify(message.connectRes);
+                        let error = $root.secterm.v1.SectermTerminalMessage.verify(message.secTerminal);
                         if (error)
-                            return "connectRes." + error;
+                            return "secTerminal." + error;
                     }
                 }
-                if (message.resize != null && message.hasOwnProperty("resize")) {
+                if (message.secConnect != null && message.hasOwnProperty("secConnect")) {
                     if (properties.data === 1)
                         return "data: multiple values";
                     properties.data = 1;
                     {
-                        let error = $root.secterm.v1.SectermTerminalResize.verify(message.resize);
+                        let error = $root.secterm.v1.SectermConnectMessage.verify(message.secConnect);
                         if (error)
-                            return "resize." + error;
-                    }
-                }
-                if (message.characters != null && message.hasOwnProperty("characters")) {
-                    if (properties.data === 1)
-                        return "data: multiple values";
-                    properties.data = 1;
-                    {
-                        let error = $root.secterm.v1.SectranTeminalCharacters.verify(message.characters);
-                        if (error)
-                            return "characters." + error;
-                    }
-                }
-                if (message.fileListReq != null && message.hasOwnProperty("fileListReq")) {
-                    if (properties.data === 1)
-                        return "data: multiple values";
-                    properties.data = 1;
-                    {
-                        let error = $root.secterm.v1.SectermFileListRequest.verify(message.fileListReq);
-                        if (error)
-                            return "fileListReq." + error;
-                    }
-                }
-                if (message.fileListRes != null && message.hasOwnProperty("fileListRes")) {
-                    if (properties.data === 1)
-                        return "data: multiple values";
-                    properties.data = 1;
-                    {
-                        let error = $root.secterm.v1.SectermFileListResponse.verify(message.fileListRes);
-                        if (error)
-                            return "fileListRes." + error;
-                    }
-                }
-                if (message.fileMv != null && message.hasOwnProperty("fileMv")) {
-                    if (properties.data === 1)
-                        return "data: multiple values";
-                    properties.data = 1;
-                    {
-                        let error = $root.secterm.v1.SectermFileMove.verify(message.fileMv);
-                        if (error)
-                            return "fileMv." + error;
-                    }
-                }
-                if (message.fileDelReq != null && message.hasOwnProperty("fileDelReq")) {
-                    if (properties.data === 1)
-                        return "data: multiple values";
-                    properties.data = 1;
-                    {
-                        let error = $root.secterm.v1.SectermFileDelete.verify(message.fileDelReq);
-                        if (error)
-                            return "fileDelReq." + error;
-                    }
-                }
-                if (message.fileCreate != null && message.hasOwnProperty("fileCreate")) {
-                    if (properties.data === 1)
-                        return "data: multiple values";
-                    properties.data = 1;
-                    {
-                        let error = $root.secterm.v1.SectermFileCreate.verify(message.fileCreate);
-                        if (error)
-                            return "fileCreate." + error;
-                    }
-                }
-                if (message.fileDownloadReq != null && message.hasOwnProperty("fileDownloadReq")) {
-                    if (properties.data === 1)
-                        return "data: multiple values";
-                    properties.data = 1;
-                    {
-                        let error = $root.secterm.v1.SectermFileDownloadReq.verify(message.fileDownloadReq);
-                        if (error)
-                            return "fileDownloadReq." + error;
-                    }
-                }
-                if (message.fileUploadReq != null && message.hasOwnProperty("fileUploadReq")) {
-                    if (properties.data === 1)
-                        return "data: multiple values";
-                    properties.data = 1;
-                    {
-                        let error = $root.secterm.v1.SectermFileUploadReq.verify(message.fileUploadReq);
-                        if (error)
-                            return "fileUploadReq." + error;
-                    }
-                }
-                if (message.fileAck != null && message.hasOwnProperty("fileAck")) {
-                    if (properties.data === 1)
-                        return "data: multiple values";
-                    properties.data = 1;
-                    {
-                        let error = $root.secterm.v1.SectermFileTransAck.verify(message.fileAck);
-                        if (error)
-                            return "fileAck." + error;
-                    }
-                }
-                if (message.fileCmd != null && message.hasOwnProperty("fileCmd")) {
-                    if (properties.data === 1)
-                        return "data: multiple values";
-                    properties.data = 1;
-                    {
-                        let error = $root.secterm.v1.SectermFileCmdMessage.verify(message.fileCmd);
-                        if (error)
-                            return "fileCmd." + error;
+                            return "secConnect." + error;
                     }
                 }
                 return null;
@@ -494,70 +244,20 @@ export const secterm = $root.secterm = (() => {
                 if (object instanceof $root.secterm.v1.SectermMessage)
                     return object;
                 let message = new $root.secterm.v1.SectermMessage();
-                if (object.connectReq != null) {
-                    if (typeof object.connectReq !== "object")
-                        throw TypeError(".secterm.v1.SectermMessage.connectReq: object expected");
-                    message.connectReq = $root.secterm.v1.SectermConnectRequest.fromObject(object.connectReq);
+                if (object.secFile != null) {
+                    if (typeof object.secFile !== "object")
+                        throw TypeError(".secterm.v1.SectermMessage.secFile: object expected");
+                    message.secFile = $root.secterm.v1.SectermFileMessage.fromObject(object.secFile);
                 }
-                if (object.connectRes != null) {
-                    if (typeof object.connectRes !== "object")
-                        throw TypeError(".secterm.v1.SectermMessage.connectRes: object expected");
-                    message.connectRes = $root.secterm.v1.SectermConnectResponse.fromObject(object.connectRes);
+                if (object.secTerminal != null) {
+                    if (typeof object.secTerminal !== "object")
+                        throw TypeError(".secterm.v1.SectermMessage.secTerminal: object expected");
+                    message.secTerminal = $root.secterm.v1.SectermTerminalMessage.fromObject(object.secTerminal);
                 }
-                if (object.resize != null) {
-                    if (typeof object.resize !== "object")
-                        throw TypeError(".secterm.v1.SectermMessage.resize: object expected");
-                    message.resize = $root.secterm.v1.SectermTerminalResize.fromObject(object.resize);
-                }
-                if (object.characters != null) {
-                    if (typeof object.characters !== "object")
-                        throw TypeError(".secterm.v1.SectermMessage.characters: object expected");
-                    message.characters = $root.secterm.v1.SectranTeminalCharacters.fromObject(object.characters);
-                }
-                if (object.fileListReq != null) {
-                    if (typeof object.fileListReq !== "object")
-                        throw TypeError(".secterm.v1.SectermMessage.fileListReq: object expected");
-                    message.fileListReq = $root.secterm.v1.SectermFileListRequest.fromObject(object.fileListReq);
-                }
-                if (object.fileListRes != null) {
-                    if (typeof object.fileListRes !== "object")
-                        throw TypeError(".secterm.v1.SectermMessage.fileListRes: object expected");
-                    message.fileListRes = $root.secterm.v1.SectermFileListResponse.fromObject(object.fileListRes);
-                }
-                if (object.fileMv != null) {
-                    if (typeof object.fileMv !== "object")
-                        throw TypeError(".secterm.v1.SectermMessage.fileMv: object expected");
-                    message.fileMv = $root.secterm.v1.SectermFileMove.fromObject(object.fileMv);
-                }
-                if (object.fileDelReq != null) {
-                    if (typeof object.fileDelReq !== "object")
-                        throw TypeError(".secterm.v1.SectermMessage.fileDelReq: object expected");
-                    message.fileDelReq = $root.secterm.v1.SectermFileDelete.fromObject(object.fileDelReq);
-                }
-                if (object.fileCreate != null) {
-                    if (typeof object.fileCreate !== "object")
-                        throw TypeError(".secterm.v1.SectermMessage.fileCreate: object expected");
-                    message.fileCreate = $root.secterm.v1.SectermFileCreate.fromObject(object.fileCreate);
-                }
-                if (object.fileDownloadReq != null) {
-                    if (typeof object.fileDownloadReq !== "object")
-                        throw TypeError(".secterm.v1.SectermMessage.fileDownloadReq: object expected");
-                    message.fileDownloadReq = $root.secterm.v1.SectermFileDownloadReq.fromObject(object.fileDownloadReq);
-                }
-                if (object.fileUploadReq != null) {
-                    if (typeof object.fileUploadReq !== "object")
-                        throw TypeError(".secterm.v1.SectermMessage.fileUploadReq: object expected");
-                    message.fileUploadReq = $root.secterm.v1.SectermFileUploadReq.fromObject(object.fileUploadReq);
-                }
-                if (object.fileAck != null) {
-                    if (typeof object.fileAck !== "object")
-                        throw TypeError(".secterm.v1.SectermMessage.fileAck: object expected");
-                    message.fileAck = $root.secterm.v1.SectermFileTransAck.fromObject(object.fileAck);
-                }
-                if (object.fileCmd != null) {
-                    if (typeof object.fileCmd !== "object")
-                        throw TypeError(".secterm.v1.SectermMessage.fileCmd: object expected");
-                    message.fileCmd = $root.secterm.v1.SectermFileCmdMessage.fromObject(object.fileCmd);
+                if (object.secConnect != null) {
+                    if (typeof object.secConnect !== "object")
+                        throw TypeError(".secterm.v1.SectermMessage.secConnect: object expected");
+                    message.secConnect = $root.secterm.v1.SectermConnectMessage.fromObject(object.secConnect);
                 }
                 return message;
             };
@@ -575,70 +275,20 @@ export const secterm = $root.secterm = (() => {
                 if (!options)
                     options = {};
                 let object = {};
-                if (message.connectReq != null && message.hasOwnProperty("connectReq")) {
-                    object.connectReq = $root.secterm.v1.SectermConnectRequest.toObject(message.connectReq, options);
+                if (message.secFile != null && message.hasOwnProperty("secFile")) {
+                    object.secFile = $root.secterm.v1.SectermFileMessage.toObject(message.secFile, options);
                     if (options.oneofs)
-                        object.data = "connectReq";
+                        object.data = "secFile";
                 }
-                if (message.connectRes != null && message.hasOwnProperty("connectRes")) {
-                    object.connectRes = $root.secterm.v1.SectermConnectResponse.toObject(message.connectRes, options);
+                if (message.secTerminal != null && message.hasOwnProperty("secTerminal")) {
+                    object.secTerminal = $root.secterm.v1.SectermTerminalMessage.toObject(message.secTerminal, options);
                     if (options.oneofs)
-                        object.data = "connectRes";
+                        object.data = "secTerminal";
                 }
-                if (message.resize != null && message.hasOwnProperty("resize")) {
-                    object.resize = $root.secterm.v1.SectermTerminalResize.toObject(message.resize, options);
+                if (message.secConnect != null && message.hasOwnProperty("secConnect")) {
+                    object.secConnect = $root.secterm.v1.SectermConnectMessage.toObject(message.secConnect, options);
                     if (options.oneofs)
-                        object.data = "resize";
-                }
-                if (message.characters != null && message.hasOwnProperty("characters")) {
-                    object.characters = $root.secterm.v1.SectranTeminalCharacters.toObject(message.characters, options);
-                    if (options.oneofs)
-                        object.data = "characters";
-                }
-                if (message.fileListReq != null && message.hasOwnProperty("fileListReq")) {
-                    object.fileListReq = $root.secterm.v1.SectermFileListRequest.toObject(message.fileListReq, options);
-                    if (options.oneofs)
-                        object.data = "fileListReq";
-                }
-                if (message.fileListRes != null && message.hasOwnProperty("fileListRes")) {
-                    object.fileListRes = $root.secterm.v1.SectermFileListResponse.toObject(message.fileListRes, options);
-                    if (options.oneofs)
-                        object.data = "fileListRes";
-                }
-                if (message.fileMv != null && message.hasOwnProperty("fileMv")) {
-                    object.fileMv = $root.secterm.v1.SectermFileMove.toObject(message.fileMv, options);
-                    if (options.oneofs)
-                        object.data = "fileMv";
-                }
-                if (message.fileDelReq != null && message.hasOwnProperty("fileDelReq")) {
-                    object.fileDelReq = $root.secterm.v1.SectermFileDelete.toObject(message.fileDelReq, options);
-                    if (options.oneofs)
-                        object.data = "fileDelReq";
-                }
-                if (message.fileCreate != null && message.hasOwnProperty("fileCreate")) {
-                    object.fileCreate = $root.secterm.v1.SectermFileCreate.toObject(message.fileCreate, options);
-                    if (options.oneofs)
-                        object.data = "fileCreate";
-                }
-                if (message.fileDownloadReq != null && message.hasOwnProperty("fileDownloadReq")) {
-                    object.fileDownloadReq = $root.secterm.v1.SectermFileDownloadReq.toObject(message.fileDownloadReq, options);
-                    if (options.oneofs)
-                        object.data = "fileDownloadReq";
-                }
-                if (message.fileUploadReq != null && message.hasOwnProperty("fileUploadReq")) {
-                    object.fileUploadReq = $root.secterm.v1.SectermFileUploadReq.toObject(message.fileUploadReq, options);
-                    if (options.oneofs)
-                        object.data = "fileUploadReq";
-                }
-                if (message.fileAck != null && message.hasOwnProperty("fileAck")) {
-                    object.fileAck = $root.secterm.v1.SectermFileTransAck.toObject(message.fileAck, options);
-                    if (options.oneofs)
-                        object.data = "fileAck";
-                }
-                if (message.fileCmd != null && message.hasOwnProperty("fileCmd")) {
-                    object.fileCmd = $root.secterm.v1.SectermFileCmdMessage.toObject(message.fileCmd, options);
-                    if (options.oneofs)
-                        object.data = "fileCmd";
+                        object.data = "secConnect";
                 }
                 return object;
             };
@@ -1937,6 +1587,268 @@ export const secterm = $root.secterm = (() => {
             return SectermConnectResponse;
         })();
 
+        v1.SectermConnectMessage = (function() {
+
+            /**
+             * Properties of a SectermConnectMessage.
+             * @memberof secterm.v1
+             * @interface ISectermConnectMessage
+             * @property {secterm.v1.ISectermConnectRequest|null} [connectReq] SectermConnectMessage connectReq
+             * @property {secterm.v1.ISectermConnectResponse|null} [connectRes] SectermConnectMessage connectRes
+             */
+
+            /**
+             * Constructs a new SectermConnectMessage.
+             * @memberof secterm.v1
+             * @classdesc Represents a SectermConnectMessage.
+             * @implements ISectermConnectMessage
+             * @constructor
+             * @param {secterm.v1.ISectermConnectMessage=} [properties] Properties to set
+             */
+            function SectermConnectMessage(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * SectermConnectMessage connectReq.
+             * @member {secterm.v1.ISectermConnectRequest|null|undefined} connectReq
+             * @memberof secterm.v1.SectermConnectMessage
+             * @instance
+             */
+            SectermConnectMessage.prototype.connectReq = null;
+
+            /**
+             * SectermConnectMessage connectRes.
+             * @member {secterm.v1.ISectermConnectResponse|null|undefined} connectRes
+             * @memberof secterm.v1.SectermConnectMessage
+             * @instance
+             */
+            SectermConnectMessage.prototype.connectRes = null;
+
+            // OneOf field names bound to virtual getters and setters
+            let $oneOfFields;
+
+            /**
+             * SectermConnectMessage data.
+             * @member {"connectReq"|"connectRes"|undefined} data
+             * @memberof secterm.v1.SectermConnectMessage
+             * @instance
+             */
+            Object.defineProperty(SectermConnectMessage.prototype, "data", {
+                get: $util.oneOfGetter($oneOfFields = ["connectReq", "connectRes"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
+            /**
+             * Creates a new SectermConnectMessage instance using the specified properties.
+             * @function create
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {secterm.v1.ISectermConnectMessage=} [properties] Properties to set
+             * @returns {secterm.v1.SectermConnectMessage} SectermConnectMessage instance
+             */
+            SectermConnectMessage.create = function create(properties) {
+                return new SectermConnectMessage(properties);
+            };
+
+            /**
+             * Encodes the specified SectermConnectMessage message. Does not implicitly {@link secterm.v1.SectermConnectMessage.verify|verify} messages.
+             * @function encode
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {secterm.v1.ISectermConnectMessage} message SectermConnectMessage message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SectermConnectMessage.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.connectReq != null && Object.hasOwnProperty.call(message, "connectReq"))
+                    $root.secterm.v1.SectermConnectRequest.encode(message.connectReq, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                if (message.connectRes != null && Object.hasOwnProperty.call(message, "connectRes"))
+                    $root.secterm.v1.SectermConnectResponse.encode(message.connectRes, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified SectermConnectMessage message, length delimited. Does not implicitly {@link secterm.v1.SectermConnectMessage.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {secterm.v1.ISectermConnectMessage} message SectermConnectMessage message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SectermConnectMessage.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a SectermConnectMessage message from the specified reader or buffer.
+             * @function decode
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {secterm.v1.SectermConnectMessage} SectermConnectMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SectermConnectMessage.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.secterm.v1.SectermConnectMessage();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.connectReq = $root.secterm.v1.SectermConnectRequest.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 2: {
+                            message.connectRes = $root.secterm.v1.SectermConnectResponse.decode(reader, reader.uint32());
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a SectermConnectMessage message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {secterm.v1.SectermConnectMessage} SectermConnectMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SectermConnectMessage.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a SectermConnectMessage message.
+             * @function verify
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            SectermConnectMessage.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                let properties = {};
+                if (message.connectReq != null && message.hasOwnProperty("connectReq")) {
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermConnectRequest.verify(message.connectReq);
+                        if (error)
+                            return "connectReq." + error;
+                    }
+                }
+                if (message.connectRes != null && message.hasOwnProperty("connectRes")) {
+                    if (properties.data === 1)
+                        return "data: multiple values";
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermConnectResponse.verify(message.connectRes);
+                        if (error)
+                            return "connectRes." + error;
+                    }
+                }
+                return null;
+            };
+
+            /**
+             * Creates a SectermConnectMessage message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {secterm.v1.SectermConnectMessage} SectermConnectMessage
+             */
+            SectermConnectMessage.fromObject = function fromObject(object) {
+                if (object instanceof $root.secterm.v1.SectermConnectMessage)
+                    return object;
+                let message = new $root.secterm.v1.SectermConnectMessage();
+                if (object.connectReq != null) {
+                    if (typeof object.connectReq !== "object")
+                        throw TypeError(".secterm.v1.SectermConnectMessage.connectReq: object expected");
+                    message.connectReq = $root.secterm.v1.SectermConnectRequest.fromObject(object.connectReq);
+                }
+                if (object.connectRes != null) {
+                    if (typeof object.connectRes !== "object")
+                        throw TypeError(".secterm.v1.SectermConnectMessage.connectRes: object expected");
+                    message.connectRes = $root.secterm.v1.SectermConnectResponse.fromObject(object.connectRes);
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a SectermConnectMessage message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {secterm.v1.SectermConnectMessage} message SectermConnectMessage
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            SectermConnectMessage.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                let object = {};
+                if (message.connectReq != null && message.hasOwnProperty("connectReq")) {
+                    object.connectReq = $root.secterm.v1.SectermConnectRequest.toObject(message.connectReq, options);
+                    if (options.oneofs)
+                        object.data = "connectReq";
+                }
+                if (message.connectRes != null && message.hasOwnProperty("connectRes")) {
+                    object.connectRes = $root.secterm.v1.SectermConnectResponse.toObject(message.connectRes, options);
+                    if (options.oneofs)
+                        object.data = "connectRes";
+                }
+                return object;
+            };
+
+            /**
+             * Converts this SectermConnectMessage to JSON.
+             * @function toJSON
+             * @memberof secterm.v1.SectermConnectMessage
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            SectermConnectMessage.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for SectermConnectMessage
+             * @function getTypeUrl
+             * @memberof secterm.v1.SectermConnectMessage
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            SectermConnectMessage.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/secterm.v1.SectermConnectMessage";
+            };
+
+            return SectermConnectMessage;
+        })();
+
         v1.SectermTerminalResize = (function() {
 
             /**
@@ -2376,6 +2288,318 @@ export const secterm = $root.secterm = (() => {
             return SectranTeminalCharacters;
         })();
 
+        v1.SectermTerminalMessage = (function() {
+
+            /**
+             * Properties of a SectermTerminalMessage.
+             * @memberof secterm.v1
+             * @interface ISectermTerminalMessage
+             * @property {secterm.v1.ISectermTerminalResize|null} [resize] SectermTerminalMessage resize
+             * @property {secterm.v1.ISectranTeminalCharacters|null} [characters] SectermTerminalMessage characters
+             */
+
+            /**
+             * Constructs a new SectermTerminalMessage.
+             * @memberof secterm.v1
+             * @classdesc Represents a SectermTerminalMessage.
+             * @implements ISectermTerminalMessage
+             * @constructor
+             * @param {secterm.v1.ISectermTerminalMessage=} [properties] Properties to set
+             */
+            function SectermTerminalMessage(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * SectermTerminalMessage resize.
+             * @member {secterm.v1.ISectermTerminalResize|null|undefined} resize
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @instance
+             */
+            SectermTerminalMessage.prototype.resize = null;
+
+            /**
+             * SectermTerminalMessage characters.
+             * @member {secterm.v1.ISectranTeminalCharacters|null|undefined} characters
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @instance
+             */
+            SectermTerminalMessage.prototype.characters = null;
+
+            // OneOf field names bound to virtual getters and setters
+            let $oneOfFields;
+
+            /**
+             * SectermTerminalMessage data.
+             * @member {"resize"|"characters"|undefined} data
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @instance
+             */
+            Object.defineProperty(SectermTerminalMessage.prototype, "data", {
+                get: $util.oneOfGetter($oneOfFields = ["resize", "characters"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
+            /**
+             * Creates a new SectermTerminalMessage instance using the specified properties.
+             * @function create
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {secterm.v1.ISectermTerminalMessage=} [properties] Properties to set
+             * @returns {secterm.v1.SectermTerminalMessage} SectermTerminalMessage instance
+             */
+            SectermTerminalMessage.create = function create(properties) {
+                return new SectermTerminalMessage(properties);
+            };
+
+            /**
+             * Encodes the specified SectermTerminalMessage message. Does not implicitly {@link secterm.v1.SectermTerminalMessage.verify|verify} messages.
+             * @function encode
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {secterm.v1.ISectermTerminalMessage} message SectermTerminalMessage message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SectermTerminalMessage.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.resize != null && Object.hasOwnProperty.call(message, "resize"))
+                    $root.secterm.v1.SectermTerminalResize.encode(message.resize, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                if (message.characters != null && Object.hasOwnProperty.call(message, "characters"))
+                    $root.secterm.v1.SectranTeminalCharacters.encode(message.characters, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified SectermTerminalMessage message, length delimited. Does not implicitly {@link secterm.v1.SectermTerminalMessage.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {secterm.v1.ISectermTerminalMessage} message SectermTerminalMessage message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SectermTerminalMessage.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a SectermTerminalMessage message from the specified reader or buffer.
+             * @function decode
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {secterm.v1.SectermTerminalMessage} SectermTerminalMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SectermTerminalMessage.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.secterm.v1.SectermTerminalMessage();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.resize = $root.secterm.v1.SectermTerminalResize.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 2: {
+                            message.characters = $root.secterm.v1.SectranTeminalCharacters.decode(reader, reader.uint32());
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a SectermTerminalMessage message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {secterm.v1.SectermTerminalMessage} SectermTerminalMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SectermTerminalMessage.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a SectermTerminalMessage message.
+             * @function verify
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            SectermTerminalMessage.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                let properties = {};
+                if (message.resize != null && message.hasOwnProperty("resize")) {
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermTerminalResize.verify(message.resize);
+                        if (error)
+                            return "resize." + error;
+                    }
+                }
+                if (message.characters != null && message.hasOwnProperty("characters")) {
+                    if (properties.data === 1)
+                        return "data: multiple values";
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectranTeminalCharacters.verify(message.characters);
+                        if (error)
+                            return "characters." + error;
+                    }
+                }
+                return null;
+            };
+
+            /**
+             * Creates a SectermTerminalMessage message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {secterm.v1.SectermTerminalMessage} SectermTerminalMessage
+             */
+            SectermTerminalMessage.fromObject = function fromObject(object) {
+                if (object instanceof $root.secterm.v1.SectermTerminalMessage)
+                    return object;
+                let message = new $root.secterm.v1.SectermTerminalMessage();
+                if (object.resize != null) {
+                    if (typeof object.resize !== "object")
+                        throw TypeError(".secterm.v1.SectermTerminalMessage.resize: object expected");
+                    message.resize = $root.secterm.v1.SectermTerminalResize.fromObject(object.resize);
+                }
+                if (object.characters != null) {
+                    if (typeof object.characters !== "object")
+                        throw TypeError(".secterm.v1.SectermTerminalMessage.characters: object expected");
+                    message.characters = $root.secterm.v1.SectranTeminalCharacters.fromObject(object.characters);
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a SectermTerminalMessage message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {secterm.v1.SectermTerminalMessage} message SectermTerminalMessage
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            SectermTerminalMessage.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                let object = {};
+                if (message.resize != null && message.hasOwnProperty("resize")) {
+                    object.resize = $root.secterm.v1.SectermTerminalResize.toObject(message.resize, options);
+                    if (options.oneofs)
+                        object.data = "resize";
+                }
+                if (message.characters != null && message.hasOwnProperty("characters")) {
+                    object.characters = $root.secterm.v1.SectranTeminalCharacters.toObject(message.characters, options);
+                    if (options.oneofs)
+                        object.data = "characters";
+                }
+                return object;
+            };
+
+            /**
+             * Converts this SectermTerminalMessage to JSON.
+             * @function toJSON
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            SectermTerminalMessage.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for SectermTerminalMessage
+             * @function getTypeUrl
+             * @memberof secterm.v1.SectermTerminalMessage
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            SectermTerminalMessage.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/secterm.v1.SectermTerminalMessage";
+            };
+
+            return SectermTerminalMessage;
+        })();
+
+        /**
+         * SectermFileCmd enum.
+         * @name secterm.v1.SectermFileCmd
+         * @enum {number}
+         * @property {number} TRANS_ERROR=0 TRANS_ERROR value
+         * @property {number} TRANS_FILE_EXISTED=1 TRANS_FILE_EXISTED value
+         * @property {number} TRANS_CANCLE=2 TRANS_CANCLE value
+         * @property {number} TRANS_SUCCESS=3 TRANS_SUCCESS value
+         */
+        v1.SectermFileCmd = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "TRANS_ERROR"] = 0;
+            values[valuesById[1] = "TRANS_FILE_EXISTED"] = 1;
+            values[valuesById[2] = "TRANS_CANCLE"] = 2;
+            values[valuesById[3] = "TRANS_SUCCESS"] = 3;
+            return values;
+        })();
+
+        /**
+         * ActionMode enum.
+         * @name secterm.v1.ActionMode
+         * @enum {number}
+         * @property {number} ACTIVE=0 ACTIVE value
+         * @property {number} PASSIVE=1 PASSIVE value
+         */
+        v1.ActionMode = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "ACTIVE"] = 0;
+            values[valuesById[1] = "PASSIVE"] = 1;
+            return values;
+        })();
+
+        /**
+         * TransProtocol enum.
+         * @name secterm.v1.TransProtocol
+         * @enum {number}
+         * @property {number} ZMODEM=0 ZMODEM value
+         * @property {number} SFTP=1 SFTP value
+         * @property {number} SCP=2 SCP value
+         * @property {number} FTP=3 FTP value
+         */
+        v1.TransProtocol = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "ZMODEM"] = 0;
+            values[valuesById[1] = "SFTP"] = 1;
+            values[valuesById[2] = "SCP"] = 2;
+            values[valuesById[3] = "FTP"] = 3;
+            return values;
+        })();
+
         v1.SectermFileInfo = (function() {
 
             /**
@@ -2729,7 +2953,7 @@ export const secterm = $root.secterm = (() => {
              * Properties of a SectermFileListRequest.
              * @memberof secterm.v1
              * @interface ISectermFileListRequest
-             * @property {string|null} [Path] SectermFileListRequest Path
+             * @property {string|null} [dirPath] SectermFileListRequest dirPath
              */
 
             /**
@@ -2748,12 +2972,12 @@ export const secterm = $root.secterm = (() => {
             }
 
             /**
-             * SectermFileListRequest Path.
-             * @member {string} Path
+             * SectermFileListRequest dirPath.
+             * @member {string} dirPath
              * @memberof secterm.v1.SectermFileListRequest
              * @instance
              */
-            SectermFileListRequest.prototype.Path = "";
+            SectermFileListRequest.prototype.dirPath = "";
 
             /**
              * Creates a new SectermFileListRequest instance using the specified properties.
@@ -2779,8 +3003,8 @@ export const secterm = $root.secterm = (() => {
             SectermFileListRequest.encode = function encode(message, writer) {
                 if (!writer)
                     writer = $Writer.create();
-                if (message.Path != null && Object.hasOwnProperty.call(message, "Path"))
-                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.Path);
+                if (message.dirPath != null && Object.hasOwnProperty.call(message, "dirPath"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.dirPath);
                 return writer;
             };
 
@@ -2816,7 +3040,7 @@ export const secterm = $root.secterm = (() => {
                     let tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1: {
-                            message.Path = reader.string();
+                            message.dirPath = reader.string();
                             break;
                         }
                     default:
@@ -2854,9 +3078,9 @@ export const secterm = $root.secterm = (() => {
             SectermFileListRequest.verify = function verify(message) {
                 if (typeof message !== "object" || message === null)
                     return "object expected";
-                if (message.Path != null && message.hasOwnProperty("Path"))
-                    if (!$util.isString(message.Path))
-                        return "Path: string expected";
+                if (message.dirPath != null && message.hasOwnProperty("dirPath"))
+                    if (!$util.isString(message.dirPath))
+                        return "dirPath: string expected";
                 return null;
             };
 
@@ -2872,8 +3096,8 @@ export const secterm = $root.secterm = (() => {
                 if (object instanceof $root.secterm.v1.SectermFileListRequest)
                     return object;
                 let message = new $root.secterm.v1.SectermFileListRequest();
-                if (object.Path != null)
-                    message.Path = String(object.Path);
+                if (object.dirPath != null)
+                    message.dirPath = String(object.dirPath);
                 return message;
             };
 
@@ -2891,9 +3115,9 @@ export const secterm = $root.secterm = (() => {
                     options = {};
                 let object = {};
                 if (options.defaults)
-                    object.Path = "";
-                if (message.Path != null && message.hasOwnProperty("Path"))
-                    object.Path = message.Path;
+                    object.dirPath = "";
+                if (message.dirPath != null && message.hasOwnProperty("dirPath"))
+                    object.dirPath = message.dirPath;
                 return object;
             };
 
@@ -2924,38 +3148,6 @@ export const secterm = $root.secterm = (() => {
             };
 
             return SectermFileListRequest;
-        })();
-
-        /**
-         * ActionMode enum.
-         * @name secterm.v1.ActionMode
-         * @enum {number}
-         * @property {number} ACTIVE=0 ACTIVE value
-         * @property {number} PASSIVE=1 PASSIVE value
-         */
-        v1.ActionMode = (function() {
-            const valuesById = {}, values = Object.create(valuesById);
-            values[valuesById[0] = "ACTIVE"] = 0;
-            values[valuesById[1] = "PASSIVE"] = 1;
-            return values;
-        })();
-
-        /**
-         * TransProtocol enum.
-         * @name secterm.v1.TransProtocol
-         * @enum {number}
-         * @property {number} ZMODEM=0 ZMODEM value
-         * @property {number} SFTP=1 SFTP value
-         * @property {number} SCP=2 SCP value
-         * @property {number} FTP=3 FTP value
-         */
-        v1.TransProtocol = (function() {
-            const valuesById = {}, values = Object.create(valuesById);
-            values[valuesById[0] = "ZMODEM"] = 0;
-            values[valuesById[1] = "SFTP"] = 1;
-            values[valuesById[2] = "SCP"] = 2;
-            values[valuesById[3] = "FTP"] = 3;
-            return values;
         })();
 
         v1.SectermFileListResponse = (function() {
@@ -3188,9 +3380,10 @@ export const secterm = $root.secterm = (() => {
              * Properties of a SectermFileMove.
              * @memberof secterm.v1
              * @interface ISectermFileMove
-             * @property {string|null} [Path] SectermFileMove Path
+             * @property {string|null} [filePath] SectermFileMove filePath
              * @property {string|null} [DstPath] SectermFileMove DstPath
              * @property {boolean|null} [force] SectermFileMove force
+             * @property {boolean|null} [recursion] SectermFileMove recursion
              */
 
             /**
@@ -3209,12 +3402,12 @@ export const secterm = $root.secterm = (() => {
             }
 
             /**
-             * SectermFileMove Path.
-             * @member {string} Path
+             * SectermFileMove filePath.
+             * @member {string} filePath
              * @memberof secterm.v1.SectermFileMove
              * @instance
              */
-            SectermFileMove.prototype.Path = "";
+            SectermFileMove.prototype.filePath = "";
 
             /**
              * SectermFileMove DstPath.
@@ -3231,6 +3424,14 @@ export const secterm = $root.secterm = (() => {
              * @instance
              */
             SectermFileMove.prototype.force = false;
+
+            /**
+             * SectermFileMove recursion.
+             * @member {boolean} recursion
+             * @memberof secterm.v1.SectermFileMove
+             * @instance
+             */
+            SectermFileMove.prototype.recursion = false;
 
             /**
              * Creates a new SectermFileMove instance using the specified properties.
@@ -3256,12 +3457,14 @@ export const secterm = $root.secterm = (() => {
             SectermFileMove.encode = function encode(message, writer) {
                 if (!writer)
                     writer = $Writer.create();
-                if (message.Path != null && Object.hasOwnProperty.call(message, "Path"))
-                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.Path);
+                if (message.filePath != null && Object.hasOwnProperty.call(message, "filePath"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.filePath);
                 if (message.DstPath != null && Object.hasOwnProperty.call(message, "DstPath"))
                     writer.uint32(/* id 2, wireType 2 =*/18).string(message.DstPath);
                 if (message.force != null && Object.hasOwnProperty.call(message, "force"))
                     writer.uint32(/* id 3, wireType 0 =*/24).bool(message.force);
+                if (message.recursion != null && Object.hasOwnProperty.call(message, "recursion"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).bool(message.recursion);
                 return writer;
             };
 
@@ -3297,7 +3500,7 @@ export const secterm = $root.secterm = (() => {
                     let tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1: {
-                            message.Path = reader.string();
+                            message.filePath = reader.string();
                             break;
                         }
                     case 2: {
@@ -3306,6 +3509,10 @@ export const secterm = $root.secterm = (() => {
                         }
                     case 3: {
                             message.force = reader.bool();
+                            break;
+                        }
+                    case 4: {
+                            message.recursion = reader.bool();
                             break;
                         }
                     default:
@@ -3343,15 +3550,18 @@ export const secterm = $root.secterm = (() => {
             SectermFileMove.verify = function verify(message) {
                 if (typeof message !== "object" || message === null)
                     return "object expected";
-                if (message.Path != null && message.hasOwnProperty("Path"))
-                    if (!$util.isString(message.Path))
-                        return "Path: string expected";
+                if (message.filePath != null && message.hasOwnProperty("filePath"))
+                    if (!$util.isString(message.filePath))
+                        return "filePath: string expected";
                 if (message.DstPath != null && message.hasOwnProperty("DstPath"))
                     if (!$util.isString(message.DstPath))
                         return "DstPath: string expected";
                 if (message.force != null && message.hasOwnProperty("force"))
                     if (typeof message.force !== "boolean")
                         return "force: boolean expected";
+                if (message.recursion != null && message.hasOwnProperty("recursion"))
+                    if (typeof message.recursion !== "boolean")
+                        return "recursion: boolean expected";
                 return null;
             };
 
@@ -3367,12 +3577,14 @@ export const secterm = $root.secterm = (() => {
                 if (object instanceof $root.secterm.v1.SectermFileMove)
                     return object;
                 let message = new $root.secterm.v1.SectermFileMove();
-                if (object.Path != null)
-                    message.Path = String(object.Path);
+                if (object.filePath != null)
+                    message.filePath = String(object.filePath);
                 if (object.DstPath != null)
                     message.DstPath = String(object.DstPath);
                 if (object.force != null)
                     message.force = Boolean(object.force);
+                if (object.recursion != null)
+                    message.recursion = Boolean(object.recursion);
                 return message;
             };
 
@@ -3390,16 +3602,19 @@ export const secterm = $root.secterm = (() => {
                     options = {};
                 let object = {};
                 if (options.defaults) {
-                    object.Path = "";
+                    object.filePath = "";
                     object.DstPath = "";
                     object.force = false;
+                    object.recursion = false;
                 }
-                if (message.Path != null && message.hasOwnProperty("Path"))
-                    object.Path = message.Path;
+                if (message.filePath != null && message.hasOwnProperty("filePath"))
+                    object.filePath = message.filePath;
                 if (message.DstPath != null && message.hasOwnProperty("DstPath"))
                     object.DstPath = message.DstPath;
                 if (message.force != null && message.hasOwnProperty("force"))
                     object.force = message.force;
+                if (message.recursion != null && message.hasOwnProperty("recursion"))
+                    object.recursion = message.recursion;
                 return object;
             };
 
@@ -3859,27 +4074,27 @@ export const secterm = $root.secterm = (() => {
             return SectermFileCreate;
         })();
 
-        v1.SectermFileDownloadReq = (function() {
+        v1.SectermFileTransReq = (function() {
 
             /**
-             * Properties of a SectermFileDownloadReq.
+             * Properties of a SectermFileTransReq.
              * @memberof secterm.v1
-             * @interface ISectermFileDownloadReq
-             * @property {Array.<secterm.v1.ISectermFileInfo>|null} [FileInfo] SectermFileDownloadReq FileInfo
-             * @property {secterm.v1.TransProtocol|null} [proto] SectermFileDownloadReq proto
-             * @property {secterm.v1.ActionMode|null} [mode] SectermFileDownloadReq mode
+             * @interface ISectermFileTransReq
+             * @property {boolean|null} [flag] SectermFileTransReq flag
+             * @property {string|null} [uuid] SectermFileTransReq uuid
+             * @property {secterm.v1.TransProtocol|null} [proto] SectermFileTransReq proto
+             * @property {secterm.v1.ActionMode|null} [mode] SectermFileTransReq mode
              */
 
             /**
-             * Constructs a new SectermFileDownloadReq.
+             * Constructs a new SectermFileTransReq.
              * @memberof secterm.v1
-             * @classdesc Represents a SectermFileDownloadReq.
-             * @implements ISectermFileDownloadReq
+             * @classdesc Represents a SectermFileTransReq.
+             * @implements ISectermFileTransReq
              * @constructor
-             * @param {secterm.v1.ISectermFileDownloadReq=} [properties] Properties to set
+             * @param {secterm.v1.ISectermFileTransReq=} [properties] Properties to set
              */
-            function SectermFileDownloadReq(properties) {
-                this.FileInfo = [];
+            function SectermFileTransReq(properties) {
                 if (properties)
                     for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                         if (properties[keys[i]] != null)
@@ -3887,443 +4102,119 @@ export const secterm = $root.secterm = (() => {
             }
 
             /**
-             * SectermFileDownloadReq FileInfo.
-             * @member {Array.<secterm.v1.ISectermFileInfo>} FileInfo
-             * @memberof secterm.v1.SectermFileDownloadReq
+             * SectermFileTransReq flag.
+             * @member {boolean} flag
+             * @memberof secterm.v1.SectermFileTransReq
              * @instance
              */
-            SectermFileDownloadReq.prototype.FileInfo = $util.emptyArray;
+            SectermFileTransReq.prototype.flag = false;
 
             /**
-             * SectermFileDownloadReq proto.
+             * SectermFileTransReq uuid.
+             * @member {string} uuid
+             * @memberof secterm.v1.SectermFileTransReq
+             * @instance
+             */
+            SectermFileTransReq.prototype.uuid = "";
+
+            /**
+             * SectermFileTransReq proto.
              * @member {secterm.v1.TransProtocol} proto
-             * @memberof secterm.v1.SectermFileDownloadReq
+             * @memberof secterm.v1.SectermFileTransReq
              * @instance
              */
-            SectermFileDownloadReq.prototype.proto = 0;
+            SectermFileTransReq.prototype.proto = 0;
 
             /**
-             * SectermFileDownloadReq mode.
+             * SectermFileTransReq mode.
              * @member {secterm.v1.ActionMode} mode
-             * @memberof secterm.v1.SectermFileDownloadReq
+             * @memberof secterm.v1.SectermFileTransReq
              * @instance
              */
-            SectermFileDownloadReq.prototype.mode = 0;
+            SectermFileTransReq.prototype.mode = 0;
 
             /**
-             * Creates a new SectermFileDownloadReq instance using the specified properties.
+             * Creates a new SectermFileTransReq instance using the specified properties.
              * @function create
-             * @memberof secterm.v1.SectermFileDownloadReq
+             * @memberof secterm.v1.SectermFileTransReq
              * @static
-             * @param {secterm.v1.ISectermFileDownloadReq=} [properties] Properties to set
-             * @returns {secterm.v1.SectermFileDownloadReq} SectermFileDownloadReq instance
+             * @param {secterm.v1.ISectermFileTransReq=} [properties] Properties to set
+             * @returns {secterm.v1.SectermFileTransReq} SectermFileTransReq instance
              */
-            SectermFileDownloadReq.create = function create(properties) {
-                return new SectermFileDownloadReq(properties);
+            SectermFileTransReq.create = function create(properties) {
+                return new SectermFileTransReq(properties);
             };
 
             /**
-             * Encodes the specified SectermFileDownloadReq message. Does not implicitly {@link secterm.v1.SectermFileDownloadReq.verify|verify} messages.
+             * Encodes the specified SectermFileTransReq message. Does not implicitly {@link secterm.v1.SectermFileTransReq.verify|verify} messages.
              * @function encode
-             * @memberof secterm.v1.SectermFileDownloadReq
+             * @memberof secterm.v1.SectermFileTransReq
              * @static
-             * @param {secterm.v1.ISectermFileDownloadReq} message SectermFileDownloadReq message or plain object to encode
+             * @param {secterm.v1.ISectermFileTransReq} message SectermFileTransReq message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
-            SectermFileDownloadReq.encode = function encode(message, writer) {
+            SectermFileTransReq.encode = function encode(message, writer) {
                 if (!writer)
                     writer = $Writer.create();
-                if (message.FileInfo != null && message.FileInfo.length)
-                    for (let i = 0; i < message.FileInfo.length; ++i)
-                        $root.secterm.v1.SectermFileInfo.encode(message.FileInfo[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-                if (message.proto != null && Object.hasOwnProperty.call(message, "proto"))
-                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.proto);
-                if (message.mode != null && Object.hasOwnProperty.call(message, "mode"))
-                    writer.uint32(/* id 3, wireType 0 =*/24).int32(message.mode);
-                return writer;
-            };
-
-            /**
-             * Encodes the specified SectermFileDownloadReq message, length delimited. Does not implicitly {@link secterm.v1.SectermFileDownloadReq.verify|verify} messages.
-             * @function encodeDelimited
-             * @memberof secterm.v1.SectermFileDownloadReq
-             * @static
-             * @param {secterm.v1.ISectermFileDownloadReq} message SectermFileDownloadReq message or plain object to encode
-             * @param {$protobuf.Writer} [writer] Writer to encode to
-             * @returns {$protobuf.Writer} Writer
-             */
-            SectermFileDownloadReq.encodeDelimited = function encodeDelimited(message, writer) {
-                return this.encode(message, writer).ldelim();
-            };
-
-            /**
-             * Decodes a SectermFileDownloadReq message from the specified reader or buffer.
-             * @function decode
-             * @memberof secterm.v1.SectermFileDownloadReq
-             * @static
-             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @param {number} [length] Message length if known beforehand
-             * @returns {secterm.v1.SectermFileDownloadReq} SectermFileDownloadReq
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            SectermFileDownloadReq.decode = function decode(reader, length) {
-                if (!(reader instanceof $Reader))
-                    reader = $Reader.create(reader);
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.secterm.v1.SectermFileDownloadReq();
-                while (reader.pos < end) {
-                    let tag = reader.uint32();
-                    switch (tag >>> 3) {
-                    case 1: {
-                            if (!(message.FileInfo && message.FileInfo.length))
-                                message.FileInfo = [];
-                            message.FileInfo.push($root.secterm.v1.SectermFileInfo.decode(reader, reader.uint32()));
-                            break;
-                        }
-                    case 2: {
-                            message.proto = reader.int32();
-                            break;
-                        }
-                    case 3: {
-                            message.mode = reader.int32();
-                            break;
-                        }
-                    default:
-                        reader.skipType(tag & 7);
-                        break;
-                    }
-                }
-                return message;
-            };
-
-            /**
-             * Decodes a SectermFileDownloadReq message from the specified reader or buffer, length delimited.
-             * @function decodeDelimited
-             * @memberof secterm.v1.SectermFileDownloadReq
-             * @static
-             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @returns {secterm.v1.SectermFileDownloadReq} SectermFileDownloadReq
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            SectermFileDownloadReq.decodeDelimited = function decodeDelimited(reader) {
-                if (!(reader instanceof $Reader))
-                    reader = new $Reader(reader);
-                return this.decode(reader, reader.uint32());
-            };
-
-            /**
-             * Verifies a SectermFileDownloadReq message.
-             * @function verify
-             * @memberof secterm.v1.SectermFileDownloadReq
-             * @static
-             * @param {Object.<string,*>} message Plain object to verify
-             * @returns {string|null} `null` if valid, otherwise the reason why it is not
-             */
-            SectermFileDownloadReq.verify = function verify(message) {
-                if (typeof message !== "object" || message === null)
-                    return "object expected";
-                if (message.FileInfo != null && message.hasOwnProperty("FileInfo")) {
-                    if (!Array.isArray(message.FileInfo))
-                        return "FileInfo: array expected";
-                    for (let i = 0; i < message.FileInfo.length; ++i) {
-                        let error = $root.secterm.v1.SectermFileInfo.verify(message.FileInfo[i]);
-                        if (error)
-                            return "FileInfo." + error;
-                    }
-                }
-                if (message.proto != null && message.hasOwnProperty("proto"))
-                    switch (message.proto) {
-                    default:
-                        return "proto: enum value expected";
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                        break;
-                    }
-                if (message.mode != null && message.hasOwnProperty("mode"))
-                    switch (message.mode) {
-                    default:
-                        return "mode: enum value expected";
-                    case 0:
-                    case 1:
-                        break;
-                    }
-                return null;
-            };
-
-            /**
-             * Creates a SectermFileDownloadReq message from a plain object. Also converts values to their respective internal types.
-             * @function fromObject
-             * @memberof secterm.v1.SectermFileDownloadReq
-             * @static
-             * @param {Object.<string,*>} object Plain object
-             * @returns {secterm.v1.SectermFileDownloadReq} SectermFileDownloadReq
-             */
-            SectermFileDownloadReq.fromObject = function fromObject(object) {
-                if (object instanceof $root.secterm.v1.SectermFileDownloadReq)
-                    return object;
-                let message = new $root.secterm.v1.SectermFileDownloadReq();
-                if (object.FileInfo) {
-                    if (!Array.isArray(object.FileInfo))
-                        throw TypeError(".secterm.v1.SectermFileDownloadReq.FileInfo: array expected");
-                    message.FileInfo = [];
-                    for (let i = 0; i < object.FileInfo.length; ++i) {
-                        if (typeof object.FileInfo[i] !== "object")
-                            throw TypeError(".secterm.v1.SectermFileDownloadReq.FileInfo: object expected");
-                        message.FileInfo[i] = $root.secterm.v1.SectermFileInfo.fromObject(object.FileInfo[i]);
-                    }
-                }
-                switch (object.proto) {
-                default:
-                    if (typeof object.proto === "number") {
-                        message.proto = object.proto;
-                        break;
-                    }
-                    break;
-                case "ZMODEM":
-                case 0:
-                    message.proto = 0;
-                    break;
-                case "SFTP":
-                case 1:
-                    message.proto = 1;
-                    break;
-                case "SCP":
-                case 2:
-                    message.proto = 2;
-                    break;
-                case "FTP":
-                case 3:
-                    message.proto = 3;
-                    break;
-                }
-                switch (object.mode) {
-                default:
-                    if (typeof object.mode === "number") {
-                        message.mode = object.mode;
-                        break;
-                    }
-                    break;
-                case "ACTIVE":
-                case 0:
-                    message.mode = 0;
-                    break;
-                case "PASSIVE":
-                case 1:
-                    message.mode = 1;
-                    break;
-                }
-                return message;
-            };
-
-            /**
-             * Creates a plain object from a SectermFileDownloadReq message. Also converts values to other types if specified.
-             * @function toObject
-             * @memberof secterm.v1.SectermFileDownloadReq
-             * @static
-             * @param {secterm.v1.SectermFileDownloadReq} message SectermFileDownloadReq
-             * @param {$protobuf.IConversionOptions} [options] Conversion options
-             * @returns {Object.<string,*>} Plain object
-             */
-            SectermFileDownloadReq.toObject = function toObject(message, options) {
-                if (!options)
-                    options = {};
-                let object = {};
-                if (options.arrays || options.defaults)
-                    object.FileInfo = [];
-                if (options.defaults) {
-                    object.proto = options.enums === String ? "ZMODEM" : 0;
-                    object.mode = options.enums === String ? "ACTIVE" : 0;
-                }
-                if (message.FileInfo && message.FileInfo.length) {
-                    object.FileInfo = [];
-                    for (let j = 0; j < message.FileInfo.length; ++j)
-                        object.FileInfo[j] = $root.secterm.v1.SectermFileInfo.toObject(message.FileInfo[j], options);
-                }
-                if (message.proto != null && message.hasOwnProperty("proto"))
-                    object.proto = options.enums === String ? $root.secterm.v1.TransProtocol[message.proto] === undefined ? message.proto : $root.secterm.v1.TransProtocol[message.proto] : message.proto;
-                if (message.mode != null && message.hasOwnProperty("mode"))
-                    object.mode = options.enums === String ? $root.secterm.v1.ActionMode[message.mode] === undefined ? message.mode : $root.secterm.v1.ActionMode[message.mode] : message.mode;
-                return object;
-            };
-
-            /**
-             * Converts this SectermFileDownloadReq to JSON.
-             * @function toJSON
-             * @memberof secterm.v1.SectermFileDownloadReq
-             * @instance
-             * @returns {Object.<string,*>} JSON object
-             */
-            SectermFileDownloadReq.prototype.toJSON = function toJSON() {
-                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-            };
-
-            /**
-             * Gets the default type url for SectermFileDownloadReq
-             * @function getTypeUrl
-             * @memberof secterm.v1.SectermFileDownloadReq
-             * @static
-             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns {string} The default type url
-             */
-            SectermFileDownloadReq.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
-                if (typeUrlPrefix === undefined) {
-                    typeUrlPrefix = "type.googleapis.com";
-                }
-                return typeUrlPrefix + "/secterm.v1.SectermFileDownloadReq";
-            };
-
-            return SectermFileDownloadReq;
-        })();
-
-        v1.SectermFileUploadReq = (function() {
-
-            /**
-             * Properties of a SectermFileUploadReq.
-             * @memberof secterm.v1
-             * @interface ISectermFileUploadReq
-             * @property {string|null} [DstPath] SectermFileUploadReq DstPath
-             * @property {Array.<secterm.v1.ISectermFileInfo>|null} [FileInfo] SectermFileUploadReq FileInfo
-             * @property {secterm.v1.ActionMode|null} [mode] SectermFileUploadReq mode
-             * @property {secterm.v1.TransProtocol|null} [proto] SectermFileUploadReq proto
-             */
-
-            /**
-             * Constructs a new SectermFileUploadReq.
-             * @memberof secterm.v1
-             * @classdesc Represents a SectermFileUploadReq.
-             * @implements ISectermFileUploadReq
-             * @constructor
-             * @param {secterm.v1.ISectermFileUploadReq=} [properties] Properties to set
-             */
-            function SectermFileUploadReq(properties) {
-                this.FileInfo = [];
-                if (properties)
-                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                        if (properties[keys[i]] != null)
-                            this[keys[i]] = properties[keys[i]];
-            }
-
-            /**
-             * SectermFileUploadReq DstPath.
-             * @member {string} DstPath
-             * @memberof secterm.v1.SectermFileUploadReq
-             * @instance
-             */
-            SectermFileUploadReq.prototype.DstPath = "";
-
-            /**
-             * SectermFileUploadReq FileInfo.
-             * @member {Array.<secterm.v1.ISectermFileInfo>} FileInfo
-             * @memberof secterm.v1.SectermFileUploadReq
-             * @instance
-             */
-            SectermFileUploadReq.prototype.FileInfo = $util.emptyArray;
-
-            /**
-             * SectermFileUploadReq mode.
-             * @member {secterm.v1.ActionMode} mode
-             * @memberof secterm.v1.SectermFileUploadReq
-             * @instance
-             */
-            SectermFileUploadReq.prototype.mode = 0;
-
-            /**
-             * SectermFileUploadReq proto.
-             * @member {secterm.v1.TransProtocol} proto
-             * @memberof secterm.v1.SectermFileUploadReq
-             * @instance
-             */
-            SectermFileUploadReq.prototype.proto = 0;
-
-            /**
-             * Creates a new SectermFileUploadReq instance using the specified properties.
-             * @function create
-             * @memberof secterm.v1.SectermFileUploadReq
-             * @static
-             * @param {secterm.v1.ISectermFileUploadReq=} [properties] Properties to set
-             * @returns {secterm.v1.SectermFileUploadReq} SectermFileUploadReq instance
-             */
-            SectermFileUploadReq.create = function create(properties) {
-                return new SectermFileUploadReq(properties);
-            };
-
-            /**
-             * Encodes the specified SectermFileUploadReq message. Does not implicitly {@link secterm.v1.SectermFileUploadReq.verify|verify} messages.
-             * @function encode
-             * @memberof secterm.v1.SectermFileUploadReq
-             * @static
-             * @param {secterm.v1.ISectermFileUploadReq} message SectermFileUploadReq message or plain object to encode
-             * @param {$protobuf.Writer} [writer] Writer to encode to
-             * @returns {$protobuf.Writer} Writer
-             */
-            SectermFileUploadReq.encode = function encode(message, writer) {
-                if (!writer)
-                    writer = $Writer.create();
-                if (message.DstPath != null && Object.hasOwnProperty.call(message, "DstPath"))
-                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.DstPath);
-                if (message.FileInfo != null && message.FileInfo.length)
-                    for (let i = 0; i < message.FileInfo.length; ++i)
-                        $root.secterm.v1.SectermFileInfo.encode(message.FileInfo[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
-                if (message.mode != null && Object.hasOwnProperty.call(message, "mode"))
-                    writer.uint32(/* id 3, wireType 0 =*/24).int32(message.mode);
+                if (message.flag != null && Object.hasOwnProperty.call(message, "flag"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).bool(message.flag);
+                if (message.uuid != null && Object.hasOwnProperty.call(message, "uuid"))
+                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.uuid);
                 if (message.proto != null && Object.hasOwnProperty.call(message, "proto"))
                     writer.uint32(/* id 4, wireType 0 =*/32).int32(message.proto);
+                if (message.mode != null && Object.hasOwnProperty.call(message, "mode"))
+                    writer.uint32(/* id 5, wireType 0 =*/40).int32(message.mode);
                 return writer;
             };
 
             /**
-             * Encodes the specified SectermFileUploadReq message, length delimited. Does not implicitly {@link secterm.v1.SectermFileUploadReq.verify|verify} messages.
+             * Encodes the specified SectermFileTransReq message, length delimited. Does not implicitly {@link secterm.v1.SectermFileTransReq.verify|verify} messages.
              * @function encodeDelimited
-             * @memberof secterm.v1.SectermFileUploadReq
+             * @memberof secterm.v1.SectermFileTransReq
              * @static
-             * @param {secterm.v1.ISectermFileUploadReq} message SectermFileUploadReq message or plain object to encode
+             * @param {secterm.v1.ISectermFileTransReq} message SectermFileTransReq message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
-            SectermFileUploadReq.encodeDelimited = function encodeDelimited(message, writer) {
+            SectermFileTransReq.encodeDelimited = function encodeDelimited(message, writer) {
                 return this.encode(message, writer).ldelim();
             };
 
             /**
-             * Decodes a SectermFileUploadReq message from the specified reader or buffer.
+             * Decodes a SectermFileTransReq message from the specified reader or buffer.
              * @function decode
-             * @memberof secterm.v1.SectermFileUploadReq
+             * @memberof secterm.v1.SectermFileTransReq
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
              * @param {number} [length] Message length if known beforehand
-             * @returns {secterm.v1.SectermFileUploadReq} SectermFileUploadReq
+             * @returns {secterm.v1.SectermFileTransReq} SectermFileTransReq
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            SectermFileUploadReq.decode = function decode(reader, length) {
+            SectermFileTransReq.decode = function decode(reader, length) {
                 if (!(reader instanceof $Reader))
                     reader = $Reader.create(reader);
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.secterm.v1.SectermFileUploadReq();
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.secterm.v1.SectermFileTransReq();
                 while (reader.pos < end) {
                     let tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1: {
-                            message.DstPath = reader.string();
-                            break;
-                        }
-                    case 2: {
-                            if (!(message.FileInfo && message.FileInfo.length))
-                                message.FileInfo = [];
-                            message.FileInfo.push($root.secterm.v1.SectermFileInfo.decode(reader, reader.uint32()));
+                            message.flag = reader.bool();
                             break;
                         }
                     case 3: {
-                            message.mode = reader.int32();
+                            message.uuid = reader.string();
                             break;
                         }
                     case 4: {
                             message.proto = reader.int32();
                             break;
                         }
+                    case 5: {
+                            message.mode = reader.int32();
+                            break;
+                        }
                     default:
                         reader.skipType(tag & 7);
                         break;
@@ -4333,52 +4224,38 @@ export const secterm = $root.secterm = (() => {
             };
 
             /**
-             * Decodes a SectermFileUploadReq message from the specified reader or buffer, length delimited.
+             * Decodes a SectermFileTransReq message from the specified reader or buffer, length delimited.
              * @function decodeDelimited
-             * @memberof secterm.v1.SectermFileUploadReq
+             * @memberof secterm.v1.SectermFileTransReq
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @returns {secterm.v1.SectermFileUploadReq} SectermFileUploadReq
+             * @returns {secterm.v1.SectermFileTransReq} SectermFileTransReq
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            SectermFileUploadReq.decodeDelimited = function decodeDelimited(reader) {
+            SectermFileTransReq.decodeDelimited = function decodeDelimited(reader) {
                 if (!(reader instanceof $Reader))
                     reader = new $Reader(reader);
                 return this.decode(reader, reader.uint32());
             };
 
             /**
-             * Verifies a SectermFileUploadReq message.
+             * Verifies a SectermFileTransReq message.
              * @function verify
-             * @memberof secterm.v1.SectermFileUploadReq
+             * @memberof secterm.v1.SectermFileTransReq
              * @static
              * @param {Object.<string,*>} message Plain object to verify
              * @returns {string|null} `null` if valid, otherwise the reason why it is not
              */
-            SectermFileUploadReq.verify = function verify(message) {
+            SectermFileTransReq.verify = function verify(message) {
                 if (typeof message !== "object" || message === null)
                     return "object expected";
-                if (message.DstPath != null && message.hasOwnProperty("DstPath"))
-                    if (!$util.isString(message.DstPath))
-                        return "DstPath: string expected";
-                if (message.FileInfo != null && message.hasOwnProperty("FileInfo")) {
-                    if (!Array.isArray(message.FileInfo))
-                        return "FileInfo: array expected";
-                    for (let i = 0; i < message.FileInfo.length; ++i) {
-                        let error = $root.secterm.v1.SectermFileInfo.verify(message.FileInfo[i]);
-                        if (error)
-                            return "FileInfo." + error;
-                    }
-                }
-                if (message.mode != null && message.hasOwnProperty("mode"))
-                    switch (message.mode) {
-                    default:
-                        return "mode: enum value expected";
-                    case 0:
-                    case 1:
-                        break;
-                    }
+                if (message.flag != null && message.hasOwnProperty("flag"))
+                    if (typeof message.flag !== "boolean")
+                        return "flag: boolean expected";
+                if (message.uuid != null && message.hasOwnProperty("uuid"))
+                    if (!$util.isString(message.uuid))
+                        return "uuid: string expected";
                 if (message.proto != null && message.hasOwnProperty("proto"))
                     switch (message.proto) {
                     default:
@@ -4389,49 +4266,33 @@ export const secterm = $root.secterm = (() => {
                     case 3:
                         break;
                     }
+                if (message.mode != null && message.hasOwnProperty("mode"))
+                    switch (message.mode) {
+                    default:
+                        return "mode: enum value expected";
+                    case 0:
+                    case 1:
+                        break;
+                    }
                 return null;
             };
 
             /**
-             * Creates a SectermFileUploadReq message from a plain object. Also converts values to their respective internal types.
+             * Creates a SectermFileTransReq message from a plain object. Also converts values to their respective internal types.
              * @function fromObject
-             * @memberof secterm.v1.SectermFileUploadReq
+             * @memberof secterm.v1.SectermFileTransReq
              * @static
              * @param {Object.<string,*>} object Plain object
-             * @returns {secterm.v1.SectermFileUploadReq} SectermFileUploadReq
+             * @returns {secterm.v1.SectermFileTransReq} SectermFileTransReq
              */
-            SectermFileUploadReq.fromObject = function fromObject(object) {
-                if (object instanceof $root.secterm.v1.SectermFileUploadReq)
+            SectermFileTransReq.fromObject = function fromObject(object) {
+                if (object instanceof $root.secterm.v1.SectermFileTransReq)
                     return object;
-                let message = new $root.secterm.v1.SectermFileUploadReq();
-                if (object.DstPath != null)
-                    message.DstPath = String(object.DstPath);
-                if (object.FileInfo) {
-                    if (!Array.isArray(object.FileInfo))
-                        throw TypeError(".secterm.v1.SectermFileUploadReq.FileInfo: array expected");
-                    message.FileInfo = [];
-                    for (let i = 0; i < object.FileInfo.length; ++i) {
-                        if (typeof object.FileInfo[i] !== "object")
-                            throw TypeError(".secterm.v1.SectermFileUploadReq.FileInfo: object expected");
-                        message.FileInfo[i] = $root.secterm.v1.SectermFileInfo.fromObject(object.FileInfo[i]);
-                    }
-                }
-                switch (object.mode) {
-                default:
-                    if (typeof object.mode === "number") {
-                        message.mode = object.mode;
-                        break;
-                    }
-                    break;
-                case "ACTIVE":
-                case 0:
-                    message.mode = 0;
-                    break;
-                case "PASSIVE":
-                case 1:
-                    message.mode = 1;
-                    break;
-                }
+                let message = new $root.secterm.v1.SectermFileTransReq();
+                if (object.flag != null)
+                    message.flag = Boolean(object.flag);
+                if (object.uuid != null)
+                    message.uuid = String(object.uuid);
                 switch (object.proto) {
                 default:
                     if (typeof object.proto === "number") {
@@ -4456,91 +4317,102 @@ export const secterm = $root.secterm = (() => {
                     message.proto = 3;
                     break;
                 }
+                switch (object.mode) {
+                default:
+                    if (typeof object.mode === "number") {
+                        message.mode = object.mode;
+                        break;
+                    }
+                    break;
+                case "ACTIVE":
+                case 0:
+                    message.mode = 0;
+                    break;
+                case "PASSIVE":
+                case 1:
+                    message.mode = 1;
+                    break;
+                }
                 return message;
             };
 
             /**
-             * Creates a plain object from a SectermFileUploadReq message. Also converts values to other types if specified.
+             * Creates a plain object from a SectermFileTransReq message. Also converts values to other types if specified.
              * @function toObject
-             * @memberof secterm.v1.SectermFileUploadReq
+             * @memberof secterm.v1.SectermFileTransReq
              * @static
-             * @param {secterm.v1.SectermFileUploadReq} message SectermFileUploadReq
+             * @param {secterm.v1.SectermFileTransReq} message SectermFileTransReq
              * @param {$protobuf.IConversionOptions} [options] Conversion options
              * @returns {Object.<string,*>} Plain object
              */
-            SectermFileUploadReq.toObject = function toObject(message, options) {
+            SectermFileTransReq.toObject = function toObject(message, options) {
                 if (!options)
                     options = {};
                 let object = {};
-                if (options.arrays || options.defaults)
-                    object.FileInfo = [];
                 if (options.defaults) {
-                    object.DstPath = "";
-                    object.mode = options.enums === String ? "ACTIVE" : 0;
+                    object.flag = false;
+                    object.uuid = "";
                     object.proto = options.enums === String ? "ZMODEM" : 0;
+                    object.mode = options.enums === String ? "ACTIVE" : 0;
                 }
-                if (message.DstPath != null && message.hasOwnProperty("DstPath"))
-                    object.DstPath = message.DstPath;
-                if (message.FileInfo && message.FileInfo.length) {
-                    object.FileInfo = [];
-                    for (let j = 0; j < message.FileInfo.length; ++j)
-                        object.FileInfo[j] = $root.secterm.v1.SectermFileInfo.toObject(message.FileInfo[j], options);
-                }
-                if (message.mode != null && message.hasOwnProperty("mode"))
-                    object.mode = options.enums === String ? $root.secterm.v1.ActionMode[message.mode] === undefined ? message.mode : $root.secterm.v1.ActionMode[message.mode] : message.mode;
+                if (message.flag != null && message.hasOwnProperty("flag"))
+                    object.flag = message.flag;
+                if (message.uuid != null && message.hasOwnProperty("uuid"))
+                    object.uuid = message.uuid;
                 if (message.proto != null && message.hasOwnProperty("proto"))
                     object.proto = options.enums === String ? $root.secterm.v1.TransProtocol[message.proto] === undefined ? message.proto : $root.secterm.v1.TransProtocol[message.proto] : message.proto;
+                if (message.mode != null && message.hasOwnProperty("mode"))
+                    object.mode = options.enums === String ? $root.secterm.v1.ActionMode[message.mode] === undefined ? message.mode : $root.secterm.v1.ActionMode[message.mode] : message.mode;
                 return object;
             };
 
             /**
-             * Converts this SectermFileUploadReq to JSON.
+             * Converts this SectermFileTransReq to JSON.
              * @function toJSON
-             * @memberof secterm.v1.SectermFileUploadReq
+             * @memberof secterm.v1.SectermFileTransReq
              * @instance
              * @returns {Object.<string,*>} JSON object
              */
-            SectermFileUploadReq.prototype.toJSON = function toJSON() {
+            SectermFileTransReq.prototype.toJSON = function toJSON() {
                 return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
             };
 
             /**
-             * Gets the default type url for SectermFileUploadReq
+             * Gets the default type url for SectermFileTransReq
              * @function getTypeUrl
-             * @memberof secterm.v1.SectermFileUploadReq
+             * @memberof secterm.v1.SectermFileTransReq
              * @static
              * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
              * @returns {string} The default type url
              */
-            SectermFileUploadReq.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            SectermFileTransReq.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
                 if (typeUrlPrefix === undefined) {
                     typeUrlPrefix = "type.googleapis.com";
                 }
-                return typeUrlPrefix + "/secterm.v1.SectermFileUploadReq";
+                return typeUrlPrefix + "/secterm.v1.SectermFileTransReq";
             };
 
-            return SectermFileUploadReq;
+            return SectermFileTransReq;
         })();
 
-        v1.SectermFileTransAck = (function() {
+        v1.SectermFileTransRes = (function() {
 
             /**
-             * Properties of a SectermFileTransAck.
+             * Properties of a SectermFileTransRes.
              * @memberof secterm.v1
-             * @interface ISectermFileTransAck
-             * @property {string|null} [uuid] SectermFileTransAck uuid
-             * @property {string|null} [srvName] SectermFileTransAck srvName
+             * @interface ISectermFileTransRes
+             * @property {string|null} [uuid] SectermFileTransRes uuid
              */
 
             /**
-             * Constructs a new SectermFileTransAck.
+             * Constructs a new SectermFileTransRes.
              * @memberof secterm.v1
-             * @classdesc Represents a SectermFileTransAck.
-             * @implements ISectermFileTransAck
+             * @classdesc Represents a SectermFileTransRes.
+             * @implements ISectermFileTransRes
              * @constructor
-             * @param {secterm.v1.ISectermFileTransAck=} [properties] Properties to set
+             * @param {secterm.v1.ISectermFileTransRes=} [properties] Properties to set
              */
-            function SectermFileTransAck(properties) {
+            function SectermFileTransRes(properties) {
                 if (properties)
                     for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                         if (properties[keys[i]] != null)
@@ -4548,80 +4420,70 @@ export const secterm = $root.secterm = (() => {
             }
 
             /**
-             * SectermFileTransAck uuid.
+             * SectermFileTransRes uuid.
              * @member {string} uuid
-             * @memberof secterm.v1.SectermFileTransAck
+             * @memberof secterm.v1.SectermFileTransRes
              * @instance
              */
-            SectermFileTransAck.prototype.uuid = "";
+            SectermFileTransRes.prototype.uuid = "";
 
             /**
-             * SectermFileTransAck srvName.
-             * @member {string} srvName
-             * @memberof secterm.v1.SectermFileTransAck
-             * @instance
-             */
-            SectermFileTransAck.prototype.srvName = "";
-
-            /**
-             * Creates a new SectermFileTransAck instance using the specified properties.
+             * Creates a new SectermFileTransRes instance using the specified properties.
              * @function create
-             * @memberof secterm.v1.SectermFileTransAck
+             * @memberof secterm.v1.SectermFileTransRes
              * @static
-             * @param {secterm.v1.ISectermFileTransAck=} [properties] Properties to set
-             * @returns {secterm.v1.SectermFileTransAck} SectermFileTransAck instance
+             * @param {secterm.v1.ISectermFileTransRes=} [properties] Properties to set
+             * @returns {secterm.v1.SectermFileTransRes} SectermFileTransRes instance
              */
-            SectermFileTransAck.create = function create(properties) {
-                return new SectermFileTransAck(properties);
+            SectermFileTransRes.create = function create(properties) {
+                return new SectermFileTransRes(properties);
             };
 
             /**
-             * Encodes the specified SectermFileTransAck message. Does not implicitly {@link secterm.v1.SectermFileTransAck.verify|verify} messages.
+             * Encodes the specified SectermFileTransRes message. Does not implicitly {@link secterm.v1.SectermFileTransRes.verify|verify} messages.
              * @function encode
-             * @memberof secterm.v1.SectermFileTransAck
+             * @memberof secterm.v1.SectermFileTransRes
              * @static
-             * @param {secterm.v1.ISectermFileTransAck} message SectermFileTransAck message or plain object to encode
+             * @param {secterm.v1.ISectermFileTransRes} message SectermFileTransRes message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
-            SectermFileTransAck.encode = function encode(message, writer) {
+            SectermFileTransRes.encode = function encode(message, writer) {
                 if (!writer)
                     writer = $Writer.create();
                 if (message.uuid != null && Object.hasOwnProperty.call(message, "uuid"))
                     writer.uint32(/* id 1, wireType 2 =*/10).string(message.uuid);
-                if (message.srvName != null && Object.hasOwnProperty.call(message, "srvName"))
-                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.srvName);
                 return writer;
             };
 
             /**
-             * Encodes the specified SectermFileTransAck message, length delimited. Does not implicitly {@link secterm.v1.SectermFileTransAck.verify|verify} messages.
+             * Encodes the specified SectermFileTransRes message, length delimited. Does not implicitly {@link secterm.v1.SectermFileTransRes.verify|verify} messages.
              * @function encodeDelimited
-             * @memberof secterm.v1.SectermFileTransAck
+             * @memberof secterm.v1.SectermFileTransRes
              * @static
-             * @param {secterm.v1.ISectermFileTransAck} message SectermFileTransAck message or plain object to encode
+             * @param {secterm.v1.ISectermFileTransRes} message SectermFileTransRes message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
-            SectermFileTransAck.encodeDelimited = function encodeDelimited(message, writer) {
+            SectermFileTransRes.encodeDelimited = function encodeDelimited(message, writer) {
                 return this.encode(message, writer).ldelim();
             };
 
             /**
-             * Decodes a SectermFileTransAck message from the specified reader or buffer.
+             * Decodes a SectermFileTransRes message from the specified reader or buffer.
              * @function decode
-             * @memberof secterm.v1.SectermFileTransAck
+             * @memberof secterm.v1.SectermFileTransRes
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
              * @param {number} [length] Message length if known beforehand
-             * @returns {secterm.v1.SectermFileTransAck} SectermFileTransAck
+             * @returns {secterm.v1.SectermFileTransRes} SectermFileTransRes
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            SectermFileTransAck.decode = function decode(reader, length) {
+            SectermFileTransRes.decode = function decode(reader, length) {
                 if (!(reader instanceof $Reader))
                     reader = $Reader.create(reader);
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.secterm.v1.SectermFileTransAck();
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.secterm.v1.SectermFileTransRes();
                 while (reader.pos < end) {
                     let tag = reader.uint32();
                     switch (tag >>> 3) {
@@ -4629,10 +4491,6 @@ export const secterm = $root.secterm = (() => {
                             message.uuid = reader.string();
                             break;
                         }
-                    case 2: {
-                            message.srvName = reader.string();
-                            break;
-                        }
                     default:
                         reader.skipType(tag & 7);
                         break;
@@ -4642,129 +4500,102 @@ export const secterm = $root.secterm = (() => {
             };
 
             /**
-             * Decodes a SectermFileTransAck message from the specified reader or buffer, length delimited.
+             * Decodes a SectermFileTransRes message from the specified reader or buffer, length delimited.
              * @function decodeDelimited
-             * @memberof secterm.v1.SectermFileTransAck
+             * @memberof secterm.v1.SectermFileTransRes
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @returns {secterm.v1.SectermFileTransAck} SectermFileTransAck
+             * @returns {secterm.v1.SectermFileTransRes} SectermFileTransRes
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            SectermFileTransAck.decodeDelimited = function decodeDelimited(reader) {
+            SectermFileTransRes.decodeDelimited = function decodeDelimited(reader) {
                 if (!(reader instanceof $Reader))
                     reader = new $Reader(reader);
                 return this.decode(reader, reader.uint32());
             };
 
             /**
-             * Verifies a SectermFileTransAck message.
+             * Verifies a SectermFileTransRes message.
              * @function verify
-             * @memberof secterm.v1.SectermFileTransAck
+             * @memberof secterm.v1.SectermFileTransRes
              * @static
              * @param {Object.<string,*>} message Plain object to verify
              * @returns {string|null} `null` if valid, otherwise the reason why it is not
              */
-            SectermFileTransAck.verify = function verify(message) {
+            SectermFileTransRes.verify = function verify(message) {
                 if (typeof message !== "object" || message === null)
                     return "object expected";
                 if (message.uuid != null && message.hasOwnProperty("uuid"))
                     if (!$util.isString(message.uuid))
                         return "uuid: string expected";
-                if (message.srvName != null && message.hasOwnProperty("srvName"))
-                    if (!$util.isString(message.srvName))
-                        return "srvName: string expected";
                 return null;
             };
 
             /**
-             * Creates a SectermFileTransAck message from a plain object. Also converts values to their respective internal types.
+             * Creates a SectermFileTransRes message from a plain object. Also converts values to their respective internal types.
              * @function fromObject
-             * @memberof secterm.v1.SectermFileTransAck
+             * @memberof secterm.v1.SectermFileTransRes
              * @static
              * @param {Object.<string,*>} object Plain object
-             * @returns {secterm.v1.SectermFileTransAck} SectermFileTransAck
+             * @returns {secterm.v1.SectermFileTransRes} SectermFileTransRes
              */
-            SectermFileTransAck.fromObject = function fromObject(object) {
-                if (object instanceof $root.secterm.v1.SectermFileTransAck)
+            SectermFileTransRes.fromObject = function fromObject(object) {
+                if (object instanceof $root.secterm.v1.SectermFileTransRes)
                     return object;
-                let message = new $root.secterm.v1.SectermFileTransAck();
+                let message = new $root.secterm.v1.SectermFileTransRes();
                 if (object.uuid != null)
                     message.uuid = String(object.uuid);
-                if (object.srvName != null)
-                    message.srvName = String(object.srvName);
                 return message;
             };
 
             /**
-             * Creates a plain object from a SectermFileTransAck message. Also converts values to other types if specified.
+             * Creates a plain object from a SectermFileTransRes message. Also converts values to other types if specified.
              * @function toObject
-             * @memberof secterm.v1.SectermFileTransAck
+             * @memberof secterm.v1.SectermFileTransRes
              * @static
-             * @param {secterm.v1.SectermFileTransAck} message SectermFileTransAck
+             * @param {secterm.v1.SectermFileTransRes} message SectermFileTransRes
              * @param {$protobuf.IConversionOptions} [options] Conversion options
              * @returns {Object.<string,*>} Plain object
              */
-            SectermFileTransAck.toObject = function toObject(message, options) {
+            SectermFileTransRes.toObject = function toObject(message, options) {
                 if (!options)
                     options = {};
                 let object = {};
-                if (options.defaults) {
+                if (options.defaults)
                     object.uuid = "";
-                    object.srvName = "";
-                }
                 if (message.uuid != null && message.hasOwnProperty("uuid"))
                     object.uuid = message.uuid;
-                if (message.srvName != null && message.hasOwnProperty("srvName"))
-                    object.srvName = message.srvName;
                 return object;
             };
 
             /**
-             * Converts this SectermFileTransAck to JSON.
+             * Converts this SectermFileTransRes to JSON.
              * @function toJSON
-             * @memberof secterm.v1.SectermFileTransAck
+             * @memberof secterm.v1.SectermFileTransRes
              * @instance
              * @returns {Object.<string,*>} JSON object
              */
-            SectermFileTransAck.prototype.toJSON = function toJSON() {
+            SectermFileTransRes.prototype.toJSON = function toJSON() {
                 return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
             };
 
             /**
-             * Gets the default type url for SectermFileTransAck
+             * Gets the default type url for SectermFileTransRes
              * @function getTypeUrl
-             * @memberof secterm.v1.SectermFileTransAck
+             * @memberof secterm.v1.SectermFileTransRes
              * @static
              * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
              * @returns {string} The default type url
              */
-            SectermFileTransAck.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+            SectermFileTransRes.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
                 if (typeUrlPrefix === undefined) {
                     typeUrlPrefix = "type.googleapis.com";
                 }
-                return typeUrlPrefix + "/secterm.v1.SectermFileTransAck";
+                return typeUrlPrefix + "/secterm.v1.SectermFileTransRes";
             };
 
-            return SectermFileTransAck;
-        })();
-
-        /**
-         * SectermFileCmd enum.
-         * @name secterm.v1.SectermFileCmd
-         * @enum {number}
-         * @property {number} TRANS_ERROR=0 TRANS_ERROR value
-         * @property {number} TRANS_FILE_EXISTED=1 TRANS_FILE_EXISTED value
-         * @property {number} TRANS_CANCLE=2 TRANS_CANCLE value
-         * @property {number} TRANS_SUCCESS=3 TRANS_SUCCESS value
-         */
-        v1.SectermFileCmd = (function() {
-            const valuesById = {}, values = Object.create(valuesById);
-            values[valuesById[0] = "TRANS_ERROR"] = 0;
-            values[valuesById[1] = "TRANS_FILE_EXISTED"] = 1;
-            values[valuesById[2] = "TRANS_CANCLE"] = 2;
-            values[valuesById[3] = "TRANS_SUCCESS"] = 3;
-            return values;
+            return SectermFileTransRes;
         })();
 
         v1.SectermFileCmdMessage = (function() {
@@ -4997,6 +4828,478 @@ export const secterm = $root.secterm = (() => {
             };
 
             return SectermFileCmdMessage;
+        })();
+
+        v1.SectermFileMessage = (function() {
+
+            /**
+             * Properties of a SectermFileMessage.
+             * @memberof secterm.v1
+             * @interface ISectermFileMessage
+             * @property {secterm.v1.ISectermFileListRequest|null} [fileListReq] SectermFileMessage fileListReq
+             * @property {secterm.v1.ISectermFileListResponse|null} [fileListRes] SectermFileMessage fileListRes
+             * @property {secterm.v1.ISectermFileMove|null} [fileMv] SectermFileMessage fileMv
+             * @property {secterm.v1.ISectermFileDelete|null} [fileDel] SectermFileMessage fileDel
+             * @property {secterm.v1.ISectermFileCreate|null} [fileCreate] SectermFileMessage fileCreate
+             * @property {secterm.v1.ISectermFileCmdMessage|null} [fileCmd] SectermFileMessage fileCmd
+             * @property {secterm.v1.ISectermFileTransReq|null} [fileTransReq] SectermFileMessage fileTransReq
+             * @property {secterm.v1.ISectermFileTransRes|null} [fileTransRes] SectermFileMessage fileTransRes
+             */
+
+            /**
+             * Constructs a new SectermFileMessage.
+             * @memberof secterm.v1
+             * @classdesc Represents a SectermFileMessage.
+             * @implements ISectermFileMessage
+             * @constructor
+             * @param {secterm.v1.ISectermFileMessage=} [properties] Properties to set
+             */
+            function SectermFileMessage(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * SectermFileMessage fileListReq.
+             * @member {secterm.v1.ISectermFileListRequest|null|undefined} fileListReq
+             * @memberof secterm.v1.SectermFileMessage
+             * @instance
+             */
+            SectermFileMessage.prototype.fileListReq = null;
+
+            /**
+             * SectermFileMessage fileListRes.
+             * @member {secterm.v1.ISectermFileListResponse|null|undefined} fileListRes
+             * @memberof secterm.v1.SectermFileMessage
+             * @instance
+             */
+            SectermFileMessage.prototype.fileListRes = null;
+
+            /**
+             * SectermFileMessage fileMv.
+             * @member {secterm.v1.ISectermFileMove|null|undefined} fileMv
+             * @memberof secterm.v1.SectermFileMessage
+             * @instance
+             */
+            SectermFileMessage.prototype.fileMv = null;
+
+            /**
+             * SectermFileMessage fileDel.
+             * @member {secterm.v1.ISectermFileDelete|null|undefined} fileDel
+             * @memberof secterm.v1.SectermFileMessage
+             * @instance
+             */
+            SectermFileMessage.prototype.fileDel = null;
+
+            /**
+             * SectermFileMessage fileCreate.
+             * @member {secterm.v1.ISectermFileCreate|null|undefined} fileCreate
+             * @memberof secterm.v1.SectermFileMessage
+             * @instance
+             */
+            SectermFileMessage.prototype.fileCreate = null;
+
+            /**
+             * SectermFileMessage fileCmd.
+             * @member {secterm.v1.ISectermFileCmdMessage|null|undefined} fileCmd
+             * @memberof secterm.v1.SectermFileMessage
+             * @instance
+             */
+            SectermFileMessage.prototype.fileCmd = null;
+
+            /**
+             * SectermFileMessage fileTransReq.
+             * @member {secterm.v1.ISectermFileTransReq|null|undefined} fileTransReq
+             * @memberof secterm.v1.SectermFileMessage
+             * @instance
+             */
+            SectermFileMessage.prototype.fileTransReq = null;
+
+            /**
+             * SectermFileMessage fileTransRes.
+             * @member {secterm.v1.ISectermFileTransRes|null|undefined} fileTransRes
+             * @memberof secterm.v1.SectermFileMessage
+             * @instance
+             */
+            SectermFileMessage.prototype.fileTransRes = null;
+
+            // OneOf field names bound to virtual getters and setters
+            let $oneOfFields;
+
+            /**
+             * SectermFileMessage data.
+             * @member {"fileListReq"|"fileListRes"|"fileMv"|"fileDel"|"fileCreate"|"fileCmd"|"fileTransReq"|"fileTransRes"|undefined} data
+             * @memberof secterm.v1.SectermFileMessage
+             * @instance
+             */
+            Object.defineProperty(SectermFileMessage.prototype, "data", {
+                get: $util.oneOfGetter($oneOfFields = ["fileListReq", "fileListRes", "fileMv", "fileDel", "fileCreate", "fileCmd", "fileTransReq", "fileTransRes"]),
+                set: $util.oneOfSetter($oneOfFields)
+            });
+
+            /**
+             * Creates a new SectermFileMessage instance using the specified properties.
+             * @function create
+             * @memberof secterm.v1.SectermFileMessage
+             * @static
+             * @param {secterm.v1.ISectermFileMessage=} [properties] Properties to set
+             * @returns {secterm.v1.SectermFileMessage} SectermFileMessage instance
+             */
+            SectermFileMessage.create = function create(properties) {
+                return new SectermFileMessage(properties);
+            };
+
+            /**
+             * Encodes the specified SectermFileMessage message. Does not implicitly {@link secterm.v1.SectermFileMessage.verify|verify} messages.
+             * @function encode
+             * @memberof secterm.v1.SectermFileMessage
+             * @static
+             * @param {secterm.v1.ISectermFileMessage} message SectermFileMessage message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SectermFileMessage.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.fileListReq != null && Object.hasOwnProperty.call(message, "fileListReq"))
+                    $root.secterm.v1.SectermFileListRequest.encode(message.fileListReq, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                if (message.fileListRes != null && Object.hasOwnProperty.call(message, "fileListRes"))
+                    $root.secterm.v1.SectermFileListResponse.encode(message.fileListRes, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                if (message.fileMv != null && Object.hasOwnProperty.call(message, "fileMv"))
+                    $root.secterm.v1.SectermFileMove.encode(message.fileMv, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                if (message.fileDel != null && Object.hasOwnProperty.call(message, "fileDel"))
+                    $root.secterm.v1.SectermFileDelete.encode(message.fileDel, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                if (message.fileCreate != null && Object.hasOwnProperty.call(message, "fileCreate"))
+                    $root.secterm.v1.SectermFileCreate.encode(message.fileCreate, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                if (message.fileCmd != null && Object.hasOwnProperty.call(message, "fileCmd"))
+                    $root.secterm.v1.SectermFileCmdMessage.encode(message.fileCmd, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                if (message.fileTransReq != null && Object.hasOwnProperty.call(message, "fileTransReq"))
+                    $root.secterm.v1.SectermFileTransReq.encode(message.fileTransReq, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
+                if (message.fileTransRes != null && Object.hasOwnProperty.call(message, "fileTransRes"))
+                    $root.secterm.v1.SectermFileTransRes.encode(message.fileTransRes, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified SectermFileMessage message, length delimited. Does not implicitly {@link secterm.v1.SectermFileMessage.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof secterm.v1.SectermFileMessage
+             * @static
+             * @param {secterm.v1.ISectermFileMessage} message SectermFileMessage message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SectermFileMessage.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a SectermFileMessage message from the specified reader or buffer.
+             * @function decode
+             * @memberof secterm.v1.SectermFileMessage
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {secterm.v1.SectermFileMessage} SectermFileMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SectermFileMessage.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.secterm.v1.SectermFileMessage();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.fileListReq = $root.secterm.v1.SectermFileListRequest.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 2: {
+                            message.fileListRes = $root.secterm.v1.SectermFileListResponse.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 3: {
+                            message.fileMv = $root.secterm.v1.SectermFileMove.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 4: {
+                            message.fileDel = $root.secterm.v1.SectermFileDelete.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 5: {
+                            message.fileCreate = $root.secterm.v1.SectermFileCreate.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 6: {
+                            message.fileCmd = $root.secterm.v1.SectermFileCmdMessage.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 7: {
+                            message.fileTransReq = $root.secterm.v1.SectermFileTransReq.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 8: {
+                            message.fileTransRes = $root.secterm.v1.SectermFileTransRes.decode(reader, reader.uint32());
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a SectermFileMessage message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof secterm.v1.SectermFileMessage
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {secterm.v1.SectermFileMessage} SectermFileMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SectermFileMessage.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a SectermFileMessage message.
+             * @function verify
+             * @memberof secterm.v1.SectermFileMessage
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            SectermFileMessage.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                let properties = {};
+                if (message.fileListReq != null && message.hasOwnProperty("fileListReq")) {
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermFileListRequest.verify(message.fileListReq);
+                        if (error)
+                            return "fileListReq." + error;
+                    }
+                }
+                if (message.fileListRes != null && message.hasOwnProperty("fileListRes")) {
+                    if (properties.data === 1)
+                        return "data: multiple values";
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermFileListResponse.verify(message.fileListRes);
+                        if (error)
+                            return "fileListRes." + error;
+                    }
+                }
+                if (message.fileMv != null && message.hasOwnProperty("fileMv")) {
+                    if (properties.data === 1)
+                        return "data: multiple values";
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermFileMove.verify(message.fileMv);
+                        if (error)
+                            return "fileMv." + error;
+                    }
+                }
+                if (message.fileDel != null && message.hasOwnProperty("fileDel")) {
+                    if (properties.data === 1)
+                        return "data: multiple values";
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermFileDelete.verify(message.fileDel);
+                        if (error)
+                            return "fileDel." + error;
+                    }
+                }
+                if (message.fileCreate != null && message.hasOwnProperty("fileCreate")) {
+                    if (properties.data === 1)
+                        return "data: multiple values";
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermFileCreate.verify(message.fileCreate);
+                        if (error)
+                            return "fileCreate." + error;
+                    }
+                }
+                if (message.fileCmd != null && message.hasOwnProperty("fileCmd")) {
+                    if (properties.data === 1)
+                        return "data: multiple values";
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermFileCmdMessage.verify(message.fileCmd);
+                        if (error)
+                            return "fileCmd." + error;
+                    }
+                }
+                if (message.fileTransReq != null && message.hasOwnProperty("fileTransReq")) {
+                    if (properties.data === 1)
+                        return "data: multiple values";
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermFileTransReq.verify(message.fileTransReq);
+                        if (error)
+                            return "fileTransReq." + error;
+                    }
+                }
+                if (message.fileTransRes != null && message.hasOwnProperty("fileTransRes")) {
+                    if (properties.data === 1)
+                        return "data: multiple values";
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermFileTransRes.verify(message.fileTransRes);
+                        if (error)
+                            return "fileTransRes." + error;
+                    }
+                }
+                return null;
+            };
+
+            /**
+             * Creates a SectermFileMessage message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof secterm.v1.SectermFileMessage
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {secterm.v1.SectermFileMessage} SectermFileMessage
+             */
+            SectermFileMessage.fromObject = function fromObject(object) {
+                if (object instanceof $root.secterm.v1.SectermFileMessage)
+                    return object;
+                let message = new $root.secterm.v1.SectermFileMessage();
+                if (object.fileListReq != null) {
+                    if (typeof object.fileListReq !== "object")
+                        throw TypeError(".secterm.v1.SectermFileMessage.fileListReq: object expected");
+                    message.fileListReq = $root.secterm.v1.SectermFileListRequest.fromObject(object.fileListReq);
+                }
+                if (object.fileListRes != null) {
+                    if (typeof object.fileListRes !== "object")
+                        throw TypeError(".secterm.v1.SectermFileMessage.fileListRes: object expected");
+                    message.fileListRes = $root.secterm.v1.SectermFileListResponse.fromObject(object.fileListRes);
+                }
+                if (object.fileMv != null) {
+                    if (typeof object.fileMv !== "object")
+                        throw TypeError(".secterm.v1.SectermFileMessage.fileMv: object expected");
+                    message.fileMv = $root.secterm.v1.SectermFileMove.fromObject(object.fileMv);
+                }
+                if (object.fileDel != null) {
+                    if (typeof object.fileDel !== "object")
+                        throw TypeError(".secterm.v1.SectermFileMessage.fileDel: object expected");
+                    message.fileDel = $root.secterm.v1.SectermFileDelete.fromObject(object.fileDel);
+                }
+                if (object.fileCreate != null) {
+                    if (typeof object.fileCreate !== "object")
+                        throw TypeError(".secterm.v1.SectermFileMessage.fileCreate: object expected");
+                    message.fileCreate = $root.secterm.v1.SectermFileCreate.fromObject(object.fileCreate);
+                }
+                if (object.fileCmd != null) {
+                    if (typeof object.fileCmd !== "object")
+                        throw TypeError(".secterm.v1.SectermFileMessage.fileCmd: object expected");
+                    message.fileCmd = $root.secterm.v1.SectermFileCmdMessage.fromObject(object.fileCmd);
+                }
+                if (object.fileTransReq != null) {
+                    if (typeof object.fileTransReq !== "object")
+                        throw TypeError(".secterm.v1.SectermFileMessage.fileTransReq: object expected");
+                    message.fileTransReq = $root.secterm.v1.SectermFileTransReq.fromObject(object.fileTransReq);
+                }
+                if (object.fileTransRes != null) {
+                    if (typeof object.fileTransRes !== "object")
+                        throw TypeError(".secterm.v1.SectermFileMessage.fileTransRes: object expected");
+                    message.fileTransRes = $root.secterm.v1.SectermFileTransRes.fromObject(object.fileTransRes);
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a SectermFileMessage message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof secterm.v1.SectermFileMessage
+             * @static
+             * @param {secterm.v1.SectermFileMessage} message SectermFileMessage
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            SectermFileMessage.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                let object = {};
+                if (message.fileListReq != null && message.hasOwnProperty("fileListReq")) {
+                    object.fileListReq = $root.secterm.v1.SectermFileListRequest.toObject(message.fileListReq, options);
+                    if (options.oneofs)
+                        object.data = "fileListReq";
+                }
+                if (message.fileListRes != null && message.hasOwnProperty("fileListRes")) {
+                    object.fileListRes = $root.secterm.v1.SectermFileListResponse.toObject(message.fileListRes, options);
+                    if (options.oneofs)
+                        object.data = "fileListRes";
+                }
+                if (message.fileMv != null && message.hasOwnProperty("fileMv")) {
+                    object.fileMv = $root.secterm.v1.SectermFileMove.toObject(message.fileMv, options);
+                    if (options.oneofs)
+                        object.data = "fileMv";
+                }
+                if (message.fileDel != null && message.hasOwnProperty("fileDel")) {
+                    object.fileDel = $root.secterm.v1.SectermFileDelete.toObject(message.fileDel, options);
+                    if (options.oneofs)
+                        object.data = "fileDel";
+                }
+                if (message.fileCreate != null && message.hasOwnProperty("fileCreate")) {
+                    object.fileCreate = $root.secterm.v1.SectermFileCreate.toObject(message.fileCreate, options);
+                    if (options.oneofs)
+                        object.data = "fileCreate";
+                }
+                if (message.fileCmd != null && message.hasOwnProperty("fileCmd")) {
+                    object.fileCmd = $root.secterm.v1.SectermFileCmdMessage.toObject(message.fileCmd, options);
+                    if (options.oneofs)
+                        object.data = "fileCmd";
+                }
+                if (message.fileTransReq != null && message.hasOwnProperty("fileTransReq")) {
+                    object.fileTransReq = $root.secterm.v1.SectermFileTransReq.toObject(message.fileTransReq, options);
+                    if (options.oneofs)
+                        object.data = "fileTransReq";
+                }
+                if (message.fileTransRes != null && message.hasOwnProperty("fileTransRes")) {
+                    object.fileTransRes = $root.secterm.v1.SectermFileTransRes.toObject(message.fileTransRes, options);
+                    if (options.oneofs)
+                        object.data = "fileTransRes";
+                }
+                return object;
+            };
+
+            /**
+             * Converts this SectermFileMessage to JSON.
+             * @function toJSON
+             * @memberof secterm.v1.SectermFileMessage
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            SectermFileMessage.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for SectermFileMessage
+             * @function getTypeUrl
+             * @memberof secterm.v1.SectermFileMessage
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            SectermFileMessage.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/secterm.v1.SectermFileMessage";
+            };
+
+            return SectermFileMessage;
         })();
 
         return v1;

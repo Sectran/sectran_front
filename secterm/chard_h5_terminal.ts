@@ -205,5 +205,111 @@ export namespace secterm {
              */
             public static getTypeUrl(typeUrlPrefix?: string): string;
         }
+
+        /** Properties of a SectermTerminalMessage. */
+        interface ISectermTerminalMessage {
+
+            /** SectermTerminalMessage resize */
+            resize?: (secterm.v1.ISectermTerminalResize|null);
+
+            /** SectermTerminalMessage characters */
+            characters?: (secterm.v1.ISectranTeminalCharacters|null);
+        }
+
+        /** Represents a SectermTerminalMessage. */
+        class SectermTerminalMessage implements ISectermTerminalMessage {
+
+            /**
+             * Constructs a new SectermTerminalMessage.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: secterm.v1.ISectermTerminalMessage);
+
+            /** SectermTerminalMessage resize. */
+            public resize?: (secterm.v1.ISectermTerminalResize|null);
+
+            /** SectermTerminalMessage characters. */
+            public characters?: (secterm.v1.ISectranTeminalCharacters|null);
+
+            /** SectermTerminalMessage data. */
+            public data?: ("resize"|"characters");
+
+            /**
+             * Creates a new SectermTerminalMessage instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns SectermTerminalMessage instance
+             */
+            public static create(properties?: secterm.v1.ISectermTerminalMessage): secterm.v1.SectermTerminalMessage;
+
+            /**
+             * Encodes the specified SectermTerminalMessage message. Does not implicitly {@link secterm.v1.SectermTerminalMessage.verify|verify} messages.
+             * @param message SectermTerminalMessage message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: secterm.v1.ISectermTerminalMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified SectermTerminalMessage message, length delimited. Does not implicitly {@link secterm.v1.SectermTerminalMessage.verify|verify} messages.
+             * @param message SectermTerminalMessage message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: secterm.v1.ISectermTerminalMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a SectermTerminalMessage message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns SectermTerminalMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): secterm.v1.SectermTerminalMessage;
+
+            /**
+             * Decodes a SectermTerminalMessage message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns SectermTerminalMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): secterm.v1.SectermTerminalMessage;
+
+            /**
+             * Verifies a SectermTerminalMessage message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a SectermTerminalMessage message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns SectermTerminalMessage
+             */
+            public static fromObject(object: { [k: string]: any }): secterm.v1.SectermTerminalMessage;
+
+            /**
+             * Creates a plain object from a SectermTerminalMessage message. Also converts values to other types if specified.
+             * @param message SectermTerminalMessage
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: secterm.v1.SectermTerminalMessage, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this SectermTerminalMessage to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for SectermTerminalMessage
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
     }
 }

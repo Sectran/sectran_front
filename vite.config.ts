@@ -21,24 +21,34 @@ export default defineConfig({
 	],
 
 	server: {
+		// proxy: {
+		// 	'192.168.10.2:8081': {
+		// 		// target: 'http://110.40.167.169:10011',
+		// 		// target: 'http://127.0.0.1:8081',
+		// 		target: 'http://192.168.10.2:8081',
+		// 		// 192.168.10.2
+		// 		changeOrigin: true,
+		// 		// rewrite: (path) => path.replace(/^\/api/, ''),
+		// 	},
+		// 	// '/file': {
+		// 	// 	target: 'http://192.168.10.2:8099',
+		// 	// 	// 192.168.10.2
+		// 	// 	changeOrigin: true,
+		// 	// 	rewrite: (path) => path.replace(/^\/file/, '/file'),
+		// 	// }
+		// }
 		proxy: {
-			'/api': {
-				// target: 'http://110.40.167.169:10011',
-				// target: 'http://127.0.0.1:8081',
+			'/api1': {
 				target: 'http://192.168.10.2:8081',
-				// 192.168.10.2
 				changeOrigin: true,
-				rewrite: (path) => path.replace(/^\/api/, ''),
+				rewrite: (path) => path.replace(/^\/api1/, ''),
 			},
-			// '/file': {
-			// 	target: 'http://192.168.10.2:8099',
-			// 	// 192.168.10.2
-			// 	changeOrigin: true,
-			// 	rewrite: (path) => path.replace(/^\/file/, '/file'),
-			// }
-
-			
-		}
+			'/api2': {
+				target: 'http://192.168.10.2:8099',
+				changeOrigin: true,
+				rewrite: (path) => path.replace(/^\/api2/, ''),
+			},
+		},
 	},
 
 	resolve: {

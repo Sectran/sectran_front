@@ -15,3 +15,12 @@ message SectranTeminalCharacters {
     // 终端数据
     bytes Data = 1;
 }
+
+message SectermTerminalMessage {
+    oneof data{
+        // window size change message 窗口大小变动
+        SectermTerminalResize resize = 1;
+        // terminale message 终端消息
+        SectranTeminalCharacters characters = 2;
+    }
+}
