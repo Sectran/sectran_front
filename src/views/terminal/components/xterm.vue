@@ -15,46 +15,11 @@
         <div class="break-style">已断开，请重新连接</div>
     </template>
 
-    <!-- 文件上传弹窗 -->
-    <a-modal v-model:open="transmissionProgressOpen" :closable="false" :footer="null" :maskClosable="false"
-        :title="`文件${['下载', '上传'][transmissionProgressType as number]}中`">
-        <div class="uploading-div">
-            <template v-if="transmissionProgressType === 0">
-                <!-- <a-input-group compact>
-                    <a-input v-model:value="fileName" style="width: calc(100% - 70px)" />
-                    <a-button type="primary" :disabled="!isDownloadAcComplish">下载</a-button>
-                </a-input-group> -->
-                <div class="items-center">
-                    <a-tooltip>
-                        <template #title>{{ fileName }}</template>
-                        <div class="file-name">{{ fileName }}</div>
-                    </a-tooltip>
-                    <div style="flex: 1;margin-left: 20px;">
-                        <a-progress :percent="calculatePercent(downloadedBytes, grossBytes)" />
-                    </div>
-                    <a-button v-if="isSupportShowSaveFilePicker" @click="selectionPath" type="primary">下载</a-button>
-                </div>
-            </template>
 
-            <template v-else-if="transmissionProgressType === 1">
-                <div class="items-center" v-for="(item, index) in filesList" :key="index">
-                    <a-tooltip>
-                        <template #title>{{ item.file.name }}</template>
-                        <div class="file-name">{{ item.file.name }}</div>
-                    </a-tooltip>
-                    <div style="flex: 1;margin-left: 20px;">
-                        <a-progress :percent="calculatePercent(item.currentChunk, item.totalChunks)" />
-                    </div>
-
-                </div>
-            </template>
-        </div>
-    </a-modal>
 
 </template>
 
 <script setup lang='ts'>
-
 import { onMounted, ref, reactive, onUnmounted } from "vue";
 import { LinkOutlined } from '@ant-design/icons-vue';
 import { message } from "ant-design-vue";
@@ -70,10 +35,9 @@ import {
     sectermConnectRequest,
     sectermTeminalResize,
     sectermTeminalCharacters,
-    sectermFileDownloadReq,
-    sectermFileDownloadStart,
     sectermFileUploadReq,
-    sectermFileUploadFulfilleTheAllReq
+    sectermFileUploadFulfilleTheAllReq,
+    sectermFileCancelUploadReq
 } from "@/common/method/proto";
 import { initSocket } from "@/common/method/socket"
 
@@ -85,7 +49,6 @@ const props = defineProps<{
     index: number
 
 }>();
-// const v1 = sectran_chard.secterm.v1;
 const v1 = secterm.v1;
 let terminal = ref(null);
 // let path = ref<string>("ws://101.133.229.239:19529");
@@ -93,8 +56,6 @@ let terminal = ref(null);
 // let path = ref<string>("ws://192.168.10.2:19529");
 let path = ref<string>("ws://192.168.10.2:19528");
 // let path = ref<string>("ws://192.168.10.1:19528");
-
-
 
 let websocket = <any>(null);
 let term = reactive<any>({});
@@ -242,7 +203,6 @@ const fileManage = (sm: secterm.v1.ISectermFileMessage) => {
             onOk() {
                 if (fileInputRef.value) {
                     fileInputRef.value.click()
-                    isStopUploading = false
                     inFileSelect.value = true
                 }
             },
@@ -268,10 +228,7 @@ type FileList = {
     totalChunks: number
     currentChunk: number
 }
-//上传展示弹窗
-let transmissionProgressOpen = ref<boolean>(false)
-//上传类型 0下载  1上传
-let transmissionProgressType = ref<Number>(0)
+
 
 //文件列表
 let filesList = ref<FileList[]>([])
@@ -296,7 +253,7 @@ const startUploads = async (event: any) => {
         }
 
     } else {
-
+        sectermFileCancelUploadReq(websocket)
         console.log("未选择文件");
     }
     inFileSelect.value = false
@@ -317,66 +274,12 @@ const makeRequest = async (formData: FormData) => {
     })
 }
 
-/**
- * 计算传输进度
- * @param currentChunk 当前分段
- * @param totalChunks 总分段
- */
-const calculatePercent = (currentChunk: number, totalChunks: number) => {
-    switch (currentChunk) {
-        case 0:
-            return 0
-        case totalChunks:
-            return 100
-        default:
-            return Math.round((currentChunk / totalChunks) * 100)
-    }
-}
-
-
-let isStopUploading: boolean = false //停止上传
-
-
-//每次文件下载大小
 let downloadRef = ref<HTMLAnchorElement>();
-
-let grossBytes: any = 0;//总字节
-let downloadedBytes = ref<number>(0); // 已经下载的字节数
-let fileName = ref<string>('')
-
-let fileHandle: any;
-declare global {
-    interface Window {
-        showSaveFilePicker: (options?: any) => Promise<any>;
-    }
-}
-/**
- * 保存分段的Blob
- */
-//  blob: Blob
-const selectionPath = async () => {
-    console.log('文件下载响应')
-    sectermFileDownloadReq([], websocket)
-    try {
-        if (!fileHandle) {
-            // 选择一个文件
-            fileHandle = await window.showSaveFilePicker({
-                suggestedName: fileName.value
-            });
-            console.log(fileHandle, 'fileHandle');
-            sectermFileDownloadStart(websocket)
-        }
-    } catch (error) {
-        console.error('追加数据时发生错误:', error);
-    }
-}
-
 
 const sleep = (ms: number) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// url: string
 const downloadFile = async () => {
     if (downloadedFileList.length === 0 || isdbeDownloading) return
     console.log('开始下载')
@@ -393,8 +296,6 @@ const downloadFile = async () => {
     isdbeDownloading = false
     downloadFile()
 }
-
-
 
 const onOpen = () => {
     let { cols, rows } = term;

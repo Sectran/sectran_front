@@ -99,106 +99,18 @@ export const sectermFileUploadFulfilleTheAllReq = (websocket: WebSocket) => {
 }
 
 /**
- * 取消文件上传
- */
-
-// export const sectermFileUploadReq = (data: any, websocket: WebSocket) => {
-
-
-// }
-/**
- * 文件上传传输
- */
-export const sectermFileuploading = (data: any, websocket: WebSocket) => {
-    return new Promise(async (resolve) => {
-        console.log(data, 'sectermFileuploading')
-        let sectermMessage = new v1.SectermMessage();
-        let fileData = new v1.SectermFileDataRes()
-        data.seriNumber = intNume
-        fileData = data
-        sectermMessage.fileData = fileData;
-        let fileUploadingData = v1.SectermMessage.encode(sectermMessage).finish();
-        await transmitWebSocket(fileUploadingData, websocket)
-        console.log(`${intNume}同步发送结束`)
-        intNume++
-        resolve('成功')
-    });
-}
-
-/**
- * 文件下载响应
- */
-export const sectermFileDownloadReq = ([]: any, websocket: WebSocket) => {
-    console.log("文件下载响应")
-    let sectermMessage = new v1.SectermMessage();
-    // let FileReq = new v1.SectermFileDownloadReq()
-    let FileReq = new v1.SectermFileDownloadReq()
-
-    sectermMessage.fileDownloadReq = FileReq
-    console.log(sectermMessage)
-    let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
-    transmitWebSocket(FileUploadReqData, websocket)
-}
-
-/**
- * 文件开始下载
- */
-
-export const sectermFileDownloadStart = (websocket: WebSocket) => {
-    console.log("文件开始下载")
-    let sectermMessage = new v1.SectermMessage();
-    console.log(sectermMessage)
-    console.log(sectermMessage.fileCmd)
-    let data = {
-        cmd: v1.SectermFileCmd.DOWNLOAD_START
-    }
-    sectermMessage.fileCmd = data
-    console.log(sectermMessage)
-    let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
-    transmitWebSocket(FileUploadReqData, websocket)
-}
-
-/**
- * 文件持续下载相应
- */
-export const sectermFileDownloadContinue = (websocket: WebSocket) => {
-    console.log("文件持续下载相应")
-    let sectermMessage = new v1.SectermMessage()
-
-    let data = {
-        cmd: v1.SectermFileCmd.DOWNLOAD_CONTINUE
-    }
-
-    sectermMessage.fileCmd = data
-    console.log(sectermMessage)
-    let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
-    transmitWebSocket(FileUploadReqData, websocket)
-}
-
-/**
  * 文件上传取消
  */
-export const sectermFileCancelUploadReq = (data: any, websocket: WebSocket) => {
-    // console.log("文件取消上传")
-    // let sectermMessage = new v1.SectermMessage();
-    // let FileReq = new v1.SectermFileCreate
-    // FileReq.FileInfo = data.FileInfo
-    // sectermMessage.fileUploadReq = FileReq;
-    // let FileUploadReqData = v1.SectermMessage.encode(sectermMessage).finish();
-    // transmitWebSocket(FileUploadReqData, websocket)
-}
-
-/**
- * 文件请求下载
- */
-export const sectermFileDownload = (data: any, websocket: WebSocket) => {
-    console.log(data, 'SectermFileDownloadReq')
+export const sectermFileCancelUploadReq = (websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
-    let fileData = new v1.SectermFileDownloadReq()
-    fileData.FileInfo
-    sectermMessage.fileData = fileData;
-    let fileUploadingData = v1.SectermMessage.encode(sectermMessage).finish();
-    transmitWebSocket(fileUploadingData, websocket)
+    let data = {
+        cmd: v1.SectermFileCmd.TRANS_CANCLE
+    }
+    if (sectermMessage.secFile) sectermMessage.secFile.fileCmd = data
+    else sectermMessage.secFile = { fileCmd: data }
+
+    let fileUploadcancelDataReq = v1.SectermMessage.encode(sectermMessage).finish();
+    transmitWebSocket(fileUploadcancelDataReq, websocket)
 }
 
 /**
@@ -233,9 +145,7 @@ export const SectermTeminaFileMove = (path: string, DstPath: string, force: bool
     fileMove.force = force
     let fileMoveData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(fileMoveData, websocket)
-    // const uintArr = Uint32Array.from([filePathData.length]);
-    // websocket.send(uintArr);
-    // websocket.send(filePathData);
+
 }
 
 /**
@@ -250,9 +160,6 @@ export const SectermTeminaFileDelete = (path: string[], websocket: WebSocket) =>
 
     let fileDeleteData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(fileDeleteData, websocket)
-    // const uintArr = Uint32Array.from([filePathData.length]);
-    // websocket.send(uintArr);
-    // websocket.send(filePathData);
 }
 
 /**
@@ -267,9 +174,6 @@ export const SectermTeminaFileCreate = (file: secterm.v1.ISectermFileInfo | null
 
     let fileCreateData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(fileCreateData, websocket)
-    // const uintArr = Uint32Array.from([filePathData.length]);
-    // websocket.send(uintArr);
-    // websocket.send(filePathData);
 }
 
 /**
@@ -283,13 +187,7 @@ export const SectermTeminaFileDownloadReq = (file: secterm.v1.ISectermFileInfo[]
     fileDownloadReq.FileInfo = file
     let fileDownloadReqData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(fileDownloadReqData, websocket)
-    // const uintArr = Uint32Array.from([filePathData.length]);
-    // websocket.send(uintArr);
-    // websocket.send(filePathData);
 }
-
-
-
 
 /**
  * websocket传输
@@ -298,18 +196,12 @@ export const SectermTeminaFileDownloadReq = (file: secterm.v1.ISectermFileInfo[]
  */
 const transmitWebSocket = (data: any, websocket: WebSocket) => {
     return new Promise((resolve) => {
-        // const uintArr = Uint32Array.from([data.length]);
-        // console.log(intNume)
-        // console.log(uintArr)
-        // console.log(data)
+
         try {
             websocket.send(data);
         } catch (error) {
             console.error('Error sending data:', error);
         }
-        // websocket.send(uintArr);
-        // websocket.send(data);
-
         resolve('成功')
     })
 }

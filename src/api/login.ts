@@ -1,2 +1,3 @@
 import requests from '@/server/request'
-export const login = <T>(data: T) => requests('/login', data)
+let prefix1 = "/api1";
+export const login = <T>(data: T) => requests(`${prefix1}/login`, data)
