@@ -86,7 +86,6 @@ export const sectermFileUploadReq = (data: secterm.v1.SectermFileTransReq, webso
  */
 
 export const sectermFileUploadFulfilleTheAllReq = (websocket: WebSocket) => {
-    console.log("全部上传完成")
     let sectermMessage = new v1.SectermMessage();
     let data = {
         cmd: v1.SectermFileCmd.TRANS_SUCCESS
@@ -121,14 +120,10 @@ export const sectermFileCancelUploadReq = (websocket: WebSocket) => {
  */
 export const sectermTeminalCatalog = (path: string, websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
-
     let filePath = new v1.SectermFileListRequest()
-    filePath.Path = path
+    filePath.dirPath = path
     let filePathData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(filePathData, websocket)
-    // const uintArr = Uint32Array.from([filePathData.length]);
-    // websocket.send(uintArr);
-    // websocket.send(filePathData);
 }
 
 /**
@@ -140,7 +135,7 @@ export const sectermTeminalCatalog = (path: string, websocket: WebSocket) => {
 export const SectermTeminaFileMove = (path: string, DstPath: string, force: boolean, websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
     let fileMove = new v1.SectermFileMove()
-    fileMove.Path = path
+    fileMove.filePath = path
     fileMove.DstPath = DstPath
     fileMove.force = force
     let fileMoveData = v1.SectermMessage.encode(sectermMessage).finish();
@@ -176,18 +171,6 @@ export const SectermTeminaFileCreate = (file: secterm.v1.ISectermFileInfo | null
     transmitWebSocket(fileCreateData, websocket)
 }
 
-/**
- * ⽂件下载请求
- * @param FileInfo ⽂件信息
- * @param websocket 
- */
-export const SectermTeminaFileDownloadReq = (file: secterm.v1.ISectermFileInfo[], websocket: WebSocket) => {
-    let sectermMessage = new v1.SectermMessage();
-    let fileDownloadReq = new v1.SectermFileDownloadReq()
-    fileDownloadReq.FileInfo = file
-    let fileDownloadReqData = v1.SectermMessage.encode(sectermMessage).finish();
-    transmitWebSocket(fileDownloadReqData, websocket)
-}
 
 /**
  * websocket传输

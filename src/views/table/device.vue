@@ -23,12 +23,16 @@
                 <div class="tags-style">
                     <a-tag v-for="(item, index) in searchTags" :key="index" closable
                         @close="() => { searchTags.splice(index, 1); on_search(extraSearchModel) }">
-
                         <a-tooltip v-if="item.name === 'Linux' || item.name === 'Windows'">
                             <template #title>系统类型：{{ item.value ? '开启' : "关闭" }}</template>
                             <span class="tags-style-text"> 系统类型：{{ item.value ? '开启' : "关闭"
                                 }}</span>
                         </a-tooltip>
+                        <a-tooltip v-else-if="item.key === 'departmentId'">
+                            <template #title>{{ t(item.name) }}：{{ departmentOption.name }}</template>
+                            <span class="tags-style-text"> {{ t(item.name) }}：{{ departmentOption.name }}</span>
+                        </a-tooltip>
+
                         <a-tooltip v-else>
                             <template #title>{{ t(item.name) }}：{{ item.value }}</template>
                             <span class="tags-style-text"> {{ t(item.name) }}：{{ item.value }}</span>
@@ -36,25 +40,25 @@
                     </a-tag>
                 </div>
                 <div class="input-text" v-if="searchModelItem">{{ t(searchModelItem.name) }} :</div>
-                <a-input class="search-style-input" v-model:value="searchInputValue" :bordered="false"
-                    @pressEnter="onInputTag">
-                    <!-- <template #suffix>
-                        <SearchOutlined @click="onInputTag" />
-                    </template> -->
-                </a-input>
+                <a-select v-if="searchModelItem?.key == 'departmentId'" :key="departmentKey"
+                    v-model:value="extraSearchModel.departmentId"
+                    :placeholder='`${t("public.pleaseSelect")}${t("public.departmentName")}`' :filter-option="false"
+                    :not-found-content="searchDepartmentState.fetching ? undefined : null"
+                    :options="searchDepartmentState.data"
+                    @search="(value: string) => searchFun(value, searchDepartmentState, listDepartment, { deep: 0, id: user.department_id })"
+                    show-search :field-names="{ label: 'name', value: 'id' }"
+                    @change="(values: number, option: any) => departmentChange(values, option)" :bordered="false"
+                    class="search-style-input" :autoClearSearchValue="true">
+                    <template v-if="searchDepartmentState.fetching" #notFoundContent>
+                        <a-spin size="small" />
+                    </template>
+                </a-select>
+                <a-input v-else class="search-style-input" v-model:value="searchInputValue" :bordered="false"
+                    @pressEnter="onInputTag"></a-input>
+
             </div>
 
-            <a-select v-model:value="extraSearchModel.departmentId"
-                :placeholder='`${t("public.pleaseSelect")}${t("public.departmentName")}`' style="width: 300px"
-                :filter-option="false" :not-found-content="searchDepartmentState.fetching ? undefined : null"
-                :options="searchDepartmentState.data"
-                @search="(value: string) => searchFun(value, searchDepartmentState, listDepartment, { deep: 0, id: user.department_id })"
-                show-search :field-names="{ label: 'name', value: 'id' }" @change="on_search(extraSearchModel)"
-                :allowClear="true">
-                <template v-if="searchDepartmentState.fetching" #notFoundContent>
-                    <a-spin size="small" />
-                </template>
-            </a-select>
+
             <a-button @click="onInputTag" :icon="h(SearchOutlined)" type="primary">
                 {{ t('public.search') }}
             </a-button>
@@ -108,7 +112,7 @@
                                 }}</a-button>
                             <a-button type="link" @click="on_deviceAccount(record.id, record.name)">{{
                                 t('device.deviceAccount')
-                            }}</a-button>
+                                }}</a-button>
                         </a-space>
                     </template>
                     <template v-else-if="column.dataIndex === 'OsKind'">{{ record.OsKind === 1 ? 'Linux' : 'Windows'
@@ -258,20 +262,24 @@ const searchFronModel: SearchFronModel[] = [
     }, {
         key: 'host',
         name: "device.deviceAddress"
+    }, {
+        key: 'departmentId',
+        name: "public.departmentName"
     },
     {
         key: 'type',
         name: "public.type",
         children: [
             {
-                name: "Linux",
+                name: "public.Linux",
                 key: "type",
                 disposefun: (value: any) => {
+                    console.log(value)
                     operateTags('Linux', value.key)
                     on_search()
                 }
             }, {
-                name: "Windows",
+                name: "public.Windows",
                 key: "type",
                 disposefun: (value: any) => {
                     operateTags('Windows', value.key)
@@ -290,10 +298,21 @@ const searchDepartmentState = reactive({
     data: [],
     fetching: false,
 });
+let departmentOption = reactive<{ name: string }>({ name: "" })
 
 let extraSearchModel = {
     departmentId: undefined
 }
+let departmentKey = ref<number>(1)
+const departmentChange = debounce((value: string, option: any) => {
+    searchInputValue.value = value;
+    departmentOption = option
+    onInputTag()
+    extraSearchModel.departmentId = undefined
+    departmentKey.value++
+}, 500)
+
+
 const extraSearchReset = () => {
     extraSearchModel.departmentId = undefined
     searchFun("", searchDepartmentState, listDepartment, { deep: 0, id: user.department_id });
@@ -364,4 +383,9 @@ const validateDeviceAddress = ({ }, value: string) => {
 
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+::v-deep(.ant-dropdown-link) {
+    width: 20px;
+    min-width: 20px;
+}
+</style>

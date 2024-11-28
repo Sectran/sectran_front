@@ -22,9 +22,10 @@ type Key = string | number;
  * @param SearchObject 搜索表单数据
  * @param requestApi 请求api的方法
  * @param tableDataHandle 表格数据二次处理
+ * @param fixedParam   表格请求的固定参数 表格数据二次处理
  * @returns sizeChange 数据
  */
-export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function = (data: any) => data) => {
+export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function = (data: any) => data, fixedParam: Object = {}) => {
     //表格头部颜色
     const headerStyle = { background: '#F8F8F9' }
     const fromSearchRef: Ref = ref<any>()
@@ -35,7 +36,7 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
         pageSize: 10,
         page: 1
     })
-
+    //
     //表格是否正在加载
     const tableLoading = ref<boolean>(false)
     const searchFormRef = ref<FormInstance>();
@@ -89,10 +90,10 @@ export const useTableHooks = (requestApi: requestApi, tableDataHandle: Function 
         let fromData = { ...searchFrom }
         console.log(isPaging.value)
         if (isPaging.value) fromData = { ...pageData, ...fromData }
-        requestApi.listApi(fromData).then((res: resTable<any>) => {
+        requestApi.listApi({ ...fromData, ...fixedParam }).then((res: resTable<any>) => {
             let { data, total } = res.data
             tableLoading.value = false
-            tableData.value = tableDataHandle(data)
+            tableData.value =  tableDataHandle(data)
             paginationOpt.total = total
             tableState.selectedRowKeys = [];
         }, () => {

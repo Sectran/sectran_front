@@ -1,11 +1,10 @@
 import axios, { AxiosRequestConfig } from "axios";
 import router from '@/router/index'
 
-import { TIMEOUT, BASE_URL } from "./config";
+import { TIMEOUT } from "./config";
 
 import { message } from 'ant-design-vue';
 axios.defaults.timeout = TIMEOUT;
-// axios.defaults.baseURL = BASE_URL;
 
 /**
  * http request 拦截器
@@ -13,7 +12,6 @@ axios.defaults.timeout = TIMEOUT;
 
 axios.interceptors.request.use(
     (config: any) => {
-        console.log("请求地址：", config);
         const token: string | null = localStorage.getItem("token");
         let headers: any = {
             'Content-Type': 'application/json',
@@ -23,7 +21,6 @@ axios.interceptors.request.use(
         if (token) {
             headers['authorization'] = `${token}`
         }
-        console.log("请求头：", headers);
         config.headers = headers
         return config;
     },
@@ -53,9 +50,6 @@ axios.interceptors.response.use(
 
 //统一接口处理，返回数据
 const requests: Function = (url: string, param: AxiosRequestConfig<string>, fecth = "post", ismessage = true, headers: any = {}): Promise<any> => {
-   
-   console.log("请求地址：", url);
-   console.log("请求地址：", headers);
     return new Promise((resolve, reject) => {
         switch (fecth) {
             case "get":

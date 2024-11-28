@@ -28,6 +28,10 @@
                             <span class="tags-style-text"> {{ t('public.status') }}：{{ item.value ? '开启' : "关闭"
                                 }}</span>
                         </a-tooltip>
+                        <a-tooltip v-else-if="item.key === 'departmentId'">
+                            <template #title>{{ t(item.name) }}：{{ departmentOption.name }}</template>
+                            <span class="tags-style-text"> {{ t(item.name) }}：{{ departmentOption.name }}</span>
+                        </a-tooltip>
 
                         <a-tooltip v-else>
                             <template #title>{{ t(item.name) }}：{{ item.value }}</template>
@@ -36,12 +40,21 @@
                     </a-tag>
                 </div>
                 <div class="input-text" v-if="searchModelItem">{{ t(searchModelItem.name) }} :</div>
-                <a-input class="search-style-input" v-model:value="searchInputValue" :bordered="false"
-                    @pressEnter="onInputTag">
-                    <!-- <template #suffix>
-                        <SearchOutlined @click="onInputTag" />
-                    </template> -->
-                </a-input>
+                <a-select v-if="searchModelItem?.key == 'departmentId'" :key="departmentKey"
+                    v-model:value="extraSearchModel.departmentId"
+                    :placeholder='`${t("public.pleaseSelect")}${t("public.departmentName")}`' :filter-option="false"
+                    :not-found-content="searchDepartmentState.fetching ? undefined : null"
+                    :options="searchDepartmentState.data"
+                    @search="(value: string) => searchFun(value, searchDepartmentState, listDepartment, { deep: 0, id: user.department_id })"
+                    show-search :field-names="{ label: 'name', value: 'id' }"
+                    @change="(values: number, option: any) => departmentChange(values, option)" :bordered="false"
+                    class="search-style-input" :autoClearSearchValue="true">
+                    <template v-if="searchDepartmentState.fetching" #notFoundContent>
+                        <a-spin size="small" />
+                    </template>
+                </a-select>
+                <a-input v-else class="search-style-input" v-model:value="searchInputValue" :bordered="false"
+                    @pressEnter="onInputTag"></a-input>
             </div>
             <!-- @click="on_search()" -->
             <a-button @click="onInputTag" :icon="h(SearchOutlined)" type="primary">
@@ -62,7 +75,7 @@
                 </a-space>
                 <a-space>
                     <a-button v-has="'/user/create'" :icon="h(PlusOutlined)" @click="onOperate()" type="primary">{{
-                            t('public.add')
+                        t('public.add')
                         }}</a-button>
                     <a-dropdown-button trigger='click'>
                         {{ t('public.columnShow') }}
@@ -91,7 +104,11 @@
                 <template #headerCell="{ column }">
                     <span>{{ t(column.title) }}</span>
                 </template>
-                <template #bodyCell="{ column, record }">
+                <template #bodyCell="{ column, record ,text}">
+                    <template v-if="column.dataIndex === 'account'">
+                        <a-button type="link" width="200">{{ text }}</a-button>
+                    </template>
+
                     <template v-if="column.dataIndex === 'updatedAt'">
                         {{ Dayjs(record[column.dataIndex]).format("YYYY-MM-DD HH:mm:ss") }}
                     </template>
@@ -101,7 +118,7 @@
                             content: record[column.dataIndex],
                         });">
                             {{ record[column.dataIndex].length > 34 ? record[column.dataIndex].slice(0, 34) :
-                            record[column.dataIndex] }}
+                                record[column.dataIndex] }}
                         </div>
                     </template>
                     <template v-if="column.dataIndex === 'operation'">
@@ -111,8 +128,8 @@
                                 }}</a-button>
                             <a-button type="link" class="operation-style-button" v-has="'/user/delete'" danger
                                 @click="handleDelete([record.id])">{{
-                            t('public.delete')
-                        }}</a-button>
+                                    t('public.delete')
+                                }}</a-button>
                         </div>
                     </template>
                     <template v-else-if="column.dataIndex === 'status'">
@@ -144,8 +161,8 @@
                     </a-form-item>
 
                     <a-form-item :label="t('user.password')" name="password" :rules="[
-                            { required: id ? false : true, message: `${t('public.pleaseInput')}${t('user.password')}` },
-                            { validator: validatePass }]" :extra='`${t("public.passwordAstrict")}`'>
+                        { required: id ? false : true, message: `${t('public.pleaseInput')}${t('user.password')}` },
+                        { validator: validatePass }]" :extra='`${t("public.passwordAstrict")}`'>
                         <a-input-password v-model:value="formState.password" autocomplete
                             :placeholder='`${t("public.pleaseInput")}${t("user.password")}`' />
                     </a-form-item>
@@ -200,7 +217,7 @@
                     <div class="pop-button">
                         <a-button @click="() => { addRedactOpen = false }" class="search-button-right "
                             tml-type="submit">{{
-                            t('public.cancel') }}</a-button>
+                                t('public.cancel') }}</a-button>
                         <a-button type="primary" html-type="submit">{{ t('public.Submit') }}</a-button>
                     </div>
                 </a-form>
@@ -262,7 +279,7 @@ const searchFronModel: SearchFronModel[] = [
         key: 'name',
         name: "user.userName"
     }, {
-        key: 'departmentName',
+        key: 'departmentId',
         name: "public.departmentName"
     }, {
         key: 'roleName',
@@ -294,7 +311,32 @@ const searchFronModel: SearchFronModel[] = [
 ]
 onMounted(() => {
     initializeSearchTable(searchFronModel, columnsData, 'userColumnsStorage')
+    searchFun("", searchDepartmentState, listDepartment, { deep: 0, id: user.department_id });
 })
+
+const departmentState = reactive({
+    data: [],
+    fetching: false,
+});
+const searchDepartmentState = reactive({
+    data: [],
+    fetching: false,
+});
+let departmentOption = reactive<{ name: string }>({ name: "" })
+
+let extraSearchModel = {
+    departmentId: undefined
+}
+let departmentKey = ref<number>(1)
+const departmentChange = debounce((value: string, option: any) => {
+    searchInputValue.value = value;
+    departmentOption = option
+    onInputTag()
+    extraSearchModel.departmentId = undefined
+    departmentKey.value++
+}, 500)
+
+
 
 const columnsData = [{
     title: 'user.account',
@@ -328,11 +370,6 @@ const handleSwitchChange = (value: any, record: formStateType) => {
         requestList()
     })
 }
-
-const departmentState = reactive({
-    data: [],
-    fetching: false,
-});
 
 const roleState = reactive({
     data: [],
@@ -388,7 +425,7 @@ const onFinish = () => {
 
 const validatePass = ({ }, value: string) => {
     if (value) {
-        let reg = /(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W])(?=.*[\S])^[0-9A-Za-z\S]{6,12}$/g;
+        let reg = /(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W])(?=.*[\S])^[0-9A-Za-z\S]{8,16}$/g;
 
         if (!reg.test(value)) {
             console.log(reg.test(value))
@@ -399,4 +436,10 @@ const validatePass = ({ }, value: string) => {
 }
 </script>
 
-<style lang="less" scoped></style>
+
+<style lang="less" scoped>
+::v-deep(.ant-dropdown-link) {
+    width: 20px;
+    min-width: 20px;
+}
+</style>

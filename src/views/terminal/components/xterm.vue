@@ -4,7 +4,10 @@
 
     <div class="terminal-header">
         <div>{{ props.username }}@{{ props.host }}</div>
-        <LinkOutlined style="font-size: 22px;" @click="socketConnect" />
+        <div style="">
+            <RedoOutlined style="font-size: 22px;" @click="socketConnect" />
+            Reconnect
+        </div>
     </div>
     <template v-if="connectionStatus">
         <div class="terminal-div">
@@ -14,14 +17,11 @@
     <template v-else>
         <div class="break-style">已断开，请重新连接</div>
     </template>
-
-
-
 </template>
 
 <script setup lang='ts'>
 import { onMounted, ref, reactive, onUnmounted } from "vue";
-import { LinkOutlined } from '@ant-design/icons-vue';
+import { RedoOutlined } from '@ant-design/icons-vue';
 import { message } from "ant-design-vue";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
@@ -47,15 +47,12 @@ const props = defineProps<{
     submitLoading: boolean
     host: string
     index: number
+    port: number
 
 }>();
 const v1 = secterm.v1;
 let terminal = ref(null);
-// let path = ref<string>("ws://101.133.229.239:19529");
-// let path = ref<string>("ws://127.0.0.1:19529");
-// let path = ref<string>("ws://192.168.10.2:19529");
-let path = ref<string>("ws://192.168.10.2:19528");
-// let path = ref<string>("ws://192.168.10.1:19528");
+let path = ref<string>(import.meta.env.VITE_Chard_Addr);
 
 let websocket = <any>(null);
 let term = reactive<any>({});
@@ -287,7 +284,7 @@ const downloadFile = async () => {
     const downloadedIitem = downloadedFileList.shift();
     const a: any = document.createElement('a');
     a.style.display = 'none';
-    a.href = `http://192.168.10.2:8099/file/download?uuid=${downloadedIitem!.uuid}`;
+    a.href = `${import.meta.env.VITE_Chard_FILE}/file/download?uuid=${downloadedIitem!.uuid}`;
     a.setAttribute('target', '_self')
     document.body.appendChild(a);
     a.click();
@@ -306,7 +303,7 @@ const onOpen = () => {
         Rows: rows,
         unmanaged: true,
         username: props.username,
-        hostname: "101.133.229.239",
+        hostname: props.host,
         port: 22,
         password: props.password,
     };
@@ -322,7 +319,7 @@ const onError = () => {
 const onClose = () => {
     // console.log(websocket)
 
-    term.write('session closed');
+    term.write(`\r\nSSH  ${props.host}: session closed\r\n`);
     // connectionStatus.value = false
     console.log("socket已经关闭");
 };

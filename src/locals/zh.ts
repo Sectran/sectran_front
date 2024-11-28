@@ -48,7 +48,7 @@ export default {
         IsAdministrator: "是否管理员",
         Port: "端口",
         Protocol: "协议",
-        PrivateKey: "私钥",
+        // PrivateKey: "私钥",
         PrivateKeyPassword: "key密码",
         bindAccount: "绑定账号",
         CorrectDeviceAddress: "正确的设备地址"
@@ -86,7 +86,9 @@ export default {
         close: "关闭",
         cancel: "取消",
         passwordAstrict: "密码要求大写字母，小写字母，特殊符号，数字，并且最少8位不超过16位！",
-        deviceAddressAstrict: '设备地址只支持IPv4！'
+        deviceAddressAstrict: '设备地址只支持IPv4！',
+        Windows:"Windows",
+        Linux:"Linux",
 
     },
     message: {

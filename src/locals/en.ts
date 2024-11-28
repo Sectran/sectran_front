@@ -93,7 +93,11 @@ export default {
         close: "close",
         cancel: "cancel",
         passwordAstrict:'The password requires uppercase letters, lowercase letters, special symbols, numbers, and at least 8 characters and no more than 16 characters！',
-        deviceAddressAstrict:'The device address supports only IPv4'
+        deviceAddressAstrict:'The device address supports only IPv4',
+        Windows:"Windows",
+        Linux:"Linux",
+
+        
     },
     message: {
         success: "operate successfully"

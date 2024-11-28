@@ -1,8 +1,10 @@
 // import requests from `@/server/request`
 import requests from "@/server/request"
-let prefix1 = "/api1";
+// ${import.meta.env.VITE_Chard_FILE}
+let prefix1 = `${import.meta.env.VITE_PROXY_BASE_URL}`;
 // 第二个后端接口
-let prefix2 = "/api2";
+// ${import.meta.env.VITE_API_URL}
+let prefix2 = `${import.meta.env.VITE_PROXY_BASE_File}`;
 
 //部门
 export const listDepartment = <T>(data: T) => requests(`${prefix1}/department/list`, data, 'post', false)

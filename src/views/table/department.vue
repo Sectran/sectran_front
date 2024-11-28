@@ -16,24 +16,35 @@
                 <div class="tags-style">
                     <a-tag v-for="(item, index) in searchTags" :key="index" closable
                         @close="() => { searchTags.splice(index, 1); onSearch() }">
-                        <a-tooltip>
+                        <a-tooltip v-if="item.key === 'departmentId'">
+                            <template #title>{{ t(item.name) }}：{{ departmentOption.name }}</template>
+                            <span class="tags-style-text"> {{ t(item.name) }}：{{ departmentOption.name }}</span>
+                        </a-tooltip>
+
+                        <a-tooltip v-else>
                             <template #title>{{ t(item.name) }}：{{ item.value }}</template>
-                            <span class="tags-style-text">{{ t(item.name) }}：{{ item.value }}</span>
+                            <span class="tags-style-text"> {{ t(item.name) }}：{{ item.value }}</span>
                         </a-tooltip>
                     </a-tag>
                 </div>
                 <div class="input-text" v-if="searchModelItem">{{ t(searchModelItem.name) }} :</div>
-                <!-- v-show="searchModelItem?.key === 'name' || searchModelItem?.key === 'description'" -->
-                <a-input class="search-style-input" v-model:value="searchInputValue" :bordered="false"
-                    @pressEnter="onInputTag">
-                    <!-- <template #suffix>
-                        <SearchOutlined @click="onInputTag" />
-                    </template> -->
-                </a-input>
-                <!-- <a-cascader class="search-style-input" v-show="searchModelItem?.key === 'area'"
-                    v-model:value="searchcascaderValue" :bordered="false"
-                    :fieldNames="{ label: 'name', value: 'name', children: 'children' }" :options="TestJson"
-                    :show-search="{ filter }" @change="changeCascader" /> -->
+            
+                <a-select v-if="searchModelItem?.key == 'departmentId'" :key="departmentKey"
+                    v-model:value="extraSearchModel.departmentId"
+                    :placeholder='`${t("public.pleaseSelect")}${t("public.departmentName")}`' :filter-option="false"
+                    :not-found-content="searchDepartmentState.fetching ? undefined : null"
+                    :options="searchDepartmentState.data"
+                    @search="(value: string) => searchFun(value, searchDepartmentState, listDepartment, { deep: 0, id: user.department_id })"
+                    show-search :field-names="{ label: 'name', value: 'id' }"
+                    @change="(values: number, option: any) => departmentChange(values, option)" :bordered="false"
+                    class="search-style-input" :autoClearSearchValue="true">
+                    <template v-if="searchDepartmentState.fetching" #notFoundContent>
+                        <a-spin size="small" />
+                    </template>
+                </a-select>
+                <a-input v-else class="search-style-input" v-model:value="searchInputValue" :bordered="false"
+                    @pressEnter="onInputTag"></a-input>
+
             </div>
             <a-button :icon="h(SearchOutlined)" @click="onInputTag" type="primary">
                 {{ t('public.search') }}
@@ -143,6 +154,7 @@ import TestJson from "@/assets/json/region.json";
 import type { ShowSearchType } from 'ant-design-vue/es/cascader';
 import { SearchFronModel, Columns } from "@/common/type/type"
 import { useStore } from 'vuex'
+import { debounce } from 'lodash';
 const store = useStore()
 type Tableitem = {
     [key: string]: any
@@ -187,9 +199,9 @@ const searchTags = ref<SearchFronModel[]>([])
 let searchInputValue = ref<string | number>("")
 // let searchcascaderValue = ref<string[]>([])
 const searchFronModel: SearchFronModel[] = [
-    {
-        key: 'name',
-        name: "department.departmentName"
+{
+        key: 'departmentId',
+        name: "public.departmentName"
     }, {
         key: 'description',
         name: "department.departmentDescribe"
@@ -207,6 +219,38 @@ const onInputTag = () => {
         onSearch()
     }
 }
+let user = JSON.parse(localStorage.getItem('user') as string);
+const departmentState = reactive({
+    data: [],
+    fetching: false,
+});
+const searchDepartmentState = reactive({
+    data: [],
+    fetching: false,
+});
+let departmentOption = reactive<{ name: string }>({ name: "" })
+
+let extraSearchModel = {
+    departmentId: undefined
+}
+let departmentKey = ref<number>(1)
+const departmentChange = debounce((value: string, option: any) => {
+    searchInputValue.value = value;
+    console.log(value, option)
+    departmentOption = option
+    onInputTag()
+    extraSearchModel.departmentId = undefined
+    departmentKey.value++
+}, 500)
+const searchFun = debounce((value: string, State: any, api: Function, obj: any) => {
+    State.data = [];
+    State.fetching = true;
+    api({ page: 1, pageSize: 10, name: value, ...obj }).then((res: any) => {
+        let { data } = res.data
+        State.data = data;
+        State.fetching = false;
+    })
+}, 300);
 
 // const changeCascader = () => {
 //     if (searchcascaderValue.value) {
@@ -379,6 +423,7 @@ onMounted(async () => {
         columnsCheckboxArray.value = columnsData.map((item: Columns) => item.dataIndex)
     }
     changeColumnsCheckbox()
+    searchFun("", searchDepartmentState, listDepartment, { deep: 0, id: user.department_id });
 })
 
 const changeColumnsCheckbox = () => {
@@ -420,4 +465,9 @@ const columnsData: Columns[] = [
 
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+::v-deep(.ant-dropdown-link) {
+    width: 20px;
+    min-width: 20px;
+}
+</style>

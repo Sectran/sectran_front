@@ -91,12 +91,14 @@ const recursionMenu = (data: Router[]) => {
 </script>
 
 <style lang="less">
-// @primary-color: #f99; // 自定义的主题颜色
 * {
   padding: 0;
   margin: 0;
 }
 body{
   min-height: 600px;
+}
+input[aria-hidden=true]{
+    display: none !important;
 }
 </style>

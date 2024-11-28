@@ -24,10 +24,10 @@
                 <div class="Content-left " :style="{ width: `${leftWidth}px` }"
                     :class="[isSpread ? 'Content-left-lessen' : '', transitionClass ? 'transition-style' : '']">
                     <div class="Content-left-search">
-                        <div class="search-sty" v-if="!isSpread">
+                        <!-- <div class="search-sty" v-if="!isSpread">
                             <a-input :bordered="false" placeholder="" />
                             <SearchOutlined class="search-icon" />
-                        </div>
+                        </div> -->
                         <MenuUnfoldOutlined class="menu-icon" @click="isSpread = !isSpread" />
 
                     </div>
@@ -44,35 +44,31 @@
                             </div>
                             <template v-if="item.isUnfold">
 
-                                <div v-for="(child, ins) in item.children" :key="ins" class="tree-child-node"
-                                    @click="onOperatingSystem(child)">
+                                <div v-for="(child, ins) in item.children" :key="ins" class="tree-child-node">
                                     <!-- child.isUnfold = !child.isUnfold -->
-                                    <div>
+                                    <div @click="onOperatingSystem(child)">
                                         <DownOutlined v-if="child.isUnfold" class="unfold-icon" />
                                         <RightOutlined v-else class="unfold-icon" />
                                         {{ child.name }}({{ child.host }})
                                     </div>
                                     <template v-if="child.isUnfold">
                                         <div v-for="(childs, inss) in child.children" :key="inss"
-                                            class="tree-child-node" @click="onAccount(child.name, child.host, childs)">
+                                            class="tree-child-node"
+                                            @click="onAccount(child.name, child.host, childs.port, childs)">
                                             {{ childs.username }}
                                         </div>
                                     </template>
                                 </div>
                             </template>
                         </div>
-
                     </div>
-
                 </div>
                 <div class="resize-style" @mousedown="mouseDown"></div>
-
                 <div class="Content-right">
-
                     <!-- <xterm @connectResult="connectResult" :submitLoading="submitLoading.valueOf" /> -->
                     <div class="xterm-div" v-if="multiList.length !== 0">
                         <a-tabs v-model:activeKey="multiActiveKey" hide-add type="editable-card" :forceRender="false"
-                            @edit="onTabsEdit" style="width:100%">
+                            @edit="(key: number) => onTabsEdit(key, 3)" style="width:100%">
                             <a-tab-pane v-for="(item, index) in multiList" :key="item.key" :closable="true"
                                 class="tab-pane">
                                 <template #tab>
@@ -82,21 +78,19 @@
                                         </div>
                                         <template #overlay>
                                             <a-menu>
-                                                <a-menu-item key="1" @click="onTabsEdit(item.key)">关闭</a-menu-item>
+                                                <a-menu-item key="1" @click="onTabsEdit(item.key, 3)">关闭</a-menu-item>
                                                 <!-- <a-menu-item v-if="index !== 0" key="1"
                                                     @click="onTabsEdit(multiList[index - 1].key)">关闭左边</a-menu-item> -->
                                                 <a-menu-item v-if="index !== multiList.length - 1" key="2"
-                                                    @click="onTabsEdit(multiList[index + 1].key)">关闭右边</a-menu-item>
-                                                <a-menu-item key="3"
-                                                    @click="onTabsEdit(item.key, 'other')">关闭其他</a-menu-item>
-                                                <a-menu-item key="4"
-                                                    @click="onTabsEdit(item.key, 'all')">全部关闭</a-menu-item>
+                                                    @click="onTabsEdit(item.key, 0)">关闭右边</a-menu-item>
+                                                <a-menu-item key="3" @click="onTabsEdit(item.key, 1)">关闭其他</a-menu-item>
+                                                <a-menu-item key="4" @click="onTabsEdit(item.key, 2)">全部关闭</a-menu-item>
                                                 <a-menu-item key="5" @click="onTabAdd(item, index)">新建会话</a-menu-item>
                                             </a-menu>
                                         </template>
                                     </a-dropdown>
                                 </template>
-                                <xterm @connectResult="connectResult" :host="item.host"
+                                <xterm @connectResult="connectResult" :host="item.host" :port="item.port"
                                     :submitLoading="submitLoading.valueOf" :username="item.username"
                                     @tabName="(index: number, name: string) => multiList[index].name = name"
                                     :password="item.password" :index="index" />
@@ -203,10 +197,8 @@
                             {{ t("public.Submit") }}
                         </a-button>
                     </a-form-item>
-
                 </a-form>
             </a-watermark>
-            <!-- :loading="loading" -->
         </a-modal>
     </a-watermark>
 </template>
@@ -223,9 +215,8 @@ import {
 import { useI18n } from "vue-i18n";
 import { headMenu } from "./menu.ts"
 import { useStore } from 'vuex'
-// PlusSquareOutlined
 import { deviceList, accountList } from "@/api/admin"
-import { UploadOutlined, LockOutlined, SearchOutlined, RightOutlined, DownOutlined } from '@ant-design/icons-vue';
+import { UploadOutlined, LockOutlined, RightOutlined, DownOutlined } from '@ant-design/icons-vue';
 import xterm from "./components/xterm.vue"
 import { ExclamationCircleOutlined, } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
@@ -240,6 +231,8 @@ type MultiList = {
     password: string
     key: number
     host: string
+    port: number
+
 }
 type TableType = {
     name: string
@@ -283,7 +276,6 @@ const onOperatingSystem = async (item: any) => {
     if (!item.isUnfold && !item.children) {
         await accountList({ page: 1, pageSize: 100, deviceId: item.id }).then((res: { data: resTable<accounType[]> }) => {
             let { data } = res.data
-
             item.children = data
             console.log(item)
         })
@@ -291,9 +283,10 @@ const onOperatingSystem = async (item: any) => {
 
     item.isUnfold = !item.isUnfold
 }
-const onAccount = (name: string, host: string, childs: accounType) => {
+const onAccount = (name: string, host: string, port: number, childs: accounType) => {
     connectFormState.username = childs.username
     connectFormState.password = childs.password
+    connectFormState.port = port
     connectFormState.host = host
     connectName.value = name
     connectOpen.value = true
@@ -303,10 +296,10 @@ const onAccount = (name: string, host: string, childs: accounType) => {
 
 onMounted(() => {
     document.addEventListener('mouseup', handleMoveThrottled)
-    // window.addEventListener("beforeunload", (e: any) => {
-    //     e.returnValue = "您确定要离开吗？请确认是否保存您的更改。";
-    //     e.preventDefault();
-    // });
+    window.addEventListener("beforeunload", (e: any) => {
+        e.returnValue = "您确定要离开吗？请确认是否保存您的更改。";
+        e.preventDefault();
+    });
 
     for (let index = 0; index < treeData.value.length; index++) {
         deviceList({ page: 1, pageSize: 100, type: treeData.value[index].title }).then((res: { data: resTable<TableType[]> }) => {
@@ -354,17 +347,6 @@ const mouseUp = () => {
 // 鼠标释放节流事件
 const handleMoveThrottled = throttle(mouseUp, 0)
 
-
-// const onNode = () => {
-//     let username = localStorage.getItem('username');
-//     let password = localStorage.getItem('password');
-//     if (username && password) {
-//         connectFormState.username = username
-//         connectFormState.password = password
-//     }
-//     connectOpen.value = true;
-// };
-
 interface ConnectFormState {
     username: string;
     password: string;
@@ -372,6 +354,7 @@ interface ConnectFormState {
     network: number
     remember: boolean
     host: string
+    port: number
 }
 
 const connectFormState = reactive<ConnectFormState>({
@@ -381,12 +364,13 @@ const connectFormState = reactive<ConnectFormState>({
     network: 1,
     remember: false,
     host: "",
+    port: 0
 });
-let multiList = ref<MultiList[]>([])
+let multiList = ref<MultiList[]>([{ name: 13213 }, { name: 13213 }])
 const on_connectFinish = () => {
-    let { username, password, host } = connectFormState
+    let { username, password, host, port } = connectFormState
     soleKey.value++
-    multiList.value.push({ username, password, name: '', host, key: soleKey.value })
+    multiList.value.push({ username, password, name: '', host, key: soleKey.value, port })
     multiActiveKey.value = soleKey.value
     submitLoading.value = true
 };
@@ -399,38 +383,50 @@ const onTabAdd = (item: MultiList, index: number) => {
     multiActiveKey.value = soleKey.value
     submitLoading.value = true
 }
+/**
+ * 
+ * @param targetKey 当前的key
+ * @param type 关闭类型 0关闭右边 1关闭其他 2关闭全部 3关闭当前
+ */
+const onTabsEdit = (targetKey: number, type: number) => {
+    console.log(targetKey, type)
+    let targetKeyIndex = multiList.value.findIndex((item: MultiList) => item.key === targetKey)
 
-const onTabsEdit = (targetKey: number, type?: string) => {
-    if (type) {
-        Modal.confirm({
-            title: '再次确认',
-            icon: createVNode(ExclamationCircleOutlined),
-            content: `是否关闭${type === 'all' ? '全部' : '其他'}?`,
-            onOk() {
-                multiList.value = type === 'all' ? [] : multiList.value.filter((item: MultiList) => item.key === targetKey)
-                if (type === 'other') multiActiveKey.value = targetKey;
-            },
-            onCancel() { },
-        });
-        return
-    }
     Modal.confirm({
         title: '再次确认',
         icon: createVNode(ExclamationCircleOutlined),
-        content: '是否要关闭标签?',
+        content: `${['Close tabs to the right', 'Close other tabs', 'Close all'][type]}?`,
         onOk() {
-            let targetKeyIndex = multiList.value.findIndex((item: MultiList) => item.key === targetKey) - 1
-            multiList.value = multiList.value.filter((item: MultiList) => item.key !== targetKey)
-            if (multiList.value.length !== 0 && multiActiveKey.value === targetKey) {
-                if (targetKeyIndex >= 0) {
-                    multiActiveKey.value = multiList.value[targetKeyIndex].key;
-                } else {
-                    multiActiveKey.value = multiList.value[0].key;
-                }
+            switch (type) {
+                case 0:
+                    multiList.value = multiList.value.slice(0, targetKeyIndex + 1)
+                    // if(multiList.value.includes((item:MultiList)=>item.key === targetKey))
+                    break;
+                case 1:
+                    multiList.value = multiList.value.filter((item: MultiList) => item.key === targetKey)
+                    multiActiveKey.value = targetKey;
+                    break;
+                case 2:
+                    multiList.value = []
+                    multiActiveKey.value = 0
+                    break;
+                case 2:
+                    // let targetKeyIndex = multiList.value.findIndex((item: MultiList) => item.key === targetKey) - 1
+                    multiList.value = multiList.value.filter((item: MultiList) => item.key !== targetKey)
+                    if (multiList.value.length !== 0 && multiActiveKey.value === targetKey) {
+                        if (targetKeyIndex >= 0) {
+                            multiActiveKey.value = multiList.value[targetKeyIndex].key;
+                        } else {
+                            multiActiveKey.value = multiList.value[0].key;
+                        }
+                    }
+                    break;
+
             }
         },
         onCancel() { },
     });
+
 }
 
 

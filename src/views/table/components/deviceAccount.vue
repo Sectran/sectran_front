@@ -85,7 +85,7 @@
                 </a-space>
                 <a-space>
                     <a-button v-has="'/user/create'" :icon="h(PlusOutlined)" @click="modelOpen = true" type="primary">{{
-                            t('public.add')
+                        t('public.add')
                         }}</a-button>
                     <a-dropdown-button trigger='click'>
                         {{ t('public.columnShow') }}
@@ -114,18 +114,32 @@
                 <template #headerCell="{ column }">
                     <span>{{ t(column.title) }}</span>
                 </template>
-                <template #bodyCell="{ column, record }">
-
+                <template #bodyCell="{ column, record ,text}">
+                    <template v-if="column.dataIndex === 'username'">
+                        <a-button type="link" width="200">{{ text }}</a-button>
+                    </template>
                     <template v-if="column.dataIndex === 'createdAt' || column.dataIndex === 'updatedAt'">
                         {{ dayjs(record[column.dataIndex]).format("YYYY-MM-DD HH:mm:ss") }}
+                    </template>
+                    <template v-if="column.dataIndex === 'protocol'">
+                        {{ ["",
+                            "SSH",
+                            "RDP",
+                            "VNV",
+                            "SFTP",
+                            "FTP",
+                            "MySQL",
+                            "Oracle",
+                            "Redis",][record[column.dataIndex]]
+                        }}
                     </template>
                     <template v-if="column.dataIndex === 'operation'">
                         <a-space :size="8">
                             <a-button type="link" v-has="'/user/update'" @click="onRedact(record)">{{ t('public.redact')
                                 }}</a-button>
                             <a-button type="link" v-has="'/user/delete'" danger @click="handleDelete([record.id])">{{
-                            t('public.delete')
-                        }}</a-button>
+                                t('public.delete')
+                            }}</a-button>
                         </a-space>
                     </template>
                 </template>
@@ -180,7 +194,7 @@
 
 <script setup lang="ts">
 import { useTableHooks } from "@/hooks/useTableHooks"
-import { ref, reactive, h, onMounted ,onBeforeMount} from 'vue';
+import { ref, reactive, h, onMounted, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n'
 import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
 import { accountCreate, accountList, accountDelete, accountUpdate } from "@/api/admin"
@@ -193,7 +207,7 @@ import { useStore } from 'vuex'
 const store = useStore()
 const props = defineProps(['deviceId']);
 
-let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, on_search, fromreset, handleDelete, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox, onInputTag ,closePaging} = useTableHooks({ listApi: accountList, deleteApi: accountDelete });
+let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, on_search, fromreset, handleDelete, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox, onInputTag, closePaging } = useTableHooks({ listApi: accountList, deleteApi: accountDelete }, undefined, { deviceId: props.deviceId });
 const { t } = useI18n()
 const id = ref<number | undefined>(undefined);
 type tableType = {
@@ -211,6 +225,7 @@ type formStateType = {
 }
 
 const modelOpen = ref<boolean>(false);
+console.log(props.deviceId)
 const formState = reactive<formStateType>({
     deviceId: Number(props.deviceId),
     username: "",
@@ -253,13 +268,13 @@ const searchFronModel: SearchFronModel[] = [
         name: "device.deviceUsername"
     }
 ]
-onBeforeMount(()=>{
+onBeforeMount(() => {
     console.log(1)
     // closePaging()
 })
 onMounted(() => {
-   
-  
+
+
     initializeSearchTable(searchFronModel, columnsData, 'deviceUserColumnsStorage')
 })
 
