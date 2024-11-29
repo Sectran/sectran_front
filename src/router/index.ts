@@ -12,7 +12,6 @@ const routes = [
   },
   ...outsideLayout,
   // ...layoutRouter
-  
 ];
 
 const router = createRouter({

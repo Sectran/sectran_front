@@ -2,7 +2,7 @@
 //tabs的处理
 type tabsArrType = {
     tabsArr: tabsType[],
-    pitchTabs: string
+    pitchTabs: string | undefined
 }
 type tabsType = {
     title: string,
@@ -15,7 +15,7 @@ export default {
     state: {
         //tabs数组
         tabsArr: [],
-        pitchTabs: ''
+        pitchTabs: undefined
     },
     mutations: {
         /**
@@ -38,15 +38,42 @@ export default {
             state.pitchTabs = name
         },
         /**
-         * 删除tabs
+         * 右键操作tbas
          * @param state 
-         * @param name 当前删除的name
-         * @param routeName 当前路由的name
+         * @param targetKey 当前操作的key
+         * @param type 关闭类型 0关闭右边 1关闭其他 2关闭全部 3关闭当前
          */
-        deleteTabsArr(state: tabsArrType, nameObj: { name: string, routeName: string }) {
-            let { name, routeName } = nameObj
-            state.tabsArr.splice(state.tabsArr.findIndex(item => item.name === nameObj.name), 1)
-            store.commit('tabsStore/isDeleteAtPresenttabs', { name, routeName })
+
+        deleteTabsArr(state: tabsArrType, nameObj: { targetKey: string, type: number }) {
+            let { targetKey, type } = nameObj
+
+            // state.tabsArr.splice(state.tabsArr.findIndex(item => item.name === nameObj.name), 1)
+            let targetKeyIndex = state.tabsArr.findIndex((item: tabsType) => item.name === targetKey)
+            switch (type) {
+                case 0:
+                    state.tabsArr.splice(targetKeyIndex + 1)
+                    if (!state.tabsArr.some((item: tabsType) => item.name === state.pitchTabs)) {
+                        state.pitchTabs = state.tabsArr.at(-1)?.name
+                    }
+                    break;
+                case 1:
+                    state.tabsArr = state.tabsArr.filter((item: tabsType) => item.name === targetKey)
+                    state.pitchTabs = targetKey;
+                    break;
+                case 2:
+                    state.tabsArr = []
+                    state.pitchTabs = undefined
+                    break;
+                case 3:
+                    state.tabsArr.splice(targetKeyIndex, 1)
+                    if (targetKey === state.pitchTabs) {
+                        state.pitchTabs = state.tabsArr.at(-1)?.name
+                    }
+            }
+
+
+
+
         },
         /**
          * 点击右键菜单

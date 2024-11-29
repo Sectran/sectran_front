@@ -13,7 +13,8 @@
                 @click="store.commit('globalConfiguration/compactMutations')" class="nav-icon nav-right-space" />
             <FullscreenExitOutlined v-else @click="store.commit('globalConfiguration/compactMutations')"
                 class="nav-icon nav-right-space" /> -->
-            <LaptopOutlined class="nav-icon nav-right-space" @click="on_terminal" />
+            <WindowsOutlined class="nav-icon nav-right-space" @click="onOutsideChain('/sftp')" />
+            <LaptopOutlined class="nav-icon nav-right-space" @click="onOutsideChain('/terminal')" />
             <BulbOutlined @click="on_theme" class="nav-icon nav-right-space" />
             <a-dropdown>
                 <TranslationOutlined @click.prevent class="nav-icon nav-right-space" />
@@ -76,6 +77,7 @@ import {
     BulbOutlined,
     LaptopOutlined,
     UserOutlined,
+    WindowsOutlined
     // FullscreenExitOutlined,
     // FullscreenOutlined
 } from "@ant-design/icons-vue";
@@ -163,13 +165,15 @@ const on_color = (item: themeColorsType) => {
 const on_theme = () => {
     store.commit('globalConfiguration/alterTheme')
 }
-const on_terminal = () => {
+
+const onOutsideChain = (path:string) =>{
     const url = router.resolve({
-        path: '/terminal',
+        path ,
     });
     window.open(url.href);
     // router.replace('/admin/user',)
 }
+
 
 const onMenu: MenuProps['onClick'] = ({ key }) => {
     switch (key) {
