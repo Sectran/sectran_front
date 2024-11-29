@@ -86,7 +86,7 @@
                 <a-space>
                     <a-button v-has="'/user/create'" :icon="h(PlusOutlined)" @click="modelOpen = true" type="primary">{{
                         t('public.add')
-                        }}</a-button>
+                    }}</a-button>
                     <a-dropdown-button trigger='click'>
                         {{ t('public.columnShow') }}
                         <template #overlay>
@@ -132,7 +132,7 @@
                                 }}</a-button>
                             <a-button type="link" v-has="'/user/delete'" danger @click="handleDelete([record.id])">{{
                                 t('public.delete')
-                            }}</a-button>
+                                }}</a-button>
                         </a-space>
                     </template>
                 </template>
@@ -152,14 +152,14 @@
                             :placeholder='`${t("public.pleaseInput")}${t("device.deviceUsername")}`' />
                     </a-form-item>
                     <a-form-item :label="t('user.password')" name="password"
-                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
+                        :rules="[{ required:  !formState.privateKey, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
                         <a-input-password v-model:value="formState.password" autocomplete="off"
                             :placeholder='`${t("public.pleaseInput")}${t("user.password")}`' />
                     </a-form-item>
                     <a-form-item :label="t('device.Protocol')" name="protocol"
                         :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.Protocol')}` }]">
 
-                        <a-select v-model:value="formState.protocol" class="w100 ">
+                        <a-select v-model:value="formState.protocol" class="w100 " @change="changeProtocol">
                             <a-select-option v-for="item in agreementArr" :value="item.value">{{ item.name
                                 }}</a-select-option>
 
@@ -176,9 +176,12 @@
                             :placeholder='`${t("public.pleaseInput")}${t("device.Port")}`' />
                     </a-form-item>
                     <a-form-item :label="t('device.PrivateKey')" name="privateKey"
-                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.PrivateKey')}` }]">
+                    
+                        :rules="[{ required: !formState.password, message: `${t('public.pleaseInput')}${t('device.PrivateKey')}` }]"
+                        
+                        >
                         <div style="display: flex;">
-                            <a-textarea class="" :autosize="false" v-model:value="formState.privateKey">
+                            <a-textarea  :autosize="false" v-model:value="formState.privateKey">
                             </a-textarea>
                             <a-form-item-rest>
                                 <a-upload name="file" :file-list="[]">
@@ -188,14 +191,9 @@
                                 </a-upload>
                             </a-form-item-rest>
                         </div>
-
-                        <!-- 
-                        <a-input v-model:value="formState.privateKey"
-                            :placeholder='`${t("public.pleaseInput")}${t("device.PrivateKey")}`' /> -->
                     </a-form-item>
 
-                    <a-form-item :label="t('device.privateKeyPassword')" name="username"
-                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.privateKeyPassword')}` }]">
+                    <a-form-item :label="t('device.privateKeyPassword')" name="username">
                         <a-input v-model:value="formState.privateKeyPassword"
                             :placeholder='`${t("public.pleaseInput")}${t("device.privateKeyPassword")}`' />
                     </a-form-item>
@@ -241,9 +239,9 @@ type formStateType = {
     [key: string]: any
     deviceId: Number | undefined
     username: string
-    protocol: Number
+    protocol: Number | undefined
     privateKey: string
-    port: Number
+    port: Number | undefined
     password: string
 }
 
@@ -252,9 +250,9 @@ console.log(props.deviceId)
 const formState = reactive<formStateType>({
     deviceId: Number(props.deviceId),
     username: "",
-    protocol: 0,
+    protocol: undefined,
     privateKey: "",
-    port: 0,
+    port: undefined,
     password: ""
 });
 
@@ -310,7 +308,7 @@ const onRedact = (record: tableType) => {
 
 let agreementArr = ref([
     { name: "SSH", value: 1 },
-    // { name: "RDP", value: 2 },
+    { name: "RDP", value: 2 },
     // { name: "VNV", value: 3 },
     // { name: "SFTP", value: 4 },
     // { name: "FTP", value: 5 },
@@ -318,6 +316,14 @@ let agreementArr = ref([
     // { name: "Oracle", value: 7 },
     // { name: "Redis", value: 8},
 ])
+
+const changeProtocol = (value:number) =>{
+    if(value === 1) {
+        formState.port = 22
+    }else if(value === 2) {
+        formState.port = 3389
+    }
+}
 
 const agreement = () => {
     // retu
