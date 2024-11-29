@@ -246,7 +246,7 @@ let isSpread = ref<boolean>(false);
 let connectOpen = ref<Boolean>(false);
 let connectName = ref<string>('')
 const submitLoading = ref<Boolean>(false);
-const multiActiveKey = ref(1);
+const multiActiveKey = ref<undefined | number>(undefined);
 const soleKey = ref<number>(0);
 
 
@@ -366,7 +366,7 @@ const connectFormState = reactive<ConnectFormState>({
     host: "",
     port: 0
 });
-let multiList = ref<MultiList[]>([{ name: 13213 }, { name: 13213 }])
+let multiList = ref<MultiList[]>([])
 const on_connectFinish = () => {
     let { username, password, host, port } = connectFormState
     soleKey.value++
@@ -385,7 +385,7 @@ const onTabAdd = (item: MultiList, index: number) => {
 }
 /**
  * 
- * @param targetKey 当前的key
+ * @param targetKey 当前操作的key
  * @param type 关闭类型 0关闭右边 1关闭其他 2关闭全部 3关闭当前
  */
 const onTabsEdit = (targetKey: number, type: number) => {
@@ -395,12 +395,15 @@ const onTabsEdit = (targetKey: number, type: number) => {
     Modal.confirm({
         title: '再次确认',
         icon: createVNode(ExclamationCircleOutlined),
-        content: `${['Close tabs to the right', 'Close other tabs', 'Close all'][type]}?`,
+        content: `${['Close tabs to the right', 'Close other tabs', 'Close all','Close at present'][type]}?`,
         onOk() {
             switch (type) {
                 case 0:
-                    multiList.value = multiList.value.slice(0, targetKeyIndex + 1)
-                    // if(multiList.value.includes((item:MultiList)=>item.key === targetKey))
+                    multiList.value.splice(targetKeyIndex + 1)
+                    if (!multiList.value.some((item: MultiList) => item.key === multiActiveKey.value)) {
+                        console.log(multiList.value.at(-1)?.key)
+                        multiActiveKey.value = multiList.value.at(-1)?.key
+                    }
                     break;
                 case 1:
                     multiList.value = multiList.value.filter((item: MultiList) => item.key === targetKey)
@@ -408,20 +411,13 @@ const onTabsEdit = (targetKey: number, type: number) => {
                     break;
                 case 2:
                     multiList.value = []
-                    multiActiveKey.value = 0
+                    multiActiveKey.value = undefined
                     break;
-                case 2:
-                    // let targetKeyIndex = multiList.value.findIndex((item: MultiList) => item.key === targetKey) - 1
-                    multiList.value = multiList.value.filter((item: MultiList) => item.key !== targetKey)
-                    if (multiList.value.length !== 0 && multiActiveKey.value === targetKey) {
-                        if (targetKeyIndex >= 0) {
-                            multiActiveKey.value = multiList.value[targetKeyIndex].key;
-                        } else {
-                            multiActiveKey.value = multiList.value[0].key;
-                        }
+                case 3:
+                    multiList.value.splice(targetKeyIndex, 1)
+                    if (targetKey === multiActiveKey.value) {
+                        multiActiveKey.value = multiList.value.at(-1)?.key
                     }
-                    break;
-
             }
         },
         onCancel() { },

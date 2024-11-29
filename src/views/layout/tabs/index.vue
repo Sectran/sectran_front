@@ -1,28 +1,40 @@
 <template>
     <div class="tabs-style">
         <a-tabs v-model:activeKey="store.state.tabsStore.pitchTabs" hide-add type="editable-card" @tabClick="on_tabs"
-            @edit="on_edit">
+            @edit="(value: string) => onTabsEdit(value, 3)">
             <a-tab-pane v-for="(pane, index) in store.state.tabsStore.tabsArr" :key="pane.name">
                 <!-- :tab="t(`menu.${pane.title}`)" -->
                 <template #tab>
-                    <span @contextmenu="rightClicked($event, index)">
-                        {{ t(`menu.${pane.title}`) }}
-                    </span>
+                    <a-dropdown :trigger="['contextmenu']">
+                        <!-- @contextmenu="rightClicked($event, index)" -->
+                        <span>
+                            {{ t(`menu.${pane.title}`) }}
+                        </span>
+                        <template #overlay>
+                            <a-menu>
+                                <a-menu-item @click="onTabsEdit(pane.name, 3)">关闭</a-menu-item>
+                                <a-menu-item v-if="index !== store.state.tabsStore.tabsArr.length - 1"
+                                    @click="onTabsEdit(pane.key, 0)">关闭右边</a-menu-item>
+                                <a-menu-item @click="onTabsEdit(pane.name, 1)">关闭其他</a-menu-item>
+                                <a-menu-item @click="onTabsEdit(pane.name, 2)">全部关闭</a-menu-item>
+                            </a-menu>
+                        </template>
+                    </a-dropdown>
                 </template>
             </a-tab-pane>
-
         </a-tabs>
         <!-- -->
     </div>
-    <div :class="{ isShow: myMenuVisible }" class="myMenu">
+    <!-- <div :class="{ isShow: myMenuVisible }" class="myMenu">
         <ul>
             <li v-show="store.state.tabsStore.tabsArr.length !== 1" @click.stop="close('others')">关闭其他</li>
             <li v-show="rightClickIndex !== 0" @click.stop="close('left')">关闭左侧标签</li>
-            <li v-show="rightClickIndex !== store.state.tabsStore.tabsArr.length - 1" @click.stop="close('right')">关闭右侧标签
+            <li v-show="rightClickIndex !== store.state.tabsStore.tabsArr.length - 1" @click.stop="close('right')">
+                关闭右侧标签
             </li>
             <li @click.stop="close('all')">全部关闭</li>
         </ul>
-    </div>
+    </div> -->
 
 </template>
 
@@ -34,7 +46,6 @@ const { t } = useI18n()
 const store = useStore()
 const route = useRoute();
 const router = useRouter();
-import { ref } from "vue"
 /**
  * 点击tabs
  * @param key key值
@@ -44,36 +55,17 @@ const on_tabs = (key: string) => {
     router.push(key)
     store.commit('tabsStore/pitchTabsChange', key)
 }
+
 /**
- * 删除tabs页
- * @param key  key值
+ * 
+ * @param name 当前操作的key
+ * @param type 关闭类型 0关闭右边 1关闭其他 2关闭全部 3关闭当前
  */
-const on_edit = (key: string) => {
-    console.log(route.name)
-    store.commit('tabsStore/deleteTabsArr', { name: key, routeName: route.name })
+const onTabsEdit = (name: string, type: number) => {
+    console.log(name)
+    console.log(type)
+    store.commit('tabsStore/deleteTabsArr', { targetKey: name, type: type })
 }
-
-
-//右键菜单
-const rightClickIndex = ref<number>(0);
-let myMenuVisible = ref<boolean>(false); //表示是否显示右键的菜单栏
-const rightClicked = (e: any, index: number) => {
-    rightClickIndex.value = index
-    e.preventDefault();
-    myMenuVisible.value = true;
-    let myMenu: any = document.querySelector(".myMenu");
-    myMenu.style.top = `${e.clientY}px`;
-    myMenu.style.left = `${e.clientX}px`;
-};
-document.addEventListener("click", () => {
-    myMenuVisible.value = false;
-});
-//点了自定义菜单的操作
-const close = (clickType: string) => {
-    console.log(rightClickIndex.value)
-    store.commit('tabsStore/onRightClick', { clickType, rightClickIndex: rightClickIndex.value,routeName:route.name })
-    myMenuVisible.value = false;
-};
 
 </script>
 
