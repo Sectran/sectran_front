@@ -309,14 +309,14 @@ const onRedact = (record: tableType) => {
 }
 
 let agreementArr = ref([
-    { name: "SSH", value: "1" },
-    { name: "RDP", value: "2" },
-    { name: "VNV", value: "3" },
-    { name: "SFTP", value: "4" },
-    { name: "FTP", value: "5" },
-    { name: "MySQL", value: "6" },
-    { name: "Oracle", value: "7" },
-    { name: "Redis", value: "8" },
+    { name: "SSH", value: 1 },
+    // { name: "RDP", value: 2 },
+    // { name: "VNV", value: 3 },
+    // { name: "SFTP", value: 4 },
+    // { name: "FTP", value: 5 },
+    // { name: "MySQL", value: 6 },
+    // { name: "Oracle", value: 7 },
+    // { name: "Redis", value: 8},
 ])
 
 const agreement = () => {
