@@ -48,9 +48,89 @@
 <script lang="ts" setup>
 import { ref, onMounted, } from "vue";
 import { RightOutlined } from '@ant-design/icons-vue';
+import { initSocket } from "@/common/method/socket"
+import { secterm, } from "@/../secterm/secterm";
+import {
+    sectermConnectRequest,
+    sectermFileListReq
+    // sectermTeminalResize,
+    // sectermTeminalCharacters,
+    // sectermFileUploadReq,
+    // sectermFileUploadFulfilleTheAllReq,
+    // sectermFileCancelUploadReq
+} from "@/common/method/proto";
+const emit = defineEmits(["connectResult", 'tabName']);
+const props = defineProps<{
+    username: string
+    password: string
+    submitLoading: boolean
+    host: string
+    index: number
+    port: number
+
+}>();
 onMounted(() => {
-    console.log('3.-组件挂载到页面之后执行-------onMounted,index')
+    socketConnect()
 })
+const v1 = secterm.v1;
+let websocket = <any>(null);
+let path = ref<string>(import.meta.env.VITE_Chard_Addr);
+const socketConnect = () => {
+    let socket = initSocket(path.value, 5000, 'arraybuffer', onOpen, onData, onError, onClose);
+    websocket = socket
+}
+
+const onOpen = () => {
+    const token: string | null = localStorage.getItem("token");
+    let connectParams = {
+        protocol: v1.SectermProtocols.SECTERM_SFTP,
+        token: token,
+        unmanaged: true,
+        username: props.username,
+        hostname: props.host,
+        port: props.port,
+        password: props.password,
+    };
+    console.log(connectParams)
+    sectermConnectRequest(connectParams, websocket);
+
+
+};
+
+const onData = async (msg: any) => {
+    let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
+
+    if (sm.secConnect) return connectManage(sm?.secConnect);
+    // if (sm?.secTerminal) return terminalManage(sm?.secTerminal)
+    // if (sm?.secFile) return fileManage(sm?.secFile)
+    console.log(sm, "未知的消息类型")
+};
+
+const connectManage = (sm: secterm.v1.ISectermConnectMessage) => {
+    if (sm.connectRes?.code != v1.SectermCode.LOGON_SUCCESS) {
+        console.log("connect error deu to " + sm.connectRes?.code);
+    } else {
+      
+        if (props.submitLoading) {
+            emit("connectResult", false);
+            localStorage.setItem("username", props.username);
+            localStorage.setItem("password", props.password);
+        }
+    }
+    sectermFileListReq("/", websocket)
+    console.log("connect success!");
+}
+
+const onError = () => {
+    if (props.submitLoading) {
+        // emit("connectResult", true);
+    }
+    // message.error(t("socket.error"));
+};
+const onClose = () => {
+    console.log("socket已经关闭");
+};
+
 
 type catalogueManagementTtype = {
     name: string

@@ -2,8 +2,8 @@ import { secterm } from "../../../secterm/secterm";
 let intNume = 0
 const v1 = secterm.v1
 type SectermTerminalResize = {
-    Colums: number
-    Rows: number
+    Colums?: number
+    Rows?: number
 }
 type SectermConnectRequest = {
     token: string | null
@@ -12,6 +12,7 @@ type SectermConnectRequest = {
     hostname: string
     port: number
     password: string
+    protocol:number
 } & SectermTerminalResize
 //连接socket
 export const sectermConnectRequest = (connectParams: SectermConnectRequest, websocket: WebSocket) => {
@@ -29,6 +30,7 @@ export const sectermConnectRequest = (connectParams: SectermConnectRequest, webs
         password: credentialPassword,
         hostname: connectParams.hostname,
         port: connectParams.port,
+        protocol: connectParams.protocol,
     };
 
     console.log(connectRequest)
@@ -45,15 +47,16 @@ export const sectermConnectRequest = (connectParams: SectermConnectRequest, webs
 export const sectermTeminalResize = (resizeParams: SectermTerminalResize, websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
     let resize = new v1.SectermTerminalResize()
-    resize.colums = resizeParams.Colums
-    resize.rows = resizeParams.Rows
+    if(resizeParams?.Colums && resizeParams?.Rows) {
+        resize.colums = resizeParams?.Colums
+        resize.rows = resizeParams?.Rows
+    }
+
     if (sectermMessage.secTerminal) sectermMessage.secTerminal.resize = resize
     else sectermMessage.secTerminal = { resize: resize }
     resize = resize
     let resizeData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(resizeData, websocket)
-
-
 }
 
 //xterm输入
@@ -66,6 +69,8 @@ export const sectermTeminalCharacters = (data: any, websocket: WebSocket) => {
     let charactersData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(charactersData, websocket)
 }
+
+
 
 /**
  * 单文件上传成功
@@ -112,18 +117,22 @@ export const sectermFileCancelUploadReq = (websocket: WebSocket) => {
     transmitWebSocket(fileUploadcancelDataReq, websocket)
 }
 
+
 /**
  * 目录查询
  * @param path 目录路径
  * @param websocket 
  * 
  */
-export const sectermTeminalCatalog = (path: string, websocket: WebSocket) => {
+export const sectermFileListReq = (path: string, websocket: WebSocket) => {
+    console.log('sectermFileListReq')
     let sectermMessage = new v1.SectermMessage();
-    let filePath = new v1.SectermFileListRequest()
-    filePath.dirPath = path
-    let filePathData = v1.SectermMessage.encode(sectermMessage).finish();
-    transmitWebSocket(filePathData, websocket)
+    let fileList = new v1.SectermFileListRequest()
+    fileList.dirPath = path
+    if(sectermMessage.secFile) sectermMessage.secFile.fileListReq = fileList
+    else sectermMessage.secFile = { fileListReq: fileList }
+    let fileListData = v1.SectermMessage.encode(sectermMessage).finish();
+    transmitWebSocket(fileListData, websocket)
 }
 
 /**

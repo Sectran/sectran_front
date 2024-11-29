@@ -53,7 +53,8 @@ export default {
         PrivateKey: "PrivateKey",
         PrivateKeyPassword: "privateKeyPassword",
         bindAccount: "Bind account",
-        CorrectDeviceAddress: "correct deviceAddress"
+        CorrectDeviceAddress: "correct deviceAddress",
+        privateKeyPassword:"privateKeyPassword"
     },
 
     asideMenu: {

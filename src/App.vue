@@ -101,4 +101,10 @@ body{
 input[aria-hidden=true]{
     display: none !important;
 }
+.ant-table-cell {
+  .ant-btn {
+        padding: 0 !important;
+    }
+}
+
 </style>

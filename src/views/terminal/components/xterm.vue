@@ -298,14 +298,16 @@ const onOpen = () => {
     let { cols, rows } = term;
     const token: string | null = localStorage.getItem("token");
     let connectParams = {
+        protocol :v1.SectermProtocols.SECTERM_SSH,
         token: token,
         Colums: cols,
         Rows: rows,
         unmanaged: true,
         username: props.username,
         hostname: props.host,
-        port: 22,
+        port: props.port,
         password: props.password,
+
     };
     console.log(connectParams)
     sectermConnectRequest(connectParams, websocket);

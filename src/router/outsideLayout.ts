@@ -9,14 +9,7 @@ export const LinkConfiguration = [{
   meta: {
     title: '连接配置',
   },
-},{
-  path: '/sftp',
-  name: 'sftp',
-  component: () => import(/* webpackChunkName: "login" */ 'views/sftp/index.vue'),
-  meta: {
-    title: '连接配置',
-  },
-},];
+}];
 
 
 export default LinkConfiguration;

@@ -94,7 +94,7 @@
                 </template>
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'operation'">
-                        <a-space :size="8">
+                        <a-space :size="18">
                             <a-button type="link" @click="onRedact(record)">{{ t('public.redact') }}</a-button>
                             <a-button type="link" @click="editLimits(record.id)">{{ t('role.permissionlist')
                                 }}</a-button>

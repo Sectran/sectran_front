@@ -48,10 +48,11 @@ export default {
         IsAdministrator: "是否管理员",
         Port: "端口",
         Protocol: "协议",
-        // PrivateKey: "私钥",
+        PrivateKey: "私钥",
         PrivateKeyPassword: "key密码",
         bindAccount: "绑定账号",
-        CorrectDeviceAddress: "正确的设备地址"
+        CorrectDeviceAddress: "正确的设备地址",
+        privateKeyPassword: "私钥口令"
     },
     role: {
         roleName: "角色名",
@@ -62,7 +63,7 @@ export default {
     public: {
         Submit: '提 交',
         delete: '删 除',
-        type:"类 型",
+        type: "类 型",
         deleteInBatches: '删除',
         add: '新 增',
         redact: '编 辑',
@@ -87,8 +88,8 @@ export default {
         cancel: "取消",
         passwordAstrict: "密码要求大写字母，小写字母，特殊符号，数字，并且最少8位不超过16位！",
         deviceAddressAstrict: '设备地址只支持IPv4！',
-        Windows:"Windows",
-        Linux:"Linux",
+        Windows: "Windows",
+        Linux: "Linux",
 
     },
     message: {

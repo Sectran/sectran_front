@@ -114,7 +114,7 @@
                 <template #headerCell="{ column }">
                     <span>{{ t(column.title) }}</span>
                 </template>
-                <template #bodyCell="{ column, record ,text}">
+                <template #bodyCell="{ column, record, text }">
                     <template v-if="column.dataIndex === 'username'">
                         <a-button type="link" width="200">{{ text }}</a-button>
                     </template>
@@ -122,19 +122,12 @@
                         {{ dayjs(record[column.dataIndex]).format("YYYY-MM-DD HH:mm:ss") }}
                     </template>
                     <template v-if="column.dataIndex === 'protocol'">
-                        {{ ["",
-                            "SSH",
-                            "RDP",
-                            "VNV",
-                            "SFTP",
-                            "FTP",
-                            "MySQL",
-                            "Oracle",
-                            "Redis",][record[column.dataIndex]]
+                        {{
+                            agreementArr.find((item: any) => item.value === record[column.dataIndex])?.name
                         }}
                     </template>
                     <template v-if="column.dataIndex === 'operation'">
-                        <a-space :size="8">
+                        <a-space :size="18">
                             <a-button type="link" v-has="'/user/update'" @click="onRedact(record)">{{ t('public.redact')
                                 }}</a-button>
                             <a-button type="link" v-has="'/user/delete'" danger @click="handleDelete([record.id])">{{
@@ -158,26 +151,56 @@
                         <a-input v-model:value="formState.username"
                             :placeholder='`${t("public.pleaseInput")}${t("device.deviceUsername")}`' />
                     </a-form-item>
+                    <a-form-item :label="t('user.password')" name="password"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
+                        <a-input-password v-model:value="formState.password" autocomplete="off"
+                            :placeholder='`${t("public.pleaseInput")}${t("user.password")}`' />
+                    </a-form-item>
                     <a-form-item :label="t('device.Protocol')" name="protocol"
                         :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.Protocol')}` }]">
-                        <a-input-number :min="1" :max="65535" v-model:value="formState.protocol" class="input-width100"
-                            :placeholder='`${t("public.pleaseInput")}${t("device.Protocol")}`' />
-                    </a-form-item>
-                    <a-form-item :label="t('device.PrivateKey')" name="privateKey"
-                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.PrivateKey')}` }]">
-                        <a-input v-model:value="formState.privateKey"
-                            :placeholder='`${t("public.pleaseInput")}${t("device.PrivateKey")}`' />
+
+                        <a-select v-model:value="formState.protocol" class="w100 ">
+                            <a-select-option v-for="item in agreementArr" :value="item.value">{{ item.name
+                                }}</a-select-option>
+
+                        </a-select>
+
+                        <!-- <a-input-number :min="1" :max="65535" v-model:value="formState.protocol" class="input-width100"
+                            :placeholder='`${t("public.pleaseInput")}${t("device.Protocol")}`' /> -->
+
+
                     </a-form-item>
                     <a-form-item :label="t('device.Port')" name="port"
                         :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.Port')}` }]">
                         <a-input-number :min="1" v-model:value="formState.port" class="input-width100"
                             :placeholder='`${t("public.pleaseInput")}${t("device.Port")}`' />
                     </a-form-item>
-                    <a-form-item :label="t('user.password')" name="password"
-                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
-                        <a-input-password v-model:value="formState.password" autocomplete="off"
-                            :placeholder='`${t("public.pleaseInput")}${t("user.password")}`' />
+                    <a-form-item :label="t('device.PrivateKey')" name="privateKey"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.PrivateKey')}` }]">
+                        <div style="display: flex;">
+                            <a-textarea class="" :autosize="false" v-model:value="formState.privateKey">
+                            </a-textarea>
+                            <a-form-item-rest>
+                                <a-upload name="file" :file-list="[]">
+                                    <a-button>
+                                        <upload-outlined></upload-outlined>
+                                    </a-button>
+                                </a-upload>
+                            </a-form-item-rest>
+                        </div>
+
+                        <!-- 
+                        <a-input v-model:value="formState.privateKey"
+                            :placeholder='`${t("public.pleaseInput")}${t("device.PrivateKey")}`' /> -->
                     </a-form-item>
+
+                    <a-form-item :label="t('device.privateKeyPassword')" name="username"
+                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.privateKeyPassword')}` }]">
+                        <a-input v-model:value="formState.privateKeyPassword"
+                            :placeholder='`${t("public.pleaseInput")}${t("device.privateKeyPassword")}`' />
+                    </a-form-item>
+
+
                     <div class="pop-button">
                         <a-button @click="() => { modelOpen = false }" class="search-button-right " tml-type="submit">
                             {{ t('public.cancel') }}
@@ -198,7 +221,7 @@ import { ref, reactive, h, onMounted, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n'
 import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
 import { accountCreate, accountList, accountDelete, accountUpdate } from "@/api/admin"
-import { SearchOutlined, PlusOutlined, SyncOutlined, DownOutlined } from '@ant-design/icons-vue';
+import { SearchOutlined, PlusOutlined, SyncOutlined, DownOutlined, UploadOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import dayjs from 'dayjs';
 import { SearchFronModel, } from "@/common/type/type"
@@ -284,6 +307,26 @@ const onRedact = (record: tableType) => {
     id.value = record.id
     modelOpen.value = true
 }
+
+let agreementArr = ref([
+    { name: "SSH", value: "1" },
+    { name: "RDP", value: "2" },
+    { name: "VNV", value: "3" },
+    { name: "SFTP", value: "4" },
+    { name: "FTP", value: "5" },
+    { name: "MySQL", value: "6" },
+    { name: "Oracle", value: "7" },
+    { name: "Redis", value: "8" },
+])
+
+const agreement = () => {
+    // retu
+
+}
+
+
+
+
 const onFinish = () => {
     let api = accountCreate
     let fromData: any = { ...formState }
@@ -300,4 +343,12 @@ const onFinish = () => {
 
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+::v-deep(.ant-upload) {
+    height: 100%;
+}
+
+::v-deep(.ant-btn) {
+    height: 100%;
+}
+</style>

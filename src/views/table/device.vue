@@ -32,7 +32,6 @@
                             <template #title>{{ t(item.name) }}：{{ departmentOption.name }}</template>
                             <span class="tags-style-text"> {{ t(item.name) }}：{{ departmentOption.name }}</span>
                         </a-tooltip>
-
                         <a-tooltip v-else>
                             <template #title>{{ t(item.name) }}：{{ item.value }}</template>
                             <span class="tags-style-text"> {{ t(item.name) }}：{{ item.value }}</span>
@@ -106,7 +105,7 @@
 
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'operation'">
-                        <a-space :size="8">
+                        <a-space :size="18">
                             <a-button type="link" @click="onOperate(record)">{{ t('public.redact') }}</a-button>
                             <a-button type="link" danger @click="handleDelete([record.id])">{{ t('public.delete')
                                 }}</a-button>
@@ -118,7 +117,6 @@
                     <template v-else-if="column.dataIndex === 'OsKind'">{{ record.OsKind === 1 ? 'Linux' : 'Windows'
                         }}</template>
                 </template>
-
                 <template #emptyText v-if="!permsJudge('/device/list')">
                     <tabNoPermissin />
                 </template>
@@ -165,8 +163,7 @@
                     </a-form-item>
 
 
-                    <a-form-item :label="t('public.Description')" name="description"
-                        :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('public.Description')}` }]">
+                    <a-form-item :label="t('public.Description')" name="description">
                         <a-textarea v-model:value="formState.description"
                             :placeholder='`${t("public.pleaseInput")}${t("public.Description")}`' />
                     </a-form-item>
@@ -388,4 +385,9 @@ const validateDeviceAddress = ({ }, value: string) => {
     width: 20px;
     min-width: 20px;
 }
+// ::v-deep(.ant-table-cell) {
+//     .ant-btn {
+//         padding: 0 !important;
+//     }
+// }
 </style>

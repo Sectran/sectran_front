@@ -43,7 +43,6 @@
                                 </div>
                             </div>
                             <template v-if="item.isUnfold">
-
                                 <div v-for="(child, ins) in item.children" :key="ins" class="tree-child-node">
                                     <!-- child.isUnfold = !child.isUnfold -->
                                     <div @click="onOperatingSystem(child)">
@@ -90,10 +89,25 @@
                                         </template>
                                     </a-dropdown>
                                 </template>
-                                <xterm @connectResult="connectResult" :host="item.host" :port="item.port"
-                                    :submitLoading="submitLoading.valueOf" :username="item.username"
-                                    @tabName="(index: number, name: string) => multiList[index].name = name"
-                                    :password="item.password" :index="index" />
+
+
+                                <template v-if="item.type === 'ssh'">
+                                    <xterm @connectResult="connectResult" :host="item.host" :port="item.port"
+                                        :submitLoading="submitLoading.valueOf" :username="item.username"
+                                        @tabName="(index: number, name: string) => multiList[index].name = name"
+                                        :password="item.password" :index="index" />
+                                </template>
+
+                                <template v-else="item.type === 'sftp'">
+                                    <sftp @connectResult="connectResult" :host="item.host" :port="item.port"
+                                        :submitLoading="submitLoading.valueOf" :username="item.username"
+                                        @tabName="(index: number, name: string) => multiList[index].name = name"
+                                        :password="item.password" :index="index" />
+                                </template>
+
+
+
+
                             </a-tab-pane>
                             <template #rightExtra>
                                 <div class="tab-right">
@@ -143,6 +157,14 @@
                     </a-form-item>
 
 
+                    <a-form-item label="终端类型" name="attestationType">
+                        <a-radio-group v-model:value="connectFormState.type">
+                            <a-radio value="ssh">ssh</a-radio>
+                            <a-radio value="sftp">sftp</a-radio>
+                        </a-radio-group>
+                    </a-form-item>
+
+
                     <a-form-item label="账号" name="username"
                         :rules="[{ required: true, message: 'Please input your username!' }]">
                         <a-input v-model:value="connectFormState.username" :disabled="connectFormState.network === 1" />
@@ -164,7 +186,6 @@
                                         v-model:value="connectFormState.password">
                                     </a-textarea>
                                     <a-form-item-rest>
-
                                         <a-upload name="file" :file-list="[]"
                                             action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                                             :before-upload="beforeUpload">
@@ -186,7 +207,6 @@
                                             </a-input>
                                         </a-form-item-rest>
                                     </div>
-
                                 </div>
                             </div>
                         </a-form-item>
@@ -217,7 +237,6 @@ import { headMenu } from "./menu.ts"
 import { useStore } from 'vuex'
 import { deviceList, accountList } from "@/api/admin"
 import { UploadOutlined, LockOutlined, RightOutlined, DownOutlined } from '@ant-design/icons-vue';
-import xterm from "./components/xterm.vue"
 import { ExclamationCircleOutlined, } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
 import { resTable } from "@/common/type/type"
@@ -225,6 +244,10 @@ import { MenuUnfoldOutlined, } from '@ant-design/icons-vue';
 import { throttle } from 'lodash';
 import { fileUpload } from "@/api/admin.ts"
 import { message } from "ant-design-vue";
+import xterm from "./components/xterm.vue"
+import sftp from "./components/sftp.vue";
+
+
 type MultiList = {
     name: string
     username: string
@@ -232,6 +255,7 @@ type MultiList = {
     key: number
     host: string
     port: number
+    type: string | undefined
 
 }
 type TableType = {
@@ -274,7 +298,7 @@ type accounType = {
 const onOperatingSystem = async (item: any) => {
     console.log(item.id)
     if (!item.isUnfold && !item.children) {
-        await accountList({ page: 1, pageSize: 100, deviceId: item.id }).then((res: { data: resTable<accounType[]> }) => {
+        await accountList({ page: 1, pageSize: 100, deviceId: item.id,detail:true }).then((res: { data: resTable<accounType[]> }) => {
             let { data } = res.data
             item.children = data
             console.log(item)
@@ -346,7 +370,6 @@ const mouseUp = () => {
 }
 // 鼠标释放节流事件
 const handleMoveThrottled = throttle(mouseUp, 0)
-
 interface ConnectFormState {
     username: string;
     password: string;
@@ -355,6 +378,7 @@ interface ConnectFormState {
     remember: boolean
     host: string
     port: number
+    type: string | undefined
 }
 
 const connectFormState = reactive<ConnectFormState>({
@@ -364,13 +388,16 @@ const connectFormState = reactive<ConnectFormState>({
     network: 1,
     remember: false,
     host: "",
-    port: 0
+    port: 0,
+    type: 'ssh'
 });
 let multiList = ref<MultiList[]>([])
 const on_connectFinish = () => {
-    let { username, password, host, port } = connectFormState
+    let { username, password, host, port, type } = connectFormState
+
+    console.log(username, password, host, port, type);
     soleKey.value++
-    multiList.value.push({ username, password, name: '', host, key: soleKey.value, port })
+    multiList.value.push({ username, password, name: '', host, key: soleKey.value, port, type })
     multiActiveKey.value = soleKey.value
     submitLoading.value = true
 };
@@ -395,7 +422,7 @@ const onTabsEdit = (targetKey: number, type: number) => {
     Modal.confirm({
         title: '再次确认',
         icon: createVNode(ExclamationCircleOutlined),
-        content: `${['Close tabs to the right', 'Close other tabs', 'Close all','Close at present'][type]}?`,
+        content: `${['Close tabs to the right', 'Close other tabs', 'Close all', 'Close at present'][type]}?`,
         onOk() {
             switch (type) {
                 case 0:
@@ -489,10 +516,10 @@ const connectResult = (modalState: boolean) => {
     .shibboleth-style {
         display: flex;
         margin-left: 40px;
-        align-items: center;
 
         .shibboleth-text {
             white-space: nowrap;
+            margin-top: 10px;
         }
 
         .shibboleth-input {
@@ -549,7 +576,7 @@ const connectResult = (modalState: boolean) => {
                 display: flex;
                 justify-content: space-between;
                 height: 30px;
-
+                justify-content: end;
                 .menu-icon {
                     color: #ffffff;
                     font-size: 18px;

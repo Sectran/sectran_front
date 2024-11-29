@@ -56,7 +56,7 @@
 
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'operation'">
-                        <a-space :size="8">
+                        <a-space :size="18">
                             <a-button type="link" @click="on_redact(record)">{{ t('public.redact') }}</a-button>
                             <a-button type="link" danger @click="handleDelete([record.Id])">{{ t('public.delete')
                                 }}</a-button>
