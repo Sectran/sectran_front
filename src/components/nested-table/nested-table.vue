@@ -93,14 +93,14 @@ type Tableitem = {
     area: string
 }
 
-interface FormState {
-    id?: number
-    area: string[]
-    description: string
-    name: string
-    parentDepartments: number | string
-    parentDepartmentId: number | string
-}
+// interface FormState {
+//     id?: number
+//     area: string[]
+//     description: string
+//     name: string
+//     parentDepartments: number | string
+//     parentDepartmentId: number | string
+// }
 
 interface Iprops {
     superiorId: number
@@ -125,7 +125,7 @@ let list = ref<any>([])
 let loading = ref<boolean>(false)
 let openState = ref<boolean>(false)
 const id = ref<number | undefined>(undefined);
-const formState = reactive<FormState>({
+const formState = reactive<any>({
     area: [],
     description: "",
     name: "",
@@ -133,8 +133,10 @@ const formState = reactive<FormState>({
     parentDepartmentId: 1,
 });
 
-const onRedactDepartment = (record: Tableitem) => {
+const onRedactDepartment = (record: any) => {
     for (const key in formState) formState[key] = record[key]
+
+
     formState.area = record.area.split('/')
     id.value = record.id
     openState.value = true

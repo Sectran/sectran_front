@@ -228,7 +228,7 @@ import { useStore } from 'vuex'
 const store = useStore()
 const props = defineProps(['deviceId']);
 
-let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, on_search, fromreset, handleDelete, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox, onInputTag, closePaging } = useTableHooks({ listApi: accountList, deleteApi: accountDelete }, undefined, { deviceId: props.deviceId });
+let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, on_search, fromreset, handleDelete, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, changeColumnsCheckbox, onInputTag } = useTableHooks({ listApi: accountList, deleteApi: accountDelete }, undefined, { deviceId: props.deviceId });
 const { t } = useI18n()
 const id = ref<number | undefined>(undefined);
 type tableType = {
@@ -324,13 +324,6 @@ const changeProtocol = (value:number) =>{
         formState.port = 3389
     }
 }
-
-const agreement = () => {
-    // retu
-
-}
-
-
 
 
 const onFinish = () => {

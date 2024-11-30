@@ -790,10 +790,10 @@ ansi-styles@^3.2.1:
   dependencies:
     color-convert "^1.9.0"
 
-ant-design-vue@4.x:
-  version "4.1.2"
-  resolved "https://registry.npmmirror.com/ant-design-vue/-/ant-design-vue-4.1.2.tgz#f1da53d6d7177fc4460aed2861dd64927d58d680"
-  integrity sha512-ynFkDJLlHgumeK6Hr1UZ7PvQNZ1uBcri/pmejBdS3kRqHeA5VRsxneYDwa8YxA+uYB5YfT2jpYsSHsiMiCjRGg==
+ant-design-vue@^4.2.6:
+  version "4.2.6"
+  resolved "https://registry.npmmirror.com/ant-design-vue/-/ant-design-vue-4.2.6.tgz#e4ce6944457cd1cd61d8b3fe52793ab58b94e337"
+  integrity sha512-t7eX13Yj3i9+i5g9lqFyYneoIb3OzTvQjq9Tts1i+eiOd3Eva/6GagxBSXM1fOCjqemIu0FYVE1ByZ/38epR3Q==
   dependencies:
     "@ant-design/colors" "^6.0.0"
     "@ant-design/icons-vue" "^7.0.0"

@@ -220,10 +220,7 @@ const onInputTag = () => {
     }
 }
 let user = JSON.parse(localStorage.getItem('user') as string);
-const departmentState = reactive({
-    data: [],
-    fetching: false,
-});
+
 const searchDepartmentState = reactive({
     data: [],
     fetching: false,

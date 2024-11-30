@@ -6,14 +6,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@novnc/novnc": "^1.4.0",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20.9.1",
-    "ant-design-vue": "4.x",
+    "ant-design-vue": "^4.2.6",
     "axios": "^1.5.0",
     "less": "^4.2.0",
     "less-loader": "^11.1.3",

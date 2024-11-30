@@ -138,11 +138,11 @@ import { useStore } from 'vuex'
 const store = useStore()
 const { t } = useI18n()
 const formRef = ref<FormInstance>();
-type SearchType = {
-    name: string
-    host: string
-    description: string
-};
+// type SearchType = {
+//     name: string
+//     host: string
+//     description: string
+// };
 
 let searchFrom = reactive({
     description: "",
@@ -150,14 +150,14 @@ let searchFrom = reactive({
     name: "",
 });
 
-type formStateType = {
-    Id?: number | string
-} & SearchType
+// type formStateType = {
+//     Id?: number | string
+// } & SearchType
 
 
-let { paginationOpt, tableData, searchFormRef, tableState, onTableSelectChange, requestList, on_search, fromreset, handleDelete } = useTableHooks<SearchType>(searchFrom, { listApi: deviceList, deleteApi: deleteDevice });
+let { paginationOpt, tableData, searchFormRef, tableState, onTableSelectChange, requestList, on_search, fromreset, handleDelete } = useTableHooks({ listApi: deviceList, deleteApi: deleteDevice });
 const addOpen = ref<boolean>(false);
-const formState = reactive<formStateType>({
+const formState = reactive<any>({
     name: "",
     host: '',
     // OsKind: "",
@@ -193,7 +193,7 @@ const deviceItem = reactive<{ deviceName: string, deviceId: number }>({ deviceNa
 //     accountOpen.value = true
 // }
 
-const on_redact = (data: formStateType) => {
+const on_redact = (data: any) => {
     addOpen.value = true
     nextTick(() => {
         for (const key in formState) {

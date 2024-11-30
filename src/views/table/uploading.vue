@@ -47,9 +47,6 @@
         </a-row>
 
 
-        <!-- <a-modal v-model:open="open" title="选择文件" @ok="open = false" :maskClosable="false" width="50%" :footer="null">
-
-        </a-modal> -->
     </div>
 </template>
 
@@ -63,8 +60,7 @@ type FileType = {
     kind: string
     name: string
 }
-const open = ref<boolean>(false);
-// const store = useStore()
+
 const fileArray = ref<FileType[]>([]);
 const filePath = ref<string[]>([])
 
@@ -84,7 +80,6 @@ const on_connect = async () => {
         let handle = await window.showDirectoryPicker(pickerOpts);
         fileArray.value = await processHandle(handle);
         filePath.value.push(handle)
-        // open.value = true
     } catch (error) {
         console.log(error);
     }

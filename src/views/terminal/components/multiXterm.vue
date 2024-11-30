@@ -24,7 +24,6 @@
         </div> -->
         <div style="flex: 1;">
             {{ props.node.key }}
-            <holl />
             <!-- <ColumnWidthOutlined @click="on_SplitScreen('transverse', item)" />
             <ColumnHeightOutlined @click="on_SplitScreen('Longitudinal', item)" /> -->
             <span @click="on_jia">加</span>
@@ -40,7 +39,6 @@
 <script setup lang="ts">
 
 import multiXterm from "./multiXterm.vue"
-import holl from "@/components/holl"
 // import {
 //     PlusSquareOutlined,
 //     ColumnWidthOutlined,

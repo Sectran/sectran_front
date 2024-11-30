@@ -4,13 +4,13 @@
 
     <div class="terminal-header">
         <div>{{ props.username }}@{{ props.host }}</div>
-        <div style="">
-            <RedoOutlined style="font-size: 22px;" @click="socketConnect" />
+        <div @click="socketConnect">
+            <RedoOutlined style="font-size: 22px;" />
             Reconnect
         </div>
     </div>
     <template v-if="connectionStatus">
-        <div class="terminal-div">
+        <div class="terminal-div" ref="terminalDiv">
             <div id="terminal" ref="terminal"></div>
         </div>
     </template>
@@ -63,11 +63,10 @@ const emit = defineEmits(["connectResult", 'tabName']);
 let connectionStatus = ref<boolean>(true);
 let inFileSelect = ref<boolean>(false)
 let fileInputRef = ref<HTMLInputElement>();
-let isSupportShowSaveFilePicker = ref<boolean>(false); //浏览器是否支持showSaveFilePicker
+let terminalDiv = ref<HTMLElement>()
 onMounted(() => {
     initXterm();
     socketConnect()
-    if ('showSaveFilePicker' in window) isSupportShowSaveFilePicker.value = true
 })
 
 const socketConnect = () => {
@@ -92,9 +91,6 @@ const initXterm = () => {
 
         },
     });
-
-
-
     _term.open(terminal.value);
     _term.prompt = (_: any) => {
         _term.write("\r\n\x1b[33m$\x1b[0m ");
@@ -122,9 +118,25 @@ const initXterm = () => {
             console.log("e", e.message);
         }
     }, 500);
-    window.addEventListener("resize", () => {
+
+    const resizeObserver = new ResizeObserver(() => {
+        //回调
+        // this.$chart.resize();
         resizeScreen();
     });
+
+    //监听对应的dom
+    if (terminalDiv.value) {
+        resizeObserver.observe(terminalDiv.value);
+    }
+
+    onUnmounted(() => {
+        resizeObserver.disconnect();
+    });
+    // window.addEventListener("resize", () => {
+    //     resizeScreen();
+    // });
+
     _term.onTitleChange((e: any) => {
         console.log(e);
         emit('tabName', props.index, e)
@@ -162,7 +174,6 @@ let isdbeDownloading: boolean = false
 
 const onData = async (msg: any) => {
     let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
-
     if (sm.secConnect) return connectManage(sm?.secConnect);
     if (sm?.secTerminal) return terminalManage(sm?.secTerminal)
     if (sm?.secFile) return fileManage(sm?.secFile)
@@ -215,10 +226,6 @@ const fileManage = (sm: secterm.v1.ISectermFileMessage) => {
         console.log('file文件处理错误类型', sm?.fileTransReq?.flag)
     }
 }
-
-//     downloadedFileList.push({ srvName: sm.fileAck.srvName, uuid: sm.fileAck.uuid })
-//     console.log(isdbeDownloading);
-//     if (!isdbeDownloading) downloadFile()
 
 type FileList = {
     file: File
@@ -298,7 +305,7 @@ const onOpen = () => {
     let { cols, rows } = term;
     const token: string | null = localStorage.getItem("token");
     let connectParams = {
-        protocol :v1.SectermProtocols.SECTERM_SSH,
+        protocol: v1.SectermProtocols.SECTERM_SSH,
         token: token,
         Colums: cols,
         Rows: rows,
@@ -328,6 +335,7 @@ const onClose = () => {
 
 onUnmounted(() => {
     resizeScreen.cancel();
+    
 });
 </script>
 

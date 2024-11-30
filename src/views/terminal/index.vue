@@ -159,8 +159,8 @@
 
                     <a-form-item label="终端类型" name="attestationType">
                         <a-radio-group v-model:value="connectFormState.type">
-                            <a-radio value="ssh">ssh</a-radio>
-                            <a-radio value="sftp">sftp</a-radio>
+                            <a-radio value="ssh">SSH</a-radio>
+                            <a-radio value="sftp">SFTP</a-radio>
                         </a-radio-group>
                     </a-form-item>
 

@@ -176,7 +176,7 @@
                 </a-form>
             </a-watermark>
         </a-modal>
-        <a-modal v-model:open="accountOpen" width="1000px" :title='`${deviceItem.deviceName}设备账号`'>
+        <a-modal v-model:open="accountOpen" width="1000px" :title='`${deviceItem.deviceName}设备账号`' :destroyOnClose="true">
             <a-watermark v-bind="store.state.globalConfiguration.watermarkConfiguration">
                 <device-account :deviceId="deviceItem.deviceId" />
             </a-watermark>

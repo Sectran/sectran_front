@@ -1,5 +1,4 @@
 import { secterm } from "../../../secterm/secterm";
-let intNume = 0
 const v1 = secterm.v1
 type SectermTerminalResize = {
     Colums?: number
@@ -78,7 +77,7 @@ export const sectermTeminalCharacters = (data: any, websocket: WebSocket) => {
 
 export const sectermFileUploadReq = (data: secterm.v1.SectermFileTransReq, websocket: WebSocket) => {
     console.log("单文件上传成功")
-    intNume = 0
+
     let sectermMessage = new v1.SectermMessage();
     if (sectermMessage.secFile) sectermMessage.secFile.fileTransReq = data
     else sectermMessage.secFile = { fileTransReq: data }
