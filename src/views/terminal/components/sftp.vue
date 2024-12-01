@@ -11,20 +11,20 @@
                             @click="onSelectcatalogue(el, ins, index)">
                             <a-dropdown :trigger="['contextmenu']">
                                 <div class="items-center">
-                                    <img v-if="el.type === 'folder'" src='@/assets/img/folder.png' alt="">
-                                    <img v-else-if="el.type === 'file'" src='@/assets/img/file.png' alt="">
-                                    <a-input v-if="inputId === el.id" v-model:value="inputValue"
-                                        @blur="inputhandleBlur" />
-                                    <div v-else class="file-text">{{ el.text }}</div>
-
-
+                                    <img v-if="el.IsDir" src='@/assets/img/folder.png' alt="">
+                                    <img v-else src='@/assets/img/file.png' alt="">
+                                    <a-input v-if="operateObj.col === index && operateObj.row === ins"
+                                        v-model:value="inputValue" @blur="inputhandleBlur" />
+                                    <div v-else class="file-text"
+                                        :style="{ 'opacity': (el.Name && el.Name[0] === '.') ? 0.4 : 1 }">{{ el.Name
+                                        }}</div>
                                 </div>
                                 <RightOutlined />
                                 <template #overlay>
                                     <a-menu>
-                                        <a-menu-item @click="onOperationList(el, 0)">重命名</a-menu-item>
-                                        <a-menu-item @click="onOperationList(el, 1)">删除</a-menu-item>
-                                        <a-menu-item @click="onOperationList(el, 2)">复制</a-menu-item>
+                                        <a-menu-item @click="onOperationList(el, 0, index, ins)">重命名</a-menu-item>
+                                        <a-menu-item @click="onOperationList(el, 1, index, ins)">删除</a-menu-item>
+                                        <a-menu-item @click="onOperationList(el, 2, index, ins)">复制</a-menu-item>
                                     </a-menu>
                                 </template>
                             </a-dropdown>
@@ -46,15 +46,16 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, } from "vue";
+import { ref, onMounted, h} from "vue";
 import { RightOutlined } from '@ant-design/icons-vue';
 import { initSocket } from "@/common/method/socket"
 import { secterm, } from "@/../secterm/secterm";
+import { message, Modal } from 'ant-design-vue';
 import {
     sectermConnectRequest,
-    sectermFileListReq
-    // sectermTeminalResize,
-    // sectermTeminalCharacters,
+    sectermFileListReq,
+    SectermTeminaFileMove,
+    SectermTeminaFileDelete,
     // sectermFileUploadReq,
     // sectermFileUploadFulfilleTheAllReq,
     // sectermFileCancelUploadReq
@@ -75,9 +76,34 @@ onMounted(() => {
 const v1 = secterm.v1;
 let websocket = <any>(null);
 let path = ref<string>(import.meta.env.VITE_Chard_Addr);
+const [modal] = Modal.useModal();
 const socketConnect = () => {
     let socket = initSocket(path.value, 5000, 'arraybuffer', onOpen, onData, onError, onClose);
     websocket = socket
+}
+
+
+
+const onData = async (msg: any) => {
+    let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
+
+    if (sm.secConnect) return connectManage(sm?.secConnect);
+    if (sm?.secFile?.fileListRes && sm?.secFile?.fileListRes.FileInfo) return sftpfileList(sm?.secFile?.fileListRes.FileInfo)
+    console.log(sm, "未知的消息类型")
+};
+
+const connectManage = (sm: secterm.v1.ISectermConnectMessage) => {
+    if (sm.connectRes?.code != v1.SectermCode.LOGON_SUCCESS) {
+        console.log("connect error deu to " + sm.connectRes?.code);
+    } else {
+        if (props.submitLoading) {
+            emit("connectResult", false);
+            localStorage.setItem("username", props.username);
+            localStorage.setItem("password", props.password);
+        }
+    }
+    sectermFileListReq("/opt", websocket)
+    console.log("connect success!");
 }
 
 const onOpen = () => {
@@ -93,33 +119,7 @@ const onOpen = () => {
     };
     console.log(connectParams)
     sectermConnectRequest(connectParams, websocket);
-
-
 };
-
-const onData = async (msg: any) => {
-    let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
-
-    if (sm.secConnect) return connectManage(sm?.secConnect);
-    // if (sm?.secTerminal) return terminalManage(sm?.secTerminal)
-    // if (sm?.secFile) return fileManage(sm?.secFile)
-    console.log(sm, "未知的消息类型")
-};
-
-const connectManage = (sm: secterm.v1.ISectermConnectMessage) => {
-    if (sm.connectRes?.code != v1.SectermCode.LOGON_SUCCESS) {
-        console.log("connect error deu to " + sm.connectRes?.code);
-    } else {
-      
-        if (props.submitLoading) {
-            emit("connectResult", false);
-            localStorage.setItem("username", props.username);
-            localStorage.setItem("password", props.password);
-        }
-    }
-    sectermFileListReq("/", websocket)
-    console.log("connect success!");
-}
 
 const onError = () => {
     if (props.submitLoading) {
@@ -131,19 +131,16 @@ const onClose = () => {
     console.log("socket已经关闭");
 };
 
-
+type catalogueType = {
+} & secterm.v1.ISectermFileInfo
 type catalogueManagementTtype = {
-    name: string
+    // path: string
     selected: number | undefined
     type: string
     catalogueList?: catalogueType[]
     fileObj?: fileObjType
 }
-type catalogueType = {
-    text: string
-    type: string
-    id: string
-}
+
 type fileObjType = {
     name: string
     text: string
@@ -152,64 +149,97 @@ type fileObjType = {
 }
 
 
-const catalogueManagement = ref<catalogueManagementTtype[]>([
-    {
-        name: '文件1',
-        selected: 1,
-        type: "catalogue",
-        catalogueList: [
-            { text: '文件1-1', type: 'folder', id: `1` },
-            { text: '文件1-2', type: 'folder', id: `2` },
-            { text: '文件1-3', type: 'file', id: `3` }
-        ]
-    }
-]);
+const catalogueManagement = ref<catalogueManagementTtype[]>([]);
+const sftpfileList = (fileListRes: catalogueType[]) => {
+    console.log(fileListRes)
+    fileListRes.sort((a, b) => {
+        if (a.IsDir && !b.IsDir) return -1;
+        if (!a.IsDir && b.IsDir) return 1;
+        return 0;
+    });
+    catalogueManagement.value.push({
+        // path: "./",
+        type: 'catalogue',
+        selected: undefined,
+        catalogueList: fileListRes,
+    })
 
-let inputValue = ref<string>('');
-let inputId = ref<string | undefined>(undefined);
+}
 
-const onOperationList = (el: catalogueType, type: number) => {
+let inputValue = ref<string | undefined | null>('');
+//当前操作的文件
+let operateFile = ref<catalogueType>({} as catalogueType);
+//当前操作的列和行 
+let operateObj = ref<{ row: number | undefined, col: number | undefined }>({ row: undefined, col: undefined });
+
+/**
+ * 
+ * @param el 当前操作文件
+ * @param type 操作类型 0 重命名 1 删除 2 复制
+ * @param index 
+ * @param ins 
+ */
+const onOperationList = (el: catalogueType, type: number, index: number, ins: number) => {
+    operateFile.value = el
     console.log(el, type)
-    inputId.value = el.id
-    inputValue.value = el.text
+    operateObj.value.col = index
+    operateObj.value.row = ins
+
+    switch (type) {
+        case 0:
+            inputValue.value = el.Name
+            break;
+        case 1:
+        deleteFile(`${operateFile.value.Path}/${operateFile.value.Name}`,operateFile.value.Name)
+            break;
+        case 2:
+            break;
+    }
 }
 const inputhandleBlur = () => {
-    inputId.value = undefined
-    inputValue.value = ""
+    const folderNameRegex = /^[a-zA-Z0-9 _-]+$/;
+    if (inputValue.value && folderNameRegex.test(inputValue.value)) {
+        console.log("重命名")
+        let path = `${operateFile.value.Path}/${operateFile.value.Name}`
+        let DstPath = `${operateFile.value.Path}/${inputValue.value}`
+        console.log(path, DstPath)
+        SectermTeminaFileMove(path, DstPath, false, websocket)
+        // operateObj.value = { row: undefined, col: undefined }
+        // inputValue.value = ""
+    } else {
+        message.error('请输入正确的文件名');
+    }
 }
+
+const deleteFile = (path: string, name: string | null | undefined) => {
+    modal.confirm({
+        title: `确定删除-${name}`,
+        content: h('div', { style: 'color:red;' }, '请谨慎操作'),
+        onOk() {
+            SectermTeminaFileDelete([path],websocket)
+            console.log('OK');
+        },
+        onCancel() {
+            console.log('Cancel');
+        },
+        class: 'test',
+    });
+}
+
+
 
 
 const onSelectcatalogue = (el: catalogueType, ins: number, index: number) => {
     console.log(el, ins, index)
-    console.log(catalogueManagement.value[index].selected)
-
-    catalogueManagement.value[index].selected = ins;
-    index++
-    catalogueManagement.value.splice(index)
-    if (el.type == 'folder') {
-        catalogueManagement.value.push({
-            name: `文件${index}`,
-            selected: undefined,
-            type: 'catalogue',
-            catalogueList: [
-                { text: `文件${index}-1`, type: 'folder', id: `${index}1` },
-                { text: `文件${index}-2`, type: 'file', id: `${index}2` },
-                { text: `文件${index}-3`, type: 'file', id: `${index}3` },
-            ]
-        })
-    } else if (el.type == 'file') {
-        catalogueManagement.value.push({
-            name: `文件${index}`,
-            selected: undefined,
-            type: 'file',
-            fileObj: {
-                name: "文件名称",
-                text: "文件内容",
-                creationTime: "2023-05-09",
-                modificationTime: "2024-11-29"
-            }
-        })
+    if (el.IsDir) {
+        //点击的是目录
+        let path = `${el.Path}/${el.Name}`;
+        catalogueManagement.value[index].selected = ins;
+        index++
+        catalogueManagement.value.splice(index)
+        sectermFileListReq(path, websocket)
     }
+
 }
 const catalogueContainerWidth = () => {
     switch (catalogueManagement.value.length) {
@@ -226,12 +256,13 @@ const catalogueContainerWidth = () => {
 <style lang="less" scoped>
 .catalogue-management {
     display: flex;
-    width: 800px;
-    height: 50vh;
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 90%;
+    margin: auto;
+    // position: fixed;
+    // left: 50%;
+    // top: 50%;
+    // transform: translate(-50%, -50%);
     overflow-x: auto;
 }
 

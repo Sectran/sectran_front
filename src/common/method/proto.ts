@@ -11,7 +11,7 @@ type SectermConnectRequest = {
     hostname: string
     port: number
     password: string
-    protocol:number
+    protocol: number
 } & SectermTerminalResize
 //连接socket
 export const sectermConnectRequest = (connectParams: SectermConnectRequest, websocket: WebSocket) => {
@@ -46,7 +46,7 @@ export const sectermConnectRequest = (connectParams: SectermConnectRequest, webs
 export const sectermTeminalResize = (resizeParams: SectermTerminalResize, websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
     let resize = new v1.SectermTerminalResize()
-    if(resizeParams?.Colums && resizeParams?.Rows) {
+    if (resizeParams?.Colums && resizeParams?.Rows) {
         resize.colums = resizeParams?.Colums
         resize.rows = resizeParams?.Rows
     }
@@ -128,7 +128,7 @@ export const sectermFileListReq = (path: string, websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
     let fileList = new v1.SectermFileListRequest()
     fileList.dirPath = path
-    if(sectermMessage.secFile) sectermMessage.secFile.fileListReq = fileList
+    if (sectermMessage.secFile) sectermMessage.secFile.fileListReq = fileList
     else sectermMessage.secFile = { fileListReq: fileList }
     let fileListData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(fileListData, websocket)
@@ -145,22 +145,25 @@ export const SectermTeminaFileMove = (path: string, DstPath: string, force: bool
     let fileMove = new v1.SectermFileMove()
     fileMove.filePath = path
     fileMove.DstPath = DstPath
-    fileMove.force = force
+    // fileMove.force = force
+    if (sectermMessage.secFile) sectermMessage.secFile.fileMv = fileMove
+    else sectermMessage.secFile = { fileMv: fileMove }
+
     let fileMoveData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(fileMoveData, websocket)
-
 }
 
 /**
  * 目录删除
- * @param path ⽂件重命名或移动请求
- * @param websocket 
+ * @param path 目录路径
+ * @param websocket
  */
 export const SectermTeminaFileDelete = (path: string[], websocket: WebSocket) => {
     let sectermMessage = new v1.SectermMessage();
     let fileDelete = new v1.SectermFileDelete()
     fileDelete.Path = path
-
+    if (sectermMessage.secFile) sectermMessage.secFile.fileDel = fileDelete
+    else sectermMessage.secFile = { fileDel: fileDelete }
     let fileDeleteData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(fileDeleteData, websocket)
 }

@@ -28,7 +28,7 @@
                             <a-input :bordered="false" placeholder="" />
                             <SearchOutlined class="search-icon" />
                         </div> -->
-                        <MenuUnfoldOutlined class="menu-icon" @click="isSpread = !isSpread" />
+                        <MenuUnfoldOutlined class="menu-icon" @click="onSpread" />
 
                     </div>
                     <div class="Content-left-tree" v-if="!isSpread" @scroll="handleScroll">
@@ -69,7 +69,7 @@
                         <a-tabs v-model:activeKey="multiActiveKey" hide-add type="editable-card" :forceRender="false"
                             @edit="(key: number) => onTabsEdit(key, 3)" style="width:100%">
                             <a-tab-pane v-for="(item, index) in multiList" :key="item.key" :closable="true"
-                                class="tab-pane">
+                                class="tab-pane" display-directive="show">
                                 <template #tab>
                                     <a-dropdown :trigger="['contextmenu']">
                                         <div style="height: 100%;width: 100%;">
@@ -92,8 +92,9 @@
 
 
                                 <template v-if="item.type === 'ssh'">
-                                    <xterm @connectResult="connectResult" :host="item.host" :port="item.port"
-                                        :submitLoading="submitLoading.valueOf" :username="item.username"
+                                    <xterm ref="childXterm" @connectResult="connectResult" :host="item.host"
+                                        :port="item.port" :submitLoading="submitLoading.valueOf"
+                                        :username="item.username"
                                         @tabName="(index: number, name: string) => multiList[index].name = name"
                                         :password="item.password" :index="index" />
                                 </template>
@@ -246,6 +247,7 @@ import { fileUpload } from "@/api/admin.ts"
 import { message } from "ant-design-vue";
 import xterm from "./components/xterm.vue"
 import sftp from "./components/sftp.vue";
+import { on } from "events";
 
 
 type MultiList = {
@@ -298,7 +300,7 @@ type accounType = {
 const onOperatingSystem = async (item: any) => {
     console.log(item.id)
     if (!item.isUnfold && !item.children) {
-        await accountList({ page: 1, pageSize: 100, deviceId: item.id,detail:true }).then((res: { data: resTable<accounType[]> }) => {
+        await accountList({ page: 1, pageSize: 100, deviceId: item.id, detail: true }).then((res: { data: resTable<accounType[]> }) => {
             let { data } = res.data
             item.children = data
             console.log(item)
@@ -314,6 +316,17 @@ const onAccount = (name: string, host: string, port: number, childs: accounType)
     connectFormState.host = host
     connectName.value = name
     connectOpen.value = true
+}
+const childXterm = ref([]);
+const onSpread = () => {
+    isSpread.value = !isSpread.value
+    setTimeout(() => {
+        childXterm.value.forEach((child: any) => {
+            if (child && child.resizeEvent) {
+                child.resizeEvent();
+            }
+        });
+    }, 2000);
 }
 
 
@@ -333,7 +346,6 @@ onMounted(() => {
         })
     }
 });
-
 
 onUnmounted(() => {
     document.removeEventListener('mouseup', handleMoveThrottled)
@@ -577,6 +589,7 @@ const connectResult = (modalState: boolean) => {
                 justify-content: space-between;
                 height: 30px;
                 justify-content: end;
+
                 .menu-icon {
                     color: #ffffff;
                     font-size: 18px;

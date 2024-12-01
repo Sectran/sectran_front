@@ -10,7 +10,7 @@
         </div>
     </div>
     <template v-if="connectionStatus">
-        <div class="terminal-div" ref="terminalDiv">
+        <div class="terminal-div">
             <div id="terminal" ref="terminal"></div>
         </div>
     </template>
@@ -63,7 +63,7 @@ const emit = defineEmits(["connectResult", 'tabName']);
 let connectionStatus = ref<boolean>(true);
 let inFileSelect = ref<boolean>(false)
 let fileInputRef = ref<HTMLInputElement>();
-let terminalDiv = ref<HTMLElement>()
+
 onMounted(() => {
     initXterm();
     socketConnect()
@@ -109,34 +109,12 @@ const initXterm = () => {
     _term.loadAddon(fitAddon);
     fitAddon.fit();
     resizeScreen = debounce(() => {
-        try {
-            fitAddon.fit();
-            let { cols, rows } = term;
-            let resizeParams = { Colums: cols, Rows: rows };
-            sectermTeminalResize(resizeParams, websocket);
-        } catch (e: any) {
-            console.log("e", e.message);
-        }
+        console.log("resize");
+        resizeEvent()
     }, 500);
-
-    const resizeObserver = new ResizeObserver(() => {
-        //回调
-        // this.$chart.resize();
+    window.addEventListener("resize", () => {
         resizeScreen();
     });
-
-    //监听对应的dom
-    if (terminalDiv.value) {
-        resizeObserver.observe(terminalDiv.value);
-    }
-
-    onUnmounted(() => {
-        resizeObserver.disconnect();
-    });
-    // window.addEventListener("resize", () => {
-    //     resizeScreen();
-    // });
-
     _term.onTitleChange((e: any) => {
         console.log(e);
         emit('tabName', props.index, e)
@@ -167,6 +145,21 @@ const initXterm = () => {
     }
     term = _term;
 };
+const resizeEvent = () => {
+
+    try {
+        fitAddon.fit();
+        let { cols, rows } = term;
+        let resizeParams = { Colums: cols, Rows: rows };
+        sectermTeminalResize(resizeParams, websocket);
+        console.log("resizeEvent");
+    } catch (e: any) {
+        console.log("e", e.message);
+    }
+}
+
+
+
 const sendCharacters = (data: any) => { sectermTeminalCharacters(data, websocket) };
 
 let downloadedFileList: { uuid: string | null | undefined }[] = []
@@ -335,7 +328,10 @@ const onClose = () => {
 
 onUnmounted(() => {
     resizeScreen.cancel();
-    
+});
+
+defineExpose({
+    resizeEvent
 });
 </script>
 
