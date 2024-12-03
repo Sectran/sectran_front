@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { theme } from 'ant-design-vue';
-import { watch, ref } from 'vue';
+import { watch, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { ConfigProvider } from 'ant-design-vue';
 import en from 'ant-design-vue/es/locale/en_US';
@@ -87,7 +87,7 @@ const recursionMenu = (data: Router[]) => {
   return routerData
 }
 
-
+const hoverBackgroundColor = computed(() => store.state.globalConfiguration.colorPrimary);
 </script>
 
 <style lang="less">
@@ -95,16 +95,22 @@ const recursionMenu = (data: Router[]) => {
   padding: 0;
   margin: 0;
 }
-body{
+
+body {
   min-height: 600px;
 }
-input[aria-hidden=true]{
-    display: none !important;
-}
-.ant-table-cell {
-  .ant-btn {
-        padding: 0 !important;
-    }
+
+input[aria-hidden=true] {
+  display: none !important;
 }
 
+.ant-table-cell {
+  .ant-btn {
+    padding: 0 !important;
+  }
+}
+
+.hover-bg:hover {
+  background-color: v-bind(hoverBackgroundColor) !important;
+}
 </style>

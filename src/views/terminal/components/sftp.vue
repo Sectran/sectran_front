@@ -148,7 +148,6 @@ type fileObjType = {
     modificationTime?: string
 }
 
-
 const catalogueManagement = ref<catalogueManagementTtype[]>([]);
 const sftpfileList = (fileListRes: catalogueType[]) => {
     console.log(fileListRes)
@@ -204,8 +203,8 @@ const inputhandleBlur = () => {
         let DstPath = `${operateFile.value.Path}/${inputValue.value}`
         console.log(path, DstPath)
         SectermTeminaFileMove(path, DstPath, false, websocket)
-        // operateObj.value = { row: undefined, col: undefined }
-        // inputValue.value = ""
+        operateObj.value.col = undefined
+        operateObj.value.row = undefined
     } else {
         message.error('请输入正确的文件名');
     }

@@ -33,7 +33,7 @@
                     </div>
                     <div class="Content-left-tree" v-if="!isSpread" @scroll="handleScroll">
                         <div v-for="(item, index) in treeData" :key="index" class="tree-node" :ref="treeRefArr[index]">
-                            <div class="items-center tree-parent-node" @click="item.isUnfold = !item.isUnfold">
+                            <div class="items-center tree-parent-node " @click="item.isUnfold = !item.isUnfold">
                                 <DownOutlined v-if="item.isUnfold" class="unfold-icon" />
                                 <RightOutlined v-else class="unfold-icon" />
                                 <img v-if="item.icon === 'linux'" src='@/assets/img/linux.png' alt="">
@@ -52,7 +52,7 @@
                                     </div>
                                     <template v-if="child.isUnfold">
                                         <div v-for="(childs, inss) in child.children" :key="inss"
-                                            class="tree-child-node"
+                                            class="tree-child-node hover-bg"
                                             @click="onAccount(child.name, child.host, childs.port, childs)">
                                             {{ childs.username }}
                                         </div>
@@ -231,7 +231,7 @@ import {
     ref,
     reactive,
     createVNode,
-    onUnmounted
+    onUnmounted,
 } from "vue";
 import { useI18n } from "vue-i18n";
 import { headMenu } from "./menu.ts"
@@ -247,8 +247,6 @@ import { fileUpload } from "@/api/admin.ts"
 import { message } from "ant-design-vue";
 import xterm from "./components/xterm.vue"
 import sftp from "./components/sftp.vue";
-import { on } from "events";
-
 
 type MultiList = {
     name: string
@@ -497,6 +495,9 @@ const connectResult = (modalState: boolean) => {
 
 </script>
 <style scoped lang='less'>
+
+
+
 .xterm-div {
     width: 100%;
     height: 100%;
