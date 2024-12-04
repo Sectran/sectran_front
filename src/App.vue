@@ -89,7 +89,7 @@ const recursionMenu = (data: Router[]) => {
 
 
 
-const hoverBackgroundColor = computed(() => store.state.globalConfiguration.colorPrimary);
+const styleBackgroundColor = computed(() => store.state.globalConfiguration.colorPrimary);
 </script>
 
 <style lang="less">
@@ -113,6 +113,6 @@ input[aria-hidden=true] {
 }
 
 .hover-bg:hover {
-  background-color: v-bind(hoverBackgroundColor) !important;
+  background-color: v-bind(styleBackgroundColor) !important;
 }
 </style>

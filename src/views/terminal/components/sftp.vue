@@ -5,73 +5,82 @@
             <div class="sftp-left">
 
             </div>
+            <div class="sftp-right">
 
-            <div class="catalogue-management">
-                <div v-for="(item, index) in catalogueManagement" :key="index"
-                    :style="{ width: catalogueContainerWidth(), minWidth: catalogueContainerWidth() }"
-                    class="catalogue-container">
-                    <template v-if="item.type === 'catalogue' && item.catalogueList && item.catalogueList.length !== 0">
-                        <a-dropdown :trigger="['contextmenu']">
-                            <div style="height: 100%;width: 100%;">
-                                <div v-for="(el, ins) in item.catalogueList" :key="ins" class="catalogue-item"
-                                    :class="{ 'select-style': item.selected === ins }"
-                                    @click="onSelectcatalogue(el, ins, index)">
-                                    <a-dropdown :trigger="['contextmenu']">
-                                        <div class="items-center">
-                                            <img v-if="el.IsDir" src='@/assets/img/folder.png' alt="">
-                                            <img v-else src='@/assets/img/file.png' alt="">
-                                            <a-input v-if="operateObj.col === index && operateObj.row === ins"
-                                                v-model:value="inputValue" @blur="inputhandleBlur" />
-                                            <div v-else class="file-text"
-                                                :style="{ 'opacity': (el.Name && el.Name[0] === '.') ? 0.4 : 1 }">{{
-                                                    el.Name
-                                                }}</div>
-                                        </div>
-                                        <RightOutlined />
-                                        <template #overlay>
-                                            <a-menu>
-                                                <a-menu-item
-                                                    @click="onOperationList(el, 0, index, ins)">重命名</a-menu-item>
-                                                <a-menu-item
-                                                    @click="onOperationList(el, 1, index, ins)">删除</a-menu-item>
-                                                <a-menu-item
-                                                    @click="onOperationList(el, 2, index, ins)">复制</a-menu-item>
-                                            </a-menu>
-                                        </template>
-                                    </a-dropdown>
+                <div class="sftp-right-nav">
+                    <div class="sftp-nav-tabs">
+                        {{ sftpNavTabs }}
+                    </div>
+                </div>
+                <div class="catalogue-management">
+                    <div v-for="(item, index) in catalogueManagement" :key="index"
+                        :style="{ width: catalogueContainerWidth(), minWidth: catalogueContainerWidth() }"
+                        class="catalogue-container">
+                        <template
+                            v-if="item.type === 'catalogue' && item.catalogueList && item.catalogueList.length !== 0">
+                            <a-dropdown :trigger="['contextmenu']">
+                                <div style="height: 100%;width: 100%;">
+                                    <div v-for="(el, ins) in item.catalogueList" :key="ins" class="catalogue-item"
+                                        :class="{ 'select-style': item.selected === ins }"
+                                        @click="onSelectcatalogue(el, ins, index)">
+                                        <a-dropdown :trigger="['contextmenu']" @contextmenu.stop>
+                                            <div class="items-center">
+                                                <img v-if="el.IsDir" src='@/assets/img/folder.png' alt="">
+                                                <img v-else src='@/assets/img/file.png' alt="">
+                                                <a-input v-if="operateObj.col === index && operateObj.row === ins"
+                                                    v-model:value="inputValue" @blur="inputhandleBlur" />
+                                                <div v-else class="file-text"
+                                                    :style="{ 'opacity': (el.Name && el.Name[0] === '.') ? 0.4 : 1 }">{{
+                                                        el.Name
+                                                    }}</div>
+                                            </div>
+                                            <RightOutlined />
+                                            <template #overlay>
+                                                <a-menu>
+                                                    <a-menu-item
+                                                        @click="onOperationList(el, 0, index, ins)">重命名</a-menu-item>
+                                                    <a-menu-item
+                                                        @click="onOperationList(el, 1, index, ins)">删除</a-menu-item>
+                                                    <a-menu-item
+                                                        @click="onOperationList(el, 2, index, ins)">复制</a-menu-item>
+                                                </a-menu>
+                                            </template>
+                                        </a-dropdown>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- <template #overlay>
-                        <a-menu>
-                            <a-menu-item>新建文件</a-menu-item>
-                        </a-menu>
-                    </template> -->
-                        </a-dropdown>
-                    </template>
-                    <template v-else-if="item.type === 'file' && item.fileObj">
-                        131231
-                    </template>
+                                <template #overlay>
+                                    <a-menu>
+                                        <a-menu-item>新建文件</a-menu-item>
+                                    </a-menu>
+                                </template>
+                            </a-dropdown>
+                        </template>
+                        <template v-else-if="item.type === 'file' && item.fileObj">
+                            131231
+                        </template>
 
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, h } from "vue";
+import { ref, onMounted, h, computed } from "vue";
 import { RightOutlined } from '@ant-design/icons-vue';
 import { initSocket } from "@/common/method/socket"
 import { secterm, } from "@/../secterm/secterm";
 import { message, Modal } from 'ant-design-vue';
+import { useStore } from 'vuex'
+
 import {
     sectermConnectRequest,
     sectermFileListReq,
     SectermTeminaFileMove,
     SectermTeminaFileDelete,
-    // sectermFileUploadReq,
-    // sectermFileUploadFulfilleTheAllReq,
-    // sectermFileCancelUploadReq
+
 } from "@/common/method/proto";
 const emit = defineEmits(["connectResult", 'tabName']);
 const props = defineProps<{
@@ -86,6 +95,7 @@ const props = defineProps<{
 onMounted(() => {
     socketConnect()
 })
+const store = useStore()
 const v1 = secterm.v1;
 let websocket = <any>(null);
 let path = ref<string>(import.meta.env.VITE_Chard_Addr);
@@ -94,8 +104,6 @@ const socketConnect = () => {
     let socket = initSocket(path.value, 5000, 'arraybuffer', onOpen, onData, onError, onClose);
     websocket = socket
 }
-
-
 
 const onData = async (msg: any) => {
     let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
@@ -263,6 +271,22 @@ const catalogueContainerWidth = () => {
             return '33%'
     }
 }
+const styleBackgroundColor = computed(() => store.state.globalConfiguration.colorPrimary);
+
+
+const sftpNavTabs = computed(() => {
+    console.log(catalogueManagement.value)
+    let tabs: any[] = []
+
+    catalogueManagement.value.map((item: catalogueManagementTtype) => {
+        if (item.catalogueList && item.selected !== undefined) {
+            tabs.push(item.catalogueList[item.selected]?.Name)
+        }
+
+    })
+    return tabs
+
+})
 </script>
 
 <style lang="less" scoped>
@@ -282,16 +306,26 @@ const catalogueContainerWidth = () => {
 
     .sftp-left {
         height: 100%;
-        width: 120px;
-        background-color: red;
+        width: 180px;
     }
+
+    .sftp-right {
+        flex: 1;
+        height: 100%;
+    }
+}
+
+.sftp-right-nav {
+    height: 30px;
+    line-height: 30px;
 }
 
 
 .catalogue-management {
+    border-left: 1px solid #f7f7f7;
     display: flex;
     flex: 1;
-    height: 100%;
+    height: calc(100% - 30px);
     overflow-x: auto;
 }
 
@@ -314,17 +348,33 @@ const catalogueContainerWidth = () => {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border-radius: 5px;
+    cursor: pointer;
+
 }
 
 .catalogue-item img {
     width: 20px;
     height: auto;
     margin-right: 5px;
+
 }
 
+.catalogue-item:hover {
+    background-color: #DBDCDC;
+}
 
 .select-style {
-    background-color: #DBDCDC;
-    border-radius: 5px;
+    background-color: v-bind(styleBackgroundColor) !important;
+    color: #ffffff;
+}
+
+.sftp-nav-tabs {
+    width: 100%;
+    border: 1px solid #d9d9d9;
+    height: 100%;
+    padding: 4px 11px;
+    box-sizing: border-box;
+    border-radius: 6px;
 }
 </style>
