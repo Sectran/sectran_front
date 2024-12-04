@@ -87,6 +87,8 @@ const recursionMenu = (data: Router[]) => {
   return routerData
 }
 
+
+
 const hoverBackgroundColor = computed(() => store.state.globalConfiguration.colorPrimary);
 </script>
 
