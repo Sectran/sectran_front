@@ -1,4 +1,5 @@
 <template>
+    
     <input type="file" ref="fileInputRef" multiple style="display: none;" @change="startUploads" />
     <a ref="downloadRef" style="display:none;"></a>
 
@@ -113,10 +114,11 @@ const initXterm = () => {
         resizeEvent()
     }, 500);
     window.addEventListener("resize", () => {
+ 
         resizeScreen();
     });
     _term.onTitleChange((e: any) => {
-        console.log(e);
+        // console.log(e);
         emit('tabName', props.index, e)
     });
 
@@ -146,13 +148,13 @@ const initXterm = () => {
     term = _term;
 };
 const resizeEvent = () => {
-
     try {
         fitAddon.fit();
         let { cols, rows } = term;
+        console.log("resize", cols, rows);
         let resizeParams = { Colums: cols, Rows: rows };
         sectermTeminalResize(resizeParams, websocket);
-        console.log("resizeEvent");
+        // console.log("resizeEvent");
     } catch (e: any) {
         console.log("e", e.message);
     }

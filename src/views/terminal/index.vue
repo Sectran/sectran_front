@@ -44,17 +44,20 @@
                             </div>
                             <template v-if="item.isUnfold">
                                 <div v-for="(child, ins) in item.children" :key="ins" class="tree-child-node">
-                                    <!-- child.isUnfold = !child.isUnfold -->
-                                    <div @click="onOperatingSystem(child)">
+                                    <div @click="onOperatingSystem(child)" class="tree-child-div">
                                         <DownOutlined v-if="child.isUnfold" class="unfold-icon" />
                                         <RightOutlined v-else class="unfold-icon" />
-                                        {{ child.name }}({{ child.host }})
+                                        <a-tooltip>
+                                            <template #title>{{ child.name }}({{ child.host }})</template>
+                                            <div class="text-hidden">{{ child.name }}({{ child.host }})</div>
+                                        </a-tooltip>
+
                                     </div>
                                     <template v-if="child.isUnfold">
                                         <div v-for="(childs, inss) in child.children" :key="inss"
                                             class="tree-child-node hover-bg"
                                             @click="onAccount(child.name, child.host, childs.port, childs)">
-                                            {{ childs.username }}
+                                            <div class="text-hidden">{{ childs.username }}</div>
                                         </div>
                                     </template>
                                 </div>
@@ -66,10 +69,10 @@
                 <div class="Content-right">
                     <!-- <xterm @connectResult="connectResult" :submitLoading="submitLoading.valueOf" /> -->
                     <div class="xterm-div" v-if="multiList.length !== 0">
-                        <a-tabs v-model:activeKey="multiActiveKey" hide-add type="editable-card" :forceRender="false"
-                            @edit="(key: number) => onTabsEdit(key, 3)" style="width:100%">
+                        <a-tabs v-model:activeKey="multiActiveKey" hide-add type="editable-card" :forceRender="true"
+                            @edit="(key: number) => onTabsEdit(key, 3)" style="width:100%" >
                             <a-tab-pane v-for="(item, index) in multiList" :key="item.key" :closable="true"
-                                class="tab-pane" display-directive="show">
+                                class="tab-pane" display-directive="show" >
                                 <template #tab>
                                     <a-dropdown :trigger="['contextmenu']">
                                         <div style="height: 100%;width: 100%;">
@@ -89,8 +92,6 @@
                                         </template>
                                     </a-dropdown>
                                 </template>
-
-
                                 <template v-if="item.type === 'ssh'">
                                     <xterm ref="childXterm" @connectResult="connectResult" :host="item.host"
                                         :port="item.port" :submitLoading="submitLoading.valueOf"
@@ -98,17 +99,12 @@
                                         @tabName="(index: number, name: string) => multiList[index].name = name"
                                         :password="item.password" :index="index" />
                                 </template>
-
                                 <template v-else="item.type === 'sftp'">
                                     <sftp @connectResult="connectResult" :host="item.host" :port="item.port"
                                         :submitLoading="submitLoading.valueOf" :username="item.username"
                                         @tabName="(index: number, name: string) => multiList[index].name = name"
                                         :password="item.password" :index="index" />
                                 </template>
-
-
-
-
                             </a-tab-pane>
                             <template #rightExtra>
                                 <div class="tab-right">
@@ -495,9 +491,6 @@ const connectResult = (modalState: boolean) => {
 
 </script>
 <style scoped lang='less'>
-
-
-
 .xterm-div {
     width: 100%;
     height: 100%;
@@ -687,6 +680,8 @@ const connectResult = (modalState: boolean) => {
     .tree-child-node {
         margin: 5px 0 5px 20px;
         font-size: 15px;
+        padding: 3px;
+        border-radius: 5px;
     }
 
 }
@@ -749,5 +744,19 @@ const connectResult = (modalState: boolean) => {
     background-color: #ffffff;
     height: 100%;
     cursor: w-resize;
+}
+
+.tree-child-div {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.text-hidden {
+    padding-left: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
 }
 </style>
