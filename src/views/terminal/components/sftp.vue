@@ -9,7 +9,9 @@
 
                 <div class="sftp-right-nav">
                     <div class="sftp-nav-tabs">
-                        {{ sftpNavTabs }}
+                        <div v-for="(item) in sftpNavTabs">
+                            {{ item }}
+                        </div>
                     </div>
                 </div>
                 <div class="catalogue-management">
@@ -276,11 +278,11 @@ const styleBackgroundColor = computed(() => store.state.globalConfiguration.colo
 
 const sftpNavTabs = computed(() => {
     console.log(catalogueManagement.value)
-    let tabs: any[] = []
-
+    let tabs: string[] = ['opt']
     catalogueManagement.value.map((item: catalogueManagementTtype) => {
         if (item.catalogueList && item.selected !== undefined) {
-            tabs.push(item.catalogueList[item.selected]?.Name)
+            tabs.push(item.catalogueList[item.selected].Name as string)
+      
         }
 
     })
@@ -317,7 +319,6 @@ const sftpNavTabs = computed(() => {
 
 .sftp-right-nav {
     height: 30px;
-    line-height: 30px;
 }
 
 

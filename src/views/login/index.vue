@@ -89,7 +89,6 @@ const onFinish = (valus: { account: string, password: string, remember: boolean 
     // router.replace('/admin/user')
     console.log(valus.remember)
     if (valus.remember) {
-        console.log(1321)
         localStorage.setItem('account', valus.account)
         localStorage.setItem('password', valus.password)
     }
