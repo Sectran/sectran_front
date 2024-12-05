@@ -8,11 +8,19 @@
             <div class="sftp-right">
 
                 <div class="sftp-right-nav">
-                    <div class="sftp-nav-tabs">
-                        <div v-for="(item) in sftpNavTabs">
+                    <template v-for="(item, index) in sftpNavTabs" :key="index">
+                        <a-checkable-tag>
                             {{ item }}
+                        </a-checkable-tag>
+                        <RightOutlined v-if="index !== sftpNavTabs.length - 1 " class="sftp-right-icon"/>
+                    </template>
+
+
+                    <!-- <div class="sftp-nav-tabs">
+                        <div >
+                            {{  }}
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="catalogue-management">
                     <div v-for="(item, index) in catalogueManagement" :key="index"
@@ -282,7 +290,6 @@ const sftpNavTabs = computed(() => {
     catalogueManagement.value.map((item: catalogueManagementTtype) => {
         if (item.catalogueList && item.selected !== undefined) {
             tabs.push(item.catalogueList[item.selected].Name as string)
-      
         }
 
     })
@@ -317,9 +324,6 @@ const sftpNavTabs = computed(() => {
     }
 }
 
-.sftp-right-nav {
-    height: 30px;
-}
 
 
 .catalogue-management {
@@ -370,12 +374,24 @@ const sftpNavTabs = computed(() => {
     color: #ffffff;
 }
 
-.sftp-nav-tabs {
+.sftp-right-nav {
+    height: 40px;
+    display: flex;
     width: 100%;
     border: 1px solid #d9d9d9;
-    height: 100%;
     padding: 4px 11px;
     box-sizing: border-box;
     border-radius: 6px;
+    align-items: center;
+    .ant-tag {
+        font-size: 18px;
+        margin-inline-end:0px;
+        padding-inline:0px;
+    }
+    .sftp-right-icon {
+        padding: 0 5px;
+        font-size: 16px;
+    }
+
 }
 </style>

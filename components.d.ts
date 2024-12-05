@@ -10,6 +10,7 @@ declare module 'vue' {
     AAvatar: typeof import('ant-design-vue/es')['Avatar']
     AButton: typeof import('ant-design-vue/es')['Button']
     ACascader: typeof import('ant-design-vue/es')['Cascader']
+    ACheckableTag: typeof import('ant-design-vue/es')['CheckableTag']
     ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
     ACheckboxGroup: typeof import('ant-design-vue/es')['CheckboxGroup']
     ADropdown: typeof import('ant-design-vue/es')['Dropdown']
