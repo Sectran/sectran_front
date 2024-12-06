@@ -104,9 +104,11 @@
                 <template #headerCell="{ column }">
                     <span>{{ t(column.title) }}</span>
                 </template>
-                <template #bodyCell="{ column, record ,text}">
+                <template #bodyCell="{ column, record, text }">
                     <template v-if="column.dataIndex === 'account'">
-                        <a-button type="link" width="200">{{ text }}</a-button>
+                        <a-button type="link" width="200" @click="particularsObj = record; particularsOpen = true;">{{
+                            text
+                        }}</a-button>
                     </template>
 
                     <template v-if="column.dataIndex === 'updatedAt'">
@@ -223,6 +225,17 @@
                 </a-form>
             </a-watermark>
         </a-modal>
+
+        <a-modal v-model:open="particularsOpen" :footer="null" :width="1000">
+            <a-descriptions title="用户详情" bordered>
+                <a-descriptions-item v-for="item in columnsData" :label="t(item.title)">
+                    <template v-if="item.dataIndex === 'status'">
+                        <a-tag :color="particularsObj[item.dataIndex] ? 'success' :'default' ">{{ particularsObj[item.dataIndex] ? '已开启' :'已关闭' }} </a-tag>
+                    </template>
+                    <template v-else>{{ particularsObj[item.dataIndex] }}</template>
+                </a-descriptions-item>
+            </a-descriptions>
+        </a-modal>
     </div>
 </template>
 
@@ -243,6 +256,9 @@ const store = useStore()
 let { paginationOpt, tableData, submitFormRef, tableState, tableLoading, onTableSelectChange, requestList, fromreset, handleDelete, onInputTag, searchInputValue, handleMenuClick, searchModelItem, searchTags, columnsCheckboxArray, tableColumns, initializeSearchTable, operateTags, changeColumnsCheckbox, on_search } = useTableHooks({ listApi: listUser, deleteApi: deleteUser });
 const { t } = useI18n()
 const id = ref<number | undefined>(undefined);
+let particularsOpen = ref<boolean>(false);
+let particularsObj = ref<any>({});
+
 type formStateType = {
     [key: string]: any
     id?: number | undefined

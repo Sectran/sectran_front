@@ -12,10 +12,8 @@
                         <a-checkable-tag>
                             {{ item }}
                         </a-checkable-tag>
-                        <RightOutlined v-if="index !== sftpNavTabs.length - 1 " class="sftp-right-icon"/>
+                        <RightOutlined v-if="index !== sftpNavTabs.length - 1" class="sftp-right-icon" />
                     </template>
-
-
                     <!-- <div class="sftp-nav-tabs">
                         <div >
                             {{  }}
@@ -61,7 +59,7 @@
 
                                 <template #overlay>
                                     <a-menu>
-                                        <a-menu-item>新建文件</a-menu-item>
+                                        <a-menu-item @click="onfolderOperation(item, index, 0)">新建文件</a-menu-item>
                                     </a-menu>
                                 </template>
                             </a-dropdown>
@@ -69,11 +67,9 @@
                         <template v-else-if="item.type === 'file' && item.fileObj">
                             131231
                         </template>
-
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </template>
@@ -110,6 +106,7 @@ const v1 = secterm.v1;
 let websocket = <any>(null);
 let path = ref<string>(import.meta.env.VITE_Chard_Addr);
 const [modal] = Modal.useModal();
+let rootDirectory = 'opt'
 const socketConnect = () => {
     let socket = initSocket(path.value, 5000, 'arraybuffer', onOpen, onData, onError, onClose);
     websocket = socket
@@ -133,7 +130,7 @@ const connectManage = (sm: secterm.v1.ISectermConnectMessage) => {
             localStorage.setItem("password", props.password);
         }
     }
-    sectermFileListReq("/opt", websocket)
+    sectermFileListReq(`/${rootDirectory}`, websocket)
     console.log("connect success!");
 }
 
@@ -165,7 +162,8 @@ const onClose = () => {
 type catalogueType = {
 } & secterm.v1.ISectermFileInfo
 type catalogueManagementTtype = {
-    // path: string
+    path: string | null | undefined
+    superiorsName: string | null | undefined
     selected: number | undefined
     type: string
     catalogueList?: catalogueType[]
@@ -178,30 +176,45 @@ type fileObjType = {
     creationTime?: string
     modificationTime?: string
 }
+let superiorsName: string = rootDirectory
+let cataloguePath = `/${rootDirectory}`
 
 const catalogueManagement = ref<catalogueManagementTtype[]>([]);
 const sftpfileList = (fileListRes: catalogueType[]) => {
-    console.log(fileListRes)
     fileListRes.sort((a, b) => {
         if (a.IsDir && !b.IsDir) return -1;
         if (!a.IsDir && b.IsDir) return 1;
         return 0;
     });
+    console.log(superiorsName)
     catalogueManagement.value.push({
-        // path: "./",
+        superiorsName: superiorsName,
+        path: cataloguePath,
         type: 'catalogue',
         selected: undefined,
         catalogueList: fileListRes,
     })
-
 }
 
+/**
+ * 右键空白位置
+ * @param item 点击的目录
+ * @param index 目录下标
+ * @param type 修改类型  0新建 1下载
+ */
+const onfolderOperation = (item: catalogueManagementTtype, index: number, type: number) => {
+    if (type === 0) {
+        inputType = 'new'
+    }
+    console.log(item, index)
+}
 let inputValue = ref<string | undefined | null>('');
+let inputType = ""
+
 //当前操作的文件
 let operateFile = ref<catalogueType>({} as catalogueType);
 //当前操作的列和行 
 let operateObj = ref<{ row: number | undefined, col: number | undefined }>({ row: undefined, col: undefined });
-
 /**
  * 
  * @param el 当前操作文件
@@ -214,9 +227,9 @@ const onOperationList = (el: catalogueType, type: number, index: number, ins: nu
     console.log(el, type)
     operateObj.value.col = index
     operateObj.value.row = ins
-
     switch (type) {
         case 0:
+            inputType = 'ren'
             inputValue.value = el.Name
             break;
         case 1:
@@ -256,20 +269,19 @@ const deleteFile = (path: string, name: string | null | undefined) => {
     });
 }
 
-
-
-
 const onSelectcatalogue = (el: catalogueType, ins: number, index: number) => {
     console.log(el, ins, index)
     if (el.IsDir) {
         //点击的是目录
         let path = `${el.Path}/${el.Name}`;
+        superiorsName = el.Name as string
+        console.log(path)
+        cataloguePath = path
         catalogueManagement.value[index].selected = ins;
         index++
         catalogueManagement.value.splice(index)
         sectermFileListReq(path, websocket)
     }
-
 }
 const catalogueContainerWidth = () => {
     switch (catalogueManagement.value.length) {
@@ -283,18 +295,8 @@ const catalogueContainerWidth = () => {
 }
 const styleBackgroundColor = computed(() => store.state.globalConfiguration.colorPrimary);
 
-
 const sftpNavTabs = computed(() => {
-    console.log(catalogueManagement.value)
-    let tabs: string[] = ['opt']
-    catalogueManagement.value.map((item: catalogueManagementTtype) => {
-        if (item.catalogueList && item.selected !== undefined) {
-            tabs.push(item.catalogueList[item.selected].Name as string)
-        }
-
-    })
-    return tabs
-
+    return catalogueManagement.value.map((item: catalogueManagementTtype) => item.superiorsName)
 })
 </script>
 
@@ -306,7 +308,6 @@ const sftpNavTabs = computed(() => {
     align-items: center;
     justify-content: center;
 
-    // background-color: red;
     &>div {
         width: 95%;
         height: 95%;
@@ -383,11 +384,13 @@ const sftpNavTabs = computed(() => {
     box-sizing: border-box;
     border-radius: 6px;
     align-items: center;
+
     .ant-tag {
         font-size: 18px;
-        margin-inline-end:0px;
-        padding-inline:0px;
+        margin-inline-end: 0px;
+        padding-inline: 0px;
     }
+
     .sftp-right-icon {
         padding: 0 5px;
         font-size: 16px;

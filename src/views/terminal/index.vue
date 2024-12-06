@@ -23,11 +23,12 @@
             <div class="Content-style">
                 <div class="Content-left " :style="{ width: `${leftWidth}px` }"
                     :class="[isSpread ? 'Content-left-lessen' : '', transitionClass ? 'transition-style' : '']">
-                    <div class="Content-left-search">
+                    <div class="Content-left-search"  >
                         <!-- <div class="search-sty" v-if="!isSpread">
                             <a-input :bordered="false" placeholder="" />
                             <SearchOutlined class="search-icon" />
                         </div> -->
+                        <SyncOutlined class="menu-icon" @click="refreshTree"  v-if="!isSpread"/>
                         <MenuUnfoldOutlined class="menu-icon" @click="onSpread" />
 
                     </div>
@@ -41,6 +42,7 @@
                                 <div>
                                     {{ item.title }}
                                 </div>
+                                
                             </div>
                             <template v-if="item.isUnfold">
                                 <div v-for="(child, ins) in item.children" :key="ins" class="tree-child-node">
@@ -233,7 +235,7 @@ import { useI18n } from "vue-i18n";
 import { headMenu } from "./menu.ts"
 import { useStore } from 'vuex'
 import { deviceList, accountList } from "@/api/admin"
-import { UploadOutlined, LockOutlined, RightOutlined, DownOutlined } from '@ant-design/icons-vue';
+import { UploadOutlined, LockOutlined, RightOutlined, DownOutlined ,SyncOutlined} from '@ant-design/icons-vue';
 import { ExclamationCircleOutlined, } from '@ant-design/icons-vue';
 import { Modal } from 'ant-design-vue';
 import { resTable } from "@/common/type/type"
@@ -331,7 +333,11 @@ onMounted(() => {
         e.returnValue = "您确定要离开吗？请确认是否保存您的更改。";
         e.preventDefault();
     });
+    refreshTree()
 
+});
+
+const refreshTree = () =>{
     for (let index = 0; index < treeData.value.length; index++) {
         deviceList({ page: 1, pageSize: 100, type: treeData.value[index].title }).then((res: { data: resTable<TableType[]> }) => {
             console.log(res)
@@ -339,7 +345,7 @@ onMounted(() => {
             treeData.value[index].children = data
         })
     }
-});
+}
 
 onUnmounted(() => {
     document.removeEventListener('mouseup', handleMoveThrottled)
@@ -582,7 +588,6 @@ const connectResult = (modalState: boolean) => {
                 display: flex;
                 justify-content: space-between;
                 height: 30px;
-                justify-content: end;
 
                 .menu-icon {
                     color: #ffffff;
