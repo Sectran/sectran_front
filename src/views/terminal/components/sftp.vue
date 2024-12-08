@@ -3,22 +3,19 @@
         <div>
 
             <div class="sftp-left">
-
+                <div v-for="(item, index) in leftPath" :key="index">
+                    {{ item }}
+                </div>
             </div>
             <div class="sftp-right">
 
                 <div class="sftp-right-nav">
                     <template v-for="(item, index) in sftpNavTabs" :key="index">
-                        <a-checkable-tag>
+                        <a-checkable-tag @click="onTags(index)">
                             {{ item }}
                         </a-checkable-tag>
                         <RightOutlined v-if="index !== sftpNavTabs.length - 1" class="sftp-right-icon" />
                     </template>
-                    <!-- <div class="sftp-nav-tabs">
-                        <div >
-                            {{  }}
-                        </div>
-                    </div> -->
                 </div>
                 <div class="catalogue-management">
                     <div v-for="(item, index) in catalogueManagement" :key="index"
@@ -50,7 +47,7 @@
                                                     <a-menu-item
                                                         @click="onOperationList(el, 1, index, ins)">删除</a-menu-item>
                                                     <a-menu-item
-                                                        @click="onOperationList(el, 2, index, ins)">复制</a-menu-item>
+                                                        @click="onOperationList(el, 2, index, ins)">剪切</a-menu-item>
                                                 </a-menu>
                                             </template>
                                         </a-dropdown>
@@ -107,6 +104,8 @@ let websocket = <any>(null);
 let path = ref<string>(import.meta.env.VITE_Chard_Addr);
 const [modal] = Modal.useModal();
 let rootDirectory = 'opt'
+let leftPath = ref<string[]>([rootDirectory])
+
 const socketConnect = () => {
     let socket = initSocket(path.value, 5000, 'arraybuffer', onOpen, onData, onError, onClose);
     websocket = socket
@@ -298,6 +297,16 @@ const styleBackgroundColor = computed(() => store.state.globalConfiguration.colo
 const sftpNavTabs = computed(() => {
     return catalogueManagement.value.map((item: catalogueManagementTtype) => item.superiorsName)
 })
+
+const onTags = (index: number) => {
+    console.log(index)
+    console.log(catalogueManagement.value[index])
+    // catalogueManagement.value[index].selected = undefined;
+    catalogueManagement.value.splice(index++);
+
+}
+
+
 </script>
 
 <style lang="less" scoped>
@@ -380,20 +389,21 @@ const sftpNavTabs = computed(() => {
     display: flex;
     width: 100%;
     border: 1px solid #d9d9d9;
-    padding: 4px 11px;
+    padding: 0 11px;
     box-sizing: border-box;
     border-radius: 6px;
     align-items: center;
+    margin-bottom: 10px;
 
     .ant-tag {
-        font-size: 18px;
+        font-size: 16px;
         margin-inline-end: 0px;
         padding-inline: 0px;
     }
 
     .sftp-right-icon {
         padding: 0 5px;
-        font-size: 16px;
+        font-size: 10px;
     }
 
 }

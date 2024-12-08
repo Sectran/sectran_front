@@ -77,6 +77,7 @@ const formState = reactive<FormState>({
 onMounted(() => {
     let account = localStorage.getItem("account") || ""
     let password = localStorage.getItem("password") || ""
+    console.log(account, password)
     if (account && password) {
         formState.account = account
         formState.password = password
