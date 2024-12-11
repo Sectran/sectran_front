@@ -54,10 +54,7 @@
                 </a-select>
                 <a-input v-else class="search-style-input" v-model:value="searchInputValue" :bordered="false"
                     @pressEnter="onInputTag"></a-input>
-
             </div>
-
-
             <a-button @click="onInputTag" :icon="h(SearchOutlined)" type="primary">
                 {{ t('public.search') }}
             </a-button>

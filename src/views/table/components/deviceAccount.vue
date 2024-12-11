@@ -152,23 +152,18 @@
                             :placeholder='`${t("public.pleaseInput")}${t("device.deviceUsername")}`' />
                     </a-form-item>
                     <a-form-item :label="t('user.password')" name="password"
-                        :rules="[{ required:  !formState.privateKey, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
+                        :rules="[{ required: !formState.privateKey, message: `${t('public.pleaseInput')}${t('user.password')}` }]">
                         <a-input-password v-model:value="formState.password" autocomplete="off"
                             :placeholder='`${t("public.pleaseInput")}${t("user.password")}`' />
                     </a-form-item>
                     <a-form-item :label="t('device.Protocol')" name="protocol"
                         :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.Protocol')}` }]">
-
                         <a-select v-model:value="formState.protocol" class="w100 " @change="changeProtocol">
                             <a-select-option v-for="item in agreementArr" :value="item.value">{{ item.name
                                 }}</a-select-option>
-
                         </a-select>
-
                         <!-- <a-input-number :min="1" :max="65535" v-model:value="formState.protocol" class="input-width100"
                             :placeholder='`${t("public.pleaseInput")}${t("device.Protocol")}`' /> -->
-
-
                     </a-form-item>
                     <a-form-item :label="t('device.Port')" name="port"
                         :rules="[{ required: true, message: `${t('public.pleaseInput')}${t('device.Port')}` }]">
@@ -176,15 +171,12 @@
                             :placeholder='`${t("public.pleaseInput")}${t("device.Port")}`' />
                     </a-form-item>
                     <a-form-item :label="t('device.PrivateKey')" name="privateKey"
-                    
-                        :rules="[{ required: !formState.password, message: `${t('public.pleaseInput')}${t('device.PrivateKey')}` }]"
-                        
-                        >
+                        :rules="[{ required: !formState.password, message: `${t('public.pleaseInput')}${t('device.PrivateKey')}` }]">
                         <div style="display: flex;">
-                            <a-textarea  :autosize="false" v-model:value="formState.privateKey">
+                            <a-textarea :autosize="false" v-model:value="formState.privateKey">
                             </a-textarea>
                             <a-form-item-rest>
-                                <a-upload name="file" :file-list="[]">
+                                <a-upload :before-upload="privateKeyBeforeUpload">
                                     <a-button>
                                         <upload-outlined></upload-outlined>
                                     </a-button>
@@ -220,7 +212,7 @@ import { useI18n } from 'vue-i18n'
 import tabNoPermissin from "@/components/public-dom/table-no-permission.vue"
 import { accountCreate, accountList, accountDelete, accountUpdate } from "@/api/admin"
 import { SearchOutlined, PlusOutlined, SyncOutlined, DownOutlined, UploadOutlined } from '@ant-design/icons-vue';
-import { message } from 'ant-design-vue';
+import { message, Upload } from 'ant-design-vue';
 import dayjs from 'dayjs';
 import { SearchFronModel, } from "@/common/type/type"
 import { permsJudge } from "@/common/method/utils"
@@ -317,10 +309,31 @@ let agreementArr = ref([
     // { name: "Redis", value: 8},
 ])
 
-const changeProtocol = (value:number) =>{
-    if(value === 1) {
+const privateKeyBeforeUpload = (file: any) => {
+    console.log('File:', file);
+
+    if (!file.type.includes('text')) {
+        message.error('只能上传文本文件');
+        return false || Upload.LIST_IGNORE;
+    }
+
+    // 使用 FileReader 读取文件内容
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        if (e.target && e.target.result) {
+            const content = e.target.result.toString();
+            formState.privateKey = content
+        }
+    };
+    reader.readAsText(file);
+
+    return false || Upload.LIST_IGNORE;
+}
+
+const changeProtocol = (value: number) => {
+    if (value === 1) {
         formState.port = 22
-    }else if(value === 2) {
+    } else if (value === 2) {
         formState.port = 3389
     }
 }

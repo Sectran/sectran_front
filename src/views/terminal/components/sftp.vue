@@ -26,8 +26,9 @@
                             <a-dropdown :trigger="['contextmenu']">
                                 <div style="height: 100%;width: 100%;">
                                     <div v-for="(el, ins) in item.catalogueList" :key="ins" class="catalogue-item"
-                                        :class="{ 'select-style': item.selected === ins }"
-                                        @click="onSelectcatalogue(el, ins, index)">
+                                        :class="{ 'select-style': item.selected.includes(ins) }"
+                                        @click="onSelectcatalogue(el, ins, index, 'click')"
+                                        @dblclick="onSelectcatalogue(el, ins, index, 'double-click')">
                                         <a-dropdown :trigger="['contextmenu']" @contextmenu.stop>
                                             <div class="items-center">
                                                 <img v-if="el.IsDir" src='@/assets/img/folder.png' alt="">
@@ -71,7 +72,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, h, computed } from "vue";
+import { ref, onMounted, h, computed, onUnmounted } from "vue";
 import { RightOutlined } from '@ant-design/icons-vue';
 import { initSocket } from "@/common/method/socket"
 import { secterm, } from "@/../secterm/secterm";
@@ -95,9 +96,32 @@ const props = defineProps<{
     port: number
 
 }>();
+// 定义 Ctrl 键状态
+const isCtrlPressed = ref(false);
+
+// 定义事件处理函数
+const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Control') {
+        isCtrlPressed.value = true;
+    }
+};
+
+const handleKeyUp = (event: KeyboardEvent) => {
+    if (event.key === 'Control') {
+        isCtrlPressed.value = false;
+    }
+};
+
+
 onMounted(() => {
     socketConnect()
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
 })
+onUnmounted(() => {
+    window.removeEventListener('keydown', handleKeyDown);
+    window.removeEventListener('keyup', handleKeyUp);
+});
 const store = useStore()
 const v1 = secterm.v1;
 let websocket = <any>(null);
@@ -163,7 +187,7 @@ type catalogueType = {
 type catalogueManagementTtype = {
     path: string | null | undefined
     superiorsName: string | null | undefined
-    selected: number | undefined
+    selected: number[]
     type: string
     catalogueList?: catalogueType[]
     fileObj?: fileObjType
@@ -190,7 +214,7 @@ const sftpfileList = (fileListRes: catalogueType[]) => {
         superiorsName: superiorsName,
         path: cataloguePath,
         type: 'catalogue',
-        selected: undefined,
+        selected: [],
         catalogueList: fileListRes,
     })
 }
@@ -267,8 +291,14 @@ const deleteFile = (path: string, name: string | null | undefined) => {
         class: 'test',
     });
 }
-
-const onSelectcatalogue = (el: catalogueType, ins: number, index: number) => {
+/**
+ * 单击事件 文件
+ * @param el 点击文件
+ * @param ins 点击文件行
+ * @param index 点击文件列
+ * @param type  点击类型
+ */
+const onSelectcatalogue = (el: catalogueType, ins: number, index: number, type: string) => {
     console.log(el, ins, index)
     if (el.IsDir) {
         //点击的是目录
@@ -276,12 +306,16 @@ const onSelectcatalogue = (el: catalogueType, ins: number, index: number) => {
         superiorsName = el.Name as string
         console.log(path)
         cataloguePath = path
-        catalogueManagement.value[index].selected = ins;
-        index++
-        catalogueManagement.value.splice(index)
-        sectermFileListReq(path, websocket)
+        if(isCtrlPressed.value)   catalogueManagement.value[index].selected.push(ins);
+        else catalogueManagement.value[index].selected = [ins];
+        if (type === 'double-click') {
+            index++
+            catalogueManagement.value.splice(index)
+            sectermFileListReq(path, websocket)
+        }
     }
 }
+
 const catalogueContainerWidth = () => {
     switch (catalogueManagement.value.length) {
         case 1:
