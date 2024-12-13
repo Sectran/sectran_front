@@ -174,14 +174,16 @@ export const SectermTeminaFileDelete = (path: string[], websocket: WebSocket) =>
  * @param websocket 
  */
 export const SectermTeminaFileCreate = (file: secterm.v1.ISectermFileInfo | null, websocket: WebSocket) => {
+
     let sectermMessage = new v1.SectermMessage();
     let fileCreate = new v1.SectermFileCreate()
     fileCreate.file = file
-
+    if (sectermMessage.secFile) sectermMessage.secFile.fileCreate = fileCreate
+    else sectermMessage.secFile = { fileCreate: fileCreate }
+    console.log('SectermTeminaFileCreate',sectermMessage)
     let fileCreateData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(fileCreateData, websocket)
 }
-
 
 /**
  * websocket传输
