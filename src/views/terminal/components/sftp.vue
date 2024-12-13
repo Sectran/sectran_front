@@ -9,12 +9,17 @@
             </div>
             <div class="sftp-right">
 
-                <div class="sftp-right-nav">
-                    <template v-for="(item, index) in sftpNavTabs" :key="index">
-                        <a-checkable-tag @click="onTags(index)">
-                            {{ item }}
-                        </a-checkable-tag>
-                        <RightOutlined v-if="index !== sftpNavTabs.length - 1" class="sftp-right-icon" />
+                <div class="sftp-right-nav" @click="onTopInput">
+                    <template v-if="topInput">
+                        <a-input v-model:value="topInput" :bordered="false" @blur="topInput = ''" />
+                    </template>
+                    <template v-else="topInput">
+                        <template v-for="(item, index) in sftpNavTabs" :key="index">
+                            <a-checkable-tag @click.stop="onTags(index)">
+                                {{ item }}
+                            </a-checkable-tag>
+                            <RightOutlined v-if="index !== sftpNavTabs.length - 1" class="sftp-right-icon" />
+                        </template>
                     </template>
                 </div>
                 <div class="catalogue-management">
@@ -26,14 +31,14 @@
                             <a-dropdown :trigger="['contextmenu']">
                                 <div style="height: 100%;width: 100%;">
                                     <div v-for="(el, ins) in item.catalogueList" :key="ins" class="catalogue-item"
-                                        :class="{ 'select-style': item.selected.includes(ins) }"
+                                        :class="{ 'select-style': item.selected.includes(el.Name as string) }"
                                         @click="onSelectcatalogue(el, ins, index, 'click')"
                                         @dblclick="onSelectcatalogue(el, ins, index, 'double-click')">
                                         <a-dropdown :trigger="['contextmenu']" @contextmenu.stop>
                                             <div class="items-center">
                                                 <img v-if="el.IsDir" src='@/assets/img/folder.png' alt="">
                                                 <img v-else src='@/assets/img/file.png' alt="">
-                                                <a-input v-if="operateObj.col === index && operateObj.row === ins"
+                                                <a-input v-if="operateObj.col === index && operateObj.name === el.Name"
                                                     v-model:value="inputValue" @blur="inputhandleBlur" />
                                                 <div v-else class="file-text"
                                                     :style="{ 'opacity': (el.Name && el.Name[0] === '.') ? 0.4 : 1 }">{{
@@ -58,6 +63,7 @@
                                 <template #overlay>
                                     <a-menu>
                                         <a-menu-item @click="onfolderOperation(item, index, 0)">新建文件</a-menu-item>
+                                        <a-menu-item @click="onfolderOperation(item, index, 1)">上传文件</a-menu-item>
                                     </a-menu>
                                 </template>
                             </a-dropdown>
@@ -70,6 +76,22 @@
             </div>
         </div>
     </div>
+
+    <a-modal v-model:open="newFileShow" title="新建文件" ok-text="新建" cancel-text="取消" @ok="onOkNewFile">
+        <a-form ref="formNewFileRef" :model="newFileFrom" layout="vertical" name="form_in_modal">
+            <a-form-item name="fileName" :rules="[{ required: true, message: '请输入文件名' }]">
+                <a-input v-model:value="newFileFrom.fileName" placeholder="请输入文件名" />
+            </a-form-item>
+
+            <a-form-item name="title">
+                <a-select mode="tags" style="width: 100%" placeholder="请选择文件类型"
+                    :options="[{ value: '1', label: '文件夹' }, { value: '2', label: '文本文件' }]"></a-select>
+            </a-form-item>
+        </a-form>
+    </a-modal>
+
+
+
 </template>
 <script lang="ts" setup>
 import { ref, onMounted, h, computed, onUnmounted } from "vue";
@@ -78,13 +100,13 @@ import { initSocket } from "@/common/method/socket"
 import { secterm, } from "@/../secterm/secterm";
 import { message, Modal } from 'ant-design-vue';
 import { useStore } from 'vuex'
-
+import type { FormInstance } from 'ant-design-vue';
 import {
     sectermConnectRequest,
     sectermFileListReq,
     SectermTeminaFileMove,
     SectermTeminaFileDelete,
-
+    SectermTeminaFileCreate
 } from "@/common/method/proto";
 const emit = defineEmits(["connectResult", 'tabName']);
 const props = defineProps<{
@@ -126,7 +148,7 @@ const store = useStore()
 const v1 = secterm.v1;
 let websocket = <any>(null);
 let path = ref<string>(import.meta.env.VITE_Chard_Addr);
-const [modal] = Modal.useModal();
+
 let rootDirectory = 'opt'
 let leftPath = ref<string[]>([rootDirectory])
 
@@ -187,7 +209,7 @@ type catalogueType = {
 type catalogueManagementTtype = {
     path: string | null | undefined
     superiorsName: string | null | undefined
-    selected: number[]
+    selected: string[]
     type: string
     catalogueList?: catalogueType[]
     fileObj?: fileObjType
@@ -218,26 +240,49 @@ const sftpfileList = (fileListRes: catalogueType[]) => {
         catalogueList: fileListRes,
     })
 }
+const formNewFileRef = ref<FormInstance>();
+let newFileShow = ref(false)
+let newFileFrom = ref({
+    fileName: '',
+    fileType: 'file',
+})
 
+let operationItem = ref<catalogueManagementTtype>()
 /**
  * 右键空白位置
  * @param item 点击的目录
  * @param index 目录下标
- * @param type 修改类型  0新建 1下载
+ * @param type 修改类型  0新建 上传
  */
 const onfolderOperation = (item: catalogueManagementTtype, index: number, type: number) => {
+    operationItem.value = item
+    console.log(item)
+    console.log(index)
     if (type === 0) {
-        inputType = 'new'
+        newFileShow.value = true
+    } else if (type === 1) {
+
     }
     console.log(item, index)
 }
-let inputValue = ref<string | undefined | null>('');
-let inputType = ""
 
+//新建文件
+const onOkNewFile = () => {
+    formNewFileRef.value?.validateFields()
+        .then(values => {
+            console.log('Received values of form: ', values);
+            let fileName = values.fileName
+            if (operationItem.value) SectermTeminaFileCreate({ Name: fileName, IsDir: false, Path: operationItem.value.path }, websocket)
+        })
+        .catch(info => {
+            console.log('Validate Failed:', info);
+        });
+}
+let inputValue = ref<string | undefined | null>('');
 //当前操作的文件
 let operateFile = ref<catalogueType>({} as catalogueType);
 //当前操作的列和行 
-let operateObj = ref<{ row: number | undefined, col: number | undefined }>({ row: undefined, col: undefined });
+let operateObj = ref<{ row: number | undefined, col: number | undefined, name: string | undefined | null }>({ row: undefined, col: undefined, name: undefined });
 /**
  * 
  * @param el 当前操作文件
@@ -248,12 +293,13 @@ let operateObj = ref<{ row: number | undefined, col: number | undefined }>({ row
 const onOperationList = (el: catalogueType, type: number, index: number, ins: number) => {
     operateFile.value = el
     console.log(el, type)
-    operateObj.value.col = index
-    operateObj.value.row = ins
+
     switch (type) {
         case 0:
-            inputType = 'ren'
             inputValue.value = el.Name
+            operateObj.value.col = index
+            operateObj.value.row = ins
+            operateObj.value.name = el.Name
             break;
         case 1:
             deleteFile(`${operateFile.value.Path}/${operateFile.value.Name}`, operateFile.value.Name)
@@ -272,13 +318,14 @@ const inputhandleBlur = () => {
         SectermTeminaFileMove(path, DstPath, false, websocket)
         operateObj.value.col = undefined
         operateObj.value.row = undefined
+        operateObj.value.name = undefined
     } else {
         message.error('请输入正确的文件名');
     }
 }
 
 const deleteFile = (path: string, name: string | null | undefined) => {
-    modal.confirm({
+    Modal.confirm({
         title: `确定删除-${name}`,
         content: h('div', { style: 'color:red;' }, '请谨慎操作'),
         onOk() {
@@ -300,20 +347,21 @@ const deleteFile = (path: string, name: string | null | undefined) => {
  */
 const onSelectcatalogue = (el: catalogueType, ins: number, index: number, type: string) => {
     console.log(el, ins, index)
-    if (el.IsDir) {
-        //点击的是目录
-        let path = `${el.Path}/${el.Name}`;
-        superiorsName = el.Name as string
-        console.log(path)
-        cataloguePath = path
-        if(isCtrlPressed.value)   catalogueManagement.value[index].selected.push(ins);
-        else catalogueManagement.value[index].selected = [ins];
-        if (type === 'double-click') {
-            index++
-            catalogueManagement.value.splice(index)
-            sectermFileListReq(path, websocket)
-        }
+
+    //点击的是目录
+    let path = `${el.Path}/${el.Name}`;
+    superiorsName = el.Name as string
+    console.log(path)
+    cataloguePath = path
+    if (isCtrlPressed.value) catalogueManagement.value[index].selected.push(el.Name as string);
+    else catalogueManagement.value[index].selected = [el.Name as string];
+    //双击就展示下一页
+    if (type === 'double-click' && el.IsDir) {
+        index++
+        catalogueManagement.value.splice(index)
+        sectermFileListReq(path, websocket)
     }
+
 }
 
 const catalogueContainerWidth = () => {
@@ -332,12 +380,16 @@ const sftpNavTabs = computed(() => {
     return catalogueManagement.value.map((item: catalogueManagementTtype) => item.superiorsName)
 })
 
+let topInput = ref('')
 const onTags = (index: number) => {
     console.log(index)
     console.log(catalogueManagement.value[index])
     // catalogueManagement.value[index].selected = undefined;
-    catalogueManagement.value.splice(index++);
-
+    // catalogueManagement.value.splice(index++);
+}
+const onTopInput = () => {
+    topInput.value = sftpNavTabs.value.join("/")
+    console.log(topInput.value)
 }
 
 
