@@ -1,7 +1,5 @@
 syntax = "proto3";
-
 package secterm.v1;
-
 option go_package = "secterm/v1;sectermv1";
 
 enum SectermFileCmd {
@@ -73,10 +71,13 @@ message SectermFileCreate {
 
 //上传文件/下载请求
 message SectermFileTransReq {
-    bool flag = 1;                 // ture上传、false下载
-    string uuid = 3;               //文件uuid（被动请求为空，上传的时候应该从http上传接口返回）
-    TransProtocol proto = 4;       //文件下载协议
-    ActionMode mode = 5;           //文件下载请求模式（主动、被动）
+    bool upload = 1;               // ture上传、false下载
+    string uuid = 3;               // 文件uuid（被动请求为空，上传的时候应该从http上传接口返回）
+    TransProtocol proto = 4;       // 文件下载协议
+    ActionMode mode = 5;           // 文件下载请求模式（主动、被动）
+    string filename = 6;           // 文件名称
+    string filepath = 7;           // 文件路径
+    bool cover = 8;                // 是否覆盖（上传使用，但是不可以覆盖目录）
 }
 
 //传输成功确认

@@ -42,7 +42,6 @@
                                 <div>
                                     {{ item.title }}
                                 </div>
-                                
                             </div>
                             <template v-if="item.isUnfold">
                                 <div v-for="(child, ins) in item.children" :key="ins" class="tree-child-node">
@@ -71,7 +70,7 @@
                 <div class="Content-right">
                     <!-- <xterm @connectResult="connectResult" :submitLoading="submitLoading.valueOf" /> -->
                     <div class="xterm-div" v-if="multiList.length !== 0">
-                        <a-tabs v-model:activeKey="multiActiveKey" hide-add type="editable-card" :forceRender="true"
+                        <a-tabs v-model:activeKey="multiActiveKey"  hide-add type="editable-card" :forceRender="true"
                             @edit="(key: number) => onTabsEdit(key, 3)" style="width:100%" >
                             <a-tab-pane v-for="(item, index) in multiList" :key="item.key" :closable="true"
                                 class="tab-pane" display-directive="show" >
@@ -99,7 +98,7 @@
                                         :port="item.port" :submitLoading="submitLoading.valueOf"
                                         :username="item.username"
                                         @tabName="(index: number, name: string) => multiList[index].name = name"
-                                        :password="item.password" :index="index" />
+                                        :password="item.password" :index="index" :itemKey="item.key" :multiActiveKey="multiActiveKey" />
                                 </template>
                                 <template v-else="item.type === 'sftp'">
                                     <sftp @connectResult="connectResult" :host="item.host" :port="item.port"

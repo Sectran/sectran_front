@@ -2,15 +2,9 @@ syntax = "proto3";
 package secterm.v1;
 option go_package = "secterm/v1;sectermv1";
 
-import "./chard_h5_common.proto";
 import "./chard_h5_connect.proto";
 import "./chard_h5_terminal.proto";
 import "./chard_h5_file.proto";
-
-message SectermCommonResponse {
-    CommonCode code = 1;
-    string message = 2;
-}
 
 //need write length(uint32 little endian) before send proto message
 message SectermMessage {
@@ -21,7 +15,5 @@ message SectermMessage {
         SectermTerminalMessage sec_terminal = 2;
         //连接操作
         SectermConnectMessage sec_connect = 3;
-        //common响应
-        SectermCommonResponse common_response = 4;
     }
 }

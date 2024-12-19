@@ -1,6 +1,10 @@
 syntax = "proto3";
+
 package secterm.v1;
+
 option go_package = "secterm/v1;sectermv1";
+
+
 
 import "./chard_h5_common.proto";
 import "./chard_h5_connect.proto";

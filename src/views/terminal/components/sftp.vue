@@ -1,7 +1,8 @@
 <template>
+    <input type="file" ref="fileInputRef" multiple style="display: none;" @change="startUploads" />
     <div class="sftp-container">
+        <!-- <div class="shadeSty"></div> -->
         <div>
-
             <div class="sftp-left">
                 <div v-for="(item, index) in leftPath" :key="index">
                     {{ item }}
@@ -11,7 +12,8 @@
 
                 <div class="sftp-right-nav" @click="onTopInput">
                     <template v-if="topInput">
-                        <a-input v-model:value="topInput" :bordered="false" @blur="topInput = ''" />
+                        <a-input style="font-size: 16px;padding: 4px 0;" v-model:value="topInput" :bordered="false"
+                            @blur="topInput = ''" ref="tagInputRef" />
                     </template>
                     <template v-else="topInput">
                         <template v-for="(item, index) in sftpNavTabs" :key="index">
@@ -32,8 +34,7 @@
                                 <div style="height: 100%;width: 100%;">
                                     <div v-for="(el, ins) in item.catalogueList" :key="ins" class="catalogue-item"
                                         :class="{ 'select-style': item.selected.includes(el.Name as string) }"
-                                        @click="onSelectcatalogue(el, ins, index, 'click')"
-                                        @dblclick="onSelectcatalogue(el, ins, index, 'double-click')">
+                                        @click="onSelectcatalogue(el, ins, index)">
                                         <a-dropdown :trigger="['contextmenu']" @contextmenu.stop>
                                             <div class="items-center">
                                                 <img v-if="el.IsDir" src='@/assets/img/folder.png' alt="">
@@ -62,8 +63,8 @@
 
                                 <template #overlay>
                                     <a-menu>
-                                        <a-menu-item @click="onfolderOperation(item, index, 0)">新建文件</a-menu-item>
-                                        <a-menu-item @click="onfolderOperation(item, index, 1)">上传文件</a-menu-item>
+                                        <a-menu-item @click="onfolderOperation(item, index, 3)">新建文件</a-menu-item>
+                                        <a-menu-item @click="onfolderOperation(item, index, 4)">上传文件</a-menu-item>
                                     </a-menu>
                                 </template>
                             </a-dropdown>
@@ -94,7 +95,7 @@
 
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, h, computed, onUnmounted } from "vue";
+import { ref, onMounted, h, computed, onUnmounted, nextTick } from "vue";
 import { RightOutlined } from '@ant-design/icons-vue';
 import { initSocket } from "@/common/method/socket"
 import { secterm, } from "@/../secterm/secterm";
@@ -106,8 +107,13 @@ import {
     sectermFileListReq,
     SectermTeminaFileMove,
     SectermTeminaFileDelete,
-    SectermTeminaFileCreate
+    SectermTeminaFileCreate,
+    sectermFileUploadFulfilleTheAllReq,
+    sectermFileCancelUploadReq,
+    sectermFileUploadReq
 } from "@/common/method/proto";
+import { fileUpload } from "@/api/admin.ts"
+
 const emit = defineEmits(["connectResult", 'tabName']);
 const props = defineProps<{
     username: string
@@ -159,11 +165,47 @@ const socketConnect = () => {
 
 const onData = async (msg: any) => {
     let sm = v1.SectermMessage.decode(new Uint8Array(msg.data));
-
+    console.log(sm.commonResponse?.code, "发送消息")
     if (sm.secConnect) return connectManage(sm?.secConnect);
     if (sm?.secFile?.fileListRes && sm?.secFile?.fileListRes.FileInfo) return sftpfileList(sm?.secFile?.fileListRes.FileInfo)
+    if (sm.commonResponse?.message) return manageResponse(sm.commonResponse)
     console.log(sm, "未知的消息类型")
 };
+
+const manageResponse = (commonResponse: secterm.v1.ISectermCommonResponse) => {
+    console.log(commonResponse.code)
+    // === v1.CommonCode.SUCCES
+    // if (commonResponse.message) {
+    //     if (operateType === undefined) return
+    //     if ([0, 1].includes(operateType) && operateObj.value.path) {
+    //         sectermFileListReq(operateObj.value.path, websocket)
+    //         operateType = undefined
+    //     } else if (operateType === 4) {
+    //         console.log(filesList)
+    //         // filesList.shift()
+    //         // sftpFileUploading()
+    //     }
+    // }
+    // if (commonResponse.message === v1.CommonCode.ERROR) return message.error(commonResponse.message)
+    if (commonResponse.code === v1.CommonCode.WARN) {
+        message.warning(commonResponse.message)
+        Modal.confirm({
+            title: '警告',
+            content: '文件重复，是否强制覆盖？',
+            onOk() {
+                sftpFileUploading(true)
+            },
+            onCancel() {
+                filesList.shift()
+                sftpFileUploading()
+            },
+            class: 'test',
+        });
+    }
+
+}
+
+
 
 const connectManage = (sm: secterm.v1.ISectermConnectMessage) => {
     if (sm.connectRes?.code != v1.SectermCode.LOGON_SUCCESS) {
@@ -181,6 +223,7 @@ const connectManage = (sm: secterm.v1.ISectermConnectMessage) => {
 
 const onOpen = () => {
     const token: string | null = localStorage.getItem("token");
+
     let connectParams = {
         protocol: v1.SectermProtocols.SECTERM_SFTP,
         token: token,
@@ -232,13 +275,19 @@ const sftpfileList = (fileListRes: catalogueType[]) => {
         return 0;
     });
     console.log(superiorsName)
-    catalogueManagement.value.push({
-        superiorsName: superiorsName,
-        path: cataloguePath,
-        type: 'catalogue',
-        selected: [],
-        catalogueList: fileListRes,
-    })
+    if (operateObj.value.col !== undefined) {
+        catalogueManagement.value[operateObj.value.col].catalogueList = fileListRes
+        operateObj.value.col = undefined
+    } else {
+        catalogueManagement.value.push({
+            superiorsName: superiorsName,
+            path: cataloguePath,
+            type: 'catalogue',
+            selected: [],
+            catalogueList: fileListRes,
+        })
+    }
+
 }
 const formNewFileRef = ref<FormInstance>();
 let newFileShow = ref(false)
@@ -252,16 +301,20 @@ let operationItem = ref<catalogueManagementTtype>()
  * 右键空白位置
  * @param item 点击的目录
  * @param index 目录下标
- * @param type 修改类型  0新建 上传
+ * @param type 修改类型  3新建  4上传
  */
 const onfolderOperation = (item: catalogueManagementTtype, index: number, type: number) => {
     operationItem.value = item
+    operateType = type
+    console.log(operationItem)
     console.log(item)
     console.log(index)
-    if (type === 0) {
+    if (type === 3) {
         newFileShow.value = true
-    } else if (type === 1) {
-
+    } else if (type === 4) {
+        if (fileInputRef.value) {
+            fileInputRef.value.click()
+        }
     }
     console.log(item, index)
 }
@@ -282,22 +335,35 @@ let inputValue = ref<string | undefined | null>('');
 //当前操作的文件
 let operateFile = ref<catalogueType>({} as catalogueType);
 //当前操作的列和行 
-let operateObj = ref<{ row: number | undefined, col: number | undefined, name: string | undefined | null }>({ row: undefined, col: undefined, name: undefined });
+
+type operateObjType = {
+    row: number | undefined
+    col: number | undefined
+    name: string | undefined | null
+    path: string | undefined | null
+}
+
+let operateObj = ref<operateObjType>({ row: undefined, col: undefined, name: undefined, path: undefined });
+//做的什么操作 0重命名 1删除 2剪切
+let operateType: number | undefined = undefined
+
 /**
  * 
  * @param el 当前操作文件
- * @param type 操作类型 0 重命名 1 删除 2 复制
+ * @param type 操作类型 0重命名 1删除 2剪切
  * @param index 
  * @param ins 
  */
 const onOperationList = (el: catalogueType, type: number, index: number, ins: number) => {
+    operateType = type
     operateFile.value = el
     console.log(el, type)
-
+    operateObj.value.col = index
+    operateObj.value.path = el.Path
+    console.log(catalogueManagement.value)
     switch (type) {
         case 0:
             inputValue.value = el.Name
-            operateObj.value.col = index
             operateObj.value.row = ins
             operateObj.value.name = el.Name
             break;
@@ -309,19 +375,18 @@ const onOperationList = (el: catalogueType, type: number, index: number, ins: nu
     }
 }
 const inputhandleBlur = () => {
-    const folderNameRegex = /^[a-zA-Z0-9 _-]+$/;
-    if (inputValue.value && folderNameRegex.test(inputValue.value)) {
-        console.log("重命名")
-        let path = `${operateFile.value.Path}/${operateFile.value.Name}`
-        let DstPath = `${operateFile.value.Path}/${inputValue.value}`
-        console.log(path, DstPath)
-        SectermTeminaFileMove(path, DstPath, false, websocket)
-        operateObj.value.col = undefined
-        operateObj.value.row = undefined
-        operateObj.value.name = undefined
-    } else {
-        message.error('请输入正确的文件名');
-    }
+    const filenameRegex = /^[a-zA-Z0-9_\-]+(\.[a-zA-Z0-9_\-]+)*$/;
+    // if (inputValue.value && filenameRegex.test(inputValue.value)) {
+    console.log("重命名")
+    let path = `${operateFile.value.Path}/${operateFile.value.Name}`
+    let DstPath = `${operateFile.value.Path}/${inputValue.value}`
+    console.log(path, DstPath)
+    SectermTeminaFileMove(path, DstPath, false, websocket)
+    operateObj.value.row = undefined
+    operateObj.value.name = undefined
+    // } else {
+    //     message.error('请输入正确的文件名');
+    // }
 }
 
 const deleteFile = (path: string, name: string | null | undefined) => {
@@ -343,9 +408,8 @@ const deleteFile = (path: string, name: string | null | undefined) => {
  * @param el 点击文件
  * @param ins 点击文件行
  * @param index 点击文件列
- * @param type  点击类型
  */
-const onSelectcatalogue = (el: catalogueType, ins: number, index: number, type: string) => {
+const onSelectcatalogue = (el: catalogueType, ins: number, index: number) => {
     console.log(el, ins, index)
 
     //点击的是目录
@@ -355,8 +419,7 @@ const onSelectcatalogue = (el: catalogueType, ins: number, index: number, type: 
     cataloguePath = path
     if (isCtrlPressed.value) catalogueManagement.value[index].selected.push(el.Name as string);
     else catalogueManagement.value[index].selected = [el.Name as string];
-    //双击就展示下一页
-    if (type === 'double-click' && el.IsDir) {
+    if (el.IsDir) {
         index++
         catalogueManagement.value.splice(index)
         sectermFileListReq(path, websocket)
@@ -385,13 +448,66 @@ const onTags = (index: number) => {
     console.log(index)
     console.log(catalogueManagement.value[index])
     // catalogueManagement.value[index].selected = undefined;
-    // catalogueManagement.value.splice(index++);
+    catalogueManagement.value.splice(index++);
 }
+let tagInputRef = ref<any>(null)
 const onTopInput = () => {
     topInput.value = sftpNavTabs.value.join("/")
+    nextTick(() => {
+        tagInputRef.value?.focus();
+    })
     console.log(topInput.value)
 }
 
+
+
+let fileInputRef = ref<HTMLInputElement>();
+//文件列表
+let filesList: File[] = ([])
+const startUploads = async (event: any) => {
+    console.log(event.target.files, 'event.target.files');
+    if (event.target.files.length !== 0) {
+        filesList = event.target.files
+        console.log(filesList, 'filesList');
+        sftpFileUploading()
+        if (fileInputRef.value) {
+            (fileInputRef.value as HTMLInputElement).value = '';
+        }
+
+    } else {
+        sectermFileCancelUploadReq(websocket)
+        console.log("未选择文件");
+    }
+}
+
+const sftpFileUploading = (cover?: boolean) => {
+    if (filesList.length > 0) {
+        let firstElement = filesList[0];
+        makeRequest(firstElement, cover)
+    } else {
+        sectermFileUploadFulfilleTheAllReq(websocket)
+    }
+}
+
+const makeRequest = async (file: File, cover = false) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    await fileUpload(formData).then(async (res: { data: string }) => {
+        let FileUploadReqData: secterm.v1.SectermFileTransReq = {
+            uuid: res.data,
+            upload: true,
+            cover,
+            filename: file.name,
+            filepath: operationItem.value?.path as string,
+            proto: secterm.v1.TransProtocol.ZMODEM,
+            mode: secterm.v1.ActionMode.ACTIVE,
+            toJSON: function (): { [k: string]: any; } {
+                throw new Error("Function not implemented.");
+            }
+        }
+        return sectermFileUploadReq(FileUploadReqData, websocket)
+    })
+}
 
 </script>
 
@@ -402,6 +518,16 @@ const onTopInput = () => {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+
+    .shadeSty {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        // background-color: red;
+    }
 
     &>div {
         width: 95%;

@@ -1,0 +1,9 @@
+syntax = "proto3";
+package secterm.v1;
+option go_package = "secterm/v1;sectermv1";
+
+enum CommonCode {
+    SUCCES = 0;
+    ERROR = 1;
+    WARN = 2;
+}

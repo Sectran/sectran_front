@@ -124,10 +124,11 @@ export const sectermFileCancelUploadReq = (websocket: WebSocket) => {
  * 
  */
 export const sectermFileListReq = (path: string, websocket: WebSocket) => {
-    console.log('sectermFileListReq')
+
     let sectermMessage = new v1.SectermMessage();
     let fileList = new v1.SectermFileListRequest()
     fileList.dirPath = path
+    console.log('sectermFileListReq',fileList.dirPath)
     if (sectermMessage.secFile) sectermMessage.secFile.fileListReq = fileList
     else sectermMessage.secFile = { fileListReq: fileList }
     let fileListData = v1.SectermMessage.encode(sectermMessage).finish();
@@ -169,7 +170,24 @@ export const SectermTeminaFileDelete = (path: string[], websocket: WebSocket) =>
 }
 
 /**
- * 创建文件
+ * sftp上传文件
+ * @param file ⽂件信息
+ * @param websocket 
+ */
+export const SectermTeminaFileUploading = (file: secterm.v1.ISectermFileInfo | null, websocket: WebSocket) => {
+
+    let sectermMessage = new v1.SectermMessage();
+    let fileCreate = new v1.SectermFileCreate()
+    fileCreate.file = file
+    if (sectermMessage.secFile) sectermMessage.secFile.fileCreate = fileCreate
+    else sectermMessage.secFile = { fileCreate: fileCreate }
+    console.log('SectermTeminaFileCreate',sectermMessage)
+    let fileCreateData = v1.SectermMessage.encode(sectermMessage).finish();
+    transmitWebSocket(fileCreateData, websocket)
+}
+
+/**
+ * 文件上传
  * @param file ⽂件信息
  * @param websocket 
  */
@@ -184,6 +202,7 @@ export const SectermTeminaFileCreate = (file: secterm.v1.ISectermFileInfo | null
     let fileCreateData = v1.SectermMessage.encode(sectermMessage).finish();
     transmitWebSocket(fileCreateData, websocket)
 }
+
 
 /**
  * websocket传输

@@ -1,27 +1,29 @@
 <template>
-    
+
     <input type="file" ref="fileInputRef" multiple style="display: none;" @change="startUploads" />
     <a ref="downloadRef" style="display:none;"></a>
 
     <div class="terminal-header">
         <div>{{ props.username }}@{{ props.host }}</div>
-        <div @click="socketConnect">
+        <div @click="socketConnect" class="rigth-icon">
             <RedoOutlined style="font-size: 22px;" />
             Reconnect
         </div>
     </div>
     <template v-if="connectionStatus">
-        <div class="terminal-div">
+        <div class="terminal-div" ref="terminalDiv">
             <div id="terminal" ref="terminal"></div>
         </div>
     </template>
     <template v-else>
         <div class="break-style">已断开，请重新连接</div>
     </template>
+
+
 </template>
 
 <script setup lang='ts'>
-import { onMounted, ref, reactive, onUnmounted } from "vue";
+import { onMounted, ref, reactive, onUnmounted, computed } from "vue";
 import { RedoOutlined } from '@ant-design/icons-vue';
 import { message } from "ant-design-vue";
 import { Terminal } from "xterm";
@@ -32,6 +34,7 @@ import "xterm/css/xterm.css";
 import { Modal } from 'ant-design-vue';
 import { secterm, } from "@/../secterm/secterm";
 import { fileUpload } from "@/api/admin.ts"
+import { useStore } from 'vuex'
 import {
     sectermConnectRequest,
     sectermTeminalResize,
@@ -49,6 +52,8 @@ const props = defineProps<{
     host: string
     index: number
     port: number
+    multiActiveKey: number | undefined
+    itemKey: number
 
 }>();
 const v1 = secterm.v1;
@@ -58,13 +63,13 @@ let path = ref<string>(import.meta.env.VITE_Chard_Addr);
 let websocket = <any>(null);
 let term = reactive<any>({});
 let fitAddon = reactive<any>({});
-let resizeScreen: any;
+
 const { t } = useI18n();
 const emit = defineEmits(["connectResult", 'tabName']);
 let connectionStatus = ref<boolean>(true);
 let inFileSelect = ref<boolean>(false)
 let fileInputRef = ref<HTMLInputElement>();
-
+const store = useStore()
 onMounted(() => {
     initXterm();
     socketConnect()
@@ -109,14 +114,14 @@ const initXterm = () => {
     fitAddon = new FitAddon();
     _term.loadAddon(fitAddon);
     fitAddon.fit();
-    resizeScreen = debounce(() => {
-        console.log("resize");
-        resizeEvent()
-    }, 500);
-    window.addEventListener("resize", () => {
- 
-        resizeScreen();
-    });
+    console.log(terminalDiv.value);
+    if (terminalDiv.value) {
+        observer.observe(terminalDiv.value);
+    }
+
+
+
+
     _term.onTitleChange((e: any) => {
         // console.log(e);
         emit('tabName', props.index, e)
@@ -147,18 +152,7 @@ const initXterm = () => {
     }
     term = _term;
 };
-const resizeEvent = () => {
-    try {
-        fitAddon.fit();
-        let { cols, rows } = term;
-        console.log("resize", cols, rows);
-        let resizeParams = { Colums: cols, Rows: rows };
-        sectermTeminalResize(resizeParams, websocket);
-        // console.log("resizeEvent");
-    } catch (e: any) {
-        console.log("e", e.message);
-    }
-}
+
 
 
 
@@ -196,7 +190,7 @@ const terminalManage = (sm: secterm.v1.ISectermTerminalMessage) => {
     }
 }
 const fileManage = (sm: secterm.v1.ISectermFileMessage) => {
-    if (sm?.fileTransReq?.flag == true) {
+    if (sm?.fileTransReq?.upload == true) {
         // 上传请求
         Modal.confirm({
             title: '是否确定上传文件?',
@@ -218,7 +212,7 @@ const fileManage = (sm: secterm.v1.ISectermFileMessage) => {
         downloadedFileList.push({ uuid: sm.fileTransRes?.uuid })
         if (!isdbeDownloading) downloadFile()
     } else {
-        console.log('file文件处理错误类型', sm?.fileTransReq?.flag)
+        console.log('file文件处理错误类型', sm?.fileTransReq?.upload)
     }
 }
 
@@ -262,7 +256,10 @@ const makeRequest = async (formData: FormData) => {
     await fileUpload(formData).then(async (res: { data: string }) => {
         let FileUploadReqData: secterm.v1.SectermFileTransReq = {
             uuid: res.data,
-            flag: true,
+            upload: true,
+            cover: true,
+            filepath: "",
+            filename: "",
             proto: secterm.v1.TransProtocol.ZMODEM,
             mode: secterm.v1.ActionMode.ACTIVE,
             toJSON: function (): { [k: string]: any; } {
@@ -328,16 +325,56 @@ const onClose = () => {
     console.log("socket已经关闭");
 };
 
+
+const handleResize = debounce(() => {
+    console.log(props.multiActiveKey)
+    console.log(props.itemKey)
+
+
+
+    if (props.multiActiveKey === props.itemKey) resizeEvent()
+
+}, 500);
+
+
+const observer = new ResizeObserver(handleResize);
+
 onUnmounted(() => {
-    resizeScreen.cancel();
+
+    observer.disconnect();
 });
 
-defineExpose({
-    resizeEvent
-});
+const terminalDiv = ref(null);
+
+const resizeEvent = () => {
+    try {
+        fitAddon.fit();
+        let { cols, rows } = term;
+        console.log("resize", cols, rows);
+        let resizeParams = { Colums: cols, Rows: rows };
+        sectermTeminalResize(resizeParams, websocket);
+        // console.log("resizeEvent");
+    } catch (e: any) {
+        console.log("e", e.message);
+    }
+}
+const styleBackgroundColor = computed(() => store.state.globalConfiguration.colorPrimary);
+
 </script>
 
 <style scoped lang='less'>
+.rigth-icon {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+
+}
+
+.rigth-icon:hover {
+    color: v-bind(styleBackgroundColor) !important;
+}
+
 .uploading-div {
     max-height: 60vh;
     overflow-y: auto;

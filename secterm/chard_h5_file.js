@@ -1555,10 +1555,13 @@ export const secterm = $root.secterm = (() => {
              * Properties of a SectermFileTransReq.
              * @memberof secterm.v1
              * @interface ISectermFileTransReq
-             * @property {boolean|null} [flag] SectermFileTransReq flag
+             * @property {boolean|null} [upload] SectermFileTransReq upload
              * @property {string|null} [uuid] SectermFileTransReq uuid
              * @property {secterm.v1.TransProtocol|null} [proto] SectermFileTransReq proto
              * @property {secterm.v1.ActionMode|null} [mode] SectermFileTransReq mode
+             * @property {string|null} [filename] SectermFileTransReq filename
+             * @property {string|null} [filepath] SectermFileTransReq filepath
+             * @property {boolean|null} [cover] SectermFileTransReq cover
              */
 
             /**
@@ -1577,12 +1580,12 @@ export const secterm = $root.secterm = (() => {
             }
 
             /**
-             * SectermFileTransReq flag.
-             * @member {boolean} flag
+             * SectermFileTransReq upload.
+             * @member {boolean} upload
              * @memberof secterm.v1.SectermFileTransReq
              * @instance
              */
-            SectermFileTransReq.prototype.flag = false;
+            SectermFileTransReq.prototype.upload = false;
 
             /**
              * SectermFileTransReq uuid.
@@ -1609,6 +1612,30 @@ export const secterm = $root.secterm = (() => {
             SectermFileTransReq.prototype.mode = 0;
 
             /**
+             * SectermFileTransReq filename.
+             * @member {string} filename
+             * @memberof secterm.v1.SectermFileTransReq
+             * @instance
+             */
+            SectermFileTransReq.prototype.filename = "";
+
+            /**
+             * SectermFileTransReq filepath.
+             * @member {string} filepath
+             * @memberof secterm.v1.SectermFileTransReq
+             * @instance
+             */
+            SectermFileTransReq.prototype.filepath = "";
+
+            /**
+             * SectermFileTransReq cover.
+             * @member {boolean} cover
+             * @memberof secterm.v1.SectermFileTransReq
+             * @instance
+             */
+            SectermFileTransReq.prototype.cover = false;
+
+            /**
              * Creates a new SectermFileTransReq instance using the specified properties.
              * @function create
              * @memberof secterm.v1.SectermFileTransReq
@@ -1632,14 +1659,20 @@ export const secterm = $root.secterm = (() => {
             SectermFileTransReq.encode = function encode(message, writer) {
                 if (!writer)
                     writer = $Writer.create();
-                if (message.flag != null && Object.hasOwnProperty.call(message, "flag"))
-                    writer.uint32(/* id 1, wireType 0 =*/8).bool(message.flag);
+                if (message.upload != null && Object.hasOwnProperty.call(message, "upload"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).bool(message.upload);
                 if (message.uuid != null && Object.hasOwnProperty.call(message, "uuid"))
                     writer.uint32(/* id 3, wireType 2 =*/26).string(message.uuid);
                 if (message.proto != null && Object.hasOwnProperty.call(message, "proto"))
                     writer.uint32(/* id 4, wireType 0 =*/32).int32(message.proto);
                 if (message.mode != null && Object.hasOwnProperty.call(message, "mode"))
                     writer.uint32(/* id 5, wireType 0 =*/40).int32(message.mode);
+                if (message.filename != null && Object.hasOwnProperty.call(message, "filename"))
+                    writer.uint32(/* id 6, wireType 2 =*/50).string(message.filename);
+                if (message.filepath != null && Object.hasOwnProperty.call(message, "filepath"))
+                    writer.uint32(/* id 7, wireType 2 =*/58).string(message.filepath);
+                if (message.cover != null && Object.hasOwnProperty.call(message, "cover"))
+                    writer.uint32(/* id 8, wireType 0 =*/64).bool(message.cover);
                 return writer;
             };
 
@@ -1675,7 +1708,7 @@ export const secterm = $root.secterm = (() => {
                     let tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1: {
-                            message.flag = reader.bool();
+                            message.upload = reader.bool();
                             break;
                         }
                     case 3: {
@@ -1688,6 +1721,18 @@ export const secterm = $root.secterm = (() => {
                         }
                     case 5: {
                             message.mode = reader.int32();
+                            break;
+                        }
+                    case 6: {
+                            message.filename = reader.string();
+                            break;
+                        }
+                    case 7: {
+                            message.filepath = reader.string();
+                            break;
+                        }
+                    case 8: {
+                            message.cover = reader.bool();
                             break;
                         }
                     default:
@@ -1725,9 +1770,9 @@ export const secterm = $root.secterm = (() => {
             SectermFileTransReq.verify = function verify(message) {
                 if (typeof message !== "object" || message === null)
                     return "object expected";
-                if (message.flag != null && message.hasOwnProperty("flag"))
-                    if (typeof message.flag !== "boolean")
-                        return "flag: boolean expected";
+                if (message.upload != null && message.hasOwnProperty("upload"))
+                    if (typeof message.upload !== "boolean")
+                        return "upload: boolean expected";
                 if (message.uuid != null && message.hasOwnProperty("uuid"))
                     if (!$util.isString(message.uuid))
                         return "uuid: string expected";
@@ -1749,6 +1794,15 @@ export const secterm = $root.secterm = (() => {
                     case 1:
                         break;
                     }
+                if (message.filename != null && message.hasOwnProperty("filename"))
+                    if (!$util.isString(message.filename))
+                        return "filename: string expected";
+                if (message.filepath != null && message.hasOwnProperty("filepath"))
+                    if (!$util.isString(message.filepath))
+                        return "filepath: string expected";
+                if (message.cover != null && message.hasOwnProperty("cover"))
+                    if (typeof message.cover !== "boolean")
+                        return "cover: boolean expected";
                 return null;
             };
 
@@ -1764,8 +1818,8 @@ export const secterm = $root.secterm = (() => {
                 if (object instanceof $root.secterm.v1.SectermFileTransReq)
                     return object;
                 let message = new $root.secterm.v1.SectermFileTransReq();
-                if (object.flag != null)
-                    message.flag = Boolean(object.flag);
+                if (object.upload != null)
+                    message.upload = Boolean(object.upload);
                 if (object.uuid != null)
                     message.uuid = String(object.uuid);
                 switch (object.proto) {
@@ -1808,6 +1862,12 @@ export const secterm = $root.secterm = (() => {
                     message.mode = 1;
                     break;
                 }
+                if (object.filename != null)
+                    message.filename = String(object.filename);
+                if (object.filepath != null)
+                    message.filepath = String(object.filepath);
+                if (object.cover != null)
+                    message.cover = Boolean(object.cover);
                 return message;
             };
 
@@ -1825,19 +1885,28 @@ export const secterm = $root.secterm = (() => {
                     options = {};
                 let object = {};
                 if (options.defaults) {
-                    object.flag = false;
+                    object.upload = false;
                     object.uuid = "";
                     object.proto = options.enums === String ? "ZMODEM" : 0;
                     object.mode = options.enums === String ? "ACTIVE" : 0;
+                    object.filename = "";
+                    object.filepath = "";
+                    object.cover = false;
                 }
-                if (message.flag != null && message.hasOwnProperty("flag"))
-                    object.flag = message.flag;
+                if (message.upload != null && message.hasOwnProperty("upload"))
+                    object.upload = message.upload;
                 if (message.uuid != null && message.hasOwnProperty("uuid"))
                     object.uuid = message.uuid;
                 if (message.proto != null && message.hasOwnProperty("proto"))
                     object.proto = options.enums === String ? $root.secterm.v1.TransProtocol[message.proto] === undefined ? message.proto : $root.secterm.v1.TransProtocol[message.proto] : message.proto;
                 if (message.mode != null && message.hasOwnProperty("mode"))
                     object.mode = options.enums === String ? $root.secterm.v1.ActionMode[message.mode] === undefined ? message.mode : $root.secterm.v1.ActionMode[message.mode] : message.mode;
+                if (message.filename != null && message.hasOwnProperty("filename"))
+                    object.filename = message.filename;
+                if (message.filepath != null && message.hasOwnProperty("filepath"))
+                    object.filepath = message.filepath;
+                if (message.cover != null && message.hasOwnProperty("cover"))
+                    object.cover = message.cover;
                 return object;
             };
 

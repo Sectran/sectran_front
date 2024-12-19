@@ -661,8 +661,8 @@ export namespace secterm {
         /** Properties of a SectermFileTransReq. */
         interface ISectermFileTransReq {
 
-            /** SectermFileTransReq flag */
-            flag?: (boolean|null);
+            /** SectermFileTransReq upload */
+            upload?: (boolean|null);
 
             /** SectermFileTransReq uuid */
             uuid?: (string|null);
@@ -672,6 +672,15 @@ export namespace secterm {
 
             /** SectermFileTransReq mode */
             mode?: (secterm.v1.ActionMode|null);
+
+            /** SectermFileTransReq filename */
+            filename?: (string|null);
+
+            /** SectermFileTransReq filepath */
+            filepath?: (string|null);
+
+            /** SectermFileTransReq cover */
+            cover?: (boolean|null);
         }
 
         /** Represents a SectermFileTransReq. */
@@ -683,8 +692,8 @@ export namespace secterm {
              */
             constructor(properties?: secterm.v1.ISectermFileTransReq);
 
-            /** SectermFileTransReq flag. */
-            public flag: boolean;
+            /** SectermFileTransReq upload. */
+            public upload: boolean;
 
             /** SectermFileTransReq uuid. */
             public uuid: string;
@@ -694,6 +703,15 @@ export namespace secterm {
 
             /** SectermFileTransReq mode. */
             public mode: secterm.v1.ActionMode;
+
+            /** SectermFileTransReq filename. */
+            public filename: string;
+
+            /** SectermFileTransReq filepath. */
+            public filepath: string;
+
+            /** SectermFileTransReq cover. */
+            public cover: boolean;
 
             /**
              * Creates a new SectermFileTransReq instance using the specified properties.

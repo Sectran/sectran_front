@@ -25,6 +25,257 @@ export const secterm = $root.secterm = (() => {
          */
         const v1 = {};
 
+        v1.SectermCommonResponse = (function() {
+
+            /**
+             * Properties of a SectermCommonResponse.
+             * @memberof secterm.v1
+             * @interface ISectermCommonResponse
+             * @property {secterm.v1.CommonCode|null} [code] SectermCommonResponse code
+             * @property {string|null} [message] SectermCommonResponse message
+             */
+
+            /**
+             * Constructs a new SectermCommonResponse.
+             * @memberof secterm.v1
+             * @classdesc Represents a SectermCommonResponse.
+             * @implements ISectermCommonResponse
+             * @constructor
+             * @param {secterm.v1.ISectermCommonResponse=} [properties] Properties to set
+             */
+            function SectermCommonResponse(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * SectermCommonResponse code.
+             * @member {secterm.v1.CommonCode} code
+             * @memberof secterm.v1.SectermCommonResponse
+             * @instance
+             */
+            SectermCommonResponse.prototype.code = 0;
+
+            /**
+             * SectermCommonResponse message.
+             * @member {string} message
+             * @memberof secterm.v1.SectermCommonResponse
+             * @instance
+             */
+            SectermCommonResponse.prototype.message = "";
+
+            /**
+             * Creates a new SectermCommonResponse instance using the specified properties.
+             * @function create
+             * @memberof secterm.v1.SectermCommonResponse
+             * @static
+             * @param {secterm.v1.ISectermCommonResponse=} [properties] Properties to set
+             * @returns {secterm.v1.SectermCommonResponse} SectermCommonResponse instance
+             */
+            SectermCommonResponse.create = function create(properties) {
+                return new SectermCommonResponse(properties);
+            };
+
+            /**
+             * Encodes the specified SectermCommonResponse message. Does not implicitly {@link secterm.v1.SectermCommonResponse.verify|verify} messages.
+             * @function encode
+             * @memberof secterm.v1.SectermCommonResponse
+             * @static
+             * @param {secterm.v1.ISectermCommonResponse} message SectermCommonResponse message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SectermCommonResponse.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.code != null && Object.hasOwnProperty.call(message, "code"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).int32(message.code);
+                if (message.message != null && Object.hasOwnProperty.call(message, "message"))
+                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.message);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified SectermCommonResponse message, length delimited. Does not implicitly {@link secterm.v1.SectermCommonResponse.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof secterm.v1.SectermCommonResponse
+             * @static
+             * @param {secterm.v1.ISectermCommonResponse} message SectermCommonResponse message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SectermCommonResponse.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a SectermCommonResponse message from the specified reader or buffer.
+             * @function decode
+             * @memberof secterm.v1.SectermCommonResponse
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {secterm.v1.SectermCommonResponse} SectermCommonResponse
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SectermCommonResponse.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.secterm.v1.SectermCommonResponse();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.code = reader.int32();
+                            break;
+                        }
+                    case 2: {
+                            message.message = reader.string();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a SectermCommonResponse message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof secterm.v1.SectermCommonResponse
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {secterm.v1.SectermCommonResponse} SectermCommonResponse
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SectermCommonResponse.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a SectermCommonResponse message.
+             * @function verify
+             * @memberof secterm.v1.SectermCommonResponse
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            SectermCommonResponse.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.code != null && message.hasOwnProperty("code"))
+                    switch (message.code) {
+                    default:
+                        return "code: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                        break;
+                    }
+                if (message.message != null && message.hasOwnProperty("message"))
+                    if (!$util.isString(message.message))
+                        return "message: string expected";
+                return null;
+            };
+
+            /**
+             * Creates a SectermCommonResponse message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof secterm.v1.SectermCommonResponse
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {secterm.v1.SectermCommonResponse} SectermCommonResponse
+             */
+            SectermCommonResponse.fromObject = function fromObject(object) {
+                if (object instanceof $root.secterm.v1.SectermCommonResponse)
+                    return object;
+                let message = new $root.secterm.v1.SectermCommonResponse();
+                switch (object.code) {
+                default:
+                    if (typeof object.code === "number") {
+                        message.code = object.code;
+                        break;
+                    }
+                    break;
+                case "SUCCES":
+                case 0:
+                    message.code = 0;
+                    break;
+                case "ERROR":
+                case 1:
+                    message.code = 1;
+                    break;
+                case "WARN":
+                case 2:
+                    message.code = 2;
+                    break;
+                }
+                if (object.message != null)
+                    message.message = String(object.message);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a SectermCommonResponse message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof secterm.v1.SectermCommonResponse
+             * @static
+             * @param {secterm.v1.SectermCommonResponse} message SectermCommonResponse
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            SectermCommonResponse.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                let object = {};
+                if (options.defaults) {
+                    object.code = options.enums === String ? "SUCCES" : 0;
+                    object.message = "";
+                }
+                if (message.code != null && message.hasOwnProperty("code"))
+                    object.code = options.enums === String ? $root.secterm.v1.CommonCode[message.code] === undefined ? message.code : $root.secterm.v1.CommonCode[message.code] : message.code;
+                if (message.message != null && message.hasOwnProperty("message"))
+                    object.message = message.message;
+                return object;
+            };
+
+            /**
+             * Converts this SectermCommonResponse to JSON.
+             * @function toJSON
+             * @memberof secterm.v1.SectermCommonResponse
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            SectermCommonResponse.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for SectermCommonResponse
+             * @function getTypeUrl
+             * @memberof secterm.v1.SectermCommonResponse
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            SectermCommonResponse.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/secterm.v1.SectermCommonResponse";
+            };
+
+            return SectermCommonResponse;
+        })();
+
         v1.SectermMessage = (function() {
 
             /**
@@ -34,6 +285,7 @@ export const secterm = $root.secterm = (() => {
              * @property {secterm.v1.ISectermFileMessage|null} [secFile] SectermMessage secFile
              * @property {secterm.v1.ISectermTerminalMessage|null} [secTerminal] SectermMessage secTerminal
              * @property {secterm.v1.ISectermConnectMessage|null} [secConnect] SectermMessage secConnect
+             * @property {secterm.v1.ISectermCommonResponse|null} [commonResponse] SectermMessage commonResponse
              */
 
             /**
@@ -75,17 +327,25 @@ export const secterm = $root.secterm = (() => {
              */
             SectermMessage.prototype.secConnect = null;
 
+            /**
+             * SectermMessage commonResponse.
+             * @member {secterm.v1.ISectermCommonResponse|null|undefined} commonResponse
+             * @memberof secterm.v1.SectermMessage
+             * @instance
+             */
+            SectermMessage.prototype.commonResponse = null;
+
             // OneOf field names bound to virtual getters and setters
             let $oneOfFields;
 
             /**
              * SectermMessage data.
-             * @member {"secFile"|"secTerminal"|"secConnect"|undefined} data
+             * @member {"secFile"|"secTerminal"|"secConnect"|"commonResponse"|undefined} data
              * @memberof secterm.v1.SectermMessage
              * @instance
              */
             Object.defineProperty(SectermMessage.prototype, "data", {
-                get: $util.oneOfGetter($oneOfFields = ["secFile", "secTerminal", "secConnect"]),
+                get: $util.oneOfGetter($oneOfFields = ["secFile", "secTerminal", "secConnect", "commonResponse"]),
                 set: $util.oneOfSetter($oneOfFields)
             });
 
@@ -119,6 +379,8 @@ export const secterm = $root.secterm = (() => {
                     $root.secterm.v1.SectermTerminalMessage.encode(message.secTerminal, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
                 if (message.secConnect != null && Object.hasOwnProperty.call(message, "secConnect"))
                     $root.secterm.v1.SectermConnectMessage.encode(message.secConnect, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                if (message.commonResponse != null && Object.hasOwnProperty.call(message, "commonResponse"))
+                    $root.secterm.v1.SectermCommonResponse.encode(message.commonResponse, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
                 return writer;
             };
 
@@ -163,6 +425,10 @@ export const secterm = $root.secterm = (() => {
                         }
                     case 3: {
                             message.secConnect = $root.secterm.v1.SectermConnectMessage.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 4: {
+                            message.commonResponse = $root.secterm.v1.SectermCommonResponse.decode(reader, reader.uint32());
                             break;
                         }
                     default:
@@ -229,6 +495,16 @@ export const secterm = $root.secterm = (() => {
                             return "secConnect." + error;
                     }
                 }
+                if (message.commonResponse != null && message.hasOwnProperty("commonResponse")) {
+                    if (properties.data === 1)
+                        return "data: multiple values";
+                    properties.data = 1;
+                    {
+                        let error = $root.secterm.v1.SectermCommonResponse.verify(message.commonResponse);
+                        if (error)
+                            return "commonResponse." + error;
+                    }
+                }
                 return null;
             };
 
@@ -258,6 +534,11 @@ export const secterm = $root.secterm = (() => {
                     if (typeof object.secConnect !== "object")
                         throw TypeError(".secterm.v1.SectermMessage.secConnect: object expected");
                     message.secConnect = $root.secterm.v1.SectermConnectMessage.fromObject(object.secConnect);
+                }
+                if (object.commonResponse != null) {
+                    if (typeof object.commonResponse !== "object")
+                        throw TypeError(".secterm.v1.SectermMessage.commonResponse: object expected");
+                    message.commonResponse = $root.secterm.v1.SectermCommonResponse.fromObject(object.commonResponse);
                 }
                 return message;
             };
@@ -290,6 +571,11 @@ export const secterm = $root.secterm = (() => {
                     if (options.oneofs)
                         object.data = "secConnect";
                 }
+                if (message.commonResponse != null && message.hasOwnProperty("commonResponse")) {
+                    object.commonResponse = $root.secterm.v1.SectermCommonResponse.toObject(message.commonResponse, options);
+                    if (options.oneofs)
+                        object.data = "commonResponse";
+                }
                 return object;
             };
 
@@ -320,6 +606,22 @@ export const secterm = $root.secterm = (() => {
             };
 
             return SectermMessage;
+        })();
+
+        /**
+         * CommonCode enum.
+         * @name secterm.v1.CommonCode
+         * @enum {number}
+         * @property {number} SUCCES=0 SUCCES value
+         * @property {number} ERROR=1 ERROR value
+         * @property {number} WARN=2 WARN value
+         */
+        v1.CommonCode = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "SUCCES"] = 0;
+            values[valuesById[1] = "ERROR"] = 1;
+            values[valuesById[2] = "WARN"] = 2;
+            return values;
         })();
 
         /**
@@ -4080,10 +4382,13 @@ export const secterm = $root.secterm = (() => {
              * Properties of a SectermFileTransReq.
              * @memberof secterm.v1
              * @interface ISectermFileTransReq
-             * @property {boolean|null} [flag] SectermFileTransReq flag
+             * @property {boolean|null} [upload] SectermFileTransReq upload
              * @property {string|null} [uuid] SectermFileTransReq uuid
              * @property {secterm.v1.TransProtocol|null} [proto] SectermFileTransReq proto
              * @property {secterm.v1.ActionMode|null} [mode] SectermFileTransReq mode
+             * @property {string|null} [filename] SectermFileTransReq filename
+             * @property {string|null} [filepath] SectermFileTransReq filepath
+             * @property {boolean|null} [cover] SectermFileTransReq cover
              */
 
             /**
@@ -4102,12 +4407,12 @@ export const secterm = $root.secterm = (() => {
             }
 
             /**
-             * SectermFileTransReq flag.
-             * @member {boolean} flag
+             * SectermFileTransReq upload.
+             * @member {boolean} upload
              * @memberof secterm.v1.SectermFileTransReq
              * @instance
              */
-            SectermFileTransReq.prototype.flag = false;
+            SectermFileTransReq.prototype.upload = false;
 
             /**
              * SectermFileTransReq uuid.
@@ -4134,6 +4439,30 @@ export const secterm = $root.secterm = (() => {
             SectermFileTransReq.prototype.mode = 0;
 
             /**
+             * SectermFileTransReq filename.
+             * @member {string} filename
+             * @memberof secterm.v1.SectermFileTransReq
+             * @instance
+             */
+            SectermFileTransReq.prototype.filename = "";
+
+            /**
+             * SectermFileTransReq filepath.
+             * @member {string} filepath
+             * @memberof secterm.v1.SectermFileTransReq
+             * @instance
+             */
+            SectermFileTransReq.prototype.filepath = "";
+
+            /**
+             * SectermFileTransReq cover.
+             * @member {boolean} cover
+             * @memberof secterm.v1.SectermFileTransReq
+             * @instance
+             */
+            SectermFileTransReq.prototype.cover = false;
+
+            /**
              * Creates a new SectermFileTransReq instance using the specified properties.
              * @function create
              * @memberof secterm.v1.SectermFileTransReq
@@ -4157,14 +4486,20 @@ export const secterm = $root.secterm = (() => {
             SectermFileTransReq.encode = function encode(message, writer) {
                 if (!writer)
                     writer = $Writer.create();
-                if (message.flag != null && Object.hasOwnProperty.call(message, "flag"))
-                    writer.uint32(/* id 1, wireType 0 =*/8).bool(message.flag);
+                if (message.upload != null && Object.hasOwnProperty.call(message, "upload"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).bool(message.upload);
                 if (message.uuid != null && Object.hasOwnProperty.call(message, "uuid"))
                     writer.uint32(/* id 3, wireType 2 =*/26).string(message.uuid);
                 if (message.proto != null && Object.hasOwnProperty.call(message, "proto"))
                     writer.uint32(/* id 4, wireType 0 =*/32).int32(message.proto);
                 if (message.mode != null && Object.hasOwnProperty.call(message, "mode"))
                     writer.uint32(/* id 5, wireType 0 =*/40).int32(message.mode);
+                if (message.filename != null && Object.hasOwnProperty.call(message, "filename"))
+                    writer.uint32(/* id 6, wireType 2 =*/50).string(message.filename);
+                if (message.filepath != null && Object.hasOwnProperty.call(message, "filepath"))
+                    writer.uint32(/* id 7, wireType 2 =*/58).string(message.filepath);
+                if (message.cover != null && Object.hasOwnProperty.call(message, "cover"))
+                    writer.uint32(/* id 8, wireType 0 =*/64).bool(message.cover);
                 return writer;
             };
 
@@ -4200,7 +4535,7 @@ export const secterm = $root.secterm = (() => {
                     let tag = reader.uint32();
                     switch (tag >>> 3) {
                     case 1: {
-                            message.flag = reader.bool();
+                            message.upload = reader.bool();
                             break;
                         }
                     case 3: {
@@ -4213,6 +4548,18 @@ export const secterm = $root.secterm = (() => {
                         }
                     case 5: {
                             message.mode = reader.int32();
+                            break;
+                        }
+                    case 6: {
+                            message.filename = reader.string();
+                            break;
+                        }
+                    case 7: {
+                            message.filepath = reader.string();
+                            break;
+                        }
+                    case 8: {
+                            message.cover = reader.bool();
                             break;
                         }
                     default:
@@ -4250,9 +4597,9 @@ export const secterm = $root.secterm = (() => {
             SectermFileTransReq.verify = function verify(message) {
                 if (typeof message !== "object" || message === null)
                     return "object expected";
-                if (message.flag != null && message.hasOwnProperty("flag"))
-                    if (typeof message.flag !== "boolean")
-                        return "flag: boolean expected";
+                if (message.upload != null && message.hasOwnProperty("upload"))
+                    if (typeof message.upload !== "boolean")
+                        return "upload: boolean expected";
                 if (message.uuid != null && message.hasOwnProperty("uuid"))
                     if (!$util.isString(message.uuid))
                         return "uuid: string expected";
@@ -4274,6 +4621,15 @@ export const secterm = $root.secterm = (() => {
                     case 1:
                         break;
                     }
+                if (message.filename != null && message.hasOwnProperty("filename"))
+                    if (!$util.isString(message.filename))
+                        return "filename: string expected";
+                if (message.filepath != null && message.hasOwnProperty("filepath"))
+                    if (!$util.isString(message.filepath))
+                        return "filepath: string expected";
+                if (message.cover != null && message.hasOwnProperty("cover"))
+                    if (typeof message.cover !== "boolean")
+                        return "cover: boolean expected";
                 return null;
             };
 
@@ -4289,8 +4645,8 @@ export const secterm = $root.secterm = (() => {
                 if (object instanceof $root.secterm.v1.SectermFileTransReq)
                     return object;
                 let message = new $root.secterm.v1.SectermFileTransReq();
-                if (object.flag != null)
-                    message.flag = Boolean(object.flag);
+                if (object.upload != null)
+                    message.upload = Boolean(object.upload);
                 if (object.uuid != null)
                     message.uuid = String(object.uuid);
                 switch (object.proto) {
@@ -4333,6 +4689,12 @@ export const secterm = $root.secterm = (() => {
                     message.mode = 1;
                     break;
                 }
+                if (object.filename != null)
+                    message.filename = String(object.filename);
+                if (object.filepath != null)
+                    message.filepath = String(object.filepath);
+                if (object.cover != null)
+                    message.cover = Boolean(object.cover);
                 return message;
             };
 
@@ -4350,19 +4712,28 @@ export const secterm = $root.secterm = (() => {
                     options = {};
                 let object = {};
                 if (options.defaults) {
-                    object.flag = false;
+                    object.upload = false;
                     object.uuid = "";
                     object.proto = options.enums === String ? "ZMODEM" : 0;
                     object.mode = options.enums === String ? "ACTIVE" : 0;
+                    object.filename = "";
+                    object.filepath = "";
+                    object.cover = false;
                 }
-                if (message.flag != null && message.hasOwnProperty("flag"))
-                    object.flag = message.flag;
+                if (message.upload != null && message.hasOwnProperty("upload"))
+                    object.upload = message.upload;
                 if (message.uuid != null && message.hasOwnProperty("uuid"))
                     object.uuid = message.uuid;
                 if (message.proto != null && message.hasOwnProperty("proto"))
                     object.proto = options.enums === String ? $root.secterm.v1.TransProtocol[message.proto] === undefined ? message.proto : $root.secterm.v1.TransProtocol[message.proto] : message.proto;
                 if (message.mode != null && message.hasOwnProperty("mode"))
                     object.mode = options.enums === String ? $root.secterm.v1.ActionMode[message.mode] === undefined ? message.mode : $root.secterm.v1.ActionMode[message.mode] : message.mode;
+                if (message.filename != null && message.hasOwnProperty("filename"))
+                    object.filename = message.filename;
+                if (message.filepath != null && message.hasOwnProperty("filepath"))
+                    object.filepath = message.filepath;
+                if (message.cover != null && message.hasOwnProperty("cover"))
+                    object.cover = message.cover;
                 return object;
             };
 

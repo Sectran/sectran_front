@@ -6,6 +6,109 @@ export namespace secterm {
     /** Namespace v1. */
     namespace v1 {
 
+        /** Properties of a SectermCommonResponse. */
+        interface ISectermCommonResponse {
+
+            /** SectermCommonResponse code */
+            code?: (secterm.v1.CommonCode|null);
+
+            /** SectermCommonResponse message */
+            message?: (string|null);
+        }
+
+        /** Represents a SectermCommonResponse. */
+        class SectermCommonResponse implements ISectermCommonResponse {
+
+            /**
+             * Constructs a new SectermCommonResponse.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: secterm.v1.ISectermCommonResponse);
+
+            /** SectermCommonResponse code. */
+            public code: secterm.v1.CommonCode;
+
+            /** SectermCommonResponse message. */
+            public message: string;
+
+            /**
+             * Creates a new SectermCommonResponse instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns SectermCommonResponse instance
+             */
+            public static create(properties?: secterm.v1.ISectermCommonResponse): secterm.v1.SectermCommonResponse;
+
+            /**
+             * Encodes the specified SectermCommonResponse message. Does not implicitly {@link secterm.v1.SectermCommonResponse.verify|verify} messages.
+             * @param message SectermCommonResponse message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: secterm.v1.ISectermCommonResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified SectermCommonResponse message, length delimited. Does not implicitly {@link secterm.v1.SectermCommonResponse.verify|verify} messages.
+             * @param message SectermCommonResponse message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: secterm.v1.ISectermCommonResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a SectermCommonResponse message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns SectermCommonResponse
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): secterm.v1.SectermCommonResponse;
+
+            /**
+             * Decodes a SectermCommonResponse message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns SectermCommonResponse
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): secterm.v1.SectermCommonResponse;
+
+            /**
+             * Verifies a SectermCommonResponse message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a SectermCommonResponse message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns SectermCommonResponse
+             */
+            public static fromObject(object: { [k: string]: any }): secterm.v1.SectermCommonResponse;
+
+            /**
+             * Creates a plain object from a SectermCommonResponse message. Also converts values to other types if specified.
+             * @param message SectermCommonResponse
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: secterm.v1.SectermCommonResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this SectermCommonResponse to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for SectermCommonResponse
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
         /** Properties of a SectermMessage. */
         interface ISectermMessage {
 
@@ -17,6 +120,9 @@ export namespace secterm {
 
             /** SectermMessage secConnect */
             secConnect?: (secterm.v1.ISectermConnectMessage|null);
+
+            /** SectermMessage commonResponse */
+            commonResponse?: (secterm.v1.ISectermCommonResponse|null);
         }
 
         /** Represents a SectermMessage. */
@@ -37,8 +143,11 @@ export namespace secterm {
             /** SectermMessage secConnect. */
             public secConnect?: (secterm.v1.ISectermConnectMessage|null);
 
+            /** SectermMessage commonResponse. */
+            public commonResponse?: (secterm.v1.ISectermCommonResponse|null);
+
             /** SectermMessage data. */
-            public data?: ("secFile"|"secTerminal"|"secConnect");
+            public data?: ("secFile"|"secTerminal"|"secConnect"|"commonResponse");
 
             /**
              * Creates a new SectermMessage instance using the specified properties.
@@ -116,6 +225,13 @@ export namespace secterm {
              * @returns The default type url
              */
             public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** CommonCode enum. */
+        enum CommonCode {
+            SUCCES = 0,
+            ERROR = 1,
+            WARN = 2
         }
 
         /** AuthMethod enum. */
@@ -1665,8 +1781,8 @@ export namespace secterm {
         /** Properties of a SectermFileTransReq. */
         interface ISectermFileTransReq {
 
-            /** SectermFileTransReq flag */
-            flag?: (boolean|null);
+            /** SectermFileTransReq upload */
+            upload?: (boolean|null);
 
             /** SectermFileTransReq uuid */
             uuid?: (string|null);
@@ -1676,6 +1792,15 @@ export namespace secterm {
 
             /** SectermFileTransReq mode */
             mode?: (secterm.v1.ActionMode|null);
+
+            /** SectermFileTransReq filename */
+            filename?: (string|null);
+
+            /** SectermFileTransReq filepath */
+            filepath?: (string|null);
+
+            /** SectermFileTransReq cover */
+            cover?: (boolean|null);
         }
 
         /** Represents a SectermFileTransReq. */
@@ -1687,8 +1812,8 @@ export namespace secterm {
              */
             constructor(properties?: secterm.v1.ISectermFileTransReq);
 
-            /** SectermFileTransReq flag. */
-            public flag: boolean;
+            /** SectermFileTransReq upload. */
+            public upload: boolean;
 
             /** SectermFileTransReq uuid. */
             public uuid: string;
@@ -1698,6 +1823,15 @@ export namespace secterm {
 
             /** SectermFileTransReq mode. */
             public mode: secterm.v1.ActionMode;
+
+            /** SectermFileTransReq filename. */
+            public filename: string;
+
+            /** SectermFileTransReq filepath. */
+            public filepath: string;
+
+            /** SectermFileTransReq cover. */
+            public cover: boolean;
 
             /**
              * Creates a new SectermFileTransReq instance using the specified properties.
