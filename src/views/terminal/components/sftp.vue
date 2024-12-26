@@ -4,8 +4,8 @@
         <!-- <div class="shadeSty"></div> -->
         <div>
             <div class="sftp-left">
-                <div v-for="(item, index) in leftPath" :key="index">
-                    {{ item }}
+                <div v-for="(item, index) in leftNavigation" :key="index">
+                    {{ item.name }}
                 </div>
             </div>
             <div class="sftp-right">
@@ -24,7 +24,7 @@
                         </template>
                     </template>
                 </div>
-                <div class="catalogue-management">
+                <div class="catalogue-management" ref="catalogueManagementRef">
                     <div v-for="(item, index) in catalogueManagement" :key="index"
                         :style="{ width: catalogueContainerWidth(), minWidth: catalogueContainerWidth() }"
                         class="catalogue-container">
@@ -114,6 +114,8 @@ import {
 } from "@/common/method/proto";
 import { fileUpload } from "@/api/admin.ts"
 
+
+
 const emit = defineEmits(["connectResult", 'tabName']);
 const props = defineProps<{
     username: string
@@ -126,7 +128,6 @@ const props = defineProps<{
 }>();
 // 定义 Ctrl 键状态
 const isCtrlPressed = ref(false);
-
 // 定义事件处理函数
 const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Control') {
@@ -156,7 +157,20 @@ let websocket = <any>(null);
 let path = ref<string>(import.meta.env.VITE_Chard_Addr);
 
 let rootDirectory = 'opt'
-let leftPath = ref<string[]>([rootDirectory])
+
+//左侧导航数据
+type LeftNavigationType = {
+    path: string,
+    name: string
+}
+let leftNavigation: LeftNavigationType[] = [
+    { path: '/opt', name: '根目录' },
+]
+
+
+
+
+
 
 const socketConnect = () => {
     let socket = initSocket(path.value, 5000, 'arraybuffer', onOpen, onData, onError, onClose);
@@ -266,7 +280,7 @@ type fileObjType = {
 }
 let superiorsName: string = rootDirectory
 let cataloguePath = `/${rootDirectory}`
-
+const catalogueManagementRef = ref<HTMLElement | null>(null);
 const catalogueManagement = ref<catalogueManagementTtype[]>([]);
 const sftpfileList = (fileListRes: catalogueType[]) => {
     fileListRes.sort((a, b) => {
@@ -287,6 +301,12 @@ const sftpfileList = (fileListRes: catalogueType[]) => {
             catalogueList: fileListRes,
         })
     }
+    nextTick(() => {
+        if (catalogueManagementRef.value) {
+            console.log(catalogueManagementRef.value.scrollWidth)
+            catalogueManagementRef.value.scrollLeft = catalogueManagementRef.value.scrollWidth;
+        }
+    });
 
 }
 const formNewFileRef = ref<FormInstance>();
@@ -536,8 +556,17 @@ const makeRequest = async (file: File, cover = false) => {
     }
 
     .sftp-left {
+        padding-top: 40px;
         height: 100%;
         width: 180px;
+
+        &>div {
+            cursor: pointer;
+        }
+
+        &>div:hover {
+            color: v-bind(styleBackgroundColor);
+        }
     }
 
     .sftp-right {
