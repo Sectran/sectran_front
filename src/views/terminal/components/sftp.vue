@@ -291,28 +291,28 @@ let newFileFrom = ref({
     fileType: 'file',
 })
 
-let operationItem = ref<catalogueManagementTtype>()
-/**
- * 右键空白位置
- * @param item 点击的目录
- * @param index 目录下标
- * @param type 修改类型  3新建  4上传
- */
-const onfolderOperation = (item: catalogueManagementTtype, index: number, type: number) => {
-    operationItem.value = item
-    operateType = type
-    console.log(operationItem)
-    console.log(item)
-    console.log(index)
-    if (type === 3) {
-        newFileShow.value = true
-    } else if (type === 4) {
-        if (fileInputRef.value) {
-            fileInputRef.value.click()
-        }
-    }
-    console.log(item, index)
-}
+// let operationItem = ref<catalogueManagementTtype>()
+// /**
+//  * 右键空白位置
+//  * @param item 点击的目录
+//  * @param index 目录下标
+//  * @param type 修改类型  3新建  4上传
+//  */
+// const onfolderOperation = (item: catalogueManagementTtype, index: number, type: number) => {
+//     operationItem.value = item
+//     operateType = type
+//     console.log(operationItem)
+//     console.log(item)
+//     console.log(index)
+//     if (type === 3) {
+//         newFileShow.value = true
+//     } else if (type === 4) {
+//         if (fileInputRef.value) {
+//             fileInputRef.value.click()
+//         }
+//     }
+//     console.log(item, index)
+// }
 
 //新建文件
 const onOkNewFile = () => {
