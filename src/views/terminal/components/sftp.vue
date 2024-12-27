@@ -4,7 +4,7 @@
         <!-- <div class="shadeSty"></div> -->
         <div>
             <div class="sftp-left">
-                <div v-for="(item, index) in leftNavigation" :key="index">
+                <div v-for="(item, index) in leftNavigation" :key="index" @click="onleftItem(item.path)">
                     {{ item.name }}
                 </div>
             </div>
@@ -142,7 +142,18 @@ let websocket = <any>(null);
 let path = ref<string>(import.meta.env.VITE_Chard_Addr);
 
 let rootDirectory = 'opt'
-let leftPath = ref<string[]>([rootDirectory])
+type LeftNavigation = {
+    name: string
+    path: string
+}
+
+
+let leftNavigation = ref<LeftNavigation[]>([
+    {
+        name: '根目录',
+        path: rootDirectory
+    }
+])
 
 const socketConnect = () => {
     let socket = initSocket(path.value, 5000, 'arraybuffer', onOpen, onData, onError, onClose);
@@ -154,24 +165,25 @@ const onData = async (msg: any) => {
     console.log(sm.commonResponse?.code, "发送消息")
     if (sm.secConnect) return connectManage(sm?.secConnect);
     if (sm?.secFile?.fileListRes && sm?.secFile?.fileListRes.FileInfo) return sftpfileList(sm?.secFile?.fileListRes.FileInfo)
-    if (sm.commonResponse?.message) return manageResponse(sm.commonResponse)
+    if (sm.commonResponse) return manageResponse(sm.commonResponse)
     console.log(sm, "未知的消息类型")
 };
 
 const manageResponse = (commonResponse: secterm.v1.ISectermCommonResponse) => {
     console.log(commonResponse.code)
-    // === v1.CommonCode.SUCCES
-    // if (commonResponse.message) {
-    //     if (operateType === undefined) return
-    //     if ([0, 1].includes(operateType) && operateObj.value.path) {
-    //         sectermFileListReq(operateObj.value.path, websocket)
-    //         operateType = undefined
-    //     } else if (operateType === 4) {
-    //         console.log(filesList)
-    //         // filesList.shift()
-    //         // sftpFileUploading()
-    //     }
-    // }
+
+    if (commonResponse.code === v1.CommonCode.SUCCES) {
+        if (operateType === undefined) return
+        if ([0, 1].includes(operateType) && operateObj.value.path) {
+            //删除和重命名就把当前目录更新下
+            sectermFileListReq(operateObj.value.path, websocket)
+            operateType = undefined
+        } else if (operateType === 4) {
+            console.log(filesList)
+            // filesList.shift()
+            // sftpFileUploading()
+        }
+    }
     // if (commonResponse.message === v1.CommonCode.ERROR) return message.error(commonResponse.message)
     if (commonResponse.code === v1.CommonCode.WARN) {
         message.warning(commonResponse.message)
@@ -203,7 +215,8 @@ const connectManage = (sm: secterm.v1.ISectermConnectMessage) => {
             localStorage.setItem("password", props.password);
         }
     }
-    sectermFileListReq(`${rootDirectory}`, websocket)
+
+    sectermFileListReq(`/${rootDirectory}`, websocket)
     console.log("connect success!");
 }
 
@@ -267,12 +280,6 @@ const sftpfileList = (fileListRes: catalogueType[]) => {
         operateObj.value.col = undefined
     } else {
         let selected: string[] = []
-        //判断是不是搜索的
-        if (tapTag.length !== 0 && TapTagItem) {
-            topTagList()
-            selected = [TapTagItem.name]
-            superiorsName = TapTagItem.name
-        }
 
         catalogueManagement.value.push({
             superiorsName: superiorsName,
@@ -281,15 +288,26 @@ const sftpfileList = (fileListRes: catalogueType[]) => {
             selected,
             catalogueList: fileListRes,
         })
+        console.error(catalogueManagement.value)
+        //判断是不是搜索的
+        if (tapTag.length !== 0 && TapTagItem) {
+            console.error(tapTag[0])
+
+            catalogueManagement.value[catalogueManagement.value.length - 1].selected = [tapTag[0].name]
+            selected = [TapTagItem.name]
+            superiorsName = TapTagItem.name
+            topTagList()
+        }
     }
+    // 滚动到最后
+    nextTick(() => {
+        if (catalogueManagementRef.value) {
+            catalogueManagementRef.value.scrollLeft = catalogueManagementRef.value.scrollWidth;
+        }
+    });
 
 }
-const formNewFileRef = ref<FormInstance>();
-let newFileShow = ref(false)
-let newFileFrom = ref({
-    fileName: '',
-    fileType: 'file',
-})
+
 
 // let operationItem = ref<catalogueManagementTtype>()
 // /**
@@ -314,18 +332,7 @@ let newFileFrom = ref({
 //     console.log(item, index)
 // }
 
-//新建文件
-const onOkNewFile = () => {
-    // formNewFileRef.value?.validateFields()
-    //     .then(values => {
-    //         console.log('Received values of form: ', values);
-    //         let fileName = values.fileName
-    //         if (operationItem.value) SectermTeminaFileCreate({ Name: fileName, IsDir: false, Path: operationItem.value.path }, websocket)
-    //     })
-    //     .catch(info => {
-    //         console.log('Validate Failed:', info);
-    //     });
-}
+
 let inputValue = ref<string | undefined | null>('');
 //当前操作的文件
 let operateFile = ref<catalogueType>({} as catalogueType);
@@ -379,8 +386,6 @@ const onfolderOperation = (item: catalogueManagementTtype, index: number, type: 
         inputValue.value = addfileName
         operateObj.value.row = index
         operateObj.value.name = addfileName
-
-
     } else {
         if (fileInputRef.value) {
             fileInputRef.value.click()
@@ -508,26 +513,51 @@ const onTopInput = () => {
     nextTick(() => { tagInputRef.value?.focus() })
 }
 const topInputBlur = () => {
-    tapTag = []
+    console.log(topInput.value)
     if (topInput.value !== '') {
+        tapTag = []
         //转换成数组并且过滤掉空字符串
         let topArr = topInput.value.split("/").filter(item => item)
         topArr.forEach((item: string, index: number) => {
             tapTag.push({
                 name: item,
                 path: `/${topArr.slice(0, index + 1).join("/")}`
+
             })
         })
+        console.log(topInput)
+        console.log(tapTag)
+
         catalogueManagement.value = []
         topTagList()
+
+    } else {
 
     }
     topInput.value = ''
 }
 
+const onleftItem = (itemPath: string) => {
+    tapTag = []
+    //转换成数组并且过滤掉空字符串
+    let topArr = itemPath.split("/").filter(item => item)
+    topArr.forEach((item: string, index: number) => {
+        tapTag.push({
+            name: item,
+            path: `/${topArr.slice(0, index + 1).join("/")}`
+
+        })
+    })
+    catalogueManagement.value = []
+    topTagList()
+}
+
 const topTagList = () => {
     TapTagItem = tapTag.shift();
+    console.log(TapTagItem)
+
     if (TapTagItem) sectermFileListReq(TapTagItem.path, websocket)
+    return
 }
 
 let fileInputRef = ref<HTMLInputElement>();
