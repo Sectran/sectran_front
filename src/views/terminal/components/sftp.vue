@@ -4,8 +4,8 @@
         <!-- <div class="shadeSty"></div> -->
         <div>
             <div class="sftp-left">
-                <div v-for="(item, index) in leftPath" :key="index">
-                    {{ item }}
+                <div v-for="(item, index) in leftNavigation" :key="index">
+                    {{ item.name }}
                 </div>
             </div>
             <div class="sftp-right">
@@ -24,7 +24,7 @@
                         </template>
                     </template>
                 </div>
-                <div class="catalogue-management">
+                <div class="catalogue-management" ref="catalogueManagementRef">
                     <div v-for="(item, index) in catalogueManagement" :key="index"
                         :style="{ width: catalogueContainerWidth(), minWidth: catalogueContainerWidth() }"
                         class="catalogue-container">
@@ -99,6 +99,8 @@ import {
 } from "@/common/method/proto";
 import { fileUpload } from "@/api/admin.ts"
 
+
+
 const emit = defineEmits(["connectResult", 'tabName']);
 const props = defineProps<{
     username: string
@@ -111,7 +113,6 @@ const props = defineProps<{
 }>();
 // 定义 Ctrl 键状态
 const isCtrlPressed = ref(false);
-
 // 定义事件处理函数
 const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Control') {
@@ -140,7 +141,7 @@ const v1 = secterm.v1;
 let websocket = <any>(null);
 let path = ref<string>(import.meta.env.VITE_Chard_Addr);
 
-let rootDirectory = '/opt'
+let rootDirectory = 'opt'
 let leftPath = ref<string[]>([rootDirectory])
 
 const socketConnect = () => {
@@ -251,7 +252,7 @@ type fileObjType = {
 }
 let superiorsName: string = rootDirectory
 let cataloguePath = `/${rootDirectory}`
-
+const catalogueManagementRef = ref<HTMLElement | null>(null);
 const catalogueManagement = ref<catalogueManagementTtype[]>([]);
 const sftpfileList = (fileListRes: catalogueType[]) => {
     fileListRes.sort((a, b) => {
@@ -280,13 +281,39 @@ const sftpfileList = (fileListRes: catalogueType[]) => {
             selected,
             catalogueList: fileListRes,
         })
-
     }
 
-
-
-
 }
+const formNewFileRef = ref<FormInstance>();
+let newFileShow = ref(false)
+let newFileFrom = ref({
+    fileName: '',
+    fileType: 'file',
+})
+
+let operationItem = ref<catalogueManagementTtype>()
+/**
+ * 右键空白位置
+ * @param item 点击的目录
+ * @param index 目录下标
+ * @param type 修改类型  3新建  4上传
+ */
+const onfolderOperation = (item: catalogueManagementTtype, index: number, type: number) => {
+    operationItem.value = item
+    operateType = type
+    console.log(operationItem)
+    console.log(item)
+    console.log(index)
+    if (type === 3) {
+        newFileShow.value = true
+    } else if (type === 4) {
+        if (fileInputRef.value) {
+            fileInputRef.value.click()
+        }
+    }
+    console.log(item, index)
+}
+
 //新建文件
 const onOkNewFile = () => {
     // formNewFileRef.value?.validateFields()
@@ -578,8 +605,17 @@ const makeRequest = async (file: File, cover = false) => {
     }
 
     .sftp-left {
+        padding-top: 40px;
         height: 100%;
         width: 180px;
+
+        &>div {
+            cursor: pointer;
+        }
+
+        &>div:hover {
+            color: v-bind(styleBackgroundColor);
+        }
     }
 
     .sftp-right {
