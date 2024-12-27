@@ -13,7 +13,7 @@
                 <div class="sftp-right-nav" @click="onTopInput">
                     <template v-if="topInput">
                         <a-input style="font-size: 16px;padding: 4px 0;" v-model:value="topInput" :bordered="false"
-                            @blur="topInput = ''" ref="tagInputRef" />
+                            @blur="topInputBlur" ref="tagInputRef" />
                     </template>
                     <template v-else="topInput">
                         <template v-for="(item, index) in sftpNavTabs" :key="index">
@@ -64,7 +64,8 @@
                                 <template #overlay>
                                     <a-menu>
                                         <a-menu-item @click="onfolderOperation(item, index, 3)">新建文件</a-menu-item>
-                                        <a-menu-item @click="onfolderOperation(item, index, 4)">上传文件</a-menu-item>
+                                        <a-menu-item @click="onfolderOperation(item, index, 4)">新建文件夹</a-menu-item>
+                                        <a-menu-item @click="onfolderOperation(item, index, 5)">上传文件</a-menu-item>
                                     </a-menu>
                                 </template>
                             </a-dropdown>
@@ -77,22 +78,6 @@
             </div>
         </div>
     </div>
-
-    <a-modal v-model:open="newFileShow" title="新建文件" ok-text="新建" cancel-text="取消" @ok="onOkNewFile">
-        <a-form ref="formNewFileRef" :model="newFileFrom" layout="vertical" name="form_in_modal">
-            <a-form-item name="fileName" :rules="[{ required: true, message: '请输入文件名' }]">
-                <a-input v-model:value="newFileFrom.fileName" placeholder="请输入文件名" />
-            </a-form-item>
-
-            <a-form-item name="title">
-                <a-select mode="tags" style="width: 100%" placeholder="请选择文件类型"
-                    :options="[{ value: '1', label: '文件夹' }, { value: '2', label: '文本文件' }]"></a-select>
-            </a-form-item>
-        </a-form>
-    </a-modal>
-
-
-
 </template>
 <script lang="ts" setup>
 import { ref, onMounted, h, computed, onUnmounted, nextTick } from "vue";
@@ -101,7 +86,7 @@ import { initSocket } from "@/common/method/socket"
 import { secterm, } from "@/../secterm/secterm";
 import { message, Modal } from 'ant-design-vue';
 import { useStore } from 'vuex'
-import type { FormInstance } from 'ant-design-vue';
+
 import {
     sectermConnectRequest,
     sectermFileListReq,
@@ -155,7 +140,7 @@ const v1 = secterm.v1;
 let websocket = <any>(null);
 let path = ref<string>(import.meta.env.VITE_Chard_Addr);
 
-let rootDirectory = 'opt'
+let rootDirectory = '/opt'
 let leftPath = ref<string[]>([rootDirectory])
 
 const socketConnect = () => {
@@ -217,7 +202,7 @@ const connectManage = (sm: secterm.v1.ISectermConnectMessage) => {
             localStorage.setItem("password", props.password);
         }
     }
-    sectermFileListReq(`/${rootDirectory}`, websocket)
+    sectermFileListReq(`${rootDirectory}`, websocket)
     console.log("connect success!");
 }
 
@@ -275,61 +260,44 @@ const sftpfileList = (fileListRes: catalogueType[]) => {
         return 0;
     });
     console.log(superiorsName)
+    //判断是不是更新的某个目录
     if (operateObj.value.col !== undefined) {
         catalogueManagement.value[operateObj.value.col].catalogueList = fileListRes
         operateObj.value.col = undefined
     } else {
+        let selected: string[] = []
+        //判断是不是搜索的
+        if (tapTag.length !== 0 && TapTagItem) {
+            topTagList()
+            selected = [TapTagItem.name]
+            superiorsName = TapTagItem.name
+        }
+
         catalogueManagement.value.push({
             superiorsName: superiorsName,
             path: cataloguePath,
             type: 'catalogue',
-            selected: [],
+            selected,
             catalogueList: fileListRes,
         })
+
     }
 
-}
-const formNewFileRef = ref<FormInstance>();
-let newFileShow = ref(false)
-let newFileFrom = ref({
-    fileName: '',
-    fileType: 'file',
-})
 
-let operationItem = ref<catalogueManagementTtype>()
-/**
- * 右键空白位置
- * @param item 点击的目录
- * @param index 目录下标
- * @param type 修改类型  3新建  4上传
- */
-const onfolderOperation = (item: catalogueManagementTtype, index: number, type: number) => {
-    operationItem.value = item
-    operateType = type
-    console.log(operationItem)
-    console.log(item)
-    console.log(index)
-    if (type === 3) {
-        newFileShow.value = true
-    } else if (type === 4) {
-        if (fileInputRef.value) {
-            fileInputRef.value.click()
-        }
-    }
-    console.log(item, index)
-}
 
+
+}
 //新建文件
 const onOkNewFile = () => {
-    formNewFileRef.value?.validateFields()
-        .then(values => {
-            console.log('Received values of form: ', values);
-            let fileName = values.fileName
-            if (operationItem.value) SectermTeminaFileCreate({ Name: fileName, IsDir: false, Path: operationItem.value.path }, websocket)
-        })
-        .catch(info => {
-            console.log('Validate Failed:', info);
-        });
+    // formNewFileRef.value?.validateFields()
+    //     .then(values => {
+    //         console.log('Received values of form: ', values);
+    //         let fileName = values.fileName
+    //         if (operationItem.value) SectermTeminaFileCreate({ Name: fileName, IsDir: false, Path: operationItem.value.path }, websocket)
+    //     })
+    //     .catch(info => {
+    //         console.log('Validate Failed:', info);
+    //     });
 }
 let inputValue = ref<string | undefined | null>('');
 //当前操作的文件
@@ -344,8 +312,57 @@ type operateObjType = {
 }
 
 let operateObj = ref<operateObjType>({ row: undefined, col: undefined, name: undefined, path: undefined });
-//做的什么操作 0重命名 1删除 2剪切
+//做的什么操作 0重命名 1删除 2剪切 3新建文件  4新建文件夹  4上传文件
 let operateType: number | undefined = undefined
+
+
+let operationItem = ref<catalogueManagementTtype>()
+/**
+ * 右键空白位置
+ * @param item 点击的目录
+ * @param index 目录下标
+ * @param type 修改类型  3新建文件  4新建文件夹  5上传文件
+ */
+const onfolderOperation = (item: catalogueManagementTtype, index: number, type: number) => {
+    operationItem.value = item
+    operateType = type
+    console.log(operationItem)
+    console.log(item)
+    console.log(index)
+
+
+    if (type === 3 || type === 4) {
+        let addIsDir = type === 4
+        let catalogueNmaeArr: any = []
+
+        catalogueNmaeArr = item.catalogueList?.filter(item => { item && item.IsDir === addIsDir }).map(item => {
+            if (item.Name && item.Name !== undefined) return item.Name
+        })
+        console.log(catalogueNmaeArr)
+        let num = 0
+        let addprefix = `新建文件${addIsDir ? '夹' : ''}`
+
+        let addfileName = `${addprefix}(${num})`
+        while (catalogueNmaeArr.includes(addfileName)) {
+            num++;
+            addfileName = `${addprefix}(${num})`
+        }
+        item.catalogueList?.push({ Name: addfileName, IsDir: addIsDir })
+
+        inputValue.value = addfileName
+        operateObj.value.row = index
+        operateObj.value.name = addfileName
+
+
+    } else {
+        if (fileInputRef.value) {
+            fileInputRef.value.click()
+        }
+    }
+    console.log(item, index)
+}
+
+
 
 /**
  * 
@@ -375,7 +392,7 @@ const onOperationList = (el: catalogueType, type: number, index: number, ins: nu
     }
 }
 const inputhandleBlur = () => {
-    const filenameRegex = /^[a-zA-Z0-9_\-]+(\.[a-zA-Z0-9_\-]+)*$/;
+    // const filenameRegex = /^[a-zA-Z0-9_\-]+(\.[a-zA-Z0-9_\-]+)*$/;
     // if (inputValue.value && filenameRegex.test(inputValue.value)) {
     console.log("重命名")
     let path = `${operateFile.value.Path}/${operateFile.value.Name}`
@@ -443,23 +460,48 @@ const sftpNavTabs = computed(() => {
     return catalogueManagement.value.map((item: catalogueManagementTtype) => item.superiorsName)
 })
 
+type tagType = {
+    name: string
+    path: string
+}
 let topInput = ref('')
+let tapTag: tagType[] = []
+let TapTagItem: tagType | undefined = undefined
+let tagInputRef = ref<any>(null)
 const onTags = (index: number) => {
     console.log(index)
     console.log(catalogueManagement.value[index])
     // catalogueManagement.value[index].selected = undefined;
-    catalogueManagement.value.splice(index++);
+    catalogueManagement.value.splice(index);
 }
-let tagInputRef = ref<any>(null)
+
+//顶部搜索框搜索路径
 const onTopInput = () => {
     topInput.value = sftpNavTabs.value.join("/")
-    nextTick(() => {
-        tagInputRef.value?.focus();
-    })
-    console.log(topInput.value)
+    nextTick(() => { tagInputRef.value?.focus() })
+}
+const topInputBlur = () => {
+    tapTag = []
+    if (topInput.value !== '') {
+        //转换成数组并且过滤掉空字符串
+        let topArr = topInput.value.split("/").filter(item => item)
+        topArr.forEach((item: string, index: number) => {
+            tapTag.push({
+                name: item,
+                path: `/${topArr.slice(0, index + 1).join("/")}`
+            })
+        })
+        catalogueManagement.value = []
+        topTagList()
+
+    }
+    topInput.value = ''
 }
 
-
+const topTagList = () => {
+    TapTagItem = tapTag.shift();
+    if (TapTagItem) sectermFileListReq(TapTagItem.path, websocket)
+}
 
 let fileInputRef = ref<HTMLInputElement>();
 //文件列表
